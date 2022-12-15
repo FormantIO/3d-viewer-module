@@ -1,24 +1,25 @@
-import { Mesh, MeshBasicMaterial, PlaneGeometry, Texture } from 'three';
-import * as uuid from 'uuid';
-import { defined, UniverseDataSource } from '@formant/universe-core';
-import { UniverseLayer } from './UniverseLayer';
-import { ILocation } from '../main';
+import { Mesh, MeshBasicMaterial, PlaneGeometry, Texture } from "three";
+import * as uuid from "uuid";
+import { defined, UniverseDataSource } from "@formant/universe-core";
+import { UniverseLayer } from "./UniverseLayer";
+import { ILocation } from "../main";
 
 const mapBoxConfig = {
-  username: 'mapbox',
-  styleId: 'satellite-v9',
+  username: "mapbox",
+  styleId: "satellite-v9",
   width: 500,
   height: 500,
   bearing: 0,
-  accessToken: 'shhh',
+  accessToken:
+    "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg",
 };
 
 export class MapLayer extends UniverseLayer {
-  static layerTypeId = 'map';
+  static layerTypeId = "map";
 
-  static commonName = 'Map';
+  static commonName = "Map";
 
-  static description = 'A plane showing satellite data';
+  static description = "A plane showing satellite data";
 
   static usesData = true;
 
@@ -35,17 +36,17 @@ export class MapLayer extends UniverseLayer {
   init() {
     const source: UniverseDataSource = {
       id: uuid.v4(),
-      sourceType: 'telemetry',
-      streamName: 'location?',
-      streamType: 'location',
+      sourceType: "telemetry",
+      streamName: "location?",
+      streamType: "location",
     };
     this.universeData.subscribeToLocation(
       defined(this.getLayerContext()?.deviceId),
       source,
       (newLoc: ILocation | Symbol) => {
-        if (typeof newLoc === 'symbol') {
-          throw new Error('unhandled data status');
-        } else if (!this.location && 'latitude' in newLoc) {
+        if (typeof newLoc === "symbol") {
+          throw new Error("unhandled data status");
+        } else if (!this.location && "latitude" in newLoc) {
           this.location = newLoc;
           this.onData();
         }
@@ -77,7 +78,7 @@ export class MapLayer extends UniverseLayer {
             URL.revokeObjectURL(img.src);
             this.texture.needsUpdate = true;
           } else {
-            throw new Error('error initializing texture');
+            throw new Error("error initializing texture");
           }
         };
       });

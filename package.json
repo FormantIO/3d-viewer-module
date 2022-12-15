@@ -9,35 +9,34 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@formant/data-sdk": "0.0.105",
     "@formant/ui-sdk": "0.0.26",
+    "@formant/universe-connector": "^0.0.5",
     "@formant/universe-core": "^0.0.9",
-    "@formant/data-sdk": "^0.0.102",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "three": "^0.146.0",
-    "styled-components": "^5.3.5",
-    "uuid": "^8.3.2",
+    "geolib": "^3.3.3",
     "howler": "^2.2.3",
     "immer": "^9.0.12",
+    "jszip": "^3.9.1",
+    "lzfjs": "^1.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "recoil": "^0.7.2",
     "recoil-nexus": "^0.3.15",
+    "styled-components": "^5.3.5",
+    "three": "^0.146.0",
     "urdf-loader": "^0.10.3",
-    "geolib": "^3.3.3",
-    "jszip": "^3.9.1",
-    "lzfjs": "^1.0.1"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/howler": "^2.2.7",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
+    "@types/styled-components": "^5.1.25",
     "@types/three": "^0.146.0",
     "@types/uuid": "^8.3.4",
-    "@vitejs/plugin-react": "^2.2.0",
-    "typescript": "^4.6.4",
-    "vite": "^3.2.3",
-    "@types/styled-components": "^5.1.25",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "@vitejs/plugin-react": "^2.2.0",
     "eslint": "^8.14.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -45,6 +44,8 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-react-hooks": "^4.5.0"
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3"
   }
 }

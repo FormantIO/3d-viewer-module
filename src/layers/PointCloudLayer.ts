@@ -4,19 +4,19 @@ import {
   Points,
   PointsMaterial,
   TextureLoader,
-} from 'three';
-import { IUniverseData, IPcd } from '@formant/universe-core';
-import * as uuid from 'uuid';
-import { defined } from '../../common/defined';
-import { UniverseLayer } from './UniverseLayer';
-import { LayerSuggestion } from './LayerRegistry';
+} from "three";
+import { IUniverseData, IPcd } from "@formant/universe-core";
+import * as uuid from "uuid";
+import { defined } from "../../common/defined";
+import { UniverseLayer } from "./UniverseLayer";
+import { LayerSuggestion } from "./LayerRegistry";
 
 export class PointCloudLayer extends UniverseLayer {
-  static layerTypeId: string = 'point_cloud';
+  static layerTypeId: string = "point_cloud";
 
-  static commonName = 'Point Cloud';
+  static commonName = "Point Cloud";
 
-  static description = 'A point cloud to represent a set of points.';
+  static description = "A point cloud to represent a set of points.";
 
   static usesData = true;
 
@@ -24,36 +24,36 @@ export class PointCloudLayer extends UniverseLayer {
 
   static fields = {
     pointSize: {
-      name: 'Point Size',
-      description: 'Size of points',
+      name: "Point Size",
+      description: "Size of points",
       placeholder: 0.01,
       value: 0.01,
-      type: 'number' as const,
-      location: ['create' as const],
+      type: "number" as const,
+      location: ["create" as const],
     },
     pointColor: {
-      name: 'Point Color',
-      description: 'Color of points',
+      name: "Point Color",
+      description: "Color of points",
       placeholder: 0xffffff,
       value: 0xffffff,
-      type: 'number' as const,
-      location: ['create' as const],
+      type: "number" as const,
+      location: ["create" as const],
     },
     pointTexture: {
-      name: 'Point Texture',
-      description: 'Texture of points',
-      placeholder: '',
-      value: '',
-      type: 'text' as const,
-      location: ['create' as const],
+      name: "Point Texture",
+      description: "Texture of points",
+      placeholder: "",
+      value: "",
+      type: "text" as const,
+      location: ["create" as const],
     },
     pointAttenuate: {
-      name: 'Point Attenuate',
-      description: 'Attenuate point size',
+      name: "Point Attenuate",
+      description: "Attenuate point size",
       placeholder: false,
       value: false,
-      type: 'boolean' as const,
-      location: ['create' as const],
+      type: "boolean" as const,
+      location: ["create" as const],
     },
   };
 
@@ -65,12 +65,12 @@ export class PointCloudLayer extends UniverseLayer {
     if (deviceContext) {
       (await universeData.getTeleopRosStreams(deviceContext)).forEach(
         (stream) => {
-          if (stream.topicType === 'sensor_msgs/PointCloud2') {
+          if (stream.topicType === "sensor_msgs/PointCloud2") {
             dataLayers.push({
               sources: [
                 {
                   id: uuid.v4(),
-                  sourceType: 'realtime',
+                  sourceType: "realtime",
                   rosTopicName: stream.topicName,
                   rosTopicType: stream.topicType,
                 },
@@ -88,7 +88,7 @@ export class PointCloudLayer extends UniverseLayer {
     const geom = new BufferGeometry();
     const MAX_POINTS = 350000;
     geom.setAttribute(
-      'position',
+      "position",
       new BufferAttribute(new Float32Array(MAX_POINTS * 3), 3)
     );
     geom.setDrawRange(0, 0);
@@ -116,8 +116,8 @@ export class PointCloudLayer extends UniverseLayer {
       defined(this.getLayerContext()).deviceId,
       defined(this.layerDataSources)[0],
       (d) => {
-        if (typeof d === 'symbol') {
-          throw new Error('unhandled data status');
+        if (typeof d === "symbol") {
+          throw new Error("unhandled data status");
         }
         this.onData(d as IPcd);
       }
