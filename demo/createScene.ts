@@ -111,6 +111,24 @@ export function createScene() {
     createFarmbot('Farmbot 1', FARM_BOT_1_DEVICE_ID),
     createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
     createFarmbot('Farmbot 3', FARM_BOT_3_DEVICE_ID),
+    // {
+    //   id: uuid.v4(),
+    //   editing: false,
+    //   type: 'trail',
+    //   name: 'Farmbot',
+    //   deviceContext: FARM_BOT_3_DEVICE_ID,
+    //   children: [],
+    //   visible: true,
+    //   position: {
+    //     type: 'gps',
+    //     stream: 'farmbot.gps',
+    //     relativeToLatitude: 31.0119,
+    //     relativeToLongitude: -92.5499,
+    //   },
+    //   fieldValues: {},
+    //   data: {},
+    //   dataSources: [],
+    // },
     /*
     {
       id: uuid.v4(),

@@ -594,7 +594,7 @@ export class SimulatedUniverseData implements IUniverseData {
         direction *= -1;
         t += 0.01 * direction;
       }
-    }, 100);
+    }, 1000);
 
     return () => {
       // cleanup subscription
