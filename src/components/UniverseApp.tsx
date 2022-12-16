@@ -81,6 +81,20 @@ const PropertyRow = styled.div`
   margin-bottom: 0.5rem;
 `;
 
+const ToggleButton = styled.button`
+  position: absolute;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  color: #3b4668;
+  cursor: pointer;
+  background: #bac4e2;
+  border: 1px solid #3b4668;
+  border-radius: 8px;
+  top: 10px;
+  left: 14px;
+`;
+
 export interface IUniverseAppProps {
   universeData: IUniverseData;
   mode?: "edit" | "view" | "no-interaction";
@@ -123,7 +137,7 @@ export function UniverseApp(props: IUniverseAppProps) {
     React.useState(false);
   const [showingLocationStreamSelect, setShowingLocationStreamSelect] =
     React.useState(false);
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [currentlySelectedElement, setCurrentlySelectedElement] =
     React.useState<TreePath | undefined>(undefined);
   const [currentContextName, setCurrentContextName] = React.useState("");
@@ -624,11 +638,7 @@ export function UniverseApp(props: IUniverseAppProps) {
         {
           icon: element.visible ? "eye" : "eye_closed",
           description: "click to toggle visibility",
-        },
-        {
-          icon: "help",
-          description: LayerRegistry.getDescription(element.type),
-        },
+        }
       ],
       children: element.children.map((_, i) =>
         buildSubTree(_, [...path, i], color)
@@ -638,12 +648,8 @@ export function UniverseApp(props: IUniverseAppProps) {
 
   const buildTree = (): TreeElement[] => [
     {
-      title: "Universe",
+      title: "Universe 3d Viewer",
       icons: [
-        {
-          icon: "help",
-          description: "This is your entire collection of layers.",
-        },
       ],
       children: sceneGraph.map((_, i) => buildSubTree(_, [i])),
     },
@@ -690,13 +696,14 @@ export function UniverseApp(props: IUniverseAppProps) {
           // gridTemplateColumns={showSidebar ? "370px 1fr" : undefined}
           sx={{ height: "100%" }}
         >
-          {showSidebar && (
+          {showSidebar ? (
             <UniverseSidebar
               onAdd={showAddDialog}
               onRemove={onRemoveItem}
               onDuplicate={onDuplicateItem}
               onRename={showRenameDialog}
               tree={buildTree()}
+              onToggleSidebar={toggleSidebar}
               onIconInteracted={onIconInteracted}
               onItemSelected={onItemSelected}
             >
@@ -790,7 +797,9 @@ export function UniverseApp(props: IUniverseAppProps) {
                 </>
               )}
             </UniverseSidebar>
-          )}
+          ) : <ToggleButton onClick={() => toggleSidebar()}>
+            <Icon name="menu" />
+          </ToggleButton>}
           <Box
             sx={{ position: "relative", overflow: "hidden", height: "100%" }}
           >
@@ -805,11 +814,6 @@ export function UniverseApp(props: IUniverseAppProps) {
               <Control onClick={recenter}>
                 <Icon name="recenter" />
               </Control>
-              {mode === "edit" && (
-                <Control onClick={toggleSidebar}>
-                  <Icon name="edit" />
-                </Control>
-              )}
             </Controls>
           </Box>
         </Box>

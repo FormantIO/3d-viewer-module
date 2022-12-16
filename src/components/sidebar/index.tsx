@@ -1,4 +1,4 @@
-import { Button } from "@formant/ui-sdk";
+import { Button, Icon } from "@formant/ui-sdk";
 import React from "react";
 import styled from "styled-components";
 import {
@@ -8,14 +8,26 @@ import {
 } from "../../model/ITreeElement";
 import { SortableTree } from "../SortableTree";
 
-const SidebarContainer = styled.div`
+interface ISidebarContainer {
+  visible: boolean
+};
+
+const SidebarContainer = styled.div<ISidebarContainer>`
+  ".visible": {
+    left: 0;
+    background-color: pink;
+  }
   background-color: #2d3855;
   position: absolute;
   z-index: 1;
-  left: 0;
+  left: ${(props) => props.visible ? '0' : '-400px'};
   padding: 1rem;
   display: grid;
   gap: 1rem;
+  max-height: 100%;
+  overflow-y: scroll;
+  transition: all 0.2s ease;
+
 `;
 
 const PropertiesSectionDiv = styled.div`
@@ -23,13 +35,13 @@ const PropertiesSectionDiv = styled.div`
   margin-bottom: 2rem;
 `;
 
-const ButtonsDiv = styled.div`
-  display: flex;
-  position: absolute;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+const ToggleButton = styled.button`
+  width: 20px;
+  height: 20px;
+  color: white;
+  cursor: pointer;
+  background: none;
+  border: none;
 `;
 
 const TreeArea = styled.div`
@@ -42,7 +54,9 @@ export interface IUniverseSidebarProps {
   onRemove: (currentPath: TreePath) => void;
   onDuplicate: (currentPath: TreePath) => void;
   onRename: (currentPath: TreePath) => void;
-  onIconInteracted?: (currentPath: TreePath, iconIndex: number) => void;
+  onToggleSidebar: () => void;
+  onIconInteracted?: (currentPath: TreePath,
+    iconIndex: number) => void;
   onItemSelected: (currentPath?: TreePath) => void;
   tree: TreeElement[];
   children?: React.ReactNode;
@@ -52,6 +66,7 @@ export function UniverseSidebar({
   onRename,
   onAdd,
   onRemove,
+  onToggleSidebar,
   onDuplicate,
   onIconInteracted,
   onItemSelected,
@@ -61,6 +76,12 @@ export function UniverseSidebar({
   const [selected, setSelected] = React.useState<TreePath | undefined>(
     undefined
   );
+  const [visible, setVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    setVisible(true);
+  }, [])
+
 
   const onTreeNodeSelect = (path: TreePath) => {
     const currentSelected = selected && treePathEquals(selected, path);
@@ -72,26 +93,18 @@ export function UniverseSidebar({
     if (onIconInteracted) onIconInteracted(path.slice(1), iconIndex);
   };
 
-  const onAddClicked = () => {
-    onAdd(selected?.slice(1) || []);
-  };
-
-  const onRemoveClicked = () => {
-    onRemove(selected?.slice(1) || []);
-    setSelected(undefined);
-  };
-
-  const onDuplicateClicked = () => {
-    onDuplicate(selected?.slice(1) || []);
-  };
-
-  const onRenameClicked = () => {
-    onRename(selected?.slice(1) || []);
-  };
+  const onToggleSidebarClicked = () => {
+    setVisible(false);
+    setTimeout(() => {
+      onToggleSidebar();
+    }, 200);
+  }
 
   return (
-    <SidebarContainer>
-      {" "}
+    <SidebarContainer visible={visible}>
+      <ToggleButton type="button" onClick={onToggleSidebarClicked}>
+        <Icon name="arrow-left" />
+      </ToggleButton>
       <TreeArea>
         <SortableTree
           items={tree}
