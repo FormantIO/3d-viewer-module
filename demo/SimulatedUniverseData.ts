@@ -569,15 +569,16 @@ export class SimulatedUniverseData implements IUniverseData {
     source: UniverseDataSource,
     callback: (data: ILocation | DataStatus) => void
   ): () => void {
-    const myRNG = seedrandom(deviceId);
+    const myRNG = seedrandom(`${deviceId}ddd`);
     let direction = 1; // start moving forward along the spline
     let t = 0; // start at the beginning of the spline
     const randomPoints: ILocation[] = [];
     for (let i = 0; i < 4; i += 1) {
       randomPoints.push({
-        latitude: 31.0119 + myRNG.quick() * 0.00001,
-        longitude: -92.5499 + myRNG.quick() * 0.00001,
+        latitude: 31.0119 + myRNG.quick() * 0.00005 - 0.00003,
+        longitude: -92.5499 + myRNG.quick() * 0.00005 - 0.00003,
       });
+      console.log(myRNG.quick() * 0.00005 - 0.00003);
     }
     const splinePoints: Vector2[] = randomPoints.map(
       (point) => new Vector2(point.latitude, point.longitude)

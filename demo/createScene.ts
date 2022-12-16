@@ -158,7 +158,7 @@ export function createScene() {
           rosTopicType: 'sensor_msgs/JointState',
         },
       ],
-    },
+    }, */
     {
       id: uuid.v4(),
       editing: false,
@@ -176,7 +176,6 @@ export function createScene() {
       },
       data: {},
     },
-    */
   ];
   return sg;
 }

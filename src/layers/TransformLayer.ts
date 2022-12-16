@@ -129,7 +129,7 @@ export class TransformLayer extends Object3D {
             longitude: positioning.relativeToLongitude,
             latitude: location.latitude,
           };
-          const horizontalDistance = getDistance(h1, h2, 0.000001);
+          let horizontalDistance = getDistance(h1, h2, 0.000001);
           const l1 = {
             longitude: location.longitude,
             latitude: location.latitude,
@@ -138,7 +138,13 @@ export class TransformLayer extends Object3D {
             longitude: location.longitude,
             latitude: positioning.relativeToLatitude,
           };
-          const verticalDistance = getDistance(l1, l2, 0.000001);
+          let verticalDistance = getDistance(l1, l2, 0.000001);
+          if (location.latitude < positioning.relativeToLatitude) {
+            verticalDistance *= -1;
+          }
+          if (location.longitude < positioning.relativeToLongitude) {
+            horizontalDistance *= -1;
+          }
           const euler = new Euler(0, 0, location.orientation);
           const quaternion = new Quaternion();
           quaternion.setFromEuler(euler);
