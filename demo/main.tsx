@@ -29,7 +29,7 @@ const getDevice = async () => {
 
 function ViewerApp() {
   const data =
-    demo === "true" ? new SimulatedUniverseData() : new LiveUniverseData();
+    demo === "true" ? new SimulatedUniverseData(moduleConfiguration) : new LiveUniverseData();
   getDevice();
   window.setInterval(() => {
     data.setTime(new Date());

@@ -1,9 +1,28 @@
 {
-  "latitude": 32.999,
-  "longitude": -90.0,
+  "latitude": 29.81321729315798,
+  "longitude": -96.88167023250331,
   "devices": [
     {
       "deviceId": "farmbot1",
+      "name": "Farmbot 1",
+      "locationStream": "farmbot1/gps",
+      "pointCloudStream": "farmbot1/pcd"
+    },
+    {
+      "deviceId": "farmbot2",
+      "name": "Farmbot 2",
+      "locationStream": "farmbot1/gps",
+      "pointCloudStream": "farmbot1/pcd"
+    },
+    {
+      "deviceId": "farmbot3",
+      "name": "Farmbot 3",
+      "locationStream": "farmbot1/gps",
+      "pointCloudStream": "farmbot1/pcd"
+    },
+    {
+      "deviceId": "farmbot4",
+      "name": "Farmbot 4",
       "locationStream": "farmbot1/gps",
       "pointCloudStream": "farmbot1/pcd"
     }

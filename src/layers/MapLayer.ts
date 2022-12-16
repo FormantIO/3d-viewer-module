@@ -31,7 +31,7 @@ export class MapLayer extends UniverseLayer {
 
   location?: ILocation;
 
-  zoomLevel: number = 15;
+  zoomLevel: number = 17;
 
   static fields = {
     latitude: {

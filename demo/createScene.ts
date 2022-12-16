@@ -33,12 +33,17 @@ function createSatelliteLayer(
   };
 }
 
-function createFarmbot(name: string, deviceId: string): SceneGraphElement {
+function createFarmbot(
+  name: string,
+  deviceId: string,
+  originLatitude: number,
+  originLongitude: number
+): SceneGraphElement {
   return {
     id: uuid.v4(),
     editing: false,
     type: 'empty',
-    name: 'Farmbot',
+    name,
     deviceContext: deviceId,
     children: [
       {
@@ -99,8 +104,8 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
     position: {
       type: 'gps',
       stream: 'farmbot.gps',
-      relativeToLatitude: 31.0119,
-      relativeToLongitude: -92.5499,
+      relativeToLatitude: originLatitude,
+      relativeToLongitude: originLongitude,
     },
     fieldValues: {},
     data: {},
@@ -109,11 +114,21 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
 }
 
 export function createScene(configuration: any) {
+  const devices = configuration.devices.map((device) =>
+    createFarmbot(
+      device.name,
+      device.deviceId,
+      configuration.latitude,
+      configuration.longitude
+    )
+  );
+
   const sg: SceneGraphElement[] = [
     createSatelliteLayer(configuration.latitude, configuration.longitude),
-    createFarmbot('Farmbot 1', FARM_BOT_1_DEVICE_ID),
-    createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
-    createFarmbot('Farmbot 3', FARM_BOT_3_DEVICE_ID),
+    ...devices,
+
+    // createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
+    // createFarmbot('Farmbot 3', FARM_BOT_3_DEVICE_ID),
     // {
     //   id: uuid.v4(),
     //   editing: false,
