@@ -5,25 +5,28 @@ export const FARM_BOT_1_DEVICE_ID = 'farmbot1';
 export const FARM_BOT_2_DEVICE_ID = 'farmbot2';
 export const FARM_BOT_3_DEVICE_ID = 'farmbot3';
 
-function createSatelliteLayer(): SceneGraphElement {
+function createSatelliteLayer(
+  latitude: number,
+  longitude: number
+): SceneGraphElement {
   return {
     id: uuid.v4(),
     editing: false,
     type: 'map',
     name: 'Satellite Map',
-    deviceContext: FARM_BOT_1_DEVICE_ID,
+    deviceContext: '',
     children: [],
     visible: true,
     position: { type: 'manual', x: 0, y: 0, z: 0 },
     fieldValues: {
-      // latitude: {
-      //   type: 'number',
-      //   value: 31.0119,
-      // },
-      // longitude: {
-      //   type: 'number',
-      //   value: -92.5499,
-      // },
+      latitude: {
+        type: 'number',
+        value: latitude,
+      },
+      longitude: {
+        type: 'number',
+        value: longitude,
+      },
     },
     data: {},
     dataSources: [],
@@ -105,9 +108,9 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
   };
 }
 
-export function createScene() {
+export function createScene(configuration: any) {
   const sg: SceneGraphElement[] = [
-    createSatelliteLayer(),
+    createSatelliteLayer(configuration.latitude, configuration.longitude),
     createFarmbot('Farmbot 1', FARM_BOT_1_DEVICE_ID),
     createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
     createFarmbot('Farmbot 3', FARM_BOT_3_DEVICE_ID),

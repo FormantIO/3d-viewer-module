@@ -3,14 +3,16 @@ import { createRoot } from "react-dom/client";
 import { FormantProvider } from "@formant/ui-sdk";
 import { Authentication, Fleet, App } from "@formant/data-sdk";
 import { LiveUniverseData } from "@formant/universe-connector";
-import { LayerRegistry, TeleportLayer, Universe } from "../src/main";
+import { defined, LayerRegistry, TeleportLayer, Universe } from "../src/main";
 import { SimulatedUniverseData } from "./SimulatedUniverseData";
 import { createScene } from "./createScene";
 import { TestLayer } from "./TestLayer";
+import configTest from "./configTest.json";
 
 // get query parameter demo
 const urlParams = new URLSearchParams(window.location.search);
 const demo = urlParams.get("demo");
+let moduleConfiguration = configTest;
 
 LayerRegistry.register(TeleportLayer);
 LayerRegistry.register(TestLayer);
@@ -21,8 +23,8 @@ const getDevice = async () => {
     return;
   }
   await Authentication.waitTilAuthenticated();
-  const configuration = await App.getCurrentModuleConfiguration();
-  console.log(configuration)
+  moduleConfiguration = JSON.parse(defined(await App.getCurrentModuleConfiguration()));
+  console.log(moduleConfiguration)
 };
 
 function ViewerApp() {
@@ -34,7 +36,7 @@ function ViewerApp() {
   }, 60 / 12);
   return (
     <Universe
-      initialSceneGraph={createScene()}
+      initialSceneGraph={createScene(moduleConfiguration)}
       universeData={data}
       mode="edit"
       vr

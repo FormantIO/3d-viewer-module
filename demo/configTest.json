@@ -1,0 +1,11 @@
+{
+  "latitude": 32.999,
+  "longitude": -90.0,
+  "devices": [
+    {
+      "deviceId": "farmbot1",
+      "locationStream": "farmbot1/gps",
+      "pointCloudStream": "farmbot1/pcd"
+    }
+  ]
+}
