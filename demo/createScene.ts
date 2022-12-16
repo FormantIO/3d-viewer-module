@@ -1,20 +1,20 @@
-import * as uuid from "uuid";
-import { SceneGraphElement } from "../src/main";
+import * as uuid from 'uuid';
+import { SceneGraphElement } from '../src/main';
 
-export const FARM_BOT_1_DEVICE_ID = "asdfadsfas";
-export const FARM_BOT_2_DEVICE_ID = "asdfadsfas";
-export const FARM_BOT_3_DEVICE_ID = "asdfadsfas";
+export const FARM_BOT_1_DEVICE_ID = 'farmbot1';
+export const FARM_BOT_2_DEVICE_ID = 'farmbot2';
+export const FARM_BOT_3_DEVICE_ID = 'farmbot3';
 
 function createSatelliteLayer(): SceneGraphElement {
   return {
     id: uuid.v4(),
     editing: false,
-    type: "map",
-    name: "Satellite Map",
+    type: 'map',
+    name: 'Satellite Map',
     deviceContext: FARM_BOT_1_DEVICE_ID,
     children: [],
     visible: true,
-    position: { type: "manual", x: 0, y: 0, z: 0 },
+    position: { type: 'manual', x: 0, y: 0, z: 0 },
     fieldValues: {
       // latitude: {
       //   type: 'number',
@@ -34,27 +34,27 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
   return {
     id: uuid.v4(),
     editing: false,
-    type: "empty",
-    name: "Farmbot",
+    type: 'empty',
+    name: 'Farmbot',
     deviceContext: deviceId,
     children: [
       {
         id: uuid.v4(),
         editing: false,
-        type: "label",
-        name: "Device Name",
+        type: 'label',
+        name: 'Device Name',
         deviceContext: deviceId,
         children: [],
         visible: true,
         position: {
-          type: "manual",
+          type: 'manual',
           x: 0,
           y: 0,
           z: 0.2,
         },
         fieldValues: {
           labelText: {
-            type: "text",
+            type: 'text',
             value: name,
           },
         },
@@ -64,20 +64,20 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
       {
         id: uuid.v4(),
         editing: false,
-        type: "point_cloud",
-        name: "Farmbot Point Cloud",
+        type: 'point_cloud',
+        name: 'Farmbot Point Cloud',
         deviceContext: FARM_BOT_1_DEVICE_ID,
         children: [],
         visible: true,
         position: {
-          type: "manual",
+          type: 'manual',
           x: 0,
           y: 0,
           z: 0,
         },
         fieldValues: {
           pointSize: {
-            type: "number",
+            type: 'number',
             value: 5,
           },
         },
@@ -85,17 +85,17 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
         dataSources: [
           {
             id: uuid.v4(),
-            sourceType: "realtime",
-            rosTopicName: "/farmbot/points",
-            rosTopicType: "sensor_msgs/PointCloud2",
+            sourceType: 'realtime',
+            rosTopicName: '/farmbot/points',
+            rosTopicType: 'sensor_msgs/PointCloud2',
           },
         ],
       },
     ],
     visible: true,
     position: {
-      type: "gps",
-      stream: "farmbot.gps",
+      type: 'gps',
+      stream: 'farmbot.gps',
       relativeToLatitude: 31.0119,
       relativeToLongitude: -92.5499,
     },
@@ -108,9 +108,9 @@ function createFarmbot(name: string, deviceId: string): SceneGraphElement {
 export function createScene() {
   const sg: SceneGraphElement[] = [
     createSatelliteLayer(),
-    createFarmbot("Farmbot 1", FARM_BOT_1_DEVICE_ID),
-    createFarmbot("Farmbot 2", FARM_BOT_2_DEVICE_ID),
-    createFarmbot("Farmbot 3", FARM_BOT_3_DEVICE_ID),
+    createFarmbot('Farmbot 1', FARM_BOT_1_DEVICE_ID),
+    createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
+    createFarmbot('Farmbot 3', FARM_BOT_3_DEVICE_ID),
     /*
     {
       id: uuid.v4(),

@@ -799,7 +799,6 @@ export function UniverseApp(props: IUniverseAppProps) {
                 ref={onViewerLoaded}
                 onSceneGraphElementEdited={onSceneGraphElementEdited}
                 universeData={props.universeData}
-                vr={vr}
               />
             )}
             <Controls>

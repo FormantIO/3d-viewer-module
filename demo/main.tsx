@@ -15,15 +15,14 @@ const demo = urlParams.get("demo");
 LayerRegistry.register(TeleportLayer);
 LayerRegistry.register(TestLayer);
 
-await Authentication.waitTilAuthenticated();
-const configuration = await App.getCurrentModuleConfiguration();
 
 const getDevice = async () => {
-  const device = await Fleet.getCurrentDevice();
-  console.log(device);
-  console.log(device.getAvailableCommands());
-  const data = await device.getLatestTelemetry();
-  console.log(data);
+  if (demo === "true") {
+    return;
+  }
+  await Authentication.waitTilAuthenticated();
+  const configuration = await App.getCurrentModuleConfiguration();
+  console.log(configuration)
 };
 
 function ViewerApp() {

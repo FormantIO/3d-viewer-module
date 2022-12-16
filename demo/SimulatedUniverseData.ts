@@ -8,11 +8,13 @@ import {
   IUniverseStatistics,
   UniverseDataSource,
   DataStatus,
-} from "@formant/universe-core";
-import { ITransformNode } from "../data-sdk/src/model/ITransformNode";
-import { ILocation } from "../data-sdk/src/model/ILocation";
-import { IMarker3DArray } from "../data-sdk/src/model/IMarker3DArray";
-import { IJointState } from "../data-sdk/src/model/IJointState";
+} from '@formant/universe-core';
+import { SplineCurve, Vector2 } from 'three';
+import seedrandom from 'seedrandom';
+import { ITransformNode } from '../data-sdk/src/model/ITransformNode';
+import { ILocation } from '../data-sdk/src/model/ILocation';
+import { IMarker3DArray } from '../data-sdk/src/model/IMarker3DArray';
+import { IJointState } from '../data-sdk/src/model/IJointState';
 import {
   IGridMap,
   IMap,
@@ -20,16 +22,15 @@ import {
   IPcd,
   IPose,
   IUniverseData,
-} from "../src/main";
-import { INumericSetEntry } from "../data-sdk/src/model/INumericSetEntry";
-import { ITransform } from "../model/ITransform";
-import { IBitset } from "../data-sdk/src/model/IBitset";
-import { FARM_BOT_1_DEVICE_ID } from "./createScene";
+} from '../src/main';
+import { INumericSetEntry } from '../data-sdk/src/model/INumericSetEntry';
+import { ITransform } from '../model/ITransform';
+import { IBitset } from '../data-sdk/src/model/IBitset';
 
-export const SPOT_ID = "abc";
-export const ARM1_ID = "asdfadsfas";
-export const ARM2_ID = "124fasd";
-export const ARM3_ID = "77hrtesgdafdsh";
+export const SPOT_ID = 'abc';
+export const ARM1_ID = 'asdfadsfas';
+export const ARM2_ID = '124fasd';
+export const ARM3_ID = '77hrtesgdafdsh';
 
 export class SimulatedUniverseData implements IUniverseData {
   subscribeToImage(
@@ -37,31 +38,31 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (image: HTMLCanvasElement | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   addInteraction(_interaction: Interaction) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   removeInteraction(_id: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   getInteractions(): Interaction[] {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   addInteractionsChangedListener(
     _callback: (interactions: Interaction[]) => void
   ): () => void {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   addInteractionListener(
     _callback: (interaction: Interaction) => void
   ): () => void {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   sendCommand(
@@ -69,7 +70,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _name: string,
     _data?: string | undefined
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToOdometry(
@@ -94,7 +95,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (data: IPose) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   sendRealtimeBoolean(
@@ -102,7 +103,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _streamName: string,
     _value: boolean
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   sendRealtimeBitset(
@@ -110,7 +111,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _streamName: string,
     _bitset: IBitset
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   sendRealtimePose(
@@ -118,7 +119,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _streamName: string,
     _pose: ITransform
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToNumeric(
@@ -126,7 +127,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (num: [number, number][]) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToNumericSet(
@@ -139,29 +140,29 @@ export class SimulatedUniverseData implements IUniverseData {
         [
           Date.now() - 3000,
           [
-            { value: Math.random(), label: "test" },
-            { value: Math.random(), label: "bar" },
+            { value: Math.random(), label: 'test' },
+            { value: Math.random(), label: 'bar' },
           ],
         ],
         [
           Date.now() - 2000,
           [
-            { value: Math.random(), label: "test" },
-            { value: Math.random(), label: "bar" },
+            { value: Math.random(), label: 'test' },
+            { value: Math.random(), label: 'bar' },
           ],
         ],
         [
           Date.now() - 1000,
           [
-            { value: Math.random(), label: "test" },
-            { value: Math.random(), label: "bar" },
+            { value: Math.random(), label: 'test' },
+            { value: Math.random(), label: 'bar' },
           ],
         ],
         [
           Date.now() - 0,
           [
-            { value: Math.random(), label: "test" },
-            { value: Math.random(), label: "bar" },
+            { value: Math.random(), label: 'test' },
+            { value: Math.random(), label: 'bar' },
           ],
         ],
       ]);
@@ -174,7 +175,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _streamName: string,
     _state: boolean
   ): void {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToGridMap(
@@ -182,7 +183,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (data: IGridMap | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToVideo(
@@ -191,14 +192,14 @@ export class SimulatedUniverseData implements IUniverseData {
     callback: (data: HTMLCanvasElement | DataStatus) => void
   ): () => void {
     const image = new Image();
-    image.crossOrigin = "Anonymous";
+    image.crossOrigin = 'Anonymous';
     image.addEventListener(
-      "load",
+      'load',
       () => {
-        const canvas = document.createElement("canvas");
+        const canvas = document.createElement('canvas');
         canvas.width = image.width;
         canvas.height = image.height;
-        const context = canvas.getContext("2d");
+        const context = canvas.getContext('2d');
         if (context) {
           context.drawImage(image, 0, 0);
           callback(canvas);
@@ -207,7 +208,7 @@ export class SimulatedUniverseData implements IUniverseData {
       false
     );
     image.src =
-      "https://threejs.org/examples/textures/2294472375_24a3b8ef46_o.jpg";
+      'https://threejs.org/examples/textures/2294472375_24a3b8ef46_o.jpg';
     return () => {};
   }
 
@@ -216,7 +217,7 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (data: T | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeToText(
@@ -224,11 +225,11 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (text: string | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   getStatistics(): Promise<IUniverseStatistics> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   subscribeDataSourceStateChange(
@@ -236,14 +237,14 @@ export class SimulatedUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _onDataSourceStateChange?: (state: DataSourceState) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   time = Date.now();
 
-  setTime(time: Date | "live"): void {
-    if (time === "live") {
-      throw new Error("Not implemented");
+  setTime(time: Date | 'live'): void {
+    if (time === 'live') {
+      throw new Error('Not implemented');
     } else {
       this.time = time.getTime();
     }
@@ -255,9 +256,9 @@ export class SimulatedUniverseData implements IUniverseData {
     if (deviceId === SPOT_ID) {
       return [
         {
-          streamName: "spotTf",
+          streamName: 'spotTf',
           transformTree: await fetch(
-            "https://formant-3d-models.s3.us-west-2.amazonaws.com/spotjoint_sit.json"
+            'https://formant-3d-models.s3.us-west-2.amazonaws.com/spotjoint_sit.json'
           ).then((_) => _.json() as ITransformNode),
         },
       ];
@@ -273,7 +274,7 @@ export class SimulatedUniverseData implements IUniverseData {
   > {
     return [
       {
-        streamName: "spotLocation",
+        streamName: 'spotLocation',
         location: {
           latitude: 45.4661989,
           longitude: -122.5782375,
@@ -286,25 +287,25 @@ export class SimulatedUniverseData implements IUniverseData {
     { deviceName: string; deviceId: string }[]
   > {
     return [
-      { deviceName: "Spot-9000", deviceId: SPOT_ID },
-      { deviceName: "Roboarm 1", deviceId: ARM1_ID },
-      { deviceName: "Roboarm 2", deviceId: ARM2_ID },
-      { deviceName: "Roboarm 3", deviceId: ARM3_ID },
+      { deviceName: 'Spot-9000', deviceId: SPOT_ID },
+      { deviceName: 'Roboarm 1', deviceId: ARM1_ID },
+      { deviceName: 'Roboarm 2', deviceId: ARM2_ID },
+      { deviceName: 'Roboarm 3', deviceId: ARM3_ID },
     ];
   }
 
   async getDeviceContextName(deviceId: string): Promise<string | undefined> {
     if (deviceId === SPOT_ID) {
-      return "Spot-9000";
+      return 'Spot-9000';
     }
     if (deviceId === ARM1_ID) {
-      return "Roboarm 1";
+      return 'Roboarm 1';
     }
     if (deviceId === ARM2_ID) {
-      return "Roboarm 2";
+      return 'Roboarm 2';
     }
     if (deviceId === ARM3_ID) {
-      return "Roboarm 3";
+      return 'Roboarm 3';
     }
     return undefined;
   }
@@ -313,8 +314,8 @@ export class SimulatedUniverseData implements IUniverseData {
     _deviceId: string,
     streamName: string
   ): Promise<string | undefined> {
-    if (streamName === "spotTf") {
-      return "transform tree";
+    if (streamName === 'spotTf') {
+      return 'transform tree';
     }
     return undefined;
   }
@@ -332,7 +333,7 @@ export class SimulatedUniverseData implements IUniverseData {
     }
     const pcd: IPcd = {
       header: {
-        version: "1",
+        version: '1',
         fields: [],
         size: [],
         type: [],
@@ -340,7 +341,7 @@ export class SimulatedUniverseData implements IUniverseData {
         height: 0,
         width: 0,
         points: 0,
-        data: "ascii",
+        data: 'ascii',
       },
       positions: new Float32Array(points),
     };
@@ -357,13 +358,13 @@ export class SimulatedUniverseData implements IUniverseData {
       markers: [...Array(100).keys()].map(() => ({
         id: Math.random(),
         ns: `cube${Math.random()}`,
-        type: "cube",
-        action: "add",
+        type: 'cube',
+        action: 'add',
         lifetime: 100000,
-        frame_id: "base_link",
+        frame_id: 'base_link',
         points: [],
-        text: "",
-        mesh_resource: "",
+        text: '',
+        mesh_resource: '',
         frame_locked: false,
         mesh_use_embedded_materials: false,
         color: { r: 1, g: 1, b: 1, a: 0.4 },
@@ -400,18 +401,18 @@ export class SimulatedUniverseData implements IUniverseData {
       window.setInterval(() => {
         callback({
           name: [
-            "fl.hx",
-            "fl.hy",
-            "fl.kn",
-            "fr.hx",
-            "fr.hy",
-            "fr.kn",
-            "hl.hx",
-            "hl.hy",
-            "hl.kn",
-            "hr.hx",
-            "hr.hy",
-            "hr.kn",
+            'fl.hx',
+            'fl.hy',
+            'fl.kn',
+            'fr.hx',
+            'fr.hy',
+            'fr.kn',
+            'hl.hx',
+            'hl.hy',
+            'hl.kn',
+            'hr.hx',
+            'hr.hy',
+            'hr.kn',
           ],
           position: [
             0,
@@ -436,12 +437,12 @@ export class SimulatedUniverseData implements IUniverseData {
       window.setInterval(() => {
         callback({
           name: [
-            "joint_1",
-            "joint_2",
-            "joint_3",
-            "joint_4",
-            "joint_5",
-            "joint_6",
+            'joint_1',
+            'joint_2',
+            'joint_3',
+            'joint_4',
+            'joint_5',
+            'joint_6',
           ],
           position: [
             Math.sin(this.time / 1000 / 3),
@@ -457,12 +458,12 @@ export class SimulatedUniverseData implements IUniverseData {
       window.setInterval(() => {
         callback({
           name: [
-            "joint_1",
-            "joint_2",
-            "joint_3",
-            "joint_4",
-            "joint_5",
-            "joint_6",
+            'joint_1',
+            'joint_2',
+            'joint_3',
+            'joint_4',
+            'joint_5',
+            'joint_6',
           ],
           position: [
             Math.sin(this.time / 1000 / 3),
@@ -478,12 +479,12 @@ export class SimulatedUniverseData implements IUniverseData {
       window.setInterval(() => {
         callback({
           name: [
-            "joint_1",
-            "joint_2",
-            "joint_3",
-            "joint_4",
-            "joint_5",
-            "joint_6",
+            'joint_1',
+            'joint_2',
+            'joint_3',
+            'joint_4',
+            'joint_5',
+            'joint_6',
           ],
           position: [
             Math.sin(this.time / 1000 / 3),
@@ -511,9 +512,9 @@ export class SimulatedUniverseData implements IUniverseData {
     if (deviceId === SPOT_ID) {
       return [
         {
-          name: "spotTf",
+          name: 'spotTf',
           configuration: {
-            type: "transform tree",
+            type: 'transform tree',
           },
         },
       ];
@@ -525,25 +526,25 @@ export class SimulatedUniverseData implements IUniverseData {
     if (deviceId === SPOT_ID) {
       return [
         {
-          topicType: "sensor_msgs/JointState",
-          topicName: "spotJoints",
+          topicType: 'sensor_msgs/JointState',
+          topicName: 'spotJoints',
         },
         {
-          topicType: "visualization_msgs/MarkerArray",
-          topicName: "spotMarkers",
+          topicType: 'visualization_msgs/MarkerArray',
+          topicName: 'spotMarkers',
         },
       ];
     }
     return [
       {
-        topicType: "sensor_msgs/JointState",
-        topicName: "armJoints",
+        topicType: 'sensor_msgs/JointState',
+        topicName: 'armJoints',
       },
     ];
   }
 
   async getUrdfs(_deviceId: string): Promise<string[]> {
-    return ["https://formant-3d-models.s3.us-west-2.amazonaws.com/arm.zip"];
+    return ['https://formant-3d-models.s3.us-west-2.amazonaws.com/arm.zip'];
   }
 
   async getHardwareStreams(_deviceId: string): Promise<IRealtimeStream[]> {
@@ -557,7 +558,7 @@ export class SimulatedUniverseData implements IUniverseData {
   ): () => void {
     if (deviceId === SPOT_ID) {
       callback({
-        url: "https://formant-3d-models.s3.us-west-2.amazonaws.com/spotjoint_sit.json",
+        url: 'https://formant-3d-models.s3.us-west-2.amazonaws.com/spotjoint_sit.json',
       });
     }
     return () => {};
@@ -568,13 +569,31 @@ export class SimulatedUniverseData implements IUniverseData {
     source: UniverseDataSource,
     callback: (data: ILocation | DataStatus) => void
   ): () => void {
-    const handle = setInterval(() => {
-      // send some value
-      callback({
-        latitude: 31.0119 + Math.random() * 0.00001,
-        longitude: -92.5499 + Math.random() * 0.00001,
+    const myRNG = seedrandom(deviceId);
+    let direction = 1; // start moving forward along the spline
+    let t = 0; // start at the beginning of the spline
+    const randomPoints: ILocation[] = [];
+    for (let i = 0; i < 4; i += 1) {
+      randomPoints.push({
+        latitude: 31.0119 + myRNG.quick() * 0.00001,
+        longitude: -92.5499 + myRNG.quick() * 0.00001,
       });
-    }, 1000);
+    }
+    const splinePoints: Vector2[] = randomPoints.map(
+      (point) => new Vector2(point.latitude, point.longitude)
+    );
+    const spline = new SplineCurve(splinePoints);
+    const handle = setInterval(() => {
+      const point = spline.getPointAt(t);
+      callback({ latitude: point.x, longitude: point.y });
+
+      // move to the next point on the spline
+      t += 0.01 * direction;
+      if (t >= 1 || t <= 0) {
+        direction *= -1;
+        t += 0.01 * direction;
+      }
+    }, 100);
 
     return () => {
       // cleanup subscription
