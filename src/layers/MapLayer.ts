@@ -1,8 +1,7 @@
 import { Mesh, MeshBasicMaterial, PlaneGeometry, Texture } from 'three';
-import * as uuid from 'uuid';
-import { defined, UniverseDataSource } from '@formant/universe-core';
+import { computeDestinationPoint } from 'geolib';
+import { GeolibGeoJSONPoint } from 'geolib/es/types';
 import { UniverseLayer } from './UniverseLayer';
-import { ILocation } from '../main';
 
 const mapBoxConfig = {
   username: 'mapbox',
@@ -29,9 +28,9 @@ export class MapLayer extends UniverseLayer {
 
   mesh?: Mesh;
 
-  location?: ILocation;
+  location: GeolibGeoJSONPoint = [0, 0];
 
-  zoomLevel: number = 17;
+  distance: number = 50;
 
   static fields = {
     latitude: {
@@ -50,27 +49,65 @@ export class MapLayer extends UniverseLayer {
       placeholder: 0,
       location: ['create' as const, 'edit' as const],
     },
+    size: {
+      name: 'Size',
+      description: 'Size of the map in meters',
+      value: 0,
+      type: 'number' as const,
+      placeholder: 0,
+      location: ['create' as const, 'edit' as const],
+    },
   };
 
   init() {
-    this.location = {
-      longitude: defined(this.getField(MapLayer.fields.longitude)),
-      latitude: defined(this.getField(MapLayer.fields.latitude)),
-    };
+    this.location = [
+      this.getField(MapLayer.fields.longitude) || 0,
+      this.getField(MapLayer.fields.latitude) || 0,
+    ];
+    this.distance = (this.getField(MapLayer.fields.size) || 0) / 2;
+
     this.onData();
   }
 
   onData = () => {
-    const { username, styleId, width, height, bearing, accessToken } =
-      mapBoxConfig;
+    const { username, styleId, width, height, accessToken } = mapBoxConfig;
 
     this.texture = new Texture();
 
-    const mapImageUrl = `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/${this.location?.longitude.toFixed(
-      4
-    )},${this.location?.latitude.toFixed(4)},${
-      this.zoomLevel
-    },${bearing}/${width}x${height}@2x?access_token=${accessToken}`;
+    // calculate bounding box, given center and distance
+    const bearings = {
+      north: 0,
+      east: 90,
+      south: 180,
+      west: 270,
+    };
+    const EARTH_RADIUS_IN_METERS = 6371e3;
+    const maxLatitude = computeDestinationPoint(
+      this.location,
+      this.distance,
+      bearings.north,
+      EARTH_RADIUS_IN_METERS
+    ).latitude.toFixed(8);
+    const minLatitude = computeDestinationPoint(
+      this.location,
+      this.distance,
+      bearings.south,
+      EARTH_RADIUS_IN_METERS
+    ).latitude.toFixed(8);
+    const maxLongitude = computeDestinationPoint(
+      this.location,
+      this.distance,
+      bearings.east,
+      EARTH_RADIUS_IN_METERS
+    ).longitude.toFixed(8);
+    const minLongitude = computeDestinationPoint(
+      this.location,
+      this.distance,
+      bearings.west,
+      EARTH_RADIUS_IN_METERS
+    ).longitude.toFixed(8);
+
+    const mapImageUrl = `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${width}x${height}?logo=false&access_token=${accessToken}`;
     fetch(mapImageUrl)
       .then((response) => response.blob())
       .then((blob) => {
@@ -92,7 +129,12 @@ export class MapLayer extends UniverseLayer {
     const material = new MeshBasicMaterial({
       map: this.texture,
     });
-    const geometry = new PlaneGeometry(5, 5, 100, 100);
+    const geometry = new PlaneGeometry(
+      this.distance * 2,
+      this.distance * 2,
+      100,
+      100
+    );
     this.mesh = new Mesh(geometry, material);
 
     this.add(this.mesh);

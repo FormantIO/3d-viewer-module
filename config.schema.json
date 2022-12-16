@@ -8,7 +8,7 @@
     "longitude": {
       "type": "number"
     },
-    "zoomLevel": {
+    "size": {
       "type": "number"
     },
     "devices": {

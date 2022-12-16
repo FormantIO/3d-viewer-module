@@ -7,7 +7,8 @@ export const FARM_BOT_3_DEVICE_ID = 'farmbot3';
 
 function createSatelliteLayer(
   latitude: number,
-  longitude: number
+  longitude: number,
+  size: number
 ): SceneGraphElement {
   return {
     id: uuid.v4(),
@@ -26,6 +27,10 @@ function createSatelliteLayer(
       longitude: {
         type: 'number',
         value: longitude,
+      },
+      size: {
+        type: 'number',
+        value: size,
       },
     },
     data: {},
@@ -124,7 +129,11 @@ export function createScene(configuration: any) {
   );
 
   const sg: SceneGraphElement[] = [
-    createSatelliteLayer(configuration.latitude, configuration.longitude),
+    createSatelliteLayer(
+      configuration.latitude,
+      configuration.longitude,
+      configuration.size
+    ),
     ...devices,
 
     // createFarmbot('Farmbot 2', FARM_BOT_2_DEVICE_ID),
