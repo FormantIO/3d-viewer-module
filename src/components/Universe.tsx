@@ -8,7 +8,6 @@ export function Universe({
   universeData,
   initialSceneGraph,
   onSceneGraphChange,
-  vr,
 }: IUniverseAppProps) {
   return (
     <RecoilRoot>
@@ -18,7 +17,6 @@ export function Universe({
         universeData={universeData}
         initialSceneGraph={initialSceneGraph}
         onSceneGraphChange={onSceneGraphChange}
-        vr={vr}
       />
     </RecoilRoot>
   );

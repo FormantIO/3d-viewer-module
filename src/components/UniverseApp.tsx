@@ -98,7 +98,6 @@ const ToggleButton = styled.button`
 export interface IUniverseAppProps {
   universeData: IUniverseData;
   mode?: "edit" | "view" | "no-interaction";
-  vr?: boolean;
   initialSceneGraph?: SceneGraphElement[];
   onSceneGraphChange?: (sceneGraph: SceneGraphElement[]) => void;
 }
@@ -648,14 +647,14 @@ export function UniverseApp(props: IUniverseAppProps) {
 
   const buildTree = (): TreeElement[] => [
     {
-      title: "Universe 3d Viewer",
+      title: "3D scene",
       icons: [
       ],
       children: sceneGraph.map((_, i) => buildSubTree(_, [i])),
     },
   ];
 
-  const { mode, vr } = props;
+  const { mode } = props;
   let element: SceneGraphElement | null | undefined;
   let hasParentContext = false;
   let parentContext: string | undefined;
@@ -698,10 +697,6 @@ export function UniverseApp(props: IUniverseAppProps) {
         >
           {showSidebar ? (
             <UniverseSidebar
-              onAdd={showAddDialog}
-              onRemove={onRemoveItem}
-              onDuplicate={onDuplicateItem}
-              onRename={showRenameDialog}
               tree={buildTree()}
               onToggleSidebar={toggleSidebar}
               onIconInteracted={onIconInteracted}

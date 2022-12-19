@@ -119,7 +119,7 @@ function createFarmbot(
 }
 
 export function createScene(configuration: any) {
-  const devices = configuration.devices.map((device) =>
+  const devices = configuration?.devices.map((device) =>
     createFarmbot(
       device.name,
       device.deviceId,

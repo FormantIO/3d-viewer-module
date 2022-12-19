@@ -581,10 +581,9 @@ export class SimulatedUniverseData implements IUniverseData {
     const randomPoints: ILocation[] = [];
     for (let i = 0; i < 4; i += 1) {
       randomPoints.push({
-        latitude:
-          this.configuration.latitude + myRNG.quick() * 0.00004 - 0.00002,
+        latitude: this.configuration.latitude + myRNG.quick() * 0.0004 - 0.0002,
         longitude:
-          this.configuration.longitude + myRNG.quick() * 0.00004 - 0.00002,
+          this.configuration.longitude + myRNG.quick() * 0.0004 - 0.0002,
       });
     }
     const splinePoints: Vector2[] = randomPoints.map(

@@ -1,4 +1,4 @@
-import { Button, Icon } from "@formant/ui-sdk";
+import { Icon } from "@formant/ui-sdk";
 import React from "react";
 import styled from "styled-components";
 import {
@@ -50,10 +50,6 @@ const TreeArea = styled.div`
 `;
 
 export interface IUniverseSidebarProps {
-  onAdd: (currentPath: TreePath) => void;
-  onRemove: (currentPath: TreePath) => void;
-  onDuplicate: (currentPath: TreePath) => void;
-  onRename: (currentPath: TreePath) => void;
   onToggleSidebar: () => void;
   onIconInteracted?: (currentPath: TreePath,
     iconIndex: number) => void;
@@ -63,11 +59,7 @@ export interface IUniverseSidebarProps {
 }
 
 export function UniverseSidebar({
-  onRename,
-  onAdd,
-  onRemove,
   onToggleSidebar,
-  onDuplicate,
   onIconInteracted,
   onItemSelected,
   tree,

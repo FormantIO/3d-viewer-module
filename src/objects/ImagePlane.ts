@@ -5,17 +5,17 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  PlaneBufferGeometry,
+  PlaneGeometry,
   ShapeGeometry,
   Texture,
   TextureLoader,
-} from "three";
-import { SVGLoader } from "../../three-utils/loaders/SVGLoader";
+} from 'three';
+import { SVGLoader } from '../../three-utils/loaders/SVGLoader';
 
 export class ImagePlane extends Object3D {
   constructor(url: string) {
     super();
-    const isSvg = url.toLowerCase().endsWith(".svg");
+    const isSvg = url.toLowerCase().endsWith('.svg');
     if (isSvg) {
       const loader = new SVGLoader();
       loader.load(url, (data) => {
@@ -53,7 +53,7 @@ export class ImagePlane extends Object3D {
           w /= h;
           h = 1;
         }
-        const geometry = new PlaneBufferGeometry(w, h);
+        const geometry = new PlaneGeometry(w, h);
         const material = new MeshBasicMaterial({
           map: texture,
           transparent: true,

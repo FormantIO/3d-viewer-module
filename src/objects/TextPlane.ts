@@ -5,7 +5,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  PlaneBufferGeometry,
+  PlaneGeometry,
   Texture,
 } from 'three';
 import { definedAndNotNull } from '../../common/defined';
@@ -97,10 +97,7 @@ export class TextPlane extends Group {
 
     this.material = material;
 
-    const mesh = new Mesh(
-      new PlaneBufferGeometry(textWidth, textHeight),
-      material
-    );
+    const mesh = new Mesh(new PlaneGeometry(textWidth, textHeight), material);
 
     const o = new Object3D();
     mesh.position.y = -textHeight * offsetVerticalPercentage;

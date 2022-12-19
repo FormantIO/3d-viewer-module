@@ -1,7 +1,7 @@
 {
   "latitude": 37.196,
   "longitude": -121.7194,
-  "size": 60,
+  "size": 160,
   "devices": [
     {
       "deviceId": "farmbot1",
