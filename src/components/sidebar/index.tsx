@@ -21,7 +21,7 @@ const SidebarContainer = styled.div<ISidebarContainer>`
   position: absolute;
   z-index: 1;
   left: ${(props) => props.visible ? '0' : '-400px'};
-  padding: 1rem;
+  padding: 1rem 0 1rem 1rem;
   display: grid;
   gap: 1rem;
   max-height: 100%;
@@ -46,7 +46,6 @@ const ToggleButton = styled.button`
 
 const TreeArea = styled.div`
   overflow-y: scroll;
-  padding-right: 1rem;
 `;
 
 export interface IUniverseSidebarProps {
@@ -105,7 +104,7 @@ export function UniverseSidebar({
           onIconSelected={onTreeNodeIconSelect}
         />
       </TreeArea>
-      <PropertiesSectionDiv>{children}</PropertiesSectionDiv>
+      {/* <PropertiesSectionDiv>{children}</PropertiesSectionDiv> */}
     </SidebarContainer>
   );
 }
