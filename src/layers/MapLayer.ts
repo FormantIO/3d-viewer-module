@@ -6,8 +6,8 @@ import { UniverseLayer } from './UniverseLayer';
 const mapBoxConfig = {
   username: 'mapbox',
   styleId: 'satellite-v9',
-  width: 500,
-  height: 500,
+  width: 1000,
+  height: 1000,
   bearing: 0,
   accessToken:
     'pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg',
@@ -136,6 +136,7 @@ export class MapLayer extends UniverseLayer {
       100
     );
     this.mesh = new Mesh(geometry, material);
+    this.mesh.position.z = -0.001;
 
     this.add(this.mesh);
   };

@@ -332,10 +332,10 @@ export class SimulatedUniverseData implements IUniverseData {
     _callback: (data: IPcd | DataStatus) => void
   ): () => void {
     const points: number[] = [];
-    for (let i = 0; i < 10; i += 1) {
-      points.push(0.1 * (Math.random() - 0.5));
-      points.push(0.1 * (Math.random() - 0.5));
-      points.push(0.1 * (Math.random() - 0.5));
+    for (let i = 0; i < 100; i += 1) {
+      points.push(Math.random() - 0.5);
+      points.push(Math.random() - 0.5);
+      points.push(Math.random() - 0.5);
     }
     const pcd: IPcd = {
       header: {
@@ -581,9 +581,12 @@ export class SimulatedUniverseData implements IUniverseData {
     const randomPoints: ILocation[] = [];
     for (let i = 0; i < 4; i += 1) {
       randomPoints.push({
-        latitude: this.configuration.latitude + myRNG.quick() * 0.0004 - 0.0002,
+        latitude:
+          Number(this.configuration.latitude) + myRNG.quick() * 0.0004 - 0.0002,
         longitude:
-          this.configuration.longitude + myRNG.quick() * 0.0004 - 0.0002,
+          Number(this.configuration.longitude) +
+          myRNG.quick() * 0.0004 -
+          0.0002,
       });
     }
     const splinePoints: Vector2[] = randomPoints.map(

@@ -92,9 +92,9 @@ export class UniverseViewer extends Component<IUniverseViewerProps> {
       0.1,
       1000
     );
-    this.camera.position.z = -1.5;
-    this.camera.position.x = 1.5;
-    this.camera.position.y = 1;
+    this.camera.position.z = 0;
+    this.camera.position.x = 0;
+    this.camera.position.y = 25;
     this.scene.add(this.camera);
 
     this.floor = new THREE.Mesh(

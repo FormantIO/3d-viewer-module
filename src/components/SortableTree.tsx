@@ -2,6 +2,7 @@ import * as React from "react";
 import { Icon, Tooltip, Typography } from "@formant/ui-sdk";
 import styled from "styled-components";
 import { TreeElement, TreePath } from "../model/ITreeElement";
+import { LayerIcon, TextIcon } from "./icons";
 
 interface ISortableTreeProps {
   items: TreeElement[];
@@ -30,12 +31,52 @@ const TreeItemDiv = styled.div`
   cursor: pointer;
   margin-top: 0.5rem;
   margin-bottom: 0rem;
-  border-bottom: #3b4668 solid 1px;
+
+  & svg, p {
+    transition: all 0.05s ease;
+  }
+
+  &:hover {
+    &  svg {
+      visibility: initial;
+    }
+  }
 `;
 
 const IconsDiv = styled.div`
   float: right;
+  margin-left: 8px;
 `;
+
+const layerIcon = (type: string = "", color: string = "white") => {
+  switch (type) {
+    case 'empty':
+      return <Icon
+        name="device"
+        sx={{
+          color,
+          width: "1.3rem",
+          height: "1.3rem",
+        }}
+      />;
+    case 'ground':
+    case 'map':
+      return <LayerIcon />
+    case 'point_cloud':
+      return <Icon
+        name="cube"
+        sx={{
+          width: "1.3rem",
+          height: "1.3rem",
+        }}
+      />;
+    case 'label':
+      return <TextIcon />
+    default:
+      return <LayerIcon />;
+  }
+
+}
 
 export function SortableTree(props: ISortableTreeProps) {
   const onIconClicked = (path: TreePath, iconIndex: number) => {
@@ -51,7 +92,7 @@ export function SortableTree(props: ISortableTreeProps) {
   };
 
   const onItemClicked = (p: TreePath) => {
-    select(p);
+    // select(p);
   };
 
   const onItemIconClicked = (currentPath: TreePath, iconIndex: number) => {
@@ -68,12 +109,15 @@ export function SortableTree(props: ISortableTreeProps) {
         selected.every(
           (val, selectedIndex) => val === currentPath[selectedIndex]
         );
+      if (currentPath.length === 1) {
+        return <div key={`tree_item${currentPath.join("-")}`}>{e.children && renderTree(e.children, currentPath)}</div>;
+      }
       return (
         <React.Fragment key={`tree_item${currentPath.join("-")}`}>
           <TreeItemDiv>
             <span
               style={{
-                marginLeft: `${(currentPath.length - 1) * 1}rem`,
+                marginLeft: `${(currentPath.length - 2) * 1.9}rem`,
                 color: isSelected ? "#18d2ff" : "#BAC4E2",
               }}
             >
@@ -81,11 +125,12 @@ export function SortableTree(props: ISortableTreeProps) {
                 onClick={onItemClicked.bind(undefined, currentPath)}
                 data-tooltip={e.title}
               >
-                <Typography variant="body1">
-                  {currentPath.length > 1 && <span>— </span>}
-
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', gap: '8px', ...((e.icons && e.icons[0].icon === 'eye_closed') && { opacity: 0.4 }) }}>
+                  {layerIcon(e.type, e.textColor)}
+                  {" "}
                   {e.title}
-                  {e.textColor && (
+                  {" "}
+                  {/* {e.textColor && (
                     <>
                       {" "}
                       <Icon
@@ -97,7 +142,7 @@ export function SortableTree(props: ISortableTreeProps) {
                         }}
                       />
                     </>
-                  )}
+                  )} */}
                 </Typography>
               </TitleSpan>
             </span>
@@ -109,26 +154,26 @@ export function SortableTree(props: ISortableTreeProps) {
                       .map((_) => _.toString())
                       .join("-")}+${icon.icon}`}
                   >
-                    <Tooltip title={icon.description}>
-                      <div
-                        tabIndex={iconIndex}
-                        role="button"
-                        onClick={onItemIconClicked.bind(
-                          undefined,
-                          currentPath,
-                          iconIndex
-                        )}
-                      >
-                        <Icon
-                          name={icon.icon}
-                          sx={{
-                            color: icon.color,
-                            width: "1rem",
-                            height: "1rem",
-                          }}
-                        />
-                      </div>
-                    </Tooltip>
+                    <div
+                      tabIndex={iconIndex}
+                      role="button"
+                      onClick={onItemIconClicked.bind(
+                        undefined,
+                        currentPath,
+                        iconIndex
+                      )}
+                    >
+                      <Icon
+                        name={icon.icon}
+                        sx={{
+                          color: icon.color,
+                          width: "1rem",
+                          height: "1rem",
+                          verticalAlign: 'sub',
+                          ...((e.icons && e.icons[0].icon === 'eye') && { visibility: 'hidden' })
+                        }}
+                      />
+                    </div>
                   </IconDiv>
                 ))}
             </IconsDiv>

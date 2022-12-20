@@ -22,15 +22,15 @@ function createSatelliteLayer(
     fieldValues: {
       latitude: {
         type: 'number',
-        value: latitude,
+        value: Number(latitude),
       },
       longitude: {
         type: 'number',
-        value: longitude,
+        value: Number(longitude),
       },
       size: {
         type: 'number',
-        value: size,
+        value: Number(size),
       },
     },
     data: {},
@@ -109,8 +109,8 @@ function createFarmbot(
     position: {
       type: 'gps',
       stream: 'farmbot.gps',
-      relativeToLatitude: originLatitude,
-      relativeToLongitude: originLongitude,
+      relativeToLatitude: Number(originLatitude),
+      relativeToLongitude: Number(originLongitude),
     },
     fieldValues: {},
     data: {},
@@ -119,7 +119,7 @@ function createFarmbot(
 }
 
 export function createScene(configuration: any) {
-  const devices = configuration?.devices.map((device) =>
+  const devices = configuration?.devices?.map((device) =>
     createFarmbot(
       device.name,
       device.deviceId,

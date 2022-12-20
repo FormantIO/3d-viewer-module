@@ -151,6 +151,7 @@ export function UniverseApp(props: IUniverseAppProps) {
   >(undefined);
   const [updatingSceneGraph, setUpdatingSceneGraph] = React.useState(false);
   const [fontLoaded, setFontLoaded] = React.useState(false);
+  const [sidebarTree, setSidebarTree] = React.useState<TreeElement[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -403,7 +404,51 @@ export function UniverseApp(props: IUniverseAppProps) {
     persist();
   };
 
+  const buildSubTree = (
+    element: SceneGraphElement,
+    path: TreePath,
+    inheritedColor?: string
+  ): TreeElement => {
+    const color = element.deviceContext
+      ? stringToColor(element.deviceContext)
+      : inheritedColor;
+    console.log(element);
+    return {
+      title: element.name,
+      textColor: color,
+      type: element.type,
+      icons: [
+        {
+          icon: element.visible ? "eye" : "eye_closed",
+          description: "click to toggle visibility",
+        }
+      ],
+      children: element.children.map((_, i) =>
+        buildSubTree(_, [...path, i], color)
+      ),
+    };
+  };
+
+  const buildTree = (): TreeElement[] => [
+    {
+      title: "3D scene",
+      icons: [
+      ],
+      children: sceneGraph.map((_, i) => buildSubTree(_, [i])),
+    },
+  ];
+
+
+  const updateSidebarTree = () => {
+    setSidebarTree(buildTree());
+  }
+
+  React.useEffect(() => {
+    updateSidebarTree();
+  }, [sceneGraph]);
+
   const onIconInteracted = (path: TreePath, icon: number) => {
+    console.log({ path, icon });
     if (path.length === 0 || !viewer) {
       return;
     }
@@ -454,7 +499,7 @@ export function UniverseApp(props: IUniverseAppProps) {
       }
     });
     setSceneGraph(newSceneGraph);
-
+    updateSidebarTree();
     persist();
   };
 
@@ -622,37 +667,7 @@ export function UniverseApp(props: IUniverseAppProps) {
     }
   };
 
-  const buildSubTree = (
-    element: SceneGraphElement,
-    path: TreePath,
-    inheritedColor?: string
-  ): TreeElement => {
-    const color = element.deviceContext
-      ? stringToColor(element.deviceContext)
-      : inheritedColor;
-    return {
-      title: element.name,
-      textColor: color,
-      icons: [
-        {
-          icon: element.visible ? "eye" : "eye_closed",
-          description: "click to toggle visibility",
-        }
-      ],
-      children: element.children.map((_, i) =>
-        buildSubTree(_, [...path, i], color)
-      ),
-    };
-  };
 
-  const buildTree = (): TreeElement[] => [
-    {
-      title: "3D scene",
-      icons: [
-      ],
-      children: sceneGraph.map((_, i) => buildSubTree(_, [i])),
-    },
-  ];
 
   const { mode } = props;
   let element: SceneGraphElement | null | undefined;
@@ -697,7 +712,7 @@ export function UniverseApp(props: IUniverseAppProps) {
         >
           {showSidebar ? (
             <UniverseSidebar
-              tree={buildTree()}
+              tree={sidebarTree}
               onToggleSidebar={toggleSidebar}
               onIconInteracted={onIconInteracted}
               onItemSelected={onItemSelected}

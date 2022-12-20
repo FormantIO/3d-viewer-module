@@ -1,10 +1,11 @@
-import { IconName } from "@formant/ui-sdk";
+import { IconName } from '@formant/ui-sdk';
 
 export interface TreeElement {
   title: string;
   textColor?: string;
   icons?: { icon: IconName; description: string; color?: string }[];
   children?: TreeElement[];
+  type?: string;
 }
 
 export type TreePath = number[];

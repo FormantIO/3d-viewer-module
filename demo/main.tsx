@@ -20,12 +20,13 @@ LayerRegistry.register(TestLayer);
 
 
 function ViewerApp() {
-  const [config, setConfig] = React.useState(configTest);
+  const [config, setConfig] = React.useState(null);
   React.useEffect(() => {
     const getDevice = async () => {
       await Authentication.waitTilAuthenticated();
       console.log(Authentication.token)
       const moduleConfiguration = JSON.parse(defined(await App.getCurrentModuleConfiguration()));
+
       setConfig(moduleConfiguration);
       console.log(moduleConfiguration)
     };
@@ -38,7 +39,8 @@ function ViewerApp() {
   }, 60 / 12);
 
   return (
-    <Universe
+
+    config ? (<Universe
       initialSceneGraph={createScene(config)}
       universeData={data}
       mode="edit"
@@ -46,7 +48,8 @@ function ViewerApp() {
         console.log(JSON.stringify(_));
         console.log(_);
       }}
-    />
+    />) : (<div>...</div>)
+
   );
 }
 
