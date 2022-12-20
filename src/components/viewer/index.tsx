@@ -38,7 +38,7 @@ const MeasureContainer = styled.div`
   width: 100%;
   height: 100vh;
 
-  background: #1c1e2c;
+  background: #282F45;
 
   > div {
     overflow: hidden;
@@ -167,6 +167,7 @@ export class UniverseViewer extends Component<IUniverseViewerProps> {
         this.camera,
         this.renderer.domElement
       );
+      this.orbitControls.maxDistance = 50;
       this.orbitControls.update();
       this.editControls = new TransformControls(
         this.camera,
@@ -373,6 +374,24 @@ export class UniverseViewer extends Component<IUniverseViewerProps> {
   public recenter() {
     if (this.orbitControls) {
       this.orbitControls.reset();
+    }
+  }
+
+  public zoom(x: number) {
+    if (this.orbitControls) {
+      if (x < 0 && this.orbitControls.getDistance() >= this.orbitControls.maxDistance) {
+        return;
+      }
+
+      const d = 2 ** x;
+      const v = this.camera.position.clone().sub(this.orbitControls.target);
+      this.camera.position.copy(
+        this.orbitControls.target
+          .clone()
+          .add(new Vector3(v.x / d, v.y / d, v.z / d))
+      );
+      // this.axisLabels?.update();
+      // this.needsUpdate = true;
     }
   }
 

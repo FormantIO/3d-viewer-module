@@ -45,8 +45,8 @@ function ViewerApp() {
       universeData={data}
       mode="edit"
       onSceneGraphChange={(_) => {
-        console.log(JSON.stringify(_));
-        console.log(_);
+        // console.log(JSON.stringify(_));
+        // console.log(_);
       }}
     />) : (<div>...</div>)
 

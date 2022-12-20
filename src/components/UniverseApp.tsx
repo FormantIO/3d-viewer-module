@@ -38,9 +38,51 @@ import { UniverseSnackbar } from "./UniverseSnackbar";
 import { sceneGraphAtom } from "../state/sceneGraph";
 
 const Controls = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-direction: column;
   position: absolute;
-  bottom: 1rem;
-  left: 1rem;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+`;
+
+const ControlGroup = styled.div`
+    box-shadow: 0 0 1.25rem #0A0B10;
+    display: flex;
+    flex-direction: column;
+    margin: 0.625rem;
+    margin-bottom: 0;
+    background: #1C1E2D;
+    border: 0.078125rem solid #3b4668;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    pointer-events: all;
+    overflow: hidden;
+
+    button {
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        color: inherit;
+        border: none;
+        text-decoration: none;
+        position: relative;
+        line-height: normal;
+
+        &:not([disabled]) {
+            cursor: pointer;
+        }
+
+        & + button {
+            border-top: 0.039375rem solid #3b4668;
+        }
+
+        & > svg {
+          vertical-align: middle;
+        }
+    }
 `;
 
 const Control = styled.div`
@@ -95,6 +137,8 @@ const ToggleButton = styled.button`
   left: 14px;
 `;
 
+let zooming = false;
+
 export interface IUniverseAppProps {
   universeData: IUniverseData;
   mode?: "edit" | "view" | "no-interaction";
@@ -136,7 +180,7 @@ export function UniverseApp(props: IUniverseAppProps) {
     React.useState(false);
   const [showingLocationStreamSelect, setShowingLocationStreamSelect] =
     React.useState(false);
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [currentlySelectedElement, setCurrentlySelectedElement] =
     React.useState<TreePath | undefined>(undefined);
   const [currentContextName, setCurrentContextName] = React.useState("");
@@ -412,7 +456,6 @@ export function UniverseApp(props: IUniverseAppProps) {
     const color = element.deviceContext
       ? stringToColor(element.deviceContext)
       : inheritedColor;
-    console.log(element);
     return {
       title: element.name,
       textColor: color,
@@ -448,7 +491,6 @@ export function UniverseApp(props: IUniverseAppProps) {
   }, [sceneGraph]);
 
   const onIconInteracted = (path: TreePath, icon: number) => {
-    console.log({ path, icon });
     if (path.length === 0 || !viewer) {
       return;
     }
@@ -525,6 +567,40 @@ export function UniverseApp(props: IUniverseAppProps) {
     if (viewer) {
       viewer.recenter();
     }
+  };
+
+  const zoomIn = (event: React.MouseEvent<any>) => {
+    event.preventDefault();
+    zooming = true;
+    const zoom = () => {
+      if (!zooming || !viewer) {
+        // eslint-disable-next-line no-use-before-define
+        clearInterval(interval);
+        return;
+      }
+      viewer.zoom(0.05);
+    };
+    zoom();
+    const interval = setInterval(zoom, 20);
+  };
+
+  const zoomOut = (event: React.MouseEvent<any>) => {
+    event.preventDefault();
+    zooming = true;
+    const zoom = () => {
+      if (!zooming || !viewer) {
+        // eslint-disable-next-line no-use-before-define
+        clearInterval(interval);
+        return;
+      }
+      viewer.zoom(-0.05);
+    };
+    zoom();
+    const interval = setInterval(zoom, 20);
+  };
+
+  const stopZoom = () => {
+    zooming = false;
   };
 
   const onItemSelected = (path?: TreePath) => {
@@ -821,9 +897,21 @@ export function UniverseApp(props: IUniverseAppProps) {
               />
             )}
             <Controls>
-              <Control onClick={recenter}>
-                <Icon name="recenter" />
-              </Control>
+              <ControlGroup>
+                <button type="button" onMouseDown={zoomIn}
+                  onMouseUp={stopZoom}>
+                  <Icon name="plus" />
+                </button>
+                <button type="button" onMouseDown={zoomOut}
+                  onMouseUp={stopZoom}>
+                  <Icon name="minus" />
+                </button>
+              </ControlGroup>
+              <ControlGroup onClick={recenter}>
+                <button type="button">
+                  <Icon name="recenter" />
+                </button>
+              </ControlGroup>
             </Controls>
           </Box>
         </Box>
