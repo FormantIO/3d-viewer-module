@@ -4,13 +4,13 @@ import { Canvas, ThreeElements, useFrame } from "@react-three/fiber";
 import { IUniverseData } from "@formant/universe-core";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
-import { UniverseData } from "../UniverseData";
+import { UniverseDataContext } from "../UniverseDataContext";
 
 interface IMarkerLayerProps extends IUniverseLayerProps {}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
   const { children } = props;
-  const _universeData = useContext(UniverseData);
+  const _universeData = useContext(UniverseDataContext);
   return (
     <TransformLayer positioning={props.positioning}>
       <mesh>

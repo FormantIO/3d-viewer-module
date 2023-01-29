@@ -2,11 +2,11 @@ import { Positioning } from "./Positioning";
 
 export class PositioningBuilder {
   static fixed(x: number, y: number, z: number): Positioning {
-    return { type: "manual", x, y, z };
+    return { type: "fixed", x, y, z };
   }
 
   static localization(stream: string): Positioning {
-    return { type: "localization", stream };
+    return { type: "odometry", stream };
   }
 
   static gps(
@@ -26,14 +26,6 @@ export class PositioningBuilder {
       type: "transform tree",
       stream,
       end,
-    };
-  }
-
-  static hud(x: number, y: number): Positioning {
-    return {
-      type: "hud",
-      x,
-      y,
     };
   }
 }

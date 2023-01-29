@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { range } from "../common/range";
 import { FormantColors } from "../FormantColors";
 import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseData } from "../UniverseData";
+import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 
@@ -12,7 +12,7 @@ interface IGeometryLayer extends IUniverseLayerProps {
 
 export function GeometryLayer(props: IGeometryLayer) {
   const { children } = props;
-  const _universeData = useContext(UniverseData);
+  const _universeData = useContext(UniverseDataContext);
   return (
     <TransformLayer positioning={props.positioning}>
       {range(0, 10).map((x, i) => (

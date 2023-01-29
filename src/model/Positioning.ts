@@ -1,28 +1,23 @@
 export type Positioning =
   | {
-      type: "manual";
+      type: "fixed";
       x: number;
       y: number;
       z: number;
     }
   | {
-      type: "hud";
-      x: number;
-      y: number;
-    }
-  | {
       type: "transform tree";
-      stream?: string;
+      stream: string;
       end?: string;
     }
   | {
-      type: "localization";
+      type: "odometry";
       stream?: string;
       rtcStream?: string;
     }
   | {
       type: "gps";
-      stream?: string;
+      stream: string;
       relativeToLongitude: number;
       relativeToLatitude: number;
     };

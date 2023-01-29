@@ -382,23 +382,23 @@
   resolved "https://registry.yarnpkg.com/@formant/ui-sdk-realtime-player-core/-/ui-sdk-realtime-player-core-0.0.2.tgz#c4a48e2de2619b3a3633c4808e201234decf0b41"
   integrity sha512-RC8z90dMvtXDAnxnSLYH2d4m27SgPI7fJasMu4X98QEwo4eOg4yRXT5TNbnpdjI7bqARbaSlosWtc7ba8d42Ng==
 
-"@formant/universe-connector@^0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.13.tgz#4c3930765034a634be2e3fb45e4ff6134747dcf4"
-  integrity sha512-/4ff+Auk+yjbxzrA1XjWb86IR6s3mC/dUxHNHX51+OjQRJ1ARazTyzddtM9XuLlxwqx/4/pWZC0Rlccx4VNLtw==
+"@formant/universe-connector@0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.14.tgz#3267946b2db9985db62fa4649fbbdaf3c8a5c87b"
+  integrity sha512-bE3WrLIxiJnIOLN3x87/5H+Ajj89nNaYiSBrZoIP4EP5Gw8if5VKevCYhZ6SgYqSlR6V7UAkeVM1Fp2FI0a6fQ==
   dependencies:
     "@formant/data-sdk" "0.0.113"
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
-    "@formant/universe-core" "^0.0.9"
+    "@formant/universe-core" "0.0.10"
     date-fns "^2.29.3"
     lzfjs "^1.0.1"
     validator "^13.7.0"
 
-"@formant/universe-core@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.9.tgz#b884a3a8fd04336ccb194de8bb76b611422ee423"
-  integrity sha512-zgALcyIowKUdz/+qY46l+ZT+7FysxIRcqt5WcaTuBCuqj7l7hI6eTQbDKoQbjYwrdKIQSqxf1PWNeZUPFW/JEQ==
+"@formant/universe-core@0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.10.tgz#c7d79b73d7167818f59314cc5beb2a6017c0b4b0"
+  integrity sha512-z9qRxqDz2tcui5sihydCWAzLd/R3U3RSsIC1vvpSZb4A5CbfTzJXgKyLbCf30DWC4GtnBYJO7bHy8DWKxHIq7A==
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
@@ -794,6 +794,11 @@ gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
+
+geolib@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/geolib/-/geolib-3.3.3.tgz#17f5a0dcdc0b051bd631b66f7131d2c14c54a15b"
+  integrity sha512-YO704pzdB/8QQekQuDmFD5uv5RAwAf4rOUPdcMhdEOz+HoPWD0sC7Qqdwb+LAvwIjXVRawx0QgZlocKYh8PFOQ==
 
 globals@^11.1.0:
   version "11.12.0"

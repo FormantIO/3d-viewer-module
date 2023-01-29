@@ -4,7 +4,7 @@ import { range } from "../common/range";
 import { Axis } from "../components/Axis";
 import { FormantColors } from "../FormantColors";
 import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseData } from "../UniverseData";
+import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 
@@ -20,7 +20,7 @@ function SilverCircle({ width }: { width: number }) {
 
 export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
-  const _universeData = useContext(UniverseData);
+  const _universeData = useContext(UniverseDataContext);
   return (
     <TransformLayer positioning={props.positioning}>
       <Axis />

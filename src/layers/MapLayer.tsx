@@ -3,7 +3,7 @@ import React, { useContext, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { FormantColors } from "../FormantColors";
 import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseData } from "../UniverseData";
+import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 
@@ -14,7 +14,7 @@ interface IMapLayer extends IUniverseLayerProps {
 export function MapLayer(props: IMapLayer) {
   const [points, setPoints] = useState<Vector3[]>([]);
   const { children } = props;
-  const _universeData = useContext(UniverseData);
+  const _universeData = useContext(UniverseDataContext);
   return (
     <TransformLayer positioning={props.positioning}>
       <mesh
