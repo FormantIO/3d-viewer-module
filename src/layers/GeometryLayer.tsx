@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { range } from "../common/range";
+import { FormantColors } from "../FormantColors";
 import { UniverseTelemetrySource } from "../model/DataSource";
 import { UniverseData } from "../UniverseData";
 import { TransformLayer } from "./TransformLayer";
@@ -17,7 +18,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       {range(0, 10).map((x, i) => (
         <mesh key={i} position={[x, 1, 1]}>
           <boxGeometry args={[0.1, 1, 0.1]} />
-          <meshStandardMaterial color={"green"} />
+          <meshStandardMaterial color={FormantColors.green} />
         </mesh>
       ))}
       {children}
