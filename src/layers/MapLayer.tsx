@@ -7,6 +7,12 @@ interface IMapLayer extends IUniverseLayerProps {}
 export function MapLayer(props: IMapLayer) {
   const { children } = props;
   return (
-    <TransformLayer positioning={props.positioning}>{children}</TransformLayer>
+    <TransformLayer positioning={props.positioning}>
+      <mesh>
+        <boxGeometry args={[3, 0.1, 3]} />
+        <meshStandardMaterial color={"orange"} />
+      </mesh>
+      {children}
+    </TransformLayer>
   );
 }

@@ -7,7 +7,7 @@ import { UniverseData } from "../UniverseData";
 interface ITransformLayerProps extends IUniverseLayerProps {}
 
 export function TransformLayer(props: ITransformLayerProps) {
-  const universeData = useContext(UniverseData);
+  const _universeData = useContext(UniverseData);
   const { children } = props;
   return <group>{children}</group>;
 }
