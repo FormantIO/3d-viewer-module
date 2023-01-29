@@ -13,7 +13,7 @@ interface IGroundLayer extends IUniverseLayerProps {}
 function SilverCircle({ width }: { width: number }) {
   return (
     <Ring rotation={[-Math.PI / 2, 0, 0]} args={[width - 0.005, width, 60]}>
-      <meshStandardMaterial color={FormantColors.silver} />
+      <meshStandardMaterial color={FormantColors.steel03} />
     </Ring>
   );
 }
@@ -25,7 +25,7 @@ export function GroundLayer(props: IGroundLayer) {
     <TransformLayer positioning={props.positioning}>
       <Axis />
       {range(0, 100).map((i) => (
-        <SilverCircle width={i} />
+        <SilverCircle key={i} width={i} />
       ))}
       {children}
     </TransformLayer>

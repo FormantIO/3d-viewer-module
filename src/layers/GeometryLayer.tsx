@@ -14,8 +14,8 @@ export function GeometryLayer(props: IGeometryLayer) {
   const _universeData = useContext(UniverseData);
   return (
     <TransformLayer positioning={props.positioning}>
-      {range(0, 10).map((x) => (
-        <mesh position={[x, 1, 1]}>
+      {range(0, 10).map((x, i) => (
+        <mesh key={i} position={[x, 1, 1]}>
           <boxGeometry args={[0.1, 1, 0.1]} />
           <meshStandardMaterial color={"green"} />
         </mesh>
