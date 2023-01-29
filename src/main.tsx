@@ -9,6 +9,7 @@ import { TransformLayer } from "./layers/TransformLayer";
 import { MapLayer } from "./layers/MapLayer";
 import { DataSourceBuilder } from "./model/DataSourceBuilder";
 import { PositioningBuilder } from "./model/PositioningBuilder";
+import { GroundLayer } from "./layers/GroundLayer";
 
 const app = document.getElementById("root");
 if (app) {
@@ -16,6 +17,7 @@ if (app) {
     <UniverseData.Provider value={new EmptyUniverseData()}>
       <Universe>
         <ambientLight />
+        <GroundLayer />
         <MapLayer dataSource={DataSourceBuilder.telemetry("eko.gps", "json")} />
         <TransformLayer
           positioning={PositioningBuilder.localization("eko.loc")}

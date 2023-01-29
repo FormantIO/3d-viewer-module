@@ -12,6 +12,7 @@
     "@formant/data-sdk": "0.0.113",
     "@formant/universe-connector": "^0.0.13",
     "@formant/universe-core": "^0.0.9",
+    "@react-three/drei": "^9.56.5",
     "@react-three/fiber": "^8.10.1",
     "@types/three": "^0.148.1",
     "@types/uuid": "^9.0.0",
