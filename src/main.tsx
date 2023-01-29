@@ -25,7 +25,6 @@ if (app) {
             deviceId: "ekobot_device",
           }}
         >
-          <RouteMakerLayer />
           <MapLayer
             // dataSource={DataSourceBuilder.telemetry("eko.gps", "json")}
             latitude={59.9139}

@@ -9,7 +9,9 @@ import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 
-interface IMapLayer extends IUniverseLayerProps {}
+interface IMapLayer extends IUniverseLayerProps {
+  size: number;
+}
 
 function Marker(props: { color: string; position: [number, number, number] }) {
   const { position, color } = props;
@@ -42,7 +44,7 @@ function Marker(props: { color: string; position: [number, number, number] }) {
 
 export function RouteMakerLayer(props: IMapLayer) {
   const [points, setPoints] = useState<Vector3[]>([]);
-  const { children } = props;
+  const { children, size } = props;
 
   return (
     <TransformLayer {...props}>
@@ -51,8 +53,8 @@ export function RouteMakerLayer(props: IMapLayer) {
           setPoints([...points, e.point]);
         }}
       >
-        <boxGeometry args={[3, 0.1, 3]} />
-        <meshStandardMaterial color={FormantColors.module} />
+        <boxGeometry args={[size, 0.1, size]} />
+        <meshPhongMaterial opacity={0} transparent />
       </mesh>
       {points.map((p: Vector3, i) => {
         const v: [number, number, number] = [p.x, p.z, -p.y];
