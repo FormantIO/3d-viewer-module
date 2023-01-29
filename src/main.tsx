@@ -6,12 +6,13 @@ import { UniverseDataContext } from "./UniverseDataContext";
 import { EmptyUniverseData } from "./EmptyUniverseData";
 import { GeometryLayer } from "./layers/GeometryLayer";
 import { TransformLayer } from "./layers/TransformLayer";
-import { MapLayer } from "./layers/MapLayer";
+import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { DataSourceBuilder } from "./model/DataSourceBuilder";
 import { PositioningBuilder } from "./model/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
 import { LayerDataContext } from "./LayerDataContext";
 import { ExampleUniverseData } from "./ExampleUniverseData";
+import { MapLayer } from "./layers/MapLayer";
 const app = document.getElementById("root");
 if (app) {
   createRoot(app).render(
@@ -25,7 +26,12 @@ if (app) {
           }}
         >
           <MapLayer
-            dataSource={DataSourceBuilder.telemetry("eko.gps", "json")}
+            // dataSource={DataSourceBuilder.telemetry("eko.gps", "json")}
+            latitude={59.9139}
+            longitude={10.7522}
+            size={200}
+            mapType="Satellite Street"
+            mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
           />
           <TransformLayer
             positioning={PositioningBuilder.localization("eko.loc")}

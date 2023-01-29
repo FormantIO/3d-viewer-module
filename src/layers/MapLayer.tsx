@@ -1,51 +1,113 @@
-import { Cylinder, Line } from "@react-three/drei";
-import React, { useContext, useRef, useState } from "react";
-import { Vector3 } from "three";
-import { FormantColors } from "../FormantColors";
+import { Fleet } from "@formant/data-sdk";
+import { defined, definedAndNotNull } from "@formant/universe-core";
+import { computeDestinationPoint } from "geolib";
+import { useContext, useEffect, useState } from "react";
+import { Texture } from "three";
+import { LayerDataContext } from "../LayerDataContext";
 import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
+import { loadTexture } from "./utils/loadTexture";
 
+const mapStyles = {
+  Street: "streets-v11",
+  Satellite: "satellite-v9",
+  "Satellite Street": "satellite-streets-v11",
+};
 interface IMapLayer extends IUniverseLayerProps {
-  dataSource: UniverseTelemetrySource;
+  dataSource?: UniverseTelemetrySource;
+  latitude?: number;
+  longitude?: number;
+  size: number;
+  mapType: "Street" | "Satellite" | "Satellite Street";
+  mapBoxKey: string;
 }
 
 export function MapLayer(props: IMapLayer) {
-  const [points, setPoints] = useState<Vector3[]>([]);
+  const { dataSource, size, latitude, longitude, mapType, mapBoxKey } = props;
   const { children } = props;
-  const _universeData = useContext(UniverseDataContext);
+  const layerData = useContext(LayerDataContext);
+  const [mapTexture, setMapTexture] = useState<Texture | undefined>();
+
+  useEffect(() => {
+    (async () => {
+      let location: [number, number];
+      if (dataSource) {
+        const device = await Fleet.getDevice(
+          definedAndNotNull(layerData).deviceId
+        );
+        const results = await device.getTelemetry(
+          defined(dataSource).streamName,
+          new Date(Date.now() - 10000),
+          new Date()
+        );
+        location = [
+          Number(results[0].points[0][1].longitude),
+          Number(results[0].points[0][1].latitude),
+        ];
+      } else {
+        location = [Number(longitude), Number(latitude)];
+      }
+
+      const mapBoxConfig = {
+        username: "mapbox",
+        styleId: mapStyles[mapType],
+        width: 1280,
+        height: 1280,
+        bearing: 0,
+        accessToken: mapBoxKey,
+      };
+      const { username, styleId, width, height, accessToken } = mapBoxConfig;
+      const distance = size / 2;
+      // calculate bounding box, given center and distance
+      const bearings = {
+        north: 0,
+        east: 90,
+        south: 180,
+        west: 270,
+      };
+      const EARTH_RADIUS_IN_METERS = 6371e3;
+      const maxLatitude = computeDestinationPoint(
+        location,
+        distance,
+        bearings.north,
+        EARTH_RADIUS_IN_METERS
+      ).latitude.toFixed(9);
+      const minLatitude = computeDestinationPoint(
+        location,
+        distance,
+        bearings.south,
+        EARTH_RADIUS_IN_METERS
+      ).latitude.toFixed(9);
+      const maxLongitude = computeDestinationPoint(
+        location,
+        distance,
+        bearings.east,
+        EARTH_RADIUS_IN_METERS
+      ).longitude.toFixed(9);
+      const minLongitude = computeDestinationPoint(
+        location,
+        distance,
+        bearings.west,
+        EARTH_RADIUS_IN_METERS
+      ).longitude.toFixed(9);
+
+      setMapTexture(
+        await loadTexture(
+          `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${width}x${height}@2x?logo=false&access_token=${accessToken}`
+        )
+      );
+    })();
+  }, []);
+  const mapReady = mapTexture !== undefined;
   return (
     <TransformLayer positioning={props.positioning}>
-      <mesh
-        onPointerDown={(e) => {
-          setPoints([...points, e.point]);
-        }}
-      >
-        <boxGeometry args={[3, 0.1, 3]} />
-        <meshStandardMaterial color={FormantColors.module} />
-      </mesh>
-      {points.map((p: Vector3, i) => {
-        const v: [number, number, number] = [p.x, p.z, -p.y];
-        let lastv: [number, number, number] | undefined;
-        if (i > 0) {
-          lastv = [points[i - 1].x, points[i - 1].z, -points[i - 1].y];
-        }
-        return (
-          <>
-            {i > 0 && lastv !== undefined && (
-              <Line
-                points={[v, lastv]}
-                color={FormantColors.silver}
-                lineWidth={1}
-              />
-            )}
-            <Cylinder position={v} scale={0.1} key={"c_" + i}>
-              <meshStandardMaterial color={FormantColors.silver} />
-            </Cylinder>
-          </>
-        );
-      })}
+      {mapReady && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry attach="geometry" args={[size, size]} />
+          <meshStandardMaterial map={mapTexture} />
+        </mesh>
+      )}
       {children}
     </TransformLayer>
   );
