@@ -14,11 +14,13 @@
     "@formant/universe-core": "0.0.10",
     "@react-three/drei": "^9.56.5",
     "@react-three/fiber": "^8.10.1",
+    "@types/seedrandom": "^3.0.4",
     "@types/three": "^0.148.1",
     "@types/uuid": "^9.0.0",
     "geolib": "^3.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "seedrandom": "^3.0.5",
     "three": "^0.149.0",
     "uuid": "^9.0.0"
   },

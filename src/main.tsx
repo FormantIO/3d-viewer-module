@@ -11,10 +11,11 @@ import { DataSourceBuilder } from "./model/DataSourceBuilder";
 import { PositioningBuilder } from "./model/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
 import { LayerDataContext } from "./LayerDataContext";
+import { ExampleUniverseData } from "./ExampleUniverseData";
 const app = document.getElementById("root");
 if (app) {
   createRoot(app).render(
-    <UniverseDataContext.Provider value={new EmptyUniverseData()}>
+    <UniverseDataContext.Provider value={new ExampleUniverseData()}>
       <Universe>
         <ambientLight />
         <GroundLayer />
