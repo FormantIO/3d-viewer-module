@@ -7,4 +7,5 @@ export const FormantColors = {
   red: "#EA719D",
   green: "#2EC495",
   blue: "#20A0FF",
+  gradient01: ["#FF72CC", "#00E4FF"],
 };

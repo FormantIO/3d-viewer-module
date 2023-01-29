@@ -11,6 +11,7 @@ import { GroundLayer } from "./layers/GroundLayer";
 import { LayerDataContext } from "./LayerDataContext";
 import { ExampleUniverseData } from "./ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
+import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 
 const app = document.getElementById("root");
 if (app) {
@@ -18,12 +19,13 @@ if (app) {
     <UniverseDataContext.Provider value={new ExampleUniverseData()}>
       <Universe>
         <ambientLight />
-        <GroundLayer />
+        <GroundLayer positioning={PositioningBuilder.fixed(0, 0.1, 0)} />
         <LayerDataContext.Provider
           value={{
             deviceId: "ekobot_device",
           }}
         >
+          <RouteMakerLayer />
           <MapLayer
             // dataSource={DataSourceBuilder.telemetry("eko.gps", "json")}
             latitude={59.9139}

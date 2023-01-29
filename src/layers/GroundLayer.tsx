@@ -1,4 +1,11 @@
-import { Circle, Cylinder, Ring, Tube } from "@react-three/drei";
+import {
+  Circle,
+  Cylinder,
+  GradientTexture,
+  Ring,
+  Tube,
+} from "@react-three/drei";
+import { ThreeElements, useFrame } from "@react-three/fiber";
 import React, { useContext, useRef, useState } from "react";
 import { range } from "../common/range";
 import { Axis } from "../components/Axis";
@@ -20,10 +27,10 @@ function SilverCircle({ width }: { width: number }) {
 
 export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
-  const _universeData = useContext(UniverseDataContext);
   return (
     <TransformLayer {...props}>
       <Axis />
+
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />
       ))}
