@@ -78,7 +78,7 @@ export function TransformLayer(props: ITransformLayerProps) {
   if (layerData) {
     deviceId = layerData.deviceId;
   }
-  const { children, positioning } = props;
+  const { children, positioning, visible } = props;
   const groupRef = useRef<THREE.Group>(null!);
   useEffect(() => {
     const p = positioning || PositioningBuilder.fixed(0, 0, 0);
@@ -205,5 +205,9 @@ export function TransformLayer(props: ITransformLayerProps) {
       }
     }
   }, [groupRef, positioning]);
+
+  if (visible == false) {
+    return <></>;
+  }
   return <group ref={groupRef}>{children}</group>;
 }

@@ -3,16 +3,15 @@ import { createRoot } from "react-dom/client";
 import { Universe } from "./Universe";
 import { MarkerLayer } from "./layers/MarkerLayer";
 import { UniverseDataContext } from "./UniverseDataContext";
-import { EmptyUniverseData } from "./EmptyUniverseData";
 import { GeometryLayer } from "./layers/GeometryLayer";
 import { TransformLayer } from "./layers/TransformLayer";
-import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { DataSourceBuilder } from "./model/DataSourceBuilder";
 import { PositioningBuilder } from "./model/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
 import { LayerDataContext } from "./LayerDataContext";
 import { ExampleUniverseData } from "./ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
+
 const app = document.getElementById("root");
 if (app) {
   createRoot(app).render(

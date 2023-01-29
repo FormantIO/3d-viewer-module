@@ -290,7 +290,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <TransformLayer positioning={props.positioning}>
+    <TransformLayer {...props}>
       <primitive object={group} />
       {children}
     </TransformLayer>

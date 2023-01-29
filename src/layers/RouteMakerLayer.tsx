@@ -17,7 +17,7 @@ export function RouteMakerLayer(props: IMapLayer) {
   const { children } = props;
 
   return (
-    <TransformLayer positioning={props.positioning}>
+    <TransformLayer {...props}>
       <mesh
         onPointerDown={(e) => {
           setPoints([...points, e.point]);

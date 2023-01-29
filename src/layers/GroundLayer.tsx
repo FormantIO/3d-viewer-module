@@ -22,7 +22,7 @@ export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
   const _universeData = useContext(UniverseDataContext);
   return (
-    <TransformLayer positioning={props.positioning}>
+    <TransformLayer {...props}>
       <Axis />
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />

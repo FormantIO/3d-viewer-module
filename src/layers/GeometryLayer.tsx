@@ -200,7 +200,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     );
   });
   return (
-    <TransformLayer positioning={props.positioning}>
+    <TransformLayer {...props}>
       <primitive object={root} />
       {children}
     </TransformLayer>
