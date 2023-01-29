@@ -7,6 +7,8 @@ import { EmptyUniverseData } from "./EmptyUniverseData";
 import { GeometryLayer } from "./layers/GeometryLayer";
 import { TransformLayer } from "./layers/TransformLayer";
 import { MapLayer } from "./layers/MapLayer";
+import { DataSourceBuilder } from "./model/DataSourceBuilder";
+import { PositioningBuilder } from "./model/PositioningBuilder";
 
 const app = document.getElementById("root");
 if (app) {
@@ -14,10 +16,14 @@ if (app) {
     <UniverseData.Provider value={new EmptyUniverseData()}>
       <Universe>
         <ambientLight />
-        <MapLayer />
-        <TransformLayer>
+        <MapLayer dataSource={DataSourceBuilder.telemetry("eko.gps", "json")} />
+        <TransformLayer
+          positioning={PositioningBuilder.localization("eko.loc")}
+        >
           <MarkerLayer />
-          <GeometryLayer />
+          <GeometryLayer
+            dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
+          />
         </TransformLayer>
       </Universe>
     </UniverseData.Provider>

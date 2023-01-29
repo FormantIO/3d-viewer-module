@@ -1,4 +1,4 @@
-import { StreamType } from "@formant/universe-core";
+import { StreamType } from "@formant/data-sdk";
 
 export interface UniverseRosDataSource {
   id: string;
