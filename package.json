@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev-vr": "vite --host --config ./vite.config.vr.ts",
+    "dev-vr": "vite --host --port 5555 --config ./vite.config.vr.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
