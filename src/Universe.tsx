@@ -17,34 +17,46 @@ type IUniverseProps = {
 };
 
 export function Universe(props: IUniverseProps) {
+  const { vr } = props;
+  const container = vr ? XR : React.Fragment;
   return (
     <>
-      {props.vr && <VRButton />}
+      {vr && <VRButton />}
       <Canvas color="red">
-        <color attach="background" args={[FormantColors.flagship]} />
-        <OrbitControls />
-        <group rotation={[Math.PI / 2, 0, 0]}>{props.children}</group>
-        <EffectComposer>
-          <DepthOfField
-            focusDistance={0}
-            focalLength={0.02}
-            bokehScale={2}
-            height={480}
-          />
-          <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
-          <Noise opacity={0.02} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer>
-        {props.vr && (
-          <XR>
-            <Controllers />
-            <Hands />
-            <mesh>
-              <boxGeometry />
-              <meshBasicMaterial color="blue" />
-            </mesh>
-          </XR>
-        )}
+        <XR>
+          <color attach="background" args={[FormantColors.flagship]} />
+          <OrbitControls />
+          <group rotation={vr ? undefined : [Math.PI / 2, 0, 0]}>
+            {props.children}
+          </group>
+          {!vr && (
+            <EffectComposer>
+              <DepthOfField
+                focusDistance={0}
+                focalLength={0.02}
+                bokehScale={2}
+                height={480}
+              />
+              <Bloom
+                luminanceThreshold={0}
+                luminanceSmoothing={0.9}
+                height={300}
+              />
+              <Noise opacity={0.02} />
+              <Vignette eskil={false} offset={0.1} darkness={1.1} />
+            </EffectComposer>
+          )}
+          {vr && (
+            <>
+              <Controllers rayMaterial={{ color: "red" }} />
+              <Hands />
+              <mesh>
+                <boxGeometry />
+                <meshBasicMaterial color="blue" />
+              </mesh>
+            </>
+          )}
+        </XR>
       </Canvas>
     </>
   );

@@ -1,5 +1,6 @@
 import { Cylinder, GradientTexture, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { Interactive } from "@react-three/xr";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { FormantColors } from "../FormantColors";
@@ -43,24 +44,34 @@ function Marker(props: { color: string; position: [number, number, number] }) {
 }
 
 export function RouteMakerLayer(props: IMapLayer) {
-  const [points, setPoints] = useState<Vector3[]>([]);
+  const [points, setPoints] = useState<[number, number, number][]>([]);
   const { children, size } = props;
 
   return (
     <TransformLayer {...props}>
-      <mesh
-        onPointerDown={(e) => {
-          setPoints([...points, e.point]);
+      <Interactive
+        onSelect={(e) => {
+          const p = e.intersection?.point;
+          if (p) {
+            setPoints([...points, [p.x, p.y, p.z]]);
+          }
         }}
       >
-        <boxGeometry args={[size, 0.1, size]} />
-        <meshPhongMaterial opacity={0} transparent />
-      </mesh>
-      {points.map((p: Vector3, i) => {
-        const v: [number, number, number] = [p.x, p.z, -p.y];
+        <mesh
+          onPointerDown={(e) => {
+            let p = e.point;
+            setPoints([...points, [p.x, p.z, -p.y]]);
+          }}
+        >
+          <boxGeometry args={[size, 0.1, size]} />
+          <meshPhongMaterial opacity={0} transparent />
+        </mesh>
+      </Interactive>
+      {points.map((p: [number, number, number], i) => {
+        const v: [number, number, number] = p;
         let lastv: [number, number, number] | undefined;
         if (i > 0) {
-          lastv = [points[i - 1].x, points[i - 1].z, -points[i - 1].y];
+          lastv = points[i - 1];
         }
         return (
           <>
