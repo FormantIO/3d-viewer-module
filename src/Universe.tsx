@@ -11,14 +11,15 @@ import {
 } from "@react-three/postprocessing";
 import { VRButton, ARButton, XR, Controllers, Hands } from "@react-three/xr";
 
+const query = new URLSearchParams(window.location.search);
+const shouldUseVR = query.get("vr") === "true";
+
 type IUniverseProps = {
   children?: React.ReactNode;
-  vr?: boolean;
 };
 
 export function Universe(props: IUniverseProps) {
-  const { vr } = props;
-  const container = vr ? XR : React.Fragment;
+  const vr = shouldUseVR;
   return (
     <>
       {vr && <VRButton />}
