@@ -37,7 +37,9 @@ if (app) {
           <TransformLayer
             positioning={PositioningBuilder.localization("eko.loc")}
           >
-            <MarkerLayer positioning={PositioningBuilder.fixed(0, 0.4, 0)} />
+            <MarkerLayer
+              positioning={PositioningBuilder.fixed(0.4, 0.1, 0.4)}
+            />
             <GeometryLayer
               dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
             />
