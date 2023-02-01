@@ -13,6 +13,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
+import * as uuid from 'uuid';
 import {
   definedAndNotNull,
   IUniverseData,
@@ -131,28 +132,31 @@ export function App() {
       <UniverseDataContext.Provider value={universeData}>
         <Universe>
           <ambientLight />
-          <GroundLayer positioning={PositioningBuilder.fixed(0, 0.1, 0)} />
+          <GroundLayer positioning={PositioningBuilder.fixed(0, 0.1, 0)} id={uuid.v4()} />
           <LayerDataContext.Provider
             value={{
               deviceId: "ekobot_device",
             }}
           >
-            <RouteMakerLayer size={200} />
+            <RouteMakerLayer size={200} id={uuid.v4()} />
             <MapLayer
               latitude={59.9139}
               longitude={10.7522}
               size={200}
               mapType="Satellite Street"
               mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
+              id={uuid.v4()}
             />
             <TransformLayer
               positioning={PositioningBuilder.localization("eko.loc")}
             >
               <MarkerLayer
-                positioning={PositioningBuilder.fixed(0.4, 0.1, 0.4)}
+                positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
+                id={uuid.v4()}
               />
               <GeometryLayer
                 dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
+                id={uuid.v4()}
               />
             </TransformLayer>
           </LayerDataContext.Provider>

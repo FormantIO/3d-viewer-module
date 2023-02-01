@@ -14,7 +14,7 @@ import {
 import { DataSourceBuilder } from "../model/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 
-interface ITransformLayerProps extends IUniverseLayerProps {}
+interface ITransformLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 
@@ -207,7 +207,7 @@ export function TransformLayer(props: ITransformLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       }
     }
-  }, [groupRef, positioning]);
+  }, [groupRef, positioning, visible]);
 
   if (visible == false) {
     return <></>;

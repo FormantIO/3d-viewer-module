@@ -1,15 +1,25 @@
 import * as THREE from "three";
-import { useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
+import { UIDataContext } from "../UIDataContext";
+import * as uuid from 'uuid';
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps {}
+interface IMarkerLayerProps extends IUniverseLayerProps { }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children } = props;
+  const { children, name, id } = props;
+  const { register, layers } = useContext(UIDataContext);
+
+  useEffect(() => {
+    register(name || 'Marker', id || uuid.v4());
+  }, [])
+
+  const thisLayer = layers.find(layer => layer.id === id);
+
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -30,6 +40,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   useFrame(({ camera }, delta) => {
     const circle = circleRef.current;
     const arrow = arrowRef.current;
+    if (!circle || !arrow) return;
     circle.scale.setScalar(2);
     arrow.scale.setScalar(2);
 
@@ -46,7 +57,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <TransformLayer {...props}>
+    <TransformLayer {...props} visible={thisLayer?.visible}>
       <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
         <meshBasicMaterial />

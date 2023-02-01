@@ -30,7 +30,8 @@ export function useUI(): UIContextData {
     const [layers, setLayers] = React.useState<LayerData[]>([]);
 
     const register = (name: string, id: string) => {
-        setLayers([...layers, { name, id, visible: true }]);
+        console.log('registering', name, id, layers)
+        setLayers((prevState) => [...prevState, { name, id, visible: true }]);
     }
 
     const toggleVisibility = (id: string) => {
