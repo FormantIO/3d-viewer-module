@@ -30,6 +30,22 @@ interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
 
+//lets make a really efficient cache for materials based on color
+const materialCache = new Map<string, MeshBasicMaterial>();
+
+const getOrCreateMaterial = (r: number, g: number, b: number, a: number) => {
+  const key = `${r},${g},${b},${a}`;
+  let material = materialCache.get(key);
+  if (!material) {
+    material = new MeshBasicMaterial({
+      color: new Color(r, g, b),
+      opacity: a,
+    });
+    materialCache.set(key, material);
+  }
+  return material;
+};
+
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource } = props;
   const world = new GeometryWorld();
@@ -149,13 +165,42 @@ export function GeometryLayer(props: IGeometryLayer) {
                 root.add(sphere);
                 worldGeometry.set(g.id, sphere);
               } else {
-                mesh.position.set(g.position.x, g.position.y, g.position.z);
-                mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
-                mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
-                mesh.material = new MeshBasicMaterial({
-                  color: new Color(g.color.r, g.color.g, g.color.b),
-                  opacity: g.color.a,
-                });
+                const p = g.position;
+                if (
+                  mesh.position.x !== p.x ||
+                  mesh.position.y !== p.y ||
+                  mesh.position.z !== p.z
+                ) {
+                  mesh.position.set(p.x, p.y, p.z);
+                }
+                const s = g.scale;
+                if (
+                  mesh.scale.x !== s.x ||
+                  mesh.scale.y !== s.y ||
+                  mesh.scale.z !== s.z
+                ) {
+                  mesh.scale.set(s.x, s.y, s.z);
+                }
+                const r = g.rotation;
+                if (
+                  mesh.rotation.x !== r.x ||
+                  mesh.rotation.y !== r.y ||
+                  mesh.rotation.z !== r.z
+                ) {
+                  mesh.rotation.set(r.x, r.y, r.z);
+                }
+                const m = mesh.material as MeshBasicMaterial;
+                if (
+                  m.color.r !== g.color.r ||
+                  m.color.g !== g.color.g ||
+                  m.color.b !== g.color.b ||
+                  m.opacity !== g.color.a
+                ) {
+                  mesh.material = new MeshBasicMaterial({
+                    color: new Color(g.color.r, g.color.g, g.color.b),
+                    opacity: g.color.a,
+                  });
+                }
               }
             } else if (g.type === "arrow") {
               if (!mesh) {
@@ -190,8 +235,8 @@ export function GeometryLayer(props: IGeometryLayer) {
         });
 
         const oldGeoIds = [...worldGeometry.keys()];
-        const newGeoIds = geometry.map((g) => g.id);
-        const toRemove = oldGeoIds.filter((id) => !newGeoIds.includes(id));
+        const newGeoIds = new Set(geometry.map((g) => g.id));
+        const toRemove = oldGeoIds.filter((id) => !newGeoIds.has(id));
         toRemove.forEach((id) => {
           root.remove(defined(worldGeometry.get(id)));
           worldGeometry.delete(id);
