@@ -2,6 +2,7 @@ import {
   defined,
   definedAndNotNull,
   IMarker3DArray,
+  UniverseTelemetrySource,
 } from "@formant/universe-core";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -20,7 +21,6 @@ import {
   Vector3,
 } from "three";
 import { LayerDataContext } from "../LayerDataContext";
-import { UniverseTelemetrySource } from "../model/DataSource";
 import { GeometryWorld } from "../objects/GeometryWorld";
 import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";

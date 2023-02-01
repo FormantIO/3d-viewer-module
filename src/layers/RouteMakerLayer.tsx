@@ -1,12 +1,8 @@
 import { Cylinder, GradientTexture, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Interactive } from "@react-three/xr";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Vector3 } from "three";
+import { useRef, useState } from "react";
 import { FormantColors } from "../FormantColors";
-import { LayerDataContext } from "../LayerDataContext";
-import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 

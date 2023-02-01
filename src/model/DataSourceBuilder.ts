@@ -1,22 +1,23 @@
 import { StreamType } from "@formant/data-sdk";
-import { UniverseDataSource } from "@formant/universe-core";
-import * as uuid from "uuid";
 import {
-  DataSource,
-  UniverseTelemetrySource,
+  UniverseDataSource,
   UniverseRosDataSource,
-} from "./DataSource";
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
+import * as uuid from "uuid";
 
 export class DataSourceBuilder {
   static telemetry(
     streamName: string,
-    streamType: StreamType
+    streamType: StreamType,
+    latestDataPoint?: boolean
   ): UniverseTelemetrySource {
     return {
       id: uuid.v4(),
       sourceType: "telemetry",
       streamName,
       streamType: streamType as any,
+      latestDataPoint,
     };
   }
 

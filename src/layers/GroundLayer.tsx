@@ -1,17 +1,7 @@
-import {
-  Circle,
-  Cylinder,
-  GradientTexture,
-  Ring,
-  Tube,
-} from "@react-three/drei";
-import { ThreeElements, useFrame } from "@react-three/fiber";
-import React, { useContext, useRef, useState } from "react";
+import { Ring } from "@react-three/drei";
 import { range } from "../common/range";
 import { Axis } from "../components/Axis";
 import { FormantColors } from "../FormantColors";
-import { UniverseTelemetrySource } from "../model/DataSource";
-import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 

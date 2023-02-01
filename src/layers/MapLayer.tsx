@@ -1,10 +1,13 @@
 import { Fleet } from "@formant/data-sdk";
-import { defined, definedAndNotNull } from "@formant/universe-core";
+import {
+  defined,
+  definedAndNotNull,
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
 import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useState } from "react";
 import { Texture } from "three";
 import { LayerDataContext } from "../LayerDataContext";
-import { UniverseTelemetrySource } from "../model/DataSource";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
