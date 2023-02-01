@@ -87,14 +87,18 @@ export class GeometryWorld {
         ns = new Map();
         this.geometry.set(marker.ns, ns);
       }
-      if (marker.action === "delete_all") {
+      const { action, type } = marker;
+      const isAddOrModify = action === 0;
+      const isDelete = action === 2;
+      const isDeleteAll = action === 3;
+      if (isDeleteAll) {
         this.geometry = new Map();
       } else {
         if (marker.id === undefined) {
           marker.id = 0;
         }
-        reifyVector3(marker.pose.translation);
-        reifyQuaternion(marker.pose.rotation);
+        reifyVector3(marker.pose.position);
+        reifyQuaternion(marker.pose.orientation);
         reifyVector3(marker.scale);
         reifyColor(marker.color);
         if (marker.points) {
@@ -103,63 +107,77 @@ export class GeometryWorld {
           });
         }
 
-        if (marker.type === "line_list") {
-          if (marker.action === "add" || marker.action === "modify") {
+        if (type === 5) {
+          if (isAddOrModify) {
             ns.set(marker.id, {
               id: `${marker.ns}_${marker.id}`,
-              type: marker.type,
-              position: marker.pose.translation,
-              rotation: marker.pose.rotation,
+              type: "line_list",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
               points: marker.points,
               dirty: true,
             });
-          } else if (marker.action === "delete") {
+          } else if (isDelete) {
             ns.delete(marker.id);
           }
-        } else if (marker.type === "sphere" || marker.type === "cube") {
-          if (marker.action === "add" || marker.action === "modify") {
+        } else if (type === 1) {
+          if (isAddOrModify) {
             ns.set(marker.id, {
               id: `${marker.ns}_${marker.id}`,
-              type: marker.type,
-              position: marker.pose.translation,
-              rotation: marker.pose.rotation,
+              type: "cube",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
               dirty: true,
             });
-          } else if (marker.action === "delete") {
+          } else if (isDelete) {
             ns.delete(marker.id);
           }
-        } else if (marker.type === "arrow") {
-          if (marker.action === "add" || marker.action === "modify") {
+        } else if (type === 2) {
+          if (isAddOrModify) {
             ns.set(marker.id, {
               id: `${marker.ns}_${marker.id}`,
-              type: marker.type,
-              position: marker.pose.translation,
-              rotation: marker.pose.rotation,
+              type: "sphere",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              dirty: true,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
+        } else if (type === 0) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "arrow",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
               points: marker.points,
               dirty: true,
             });
-          } else if (marker.action === "delete") {
+          } else if (isDelete) {
             ns.delete(marker.id);
           }
-        } else if (marker.type === "text_view_facing") {
-          if (marker.action === "add" || marker.action === "modify") {
+        } else if (type === 9) {
+          if (isAddOrModify) {
             ns.set(marker.id, {
               id: `${marker.ns}_${marker.id}`,
               type: "text",
-              position: marker.pose.translation,
-              rotation: marker.pose.rotation,
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
               text: marker.text || "",
               dirty: true,
             });
-          } else if (marker.action === "delete") {
+          } else if (isDelete) {
             ns.delete(marker.id);
           }
         }
