@@ -6,7 +6,7 @@ import {
   Tube,
 } from "@react-three/drei";
 import { ThreeElements, useFrame } from "@react-three/fiber";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { range } from "../common/range";
 import { Axis } from "../components/Axis";
 import { FormantColors } from "../FormantColors";
@@ -14,8 +14,9 @@ import { UniverseTelemetrySource } from "../model/DataSource";
 import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
+import { UIDataContext } from "../UIDataContext";
 
-interface IGroundLayer extends IUniverseLayerProps {}
+interface IGroundLayer extends IUniverseLayerProps { }
 
 function SilverCircle({ width }: { width: number }) {
   return (
@@ -27,8 +28,18 @@ function SilverCircle({ width }: { width: number }) {
 
 export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
+  const { register, layers } = React.useContext(UIDataContext);
+  const id = 'laksjdasl';
+
+  useEffect(() => {
+    register('ground', id);
+  }, [])
+
+  const thisLayer = layers.find(layer => layer.id === id);
+
+
   return (
-    <TransformLayer {...props}>
+    <TransformLayer {...props} visible={thisLayer?.visible}>
       <Axis />
 
       {range(0, 100).map((i) => (
