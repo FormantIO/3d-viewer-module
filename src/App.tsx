@@ -21,7 +21,7 @@ import {
 } from "@formant/universe-core";
 import { parsePositioning } from "./config";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-// import { TelemetryUniverseData } from "../../universe-connector/src/main";
+import { TelemetryUniverseData } from "@formant/universe-connector";
 
 const query = new URLSearchParams(window.location.search);
 const demoMode = query.get("auth") === null;
