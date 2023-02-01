@@ -31,9 +31,7 @@ export function Universe(props: IUniverseProps) {
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
             <OrbitControls />
-            <group rotation={vr ? undefined : [Math.PI / 2, 0, 0]}>
-              {props.children}
-            </group>
+            <group>{props.children}</group>
             {!vr && (
               <EffectComposer>
                 <DepthOfField
@@ -63,8 +61,8 @@ export function Universe(props: IUniverseProps) {
             )}
           </XR>
         </Canvas>
-        <Sidebar />
       </UIDataContext.Provider>
+
     </>
   );
 }

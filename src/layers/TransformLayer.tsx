@@ -97,7 +97,8 @@ export function TransformLayer(props: ITransformLayerProps) {
           DataSourceBuilder.telemetry(p.stream, "location"),
           (d) => {
             if (typeof d === "symbol") {
-              throw new Error("unhandled data status");
+              console.warn("unhandled empty gps location");
+              return;
             }
             const location = d as ILocation;
             const h1 = {
@@ -140,7 +141,7 @@ export function TransformLayer(props: ITransformLayerProps) {
             g.matrixAutoUpdate = false;
           }
         );
-        setPositionUnsubscriber(unsubscribe);
+        setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
         if (p.stream) {
@@ -155,7 +156,8 @@ export function TransformLayer(props: ITransformLayerProps) {
           d,
           (d) => {
             if (typeof d === "symbol") {
-              throw new Error("unhandled data status");
+              console.warn("unhandled empty odometry");
+              return;
             }
             const odom = d as IOdometry;
             const pos = odom.pose.translation;
@@ -166,14 +168,15 @@ export function TransformLayer(props: ITransformLayerProps) {
             );
           }
         );
-        setPositionUnsubscriber(unsubscribe);
+        setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "transform tree") {
         const unsubscribe = universeData.subscribeToTransformTree(
           defined(deviceId, "transform tree positioning requires a device id"),
           DataSourceBuilder.telemetry(p.stream, "transform tree"),
           (d) => {
             if (typeof d === "symbol") {
-              throw new Error("unhandled data status");
+              console.warn("unhandled empty transform tree");
+              return;
             }
             const transformTree = d as ITransformNode;
             fetch(defined(transformTree.url))
@@ -201,7 +204,7 @@ export function TransformLayer(props: ITransformLayerProps) {
               });
           }
         );
-        setPositionUnsubscriber(unsubscribe);
+        setPositionUnsubscriber(() => unsubscribe);
       }
     }
   }, [groupRef, positioning]);

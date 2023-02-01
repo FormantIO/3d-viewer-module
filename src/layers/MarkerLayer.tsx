@@ -44,7 +44,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
 
   return (
     <TransformLayer {...props}>
-      <mesh ref={arrowRef} name="arrow" rotation-x={-Math.PI / 2}>
+      <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
         <meshBasicMaterial />
       </mesh>

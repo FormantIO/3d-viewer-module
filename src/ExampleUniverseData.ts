@@ -356,8 +356,8 @@ export class ExampleUniverseData implements IUniverseData {
       markers: [...Array(100).keys()].map(() => ({
         id: Math.random(),
         ns: `cube${Math.random()}`,
-        type: "cube",
-        action: "add",
+        type: 1,
+        action: 0,
         lifetime: 100000,
         frame_id: "base_link",
         points: [],
@@ -368,12 +368,12 @@ export class ExampleUniverseData implements IUniverseData {
         color: { r: 1, g: 1, b: 1, a: 0.4 },
         colors: [],
         pose: {
-          translation: {
+          position: {
             x: 20 * Math.random() - 10,
             y: 20 * Math.random() - 10,
             z: 0,
           },
-          rotation: {
+          orientation: {
             x: 0,
             y: 0,
             z: 0,
