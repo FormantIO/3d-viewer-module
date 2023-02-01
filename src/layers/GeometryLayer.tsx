@@ -49,7 +49,7 @@ const getOrCreateMaterial = (r: number, g: number, b: number, a: number) => {
 };
 
 export function GeometryLayer(props: IGeometryLayer) {
-  const { children, dataSource, name, id } = props;
+  const { children, dataSource, name, id, treePath } = props;
   const { register, layers } = useContext(UIDataContext);
   const world = new GeometryWorld();
 
@@ -60,7 +60,7 @@ export function GeometryLayer(props: IGeometryLayer) {
   const layerData = useContext(LayerDataContext);
 
   useEffect(() => {
-    register(name || 'Geometry', id || uuid.v4());
+    register(name || 'Geometry', id || uuid.v4(), treePath);
   }, [])
 
   const thisLayer = layers.find(layer => layer.id === id);

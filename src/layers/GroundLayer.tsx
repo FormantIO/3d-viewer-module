@@ -20,11 +20,11 @@ function SilverCircle({ width }: { width: number }) {
 }
 
 export function GroundLayer(props: IGroundLayer) {
-  const { children, name, id } = props;
+  const { children, name, id, treePath } = props;
   const { register, layers } = React.useContext(UIDataContext);
 
   useEffect(() => {
-    register(name || 'Ground', id || uuid.v4());
+    register(name || 'Ground', id || uuid.v4(), treePath);
   }, [])
 
   const thisLayer = layers.find(layer => layer.id === id);

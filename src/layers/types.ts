@@ -8,4 +8,5 @@ export interface IUniverseLayerProps {
   positioning?: Positioning;
   name?: string;
   id?: string;
+  treePath?: number[];
 }

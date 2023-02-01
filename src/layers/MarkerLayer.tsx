@@ -8,14 +8,14 @@ import { UIDataContext } from "../UIDataContext";
 import * as uuid from "uuid";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps {}
+interface IMarkerLayerProps extends IUniverseLayerProps { }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children, name, id } = props;
+  const { children, name, id, treePath } = props;
   const { register, layers } = useContext(UIDataContext);
 
   useEffect(() => {
-    register(name || "Marker", id || uuid.v4());
+    register(name || "Marker", id || uuid.v4(), treePath);
   }, []);
 
   const thisLayer = layers.find((layer) => layer.id === id);

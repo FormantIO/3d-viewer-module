@@ -10,7 +10,7 @@ import { LayerDataContext } from "./LayerDataContext";
 import { ExampleUniverseData } from "./ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
 import * as uuid from "uuid";
@@ -22,6 +22,8 @@ import {
 import { parsePositioning } from "./config";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { TelemetryUniverseData } from "@formant/universe-connector";
+import { UIDataContext } from "./UIDataContext";
+import EmptyLayer from "./layers/EmptyLayer";
 
 const query = new URLSearchParams(window.location.search);
 const demoMode = query.get("auth") === null;
@@ -30,13 +32,15 @@ const currentDeviceId = query.get("device");
 function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
+  let mapLayers: React.ReactNode[] = [];
+  const getTreePath = () => [devices.length, deviceLayers.length + mapLayers.length];
   (config.devices || []).forEach((device, di) => {
-    const mapLayers = (device.mapLayers || []).map((layer, i) => {
+    mapLayers = (device.mapLayers || []).map((layer, i) => {
       const positioning = layer.positioning
         ? parsePositioning(layer.positioning)
         : PositioningBuilder.fixed(0, 0, 0);
       if (layer.mapType === "Ground Plane") {
-        return <GroundLayer key={"map" + i} positioning={positioning} />;
+        return <GroundLayer key={"map" + i} positioning={positioning} id={uuid.v4()} treePath={getTreePath()} name={layer.mapName} />;
       }
       // Portland long lat
       const defaultLong = "-122.6765";
@@ -53,6 +57,8 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
           longitude={parseFloat(layer.longitude || defaultLong)}
           mapBoxKey={layer.mapboxKey || ""}
           dataSource={dataSource as UniverseTelemetrySource}
+          name={layer.mapName}
+          id={uuid.v4()} treePath={getTreePath()}
         />
       );
     });
@@ -63,7 +69,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       if (layer.visualType === "Circle") {
         deviceLayers.push(
-          <MarkerLayer key={"vis" + i} positioning={positioning} />
+          <MarkerLayer key={"vis" + i} positioning={positioning} id={uuid.v4()} treePath={getTreePath()} />
         );
       }
     });
@@ -78,6 +84,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
             key={"geo" + i}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
+            id={uuid.v4()} treePath={getTreePath()}
           />
         );
       }
@@ -89,8 +96,10 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
           deviceId: definedAndNotNull(currentDeviceId),
         }}
       >
-        {mapLayers}
-        {deviceLayers}
+        <EmptyLayer name={device.name} id={currentDeviceId || uuid.v4()} treePath={[devices.length]}>
+          {mapLayers}
+          {deviceLayers}
+        </EmptyLayer>
       </LayerDataContext.Provider>
     );
     deviceLayers = [];

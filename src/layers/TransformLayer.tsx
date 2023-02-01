@@ -207,10 +207,7 @@ export function TransformLayer(props: ITransformLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       }
     }
-  }, [groupRef, positioning, visible]);
+  }, [groupRef, positioning]);
 
-  if (visible == false) {
-    return <></>;
-  }
-  return <group ref={groupRef}>{children}</group>;
+  return <group visible={visible} ref={groupRef}>{children}</group>;
 }

@@ -7,11 +7,12 @@ interface LayerData {
     name: string;
     id: string;
     visible: boolean;
+    treePath?: number[];
 }
 
 interface UIContextData {
     layers: LayerData[];
-    register: (name: string, id: string) => void;
+    register: (name: string, id: string, treePath?: number[]) => void;
     toggleVisibility: (id: string) => void;
 }
 
@@ -21,7 +22,7 @@ export const UIDataContext =
         {
             layers: [],
             register: (name: string, id: string) => { },
-            toggleVisibility: (id: string) => { }
+            toggleVisibility: (id: string) => { },
         }
     );
 
@@ -29,9 +30,9 @@ export const UIDataContext =
 export function useUI(): UIContextData {
     const [layers, setLayers] = React.useState<LayerData[]>([]);
 
-    const register = (name: string, id: string) => {
-        console.log('registering', name, id, layers)
-        setLayers((prevState) => [...prevState, { name, id, visible: true }]);
+    const register = (name: string, id: string, treePath?: number[]) => {
+        console.log('registering', name, id, treePath, layers)
+        setLayers((prevState) => [...prevState, { name, id, visible: true, treePath }]);
     }
 
     const toggleVisibility = (id: string) => {
