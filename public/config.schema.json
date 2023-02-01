@@ -1,0 +1,488 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "3D viewer",
+  "type": "object",
+  "properties": {
+    "devices": {
+      "title": "Add Device Source",
+
+      "type": "array",
+      "$formant.itemName": "Device Source",
+      "items": {
+        "type": "object",
+        "$formant.itemName": "Device Source",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mapLayers": {
+            "title": "Add Map",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "$formant.itemName": "Map",
+              "properties": {
+                "mapName": {
+                  "type": "string"
+                },
+                "mapType": {
+                  "title": "Map Type",
+                  "type": "string",
+                  "enum": ["Ground Plane", "World Map"]
+                },
+                "worldMapType": {
+                  "title": "World Map Type",
+                  "type": "string",
+                  "enum": ["Satellite", "Street", "Satellite Street"],
+                  "$formant.visible.when": ["mapType", "=", "World Map"]
+                },
+                "longitude": {
+                  "title": "Longitude (if not using stream)",
+                  "type": "number",
+                  "$formant.visible.when": ["mapType", "=", "World Map"]
+                },
+                "latitude": {
+                  "title": "Latitude (if not using stream)",
+                  "type": "number",
+                  "$formant.visible.when": ["mapType", "=", "World Map"]
+                },
+                "mapSize": {
+                  "title": "Map Edge Length (meters)",
+                  "type": "number",
+                  "$formant.visible.when": ["mapType", "=", "World Map"]
+                },
+                "mapboxKey": {
+                  "title": "Mapbox key",
+                  "type": "string",
+                  "$formant.visible.when": ["mapType", "=", "World Map"]
+                },
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "telemetryStreamName": {
+                      "type": "string",
+                      "$formant.streams.byType": "location"
+                    },
+                    "latestDataPoint": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+                    }
+                  }
+                },
+                "positioning": {
+                  "$formant.itemName": "Positioning",
+                  "type": "object",
+                  "properties": {
+                    "positioningType": {
+                      "type": "string",
+                      "enum": [
+                        "Fixed",
+                        "Gps",
+                        "Odometry",
+                        "Transform Tree",
+                        "Hud"
+                      ],
+                      "default": "fixed"
+                    },
+                    "x": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "y": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "z": {
+                      "title": "Z-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "hudX": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "hudY": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "relativeLatitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "relativeLongitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "gpsStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "location",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "localizationStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "localization",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "localizationRealtimeStream": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "transformTreeStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "transform tree",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    },
+                    "transformTreeEndPoint": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "geometryLayers": {
+            "title": "Marker Array",
+
+            "type": "array",
+            "items": {
+              "$formant.itemName": "Geometry",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "telemetryStreamName": {
+                      "type": "string",
+                      "$formant.streams.byType": "json"
+                    },
+                    "latestDataPoint": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+                    }
+                  }
+                },
+                "positioning": {
+                  "$formant.itemName": "Positioning",
+                  "type": "object",
+                  "properties": {
+                    "positioningType": {
+                      "type": "string",
+                      "enum": [
+                        "Fixed",
+                        "Gps",
+                        "Odometry",
+                        "Transform Tree",
+                        "Hud"
+                      ],
+                      "default": "fixed"
+                    },
+                    "x": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "y": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "z": {
+                      "title": "Z-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "hudX": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "hudY": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "relativeLatitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "relativeLongitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "gpsStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "location",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "localizationStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "localization",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "localizationRealtimeStream": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "transformTreeStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "transform tree",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    },
+                    "transformTreeEndPoint": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "deviceVisualLayers": {
+            "title": "Geolocation Marker",
+
+            "type": "array",
+            "items": {
+              "$formant.itemName": "Marker",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "visualType": {
+                  "type": "string",
+                  "enum": ["Circle"]
+                },
+                "positioning": {
+                  "$formant.itemName": "Positioning",
+                  "type": "object",
+                  "properties": {
+                    "positioningType": {
+                      "type": "string",
+                      "enum": [
+                        "Fixed",
+                        "Gps",
+                        "Odometry",
+                        "Transform Tree",
+                        "Hud"
+                      ],
+                      "default": "fixed"
+                    },
+                    "x": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "y": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "z": {
+                      "title": "Z-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                    },
+                    "hudX": {
+                      "title": "X-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "hudY": {
+                      "title": "Y-axis",
+
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Hud"]
+                    },
+                    "relativeLatitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "relativeLongitude": {
+                      "type": "number",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "gpsStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "location",
+                      "$formant.visible.when": ["positioningType", "=", "Gps"]
+                    },
+                    "localizationStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "localization",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "localizationRealtimeStream": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "transformTreeStream": {
+                      "type": "string",
+                      "$formant.streams.byType": "transform tree",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    },
+                    "transformTreeEndPoint": {
+                      "type": "string",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Transform Tree"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "positioning": {
+            "$formant.itemName": "Positioning",
+            "type": "object",
+            "properties": {
+              "positioningType": {
+                "type": "string",
+                "enum": ["Fixed", "Gps", "Odometry", "Transform Tree", "Hud"],
+                "default": "fixed"
+              },
+              "x": {
+                "title": "X-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Fixed"]
+              },
+              "y": {
+                "title": "Y-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Fixed"]
+              },
+              "z": {
+                "title": "Z-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Fixed"]
+              },
+              "hudX": {
+                "title": "X-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Hud"]
+              },
+              "hudY": {
+                "title": "Y-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Hud"]
+              },
+              "relativeLatitude": {
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "relativeLongitude": {
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "gpsStream": {
+                "type": "string",
+                "$formant.streams.byType": "location",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "localizationStream": {
+                "type": "string",
+                "$formant.streams.byType": "localization",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "localizationRealtimeStream": {
+                "type": "string",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "transformTreeStream": {
+                "type": "string",
+                "$formant.streams.byType": "transform tree",
+                "$formant.visible.when": [
+                  "positioningType",
+                  "=",
+                  "Transform Tree"
+                ]
+              },
+              "transformTreeEndPoint": {
+                "type": "string",
+                "$formant.visible.when": [
+                  "positioningType",
+                  "=",
+                  "Transform Tree"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
