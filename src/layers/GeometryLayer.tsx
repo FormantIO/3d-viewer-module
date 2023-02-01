@@ -47,7 +47,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       dataSource,
       (d) => {
         if (typeof d === "symbol") {
-          console.error("geometry received error from universe data");
+          console.warn("geometry received error from universe data");
           return;
         }
         const markerArray = d as IMarker3DArray;
