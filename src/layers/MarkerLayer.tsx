@@ -28,9 +28,12 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   const scaleVector = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ camera }, delta) => {
-    const scaleFactor = 25;
     const circle = circleRef.current;
     const arrow = arrowRef.current;
+    circle.scale.setScalar(2);
+    arrow.scale.setScalar(2);
+
+    /* sconst scaleFactor = 25;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /
@@ -39,7 +42,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     arrow.scale.setScalar(scale);
 
     (circle.material as any).uniforms.uTime.value += delta;
-    circle.lookAt(camera.position);
+    circle.lookAt(camera.position);*/
   });
 
   return (

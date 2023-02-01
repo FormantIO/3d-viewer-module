@@ -15,6 +15,7 @@ import { UIDataContext, useUI } from "./UIDataContext";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
+const fancy = query.get("fancy") === "true";
 
 type IUniverseProps = {
   children?: React.ReactNode;
@@ -32,7 +33,7 @@ export function Universe(props: IUniverseProps) {
             <color attach="background" args={[FormantColors.flagship]} />
             <OrbitControls />
             <group>{props.children}</group>
-            {!vr && (
+            {fancy && (
               <EffectComposer>
                 <DepthOfField
                   focusDistance={0}
@@ -62,7 +63,6 @@ export function Universe(props: IUniverseProps) {
           </XR>
         </Canvas>
       </UIDataContext.Provider>
-
     </>
   );
 }
