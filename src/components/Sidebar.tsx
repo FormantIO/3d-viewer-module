@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { LayerIcon } from "./icons";
 
 interface ITreeArea {
-    visible: boolean
+  visible: boolean
 };
 
 const SidebarContainer = styled.div<ITreeArea>`
@@ -52,9 +52,17 @@ const LayersWrapper = styled.div<ITreeArea>`
   }
 `;
 
-const LayerRow = styled.div`
-cursor: pointer;
-  border-bottom: 1px solid #1C1E2D;
+interface ILayerRow {
+  hasChildren: boolean;
+  isLastChild: boolean;
+  isChild: boolean;
+}
+
+const LayerRow = styled.div<ILayerRow>`
+  cursor: pointer;
+  border-bottom: ${(props) =>
+    (!props.isChild || props.isLastChild) && (props.hasChildren ? 'none' : '1px solid #1C1E2D')
+  };
   height: 40px;
   padding: 0 8px;
   display: flex;
@@ -70,44 +78,72 @@ cursor: pointer;
       visibility: initial;
     }
   }
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 
 const Sidebar = () => {
-    const { layers, toggleVisibility } = React.useContext(UIDataContext);
-    const [visible, setVisible] = React.useState(false);
+  const { layers, toggleVisibility } = React.useContext(UIDataContext);
+  const [visible, setVisible] = React.useState(false);
 
-    const onToggleSidebarClicked = () => {
-        setVisible(!visible);
+  const onToggleSidebarClicked = () => {
+    setVisible(!visible);
+  }
+
+  const sortedLayers = layers.sort((a, b) => {
+    if (!a.treePath || !b.treePath) return 0;
+    const minLength = Math.min(a.treePath.length, b.treePath.length);
+    for (let i = 0; i < minLength; i++) {
+      if (a.treePath[i] !== b.treePath[i]) {
+        return a.treePath[i] - b.treePath[i];
+      }
     }
+    return a.treePath.length - b.treePath.length;
+  });
 
-    return (
-        <SidebarContainer visible={visible}>
-            <ToggleButton onClick={onToggleSidebarClicked}>
-                <Typography variant="body1" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
-                    <LayerIcon />
+  const hasChildren = (layer: any) => {
+    return sortedLayers.some(l => l.treePath && l.treePath[0] === layer.treePath[0] && l.treePath.length > layer.treePath.length);
+  };
 
-                    {" "}
-                    Layers
-                    {" "}
-                </Typography>
-                <Icon name={visible ? "chevron-up" : "chevron-down"} />
-            </ToggleButton>
-            <LayersWrapper visible={visible}>
-                {layers.map((c) => {
-                    return <LayerRow key={c.id}>
-                        <Typography variant="body1" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
-                            <LayerIcon />
-                            {" "}
-                            {c.name}
-                            {" "}
-                        </Typography>
-                        <input type="checkbox" checked={c.visible} onChange={() => toggleVisibility(c.id)} />
-                    </LayerRow>
-                })}
-            </LayersWrapper>
-        </SidebarContainer>
-    );
+  const isLastChild = (layer: any) => {
+    if (layer.treePath?.length === 1) return false;
+    return !sortedLayers.some(l => l.treePath && l.treePath[0] === layer.treePath[0] && l.treePath[1] > layer.treePath[1]);
+  };
+
+  const isChild = (layer: any) => {
+    return layer.treePath?.length > 1;
+  };
+
+  return (
+    <SidebarContainer visible={visible}>
+      <ToggleButton onClick={onToggleSidebarClicked}>
+        <Typography variant="body1" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
+          <LayerIcon />
+
+          {" "}
+          Layers
+          {" "}
+        </Typography>
+        <Icon name={visible ? "chevron-up" : "chevron-down"} />
+      </ToggleButton>
+      <LayersWrapper visible={visible}>
+        {sortedLayers.map((c) => {
+          return <LayerRow key={c.id} hasChildren={hasChildren(c)} isChild={isChild(c)} isLastChild={isLastChild(c)}>
+            <Typography variant="body1" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', marginLeft: c.treePath ? (c.treePath.length) * 20 + 'px' : 0 }}>
+              <LayerIcon />
+              {" "}
+              {c.name}
+              {" "}
+            </Typography>
+            <input type="checkbox" checked={c.visible} onChange={() => toggleVisibility(c.id)} />
+          </LayerRow>
+        })}
+      </LayersWrapper>
+    </SidebarContainer>
+  );
 }
 
 export default Sidebar;
