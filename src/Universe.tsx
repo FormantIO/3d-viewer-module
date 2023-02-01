@@ -10,6 +10,8 @@ import {
   Vignette,
 } from "@react-three/postprocessing";
 import { VRButton, ARButton, XR, Controllers, Hands } from "@react-three/xr";
+import Sidebar from "./components/Sidebar";
+import { UIDataContext, useUI } from "./UIDataContext";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -20,43 +22,47 @@ type IUniverseProps = {
 
 export function Universe(props: IUniverseProps) {
   const vr = shouldUseVR;
+  const { layers, register, toggleVisibility } = useUI();
   return (
     <>
-      {vr && <VRButton />}
-      <Canvas color="red">
-        <XR>
-          <color attach="background" args={[FormantColors.flagship]} />
-          <OrbitControls />
-          <group>{props.children}</group>
-          {!vr && (
-            <EffectComposer>
-              <DepthOfField
-                focusDistance={0}
-                focalLength={0.02}
-                bokehScale={2}
-                height={480}
-              />
-              <Bloom
-                luminanceThreshold={0}
-                luminanceSmoothing={0.9}
-                height={300}
-              />
-              <Noise opacity={0.02} />
-              <Vignette eskil={false} offset={0.1} darkness={1.1} />
-            </EffectComposer>
-          )}
-          {vr && (
-            <>
-              <Controllers rayMaterial={{ color: "red" }} />
-              <Hands />
-              <mesh>
-                <boxGeometry />
-                <meshBasicMaterial color="blue" />
-              </mesh>
-            </>
-          )}
-        </XR>
-      </Canvas>
+      <UIDataContext.Provider value={{ layers, register, toggleVisibility }}>
+        {vr && <VRButton />}
+        <Canvas color="red">
+          <XR>
+            <color attach="background" args={[FormantColors.flagship]} />
+            <OrbitControls />
+            <group>{props.children}</group>
+            {!vr && (
+              <EffectComposer>
+                <DepthOfField
+                  focusDistance={0}
+                  focalLength={0.02}
+                  bokehScale={2}
+                  height={480}
+                />
+                <Bloom
+                  luminanceThreshold={0}
+                  luminanceSmoothing={0.9}
+                  height={300}
+                />
+                <Noise opacity={0.02} />
+                <Vignette eskil={false} offset={0.1} darkness={1.1} />
+              </EffectComposer>
+            )}
+            {vr && (
+              <>
+                <Controllers rayMaterial={{ color: "red" }} />
+                <Hands />
+                <mesh>
+                  <boxGeometry />
+                  <meshBasicMaterial color="blue" />
+                </mesh>
+              </>
+            )}
+          </XR>
+        </Canvas>
+      </UIDataContext.Provider>
+
     </>
   );
 }
