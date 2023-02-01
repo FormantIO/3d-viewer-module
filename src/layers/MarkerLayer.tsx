@@ -5,21 +5,20 @@ import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
 import { UIDataContext } from "../UIDataContext";
-import * as uuid from 'uuid';
+import * as uuid from "uuid";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps { }
+interface IMarkerLayerProps extends IUniverseLayerProps {}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
   const { children, name, id } = props;
   const { register, layers } = useContext(UIDataContext);
 
   useEffect(() => {
-    register(name || 'Marker', id || uuid.v4());
-  }, [])
+    register(name || "Marker", id || uuid.v4());
+  }, []);
 
-  const thisLayer = layers.find(layer => layer.id === id);
-
+  const thisLayer = layers.find((layer) => layer.id === id);
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -44,7 +43,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     circle.scale.setScalar(2);
     arrow.scale.setScalar(2);
 
-    /* sconst scaleFactor = 25;
+    const scaleFactor = 25;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /
@@ -53,7 +52,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     arrow.scale.setScalar(scale);
 
     (circle.material as any).uniforms.uTime.value += delta;
-    circle.lookAt(camera.position);*/
+    circle.lookAt(camera.position);
   });
 
   return (

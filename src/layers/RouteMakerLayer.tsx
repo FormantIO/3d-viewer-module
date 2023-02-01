@@ -70,7 +70,7 @@ export function RouteMakerLayer(props: IMapLayer) {
           lastv = points[i - 1];
         }
         return (
-          <>
+          <group key={i}>
             {i > 0 && lastv !== undefined && (
               <Line
                 points={[v, lastv]}
@@ -81,9 +81,8 @@ export function RouteMakerLayer(props: IMapLayer) {
             <Marker
               color={i === 0 ? FormantColors.green : FormantColors.silver}
               position={v}
-              key={"c_" + i}
             />
-          </>
+          </group>
         );
       })}
       {children}

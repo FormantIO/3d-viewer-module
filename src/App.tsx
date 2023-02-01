@@ -13,14 +13,15 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
-import * as uuid from 'uuid';
+import * as uuid from "uuid";
 import {
   definedAndNotNull,
   IUniverseData,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { parsePositioning } from "./config";
-import { TelemetryUniverseData } from "../../universe-connector/src/main";
+import { PointCloudLayer } from "./layers/PointCloudLayer";
+// import { TelemetryUniverseData } from "../../universe-connector/src/main";
 
 const query = new URLSearchParams(window.location.search);
 const demoMode = query.get("auth") === null;
@@ -132,7 +133,10 @@ export function App() {
       <UniverseDataContext.Provider value={universeData}>
         <Universe>
           <ambientLight />
-          <GroundLayer positioning={PositioningBuilder.fixed(0, 0.1, 0)} id={uuid.v4()} />
+          <GroundLayer
+            positioning={PositioningBuilder.fixed(0, 0.1, 0)}
+            id={uuid.v4()}
+          />
           <LayerDataContext.Provider
             value={{
               deviceId: "ekobot_device",
@@ -156,6 +160,10 @@ export function App() {
               />
               <GeometryLayer
                 dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
+                id={uuid.v4()}
+              />
+              <PointCloudLayer
+                positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
                 id={uuid.v4()}
               />
             </TransformLayer>

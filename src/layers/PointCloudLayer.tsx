@@ -1,9 +1,24 @@
 import { useContext, useEffect, useState } from "react";
 import { LayerDataContext } from "../LayerDataContext";
 import { DataSourceBuilder } from "../model/DataSourceBuilder";
+import { UIDataContext } from "../UIDataContext";
 import { UniverseDataContext } from "../UniverseDataContext";
+import { TransformLayer } from "./TransformLayer";
+import * as uuid from "uuid";
+import { IUniverseLayerProps } from "./types";
 
-export const PointCloudLayer = () => {
+interface IPointCloudProps extends IUniverseLayerProps {}
+
+export const PointCloudLayer = (props: IPointCloudProps) => {
+  const { children, name, id } = props;
+  const { register, layers } = useContext(UIDataContext);
+
+  useEffect(() => {
+    register(name || "PointCloud", id || uuid.v4());
+  }, []);
+
+  const thisLayer = layers.find((layer) => layer.id === id);
+
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
   const [positions, setPositions] = useState([]);
@@ -27,7 +42,7 @@ export const PointCloudLayer = () => {
   }, [layerData, universeData, setPositions]);
 
   return (
-    <>
+    <TransformLayer {...props} visible={thisLayer?.visible}>
       {positions.length > 0 && (
         <points>
           <bufferGeometry attach="geometry">
@@ -50,6 +65,6 @@ export const PointCloudLayer = () => {
           />
         </points>
       )}
-    </>
+    </TransformLayer>
   );
 };
