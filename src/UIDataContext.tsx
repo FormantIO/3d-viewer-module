@@ -1,7 +1,4 @@
-import { IUniverseData } from "@formant/universe-core";
 import React from "react";
-import { EmptyUniverseData } from "./EmptyUniverseData";
-import { Device } from "@formant/data-sdk";
 
 interface LayerData {
     name: string;
@@ -36,12 +33,28 @@ export function useUI(): UIContextData {
     }
 
     const toggleVisibility = (id: string) => {
-        setLayers(layers.map((c) => {
-            if (c.id === id) {
-                return { ...c, visible: !c.visible };
-            }
-            return c;
-        }));
+        setLayers(prevState => {
+            return prevState.map(c => {
+                if (c.id === id) {
+                    const newVisibility = !c.visible;
+                    if (c.treePath && c.treePath.length > 0) {
+                        const children = prevState.filter(layer => layer.treePath && c.treePath && layer.treePath[0] === c.treePath[0] && layer.treePath.length > c.treePath.length);
+                        if (!newVisibility) {
+                            children.forEach(child => {
+                                sessionStorage.setItem(`${child.id}-visible`, child.visible.toString());
+                                child.visible = false;
+                            });
+                        } else {
+                            children.forEach(child => {
+                                child.visible = JSON.parse(sessionStorage.getItem(`${child.id}-visible`) || 'true');
+                            });
+                        }
+                    }
+                    return { ...c, visible: newVisibility };
+                }
+                return c;
+            });
+        });
     }
 
     return { layers, register, toggleVisibility };
