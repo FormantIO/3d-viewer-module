@@ -12,14 +12,83 @@ import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
-import { Viewer3DConfiguration } from "./config";
-import { IUniverseData } from "@formant/universe-core";
+import { parseDataSource, Viewer3DConfiguration } from "./config";
+import {
+  definedAndNotNull,
+  IUniverseData,
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
+import { parsePositioning } from "./config";
+import { TelemetryUniverseData } from "@formant/universe-connector";
 
 const query = new URLSearchParams(window.location.search);
 const demoMode = query.get("auth") === null;
+const currentDeviceId = query.get("device");
 
 function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
-  return <></>;
+  const devices: React.ReactNode[] = [];
+  let deviceLayers: React.ReactNode[] = [];
+  (config.devices || []).forEach((device) => {
+    const mapLayers = (device.mapLayers || []).map((layer) => {
+      const positioning = layer.positioning
+        ? parsePositioning(layer.positioning)
+        : PositioningBuilder.fixed(0, 0, 0);
+      if (layer.mapType === "Ground Plane") {
+        return <GroundLayer positioning={positioning} />;
+      }
+      // Portland long lat
+      const defaultLong = "-122.6765";
+      const defaultLat = "45.5231";
+
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      return (
+        <MapLayer
+          positioning={positioning}
+          mapType={layer.worldMapType || "Satellite"}
+          size={parseFloat(layer.mapSize || "200")}
+          latitude={parseFloat(layer.latitude || defaultLat)}
+          longitude={parseFloat(layer.longitude || defaultLong)}
+          mapBoxKey={layer.mapboxKey || ""}
+          dataSource={dataSource as UniverseTelemetrySource}
+        />
+      );
+    });
+    (device.deviceVisualLayers || []).forEach((layer) => {
+      const positioning = layer.positioning
+        ? parsePositioning(layer.positioning)
+        : PositioningBuilder.fixed(0, 0, 0);
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      if (layer.visualType === "Circle") {
+        deviceLayers.push(<MarkerLayer positioning={positioning} />);
+      }
+    });
+    (device.geometryLayers || []).forEach((layer) => {
+      const positioning = layer.positioning
+        ? parsePositioning(layer.positioning)
+        : PositioningBuilder.fixed(0, 0, 0);
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      if (dataSource) {
+        deviceLayers.push(
+          <GeometryLayer
+            positioning={positioning}
+            dataSource={dataSource as UniverseTelemetrySource}
+          />
+        );
+      }
+    });
+    devices.push(
+      <LayerDataContext.Provider
+        value={{
+          deviceId: definedAndNotNull(currentDeviceId),
+        }}
+      >
+        {mapLayers}
+        {deviceLayers}
+      </LayerDataContext.Provider>
+    );
+    deviceLayers = [];
+  });
+  return <>{devices}</>;
 }
 
 export function App() {
@@ -28,7 +97,7 @@ export function App() {
     Viewer3DConfiguration | undefined
   >();
   const [universeData] = useState<IUniverseData>(() => {
-    return new ExampleUniverseData();
+    return demoMode ? new ExampleUniverseData() : new TelemetryUniverseData();
   });
   useEffect(() => {
     if (demoMode) {
@@ -46,8 +115,12 @@ export function App() {
           JSON.parse(config.configuration) as Viewer3DConfiguration
         );
       });
+      FormantApp.addModuleDataListener((event) => {
+        const d = new Date(event.time);
+        universeData.setTime(d);
+      });
     })();
-  });
+  }, []);
   if (demoMode) {
     return (
       <UniverseDataContext.Provider value={universeData}>
@@ -84,9 +157,14 @@ export function App() {
     );
   }
   if (authenticated && configuration) {
-    <UniverseDataContext.Provider value={universeData}>
-      <Universe>buildUniverse(configuration);</Universe>
-    </UniverseDataContext.Provider>;
+    return (
+      <UniverseDataContext.Provider value={universeData}>
+        <Universe>
+          <ambientLight />
+          {buildUniverse(configuration)};
+        </Universe>
+      </UniverseDataContext.Provider>
+    );
   }
-  return <div>Not authenticated</div>;
+  return <div>no configuration</div>;
 }

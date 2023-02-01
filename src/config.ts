@@ -60,7 +60,7 @@ export type Viewer3DConfiguration = {
   }[];
 };
 
-function parseDataSource(
+export function parseDataSource(
   dataSource: Viewer3DConfigurationDataSource
 ): UniverseDataSource | undefined {
   if (dataSource.telemetryStreamName) {
@@ -73,7 +73,7 @@ function parseDataSource(
   return undefined;
 }
 
-function parsePositioning(
+export function parsePositioning(
   positioning: Viewer3DConfiguarationPositioning
 ): Positioning {
   switch (positioning.positioningType) {
