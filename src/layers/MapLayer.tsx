@@ -106,7 +106,7 @@ export function MapLayer(props: IMapLayer) {
   return (
     <TransformLayer {...props}>
       {mapReady && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />
           <meshStandardMaterial map={mapTexture} />
         </mesh>

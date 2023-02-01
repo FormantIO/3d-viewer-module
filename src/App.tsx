@@ -19,7 +19,7 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { parsePositioning } from "./config";
-import { TelemetryUniverseData } from "@formant/universe-connector";
+import { TelemetryUniverseData } from "../../universe-connector/src/main";
 
 const query = new URLSearchParams(window.location.search);
 const demoMode = query.get("auth") === null;
@@ -28,13 +28,13 @@ const currentDeviceId = query.get("device");
 function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
-  (config.devices || []).forEach((device) => {
-    const mapLayers = (device.mapLayers || []).map((layer) => {
+  (config.devices || []).forEach((device, di) => {
+    const mapLayers = (device.mapLayers || []).map((layer, i) => {
       const positioning = layer.positioning
         ? parsePositioning(layer.positioning)
         : PositioningBuilder.fixed(0, 0, 0);
       if (layer.mapType === "Ground Plane") {
-        return <GroundLayer positioning={positioning} />;
+        return <GroundLayer key={"map" + i} positioning={positioning} />;
       }
       // Portland long lat
       const defaultLong = "-122.6765";
@@ -43,6 +43,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       return (
         <MapLayer
+          key={"map" + i}
           positioning={positioning}
           mapType={layer.worldMapType || "Satellite"}
           size={parseFloat(layer.mapSize || "200")}
@@ -53,16 +54,18 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
         />
       );
     });
-    (device.deviceVisualLayers || []).forEach((layer) => {
+    (device.deviceVisualLayers || []).forEach((layer, i) => {
       const positioning = layer.positioning
         ? parsePositioning(layer.positioning)
         : PositioningBuilder.fixed(0, 0, 0);
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       if (layer.visualType === "Circle") {
-        deviceLayers.push(<MarkerLayer positioning={positioning} />);
+        deviceLayers.push(
+          <MarkerLayer key={"vis" + i} positioning={positioning} />
+        );
       }
     });
-    (device.geometryLayers || []).forEach((layer) => {
+    (device.geometryLayers || []).forEach((layer, i) => {
       const positioning = layer.positioning
         ? parsePositioning(layer.positioning)
         : PositioningBuilder.fixed(0, 0, 0);
@@ -70,6 +73,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
       if (dataSource) {
         deviceLayers.push(
           <GeometryLayer
+            key={"geo" + i}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
           />
@@ -78,6 +82,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
     });
     devices.push(
       <LayerDataContext.Provider
+        key={"data" + di}
         value={{
           deviceId: definedAndNotNull(currentDeviceId),
         }}
@@ -88,7 +93,7 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
     );
     deviceLayers = [];
   });
-  return <>{devices}</>;
+  return devices;
 }
 
 export function App() {
@@ -134,7 +139,6 @@ export function App() {
           >
             <RouteMakerLayer size={200} />
             <MapLayer
-              // dataSource={DataSourceBuilder.telemetry("eko.gps", "json")}
               latitude={59.9139}
               longitude={10.7522}
               size={200}

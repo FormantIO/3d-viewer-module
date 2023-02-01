@@ -20,7 +20,6 @@ export function GroundLayer(props: IGroundLayer) {
   return (
     <TransformLayer {...props}>
       <Axis />
-
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />
       ))}
