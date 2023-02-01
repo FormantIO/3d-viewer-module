@@ -163,7 +163,7 @@ export function App() {
                 id={uuid.v4()}
               />
               <PointCloudLayer
-                positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
+                positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
                 id={uuid.v4()}
               />
             </TransformLayer>

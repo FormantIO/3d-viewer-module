@@ -59,7 +59,12 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     <TransformLayer {...props} visible={thisLayer?.visible}>
       <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
-        <meshBasicMaterial />
+        <meshStandardMaterial
+          color="white"
+          emissive="white"
+          emissiveIntensity={2}
+          toneMapped={false}
+        />
       </mesh>
       <mesh name="circle" ref={circleRef}>
         <circleGeometry args={[0.8, 20]} />
