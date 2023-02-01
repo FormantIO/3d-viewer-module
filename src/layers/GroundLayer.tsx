@@ -19,12 +19,12 @@ function SilverCircle({ width }: { width: number }) {
 }
 
 export function GroundLayer(props: IGroundLayer) {
-  const { children } = props;
+  const { children, name } = props;
   const { register, layers } = React.useContext(UIDataContext);
   const id = 'laksjdasl';
 
   useEffect(() => {
-    register('ground', id);
+    register(name || 'Ground', id);
   }, [])
 
   const thisLayer = layers.find(layer => layer.id === id);

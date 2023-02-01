@@ -62,6 +62,7 @@ export function Universe(props: IUniverseProps) {
             )}
           </XR>
         </Canvas>
+        <Sidebar />
       </UIDataContext.Provider>
     </>
   );
