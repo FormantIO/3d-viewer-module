@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { MapControls, OrbitControls } from "@react-three/drei";
 import React from "react";
 import { FormantColors } from "./FormantColors";
 import {
@@ -29,10 +29,10 @@ export function Universe(props: IUniverseProps) {
     <>
       <UIDataContext.Provider value={{ layers, register, toggleVisibility }}>
         {vr && <VRButton />}
-        <Canvas color="red">
+        <Canvas camera={{ position: [0, 0, 300], up: [0, 0, 1], far: 10000 }}>
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
-            <OrbitControls />
+            <MapControls enableDamping={false} />
             <group>{props.children}</group>
             {fancy && (
               <EffectComposer>
