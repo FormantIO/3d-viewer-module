@@ -1,6 +1,6 @@
 import { Icon, Typography } from "@formant/ui-sdk";
 import React from "react";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
 import { LayerIcon } from "./icons";
 

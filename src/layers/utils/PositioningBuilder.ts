@@ -1,4 +1,4 @@
-import { Positioning } from "./Positioning";
+import { Positioning } from "../common/Positioning";
 
 export class PositioningBuilder {
   static fixed(x: number, y: number, z: number): Positioning {

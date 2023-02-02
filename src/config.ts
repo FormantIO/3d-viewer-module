@@ -1,9 +1,9 @@
 import { Authentication, App } from "@formant/data-sdk";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import { StreamType, UniverseDataSource } from "@formant/universe-core";
-import { DataSourceBuilder } from "./model/DataSourceBuilder";
-import { Positioning } from "./model/Positioning";
-import { PositioningBuilder } from "./model/PositioningBuilder";
+import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
+import { Positioning } from "./layers/common/Positioning";
+import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 
 // get query strings
 const urlParams = new URLSearchParams(window.location.search);

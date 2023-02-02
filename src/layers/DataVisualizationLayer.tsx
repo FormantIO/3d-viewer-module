@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { getDistance } from "geolib";
 import { IUniverseLayerProps } from "./types";
-import { UniverseDataContext } from "../UniverseDataContext";
-import { PositioningBuilder } from "../model/PositioningBuilder";
-import { LayerDataContext } from "../LayerDataContext";
+import { UniverseDataContext } from "./common/UniverseDataContext";
+import { PositioningBuilder } from "./utils/PositioningBuilder";
+import { LayerDataContext } from "./common/LayerDataContext";
 import {
   CloseSubscription,
   defined,
@@ -11,12 +11,12 @@ import {
   IOdometry,
   ITransformNode,
 } from "@formant/universe-core";
-import { DataSourceBuilder } from "../model/DataSourceBuilder";
+import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
 
-interface ITransformLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -70,7 +70,7 @@ function buildTransformList(
   return newTransformsSoFar;
 }
 
-export function DataVisualizationLayer(props: ITransformLayerProps) {
+export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const [positionUnsubscriber, setPositionUnsubscriber] = useState<
     CloseSubscription | undefined
   >();

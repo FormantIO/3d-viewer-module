@@ -1,4 +1,4 @@
-import { FormantColors } from "../FormantColors";
+import { FormantColors } from "../utils/FormantColors";
 
 export function Axis() {
   return (

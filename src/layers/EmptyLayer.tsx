@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "./common/UIDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import * as uuid from "uuid";

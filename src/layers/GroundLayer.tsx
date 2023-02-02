@@ -2,11 +2,11 @@ import { ThreeElements, useFrame } from "@react-three/fiber";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Ring } from "@react-three/drei";
 import { range } from "../common/range";
-import { Axis } from "../components/Axis";
-import { FormantColors } from "../FormantColors";
+import { Axis } from "./objects/Axis";
+import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
 
 interface IGroundLayer extends IUniverseLayerProps {}

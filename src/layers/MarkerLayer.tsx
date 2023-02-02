@@ -4,7 +4,7 @@ import { useFrame, extend } from "@react-three/fiber";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
 extend({ MarkerMaterial });
 

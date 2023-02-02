@@ -2,7 +2,7 @@ import { Cylinder, GradientTexture, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Interactive } from "@react-three/xr";
 import { useRef, useState } from "react";
-import { FormantColors } from "../FormantColors";
+import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 

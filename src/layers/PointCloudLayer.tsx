@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { LayerDataContext } from "../LayerDataContext";
-import { DataSourceBuilder } from "../model/DataSourceBuilder";
-import { UIDataContext } from "../UIDataContext";
-import { UniverseDataContext } from "../UniverseDataContext";
+import { LayerDataContext } from "./common/LayerDataContext";
+import { DataSourceBuilder } from "./utils/DataSourceBuilder";
+import { UIDataContext } from "./common/UIDataContext";
+import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import * as uuid from "uuid";
 import { IUniverseLayerProps } from "./types";

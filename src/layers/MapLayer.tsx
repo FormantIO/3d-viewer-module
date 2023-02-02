@@ -7,11 +7,11 @@ import {
 import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useState } from "react";
 import { Texture } from "three";
-import { LayerDataContext } from "../LayerDataContext";
+import { LayerDataContext } from "./common/LayerDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
-import { UIDataContext } from "../UIDataContext";
+import { UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
 
 const mapStyles = {

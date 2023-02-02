@@ -1,6 +1,6 @@
-import { IUniverseData } from '@formant/universe-core';
-import React from 'react';
-import { Positioning } from '../model/Positioning';
+import { IUniverseData } from "@formant/universe-core";
+import React from "react";
+import { Positioning } from "./common/Positioning";
 
 export interface IUniverseLayerProps {
   visible?: boolean;

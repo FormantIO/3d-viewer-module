@@ -5,7 +5,7 @@ import {
   PerspectiveCamera,
 } from "@react-three/drei";
 import React, { useEffect } from "react";
-import { FormantColors } from "./FormantColors";
+import { FormantColors } from "../utils/FormantColors";
 import {
   EffectComposer,
   // DepthOfField,
@@ -15,7 +15,7 @@ import {
 } from "@react-three/postprocessing";
 import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
 import { Scene, Vector3 } from "three";
 

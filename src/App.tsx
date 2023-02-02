@@ -1,13 +1,13 @@
-import { Universe } from "./Universe";
+import { Universe } from "./layers/common/Universe";
 import { MarkerLayer } from "./layers/MarkerLayer";
-import { UniverseDataContext } from "./UniverseDataContext";
+import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { GeometryLayer } from "./layers/GeometryLayer";
 import { DataVisualizationLayer } from "./layers/DataVisualizationLayer";
-import { DataSourceBuilder } from "./model/DataSourceBuilder";
-import { PositioningBuilder } from "./model/PositioningBuilder";
+import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
+import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
-import { LayerDataContext } from "./LayerDataContext";
-import { ExampleUniverseData } from "./ExampleUniverseData";
+import { LayerDataContext } from "./layers/common/LayerDataContext";
+import { ExampleUniverseData } from "./layers/common/ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useContext, useEffect, useState } from "react";
@@ -22,7 +22,7 @@ import {
 import { parsePositioning } from "./config";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { TelemetryUniverseData } from "@formant/universe-connector";
-import { UIDataContext } from "./UIDataContext";
+import { UIDataContext } from "./layers/common/UIDataContext";
 import EmptyLayer from "./layers/EmptyLayer";
 
 const query = new URLSearchParams(window.location.search);

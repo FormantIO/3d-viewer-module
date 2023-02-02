@@ -20,9 +20,9 @@ import {
   Texture,
   Vector3,
 } from "three";
-import { LayerDataContext } from "../LayerDataContext";
-import { GeometryWorld } from "../objects/GeometryWorld";
-import { UniverseDataContext } from "../UniverseDataContext";
+import { LayerDataContext } from "./common/LayerDataContext";
+import { GeometryWorld } from "./objects/GeometryWorld";
+import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 
