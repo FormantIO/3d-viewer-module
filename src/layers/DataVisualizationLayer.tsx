@@ -71,23 +71,25 @@ function buildTransformList(
 }
 
 export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
+  const { children, positioning, visible, name, id, treePath } = props;
   const [positionUnsubscriber, setPositionUnsubscriber] = useState<
     CloseSubscription | undefined
   >();
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
+  const [currentLayerId, setCurrentLayerId] = useState(() => id || uuid.v4());
   let deviceId: string | undefined;
   if (layerData) {
     deviceId = layerData.deviceId;
   }
-  const { children, positioning, visible, name, id, treePath } = props;
   const groupRef = useRef<THREE.Group>(null!);
 
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
-    register(name || "Layer", id || uuid.v4(), treePath);
+    register(name || "Layer", currentLayerId, treePath);
   }, []);
-  const thisLayer = layers.find((layer) => layer.id === id);
+
+  const thisLayer = layers.find((layer) => layer.id === currentLayerId);
 
   useEffect(() => {
     const p = positioning || PositioningBuilder.fixed(0, 0, 0);
@@ -222,7 +224,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     <group
       visible={visible || thisLayer?.visible}
       ref={groupRef}
-      name={props.id}
+      name={currentLayerId}
     >
       {children}
     </group>

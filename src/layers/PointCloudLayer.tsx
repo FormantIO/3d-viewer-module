@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { LayerDataContext } from "./common/LayerDataContext";
-import { DataSourceBuilder } from "./utils/DataSourceBuilder";
-import { UIDataContext } from "./common/UIDataContext";
-import { UniverseDataContext } from "./common/UniverseDataContext";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import * as uuid from "uuid";
 import { IUniverseLayerProps } from "./types";
+import { UIDataContext } from "./common/UIDataContext";
+import { UniverseDataContext } from "./common/UniverseDataContext";
+import { LayerDataContext } from "./common/LayerDataContext";
+import { DataSourceBuilder } from "./utils/DataSourceBuilder";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 
 interface IPointCloudProps extends IUniverseLayerProps {}
 
@@ -48,7 +48,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           <pointsMaterial
             attach="material"
             color={[4, 3.0, 1]}
-            size={0.05}
+            size={0.1}
             sizeAttenuation
             transparent={false}
             alphaTest={0.5}
