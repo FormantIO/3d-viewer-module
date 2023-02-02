@@ -86,11 +86,15 @@ const LayerRow = styled.div<ILayerRow>`
 
 
 const Sidebar = () => {
-  const { layers, toggleVisibility } = React.useContext(UIDataContext);
+  const { layers, toggleVisibility, setCameraTargetId } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
 
   const onToggleSidebarClicked = () => {
     setVisible(!visible);
+  }
+
+  const onLayerClicked = (id: string) => {
+    setCameraTargetId(id);
   }
 
   const sortedLayers = layers.sort((a, b) => {
@@ -131,7 +135,7 @@ const Sidebar = () => {
       </ToggleButton>
       <LayersWrapper visible={visible}>
         {sortedLayers.map((c) => {
-          return <LayerRow key={c.id} hasChildren={hasChildren(c)} isChild={isChild(c)} isLastChild={isLastChild(c)}>
+          return <LayerRow key={c.id} hasChildren={hasChildren(c)} isChild={isChild(c)} isLastChild={isLastChild(c)} onDoubleClick={() => onLayerClicked(c.id)} >
             <Typography variant="body1" sx={{ color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', marginLeft: c.treePath ? (c.treePath.length) * 20 + 'px' : 0 }}>
               <LayerIcon />
               {" "}

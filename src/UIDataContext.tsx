@@ -11,6 +11,8 @@ interface UIContextData {
     layers: LayerData[];
     register: (name: string, id: string, treePath?: number[]) => void;
     toggleVisibility: (id: string) => void;
+    cameraTargetId: string;
+    setCameraTargetId: (id: string) => void;
 }
 
 
@@ -20,12 +22,15 @@ export const UIDataContext =
             layers: [],
             register: (name: string, id: string) => { },
             toggleVisibility: (id: string) => { },
+            cameraTargetId: '',
+            setCameraTargetId: (id: string) => { }
         }
     );
 
 
 export function useUI(): UIContextData {
     const [layers, setLayers] = React.useState<LayerData[]>([]);
+    const [cameraTargetId, setCameraTargetId] = React.useState<string>('');
 
     const register = (name: string, id: string, treePath?: number[]) => {
         console.log('registering', name, id, treePath, layers)
@@ -57,5 +62,5 @@ export function useUI(): UIContextData {
         });
     }
 
-    return { layers, register, toggleVisibility };
+    return { layers, register, toggleVisibility, cameraTargetId, setCameraTargetId };
 }

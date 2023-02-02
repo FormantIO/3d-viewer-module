@@ -209,5 +209,5 @@ export function TransformLayer(props: ITransformLayerProps) {
     }
   }, [groupRef, positioning]);
 
-  return <group visible={visible} ref={groupRef}>{children}</group>;
+  return <group visible={visible} ref={groupRef} name={props.id}>{children}</group>;
 }
