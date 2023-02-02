@@ -2,7 +2,7 @@ import { Universe } from "./Universe";
 import { MarkerLayer } from "./layers/MarkerLayer";
 import { UniverseDataContext } from "./UniverseDataContext";
 import { GeometryLayer } from "./layers/GeometryLayer";
-import { TransformLayer } from "./layers/TransformLayer";
+import { DataVisualizationLayer } from "./layers/DataVisualizationLayer";
 import { DataSourceBuilder } from "./model/DataSourceBuilder";
 import { PositioningBuilder } from "./model/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
@@ -184,7 +184,7 @@ export function App() {
               mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
               id={uuid.v4()}
             />
-            <TransformLayer
+            <DataVisualizationLayer
               positioning={PositioningBuilder.localization("eko.loc")}
             >
               <MarkerLayer
@@ -199,7 +199,7 @@ export function App() {
                 positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
                 id={uuid.v4()}
               />
-            </TransformLayer>
+            </DataVisualizationLayer>
           </LayerDataContext.Provider>
         </Universe>
       </UniverseDataContext.Provider>

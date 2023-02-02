@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { useContext, useEffect, useMemo, useRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
 import { UIDataContext } from "../UIDataContext";
@@ -49,7 +49,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
         <meshStandardMaterial
@@ -68,6 +68,6 @@ export function MarkerLayer(props: IMarkerLayerProps) {
         />
       </mesh>
       {children}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 }

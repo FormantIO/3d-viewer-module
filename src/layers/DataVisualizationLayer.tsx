@@ -70,7 +70,7 @@ function buildTransformList(
   return newTransformsSoFar;
 }
 
-export function TransformLayer(props: ITransformLayerProps) {
+export function DataVisualizationLayer(props: ITransformLayerProps) {
   const [positionUnsubscriber, setPositionUnsubscriber] = useState<
     CloseSubscription | undefined
   >();

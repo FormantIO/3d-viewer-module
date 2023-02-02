@@ -23,7 +23,7 @@ import {
 import { LayerDataContext } from "../LayerDataContext";
 import { GeometryWorld } from "../objects/GeometryWorld";
 import { UniverseDataContext } from "../UniverseDataContext";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 
 interface IGeometryLayer extends IUniverseLayerProps {
@@ -245,9 +245,9 @@ export function GeometryLayer(props: IGeometryLayer) {
     );
   });
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       <primitive object={root} />
       {children}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 }

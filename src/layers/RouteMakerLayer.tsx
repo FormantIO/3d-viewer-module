@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Interactive } from "@react-three/xr";
 import { useRef, useState } from "react";
 import { FormantColors } from "../FormantColors";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 
 interface IMapLayer extends IUniverseLayerProps {
@@ -44,7 +44,7 @@ export function RouteMakerLayer(props: IMapLayer) {
   const { children, size } = props;
 
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       <Interactive
         onSelect={(e) => {
           const p = e.intersection?.point;
@@ -86,6 +86,6 @@ export function RouteMakerLayer(props: IMapLayer) {
         );
       })}
       {children}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 }

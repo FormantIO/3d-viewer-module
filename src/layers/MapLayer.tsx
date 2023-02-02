@@ -8,7 +8,7 @@ import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useState } from "react";
 import { Texture } from "three";
 import { LayerDataContext } from "../LayerDataContext";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UIDataContext } from "../UIDataContext";
@@ -106,7 +106,7 @@ export function MapLayer(props: IMapLayer) {
   }, []);
   const mapReady = mapTexture !== undefined;
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       {mapReady && (
         <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />
@@ -114,6 +114,6 @@ export function MapLayer(props: IMapLayer) {
         </mesh>
       )}
       {children}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 }

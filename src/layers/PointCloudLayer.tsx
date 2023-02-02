@@ -3,7 +3,7 @@ import { LayerDataContext } from "../LayerDataContext";
 import { DataSourceBuilder } from "../model/DataSourceBuilder";
 import { UIDataContext } from "../UIDataContext";
 import { UniverseDataContext } from "../UniverseDataContext";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import * as uuid from "uuid";
 import { IUniverseLayerProps } from "./types";
 
@@ -33,7 +33,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   }, [layerData, universeData, setPositions]);
 
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       {positions.length > 0 && (
         <points>
           <bufferGeometry attach="geometry">
@@ -56,6 +56,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           />
         </points>
       )}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 };

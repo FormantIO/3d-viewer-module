@@ -4,7 +4,7 @@ import { Ring } from "@react-three/drei";
 import { range } from "../common/range";
 import { Axis } from "../components/Axis";
 import { FormantColors } from "../FormantColors";
-import { TransformLayer } from "./TransformLayer";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { UIDataContext } from "../UIDataContext";
 import * as uuid from "uuid";
@@ -23,12 +23,12 @@ export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
 
   return (
-    <TransformLayer {...props}>
+    <DataVisualizationLayer {...props}>
       <Axis />
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />
       ))}
       {children}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 }
