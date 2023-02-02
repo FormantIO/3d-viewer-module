@@ -120,6 +120,24 @@ const LayerTitle = styled.div`
   }
 `;
 
+interface IVisibilityIcon {
+  layerVisible: boolean;
+}
+
+const VisibilityIcon = styled.div<IVisibilityIcon>`
+  & svg {
+    transition: all 0.1s ease;
+    opacity: ${(props) => (props.layerVisible ? 0 : 1)}
+  }
+
+  &:hover {
+    & svg {
+      opacity: 1;
+    }
+  }
+`;
+
+
 const typographyStyle = {
   color: "white",
   fontSize: "16px",
@@ -246,14 +264,14 @@ const Sidebar = ({
                   {c.name}
                 </Typography>
               </LayerTitle>
-              <div onClick={() => toggleVisibility(c.id)}>
+              <VisibilityIcon onClick={() => toggleVisibility(c.id)} layerVisible={c.visible}>
                 {c.visible ? (
                   <EyeIcon />
 
                 ) : (
                   <EyeCloseIcon />
                 )}
-              </div>
+              </VisibilityIcon>
             </LayerRow>
           );
         })}
