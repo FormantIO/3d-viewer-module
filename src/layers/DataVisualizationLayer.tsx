@@ -15,8 +15,9 @@ import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import { UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
+import { LayerType } from "./common/LayerTypes";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 
@@ -71,25 +72,26 @@ function buildTransformList(
 }
 
 export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
-  const { children, positioning, visible, name, id, treePath } = props;
   const [positionUnsubscriber, setPositionUnsubscriber] = useState<
     CloseSubscription | undefined
   >();
+  const [layerId, setLayerId] = useState<string | undefined>(undefined);
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
-  const [currentLayerId, setCurrentLayerId] = useState(() => id || uuid.v4());
   let deviceId: string | undefined;
   if (layerData) {
     deviceId = layerData.deviceId;
   }
+  const { children, positioning, visible, name, id, treePath, type } = props;
   const groupRef = useRef<THREE.Group>(null!);
 
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
-    register(name || "Layer", currentLayerId, treePath);
+    const autoId = id || uuid.v4();
+    setLayerId(autoId)
+    register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
   }, []);
-
-  const thisLayer = layers.find((layer) => layer.id === currentLayerId);
+  const thisLayer = layers.find((layer) => layer.id === id);
 
   useEffect(() => {
     const p = positioning || PositioningBuilder.fixed(0, 0, 0);
@@ -224,7 +226,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     <group
       visible={visible || thisLayer?.visible}
       ref={groupRef}
-      name={currentLayerId}
+      name={layerId}
     >
       {children}
     </group>

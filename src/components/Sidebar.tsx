@@ -1,6 +1,6 @@
 import { Icon, Typography } from "@formant/ui-sdk";
 import React from "react";
-import { UIDataContext } from "../layers/common/UIDataContext";
+import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
 import { LayerIcon } from "./icons";
 
@@ -97,8 +97,15 @@ const Sidebar = ({
     setVisible(!visible);
   };
 
-  const onLayerClicked = (id: string) => {
-    lookAtTargetId(id);
+  const onLayerClicked = (layer: LayerData) => {
+    if (layer.type === "empty" && hasChildren(layer)) {
+      const markerChild = layers.find(l => l.treePath && layer.treePath && l.treePath[0] === layer.treePath[0] && l.treePath.length === 2 && l.type === "marker");
+      if (markerChild) {
+        lookAtTargetId(markerChild.id);
+        return;
+      }
+    }
+    lookAtTargetId(layer.id);
   };
 
   const sortedLayers = layers.sort((a, b) => {
@@ -160,7 +167,7 @@ const Sidebar = ({
               hasChildren={hasChildren(c)}
               isChild={isChild(c)}
               isLastChild={isLastChild(c)}
-              onDoubleClick={() => onLayerClicked(c.id)}
+              onDoubleClick={() => onLayerClicked(c)}
             >
               <Typography
                 variant="body1"

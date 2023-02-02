@@ -1,7 +1,7 @@
 import React from "react";
 import { LayerType } from "./LayerTypes";
 
-interface LayerData {
+export interface LayerData {
     name: string;
     id: string;
     type: LayerType;
@@ -35,7 +35,6 @@ export function useUI(): UIContextData {
     const [cameraTargetId, setCameraTargetId] = React.useState<string>('');
 
     const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
-        console.log('registering', name, id, treePath, layers)
         setLayers((prevState) => [...prevState, { name, id, visible: true, type, treePath }]);
     }
 
