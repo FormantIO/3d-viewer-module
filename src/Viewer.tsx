@@ -18,6 +18,7 @@ import {
 import { parsePositioning } from "./config";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import EmptyLayer from "./layers/EmptyLayer";
+import { MissingConfig } from "./components/MissingConfig";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -157,5 +158,5 @@ export function Viewer() {
       </UniverseDataContext.Provider>
     );
   }
-  return <div>no configuration</div>;
+  return <MissingConfig />;
 }
