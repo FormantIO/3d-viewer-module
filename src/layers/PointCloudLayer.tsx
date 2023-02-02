@@ -1,15 +1,23 @@
 import { useContext, useEffect, useState } from "react";
-import { LayerDataContext } from "./common/LayerDataContext";
-import { DataSourceBuilder } from "./utils/DataSourceBuilder";
-import { UIDataContext } from "./common/UIDataContext";
-import { UniverseDataContext } from "./common/UniverseDataContext";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import * as uuid from "uuid";
 import { IUniverseLayerProps } from "./types";
+import { UIDataContext } from "./common/UIDataContext";
+import { UniverseDataContext } from "./common/UniverseDataContext";
+import { LayerDataContext } from "./common/LayerDataContext";
+import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 
 interface IPointCloudProps extends IUniverseLayerProps {}
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
+  const { children, name, id, treePath } = props;
+  const { register, layers } = useContext(UIDataContext);
+
+  useEffect(() => {
+    register(name || "PointCloud", id || uuid.v4(), treePath);
+  }, []);
+
+  const thisLayer = layers.find((layer) => layer.id === id);
+
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
   const [positions, setPositions] = useState([]);
@@ -33,7 +41,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   }, [layerData, universeData, setPositions]);
 
   return (
-    <DataVisualizationLayer {...props}>
+    <TransformLayer {...props} visible={thisLayer?.visible}>
       {positions.length > 0 && (
         <points>
           <bufferGeometry attach="geometry">
@@ -48,7 +56,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           <pointsMaterial
             attach="material"
             color={[4, 3.0, 1]}
-            size={0.05}
+            size={0.1}
             sizeAttenuation
             transparent={false}
             alphaTest={0.5}
@@ -56,6 +64,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           />
         </points>
       )}
-    </DataVisualizationLayer>
+    </TransformLayer>
   );
 };
