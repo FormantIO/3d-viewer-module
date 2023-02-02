@@ -21,6 +21,39 @@ Adding a new layer of information has two components
 * Creating the code for 3D visualization of your layer
 * Adding configuration to the module's schema and connecting the configuration to your layer
 
+## Simple Example
+
+Here's a simple non-data driven example of creating a visualization of a ground plane :
+
+```typescript
+interface IGroundLayer extends IUniverseLayerProps { 
+  color: string
+}
+
+function SilverCircle({ width, color }: { width: number, color: string }) {
+  return (
+    <Ring args={[width - 0.005, width, 60]}>
+      <meshStandardMaterial color={FormantColors.steel03} />
+    </Ring>
+  );
+}
+
+export function GroundLayer(props: IGroundLayer) {
+  const { color } = props;
+
+  return (
+    <DataVisualizationLayer {...props} type={LayerType.GROUND}>
+      <Axis />
+      {range(0, 100).map((i) => (
+        <SilverCircle key={i} width={i} color />
+      ))}
+    </DataVisualizationLayer>
+  );
+}
+```
+
+Notice the component takes in properties for determing the color of the rings that represent the ground.  These properties can be connected to configuration values of the module.
+
 # How do I run 3D viewer when i'm developing on it?
 
 ```
