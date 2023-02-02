@@ -8,6 +8,7 @@ import useWindowSize from "../common/useWindowSize";
 interface ITreeArea {
   visible: boolean;
   innerWidth?: number;
+  layerCount?: number;
 }
 
 const SidebarContainer = styled.div<ITreeArea>`
@@ -26,6 +27,7 @@ const SidebarContainer = styled.div<ITreeArea>`
   &:hover {
     width: 184px;
   }
+
   ${(props) => props.innerWidth && props.innerWidth > 452 && `
     width: 384px;
     &:hover {
@@ -35,35 +37,44 @@ const SidebarContainer = styled.div<ITreeArea>`
   }
 `;
 
-const ToggleButton = styled.div`
+interface IToggleButton {
+  innerWidth: number;
+}
+
+const ToggleButton = styled.div<IToggleButton>`
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 40px;
-  padding: 4px 8px;
+  padding: 4px 7px;
+  height: ${(props) => (props.innerWidth > 452 ? "40px" : "32px")};
 
   & svg {
     color: white;
   }
 `;
 
-const LayersWrapper = styled.div<ITreeArea>`
+interface ILayersWrapper {
+  visible: boolean;
+  innerWidth: number;
+  layerCount: number;
+}
+
+const LayersWrapper = styled.div<ILayersWrapper>`
   overflow-y: hidden;
-  transition: max-height 0.3s ease-in-out;
+  transition: height 0.3s ease-in-out;
   //transition-delay: 0.1s;
-  max-height: ${(props) => (props.visible ? "500px" : "0px")};
+  height: ${(props) => (props.visible ? props.layerCount * (props.innerWidth > 452 ? 40 : 32) + "px" : "0px")};
   border-top: ${(props) => (props.visible ? "1px solid #3B4668" : "none")};
-  &:hover {
-    overflow-y: auto;
-  }
+  overflow: hidden;
 `;
 
 interface ILayerRow {
   hasChildren: boolean;
   isLastChild: boolean;
   isChild: boolean;
+  innerWidth: number;
 }
 
 const LayerRow = styled.div<ILayerRow>`
@@ -71,15 +82,17 @@ const LayerRow = styled.div<ILayerRow>`
   border-bottom: ${(props) =>
     (!props.isChild || props.isLastChild) &&
     (props.hasChildren ? "none" : "1px solid #3B4668")};
-  height: 32px;
+  height: ${(props) => (props.innerWidth > 452 ? "40px" : "32px")};
   padding: 4px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-left: ${(props) => (props.isChild ? "26px" : "0px")};
 
   & svg,
   p {
     transition: all 0.05s ease;
+    flex-shrink: none;
   }
 
   &:hover {
@@ -93,16 +106,31 @@ const LayerRow = styled.div<ILayerRow>`
   }
 `;
 
+const LayerTitle = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow: hidden;
+  
+
+    & svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
 const typographyStyle = {
   color: "white",
   fontSize: "16px",
   fontWeight: 400,
-  lineHeight: "27px",
+  lineHeight: "24px",
   letterSpacing: "1px",
   fontFamily: "Inter",
-  gap: "8px",
-  display: "flex",
-  alignItems: "center",
+  flex: "1",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  minWidth: "1px",
 };
 
 const Sidebar = ({
@@ -166,16 +194,19 @@ const Sidebar = ({
 
   return (
     <SidebarContainer visible={visible} innerWidth={width}>
-      <ToggleButton onClick={onToggleSidebarClicked}>
-        <Typography
-          variant="body1"
-          sx={typographyStyle}
-        >
-          <LayerIcon /> Layers{" "}
-        </Typography>
+      <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
+        <LayerTitle>
+          <LayerIcon />
+          <Typography
+            variant="body1"
+            sx={typographyStyle}
+          >
+            Layers
+          </Typography>
+        </LayerTitle>
         <Icon name={visible ? "chevron-up" : "chevron-down"} />
       </ToggleButton>
-      <LayersWrapper visible={visible}>
+      <LayersWrapper visible={visible} layerCount={sortedLayers.length} innerWidth={width}>
         {sortedLayers.map((c) => {
           return (
             <LayerRow
@@ -184,21 +215,26 @@ const Sidebar = ({
               isChild={isChild(c)}
               isLastChild={isLastChild(c)}
               onDoubleClick={() => onLayerClicked(c)}
+              innerWidth={width}
             >
-              <Typography
-                variant="body1"
-                sx={typographyStyle}
-              >
-                <LayerIcon /> {c.name}{" "}
-              </Typography>
-              <span onClick={() => toggleVisibility(c.id)}>
+              <LayerTitle>
+
+                <LayerIcon />
+                <Typography
+                  variant="body1"
+                  sx={typographyStyle}
+                >
+                  {c.name}
+                </Typography>
+              </LayerTitle>
+              <div onClick={() => toggleVisibility(c.id)}>
                 {c.visible ? (
                   <EyeIcon />
 
                 ) : (
                   <EyeCloseIcon />
                 )}
-              </span>
+              </div>
             </LayerRow>
           );
         })}
