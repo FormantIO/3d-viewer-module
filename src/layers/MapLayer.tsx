@@ -11,8 +11,7 @@ import { LayerDataContext } from "./common/LayerDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
-import { UIDataContext } from "./common/UIDataContext";
-import * as uuid from "uuid";
+import { LayerType } from "./common/LayerTypes";
 
 const mapStyles = {
   Street: "streets-v11",
@@ -106,7 +105,7 @@ export function MapLayer(props: IMapLayer) {
   }, []);
   const mapReady = mapTexture !== undefined;
   return (
-    <DataVisualizationLayer {...props}>
+    <DataVisualizationLayer {...props} type={LayerType.MAP}>
       {mapReady && (
         <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />

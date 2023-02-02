@@ -1,15 +1,17 @@
 import React from "react";
+import { LayerType } from "./LayerTypes";
 
 interface LayerData {
     name: string;
     id: string;
+    type: LayerType;
     visible: boolean;
     treePath?: number[];
 }
 
 interface UIContextData {
     layers: LayerData[];
-    register: (name: string, id: string, treePath?: number[]) => void;
+    register: (name: string, id: string, type: LayerType, treePath?: number[]) => void;
     toggleVisibility: (id: string) => void;
     cameraTargetId: string;
     setCameraTargetId: (id: string) => void;
@@ -20,7 +22,7 @@ export const UIDataContext =
     React.createContext<UIContextData>(
         {
             layers: [],
-            register: (name: string, id: string) => { },
+            register: (name: string, id: string, type: LayerType, treePath?: number[]) => { },
             toggleVisibility: (id: string) => { },
             cameraTargetId: '',
             setCameraTargetId: (id: string) => { }
@@ -32,9 +34,9 @@ export function useUI(): UIContextData {
     const [layers, setLayers] = React.useState<LayerData[]>([]);
     const [cameraTargetId, setCameraTargetId] = React.useState<string>('');
 
-    const register = (name: string, id: string, treePath?: number[]) => {
+    const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
         console.log('registering', name, id, treePath, layers)
-        setLayers((prevState) => [...prevState, { name, id, visible: true, treePath }]);
+        setLayers((prevState) => [...prevState, { name, id, visible: true, type, treePath }]);
     }
 
     const toggleVisibility = (id: string) => {

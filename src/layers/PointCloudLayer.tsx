@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import * as uuid from "uuid";
 import { IUniverseLayerProps } from "./types";
-import { UIDataContext } from "./common/UIDataContext";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerDataContext } from "./common/LayerDataContext";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
@@ -11,6 +9,9 @@ import { UniverseTelemetrySource } from "@formant/universe-core";
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
+import { LayerType } from "./common/LayerTypes";
+
+interface IPointCloudProps extends IUniverseLayerProps { }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
@@ -37,7 +38,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   }, [layerData, universeData, setPositions]);
 
   return (
-    <DataVisualizationLayer {...props}>
+    <DataVisualizationLayer {...props} type={LayerType.POINTCLOUD}>
       {positions.length > 0 && (
         <points>
           <bufferGeometry attach="geometry">

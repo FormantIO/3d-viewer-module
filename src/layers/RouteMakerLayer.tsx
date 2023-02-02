@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
+import { LayerType } from "./common/LayerTypes";
 
 interface IMapLayer extends IUniverseLayerProps {
   size: number;
@@ -44,7 +45,7 @@ export function RouteMakerLayer(props: IMapLayer) {
   const { children, size } = props;
 
   return (
-    <DataVisualizationLayer {...props}>
+    <DataVisualizationLayer {...props} type={LayerType.ROUTE}>
       <Interactive
         onSelect={(e) => {
           const p = e.intersection?.point;

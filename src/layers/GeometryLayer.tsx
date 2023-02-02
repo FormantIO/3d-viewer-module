@@ -25,6 +25,7 @@ import { GeometryWorld } from "./objects/GeometryWorld";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
+import { LayerType } from "./common/LayerTypes";
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
@@ -245,7 +246,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     );
   });
   return (
-    <DataVisualizationLayer {...props}>
+    <DataVisualizationLayer {...props} type={LayerType.GEOMETRY}>
       <primitive object={root} />
       {children}
     </DataVisualizationLayer>
