@@ -156,7 +156,7 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
-            <MapControls enableDamping={false} ref={mapControlsRef} />
+            <MapControls enableDamping={false} ref={mapControlsRef} minDistance={10} maxPolarAngle={(Math.PI / 2) - 0.1} />
             <PerspectiveCamera
               makeDefault
               position={[0, 0, 300]}
