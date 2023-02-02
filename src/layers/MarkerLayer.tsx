@@ -11,14 +11,7 @@ extend({ MarkerMaterial });
 interface IMarkerLayerProps extends IUniverseLayerProps {}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children, name, id, treePath } = props;
-  const { register, layers } = useContext(UIDataContext);
-
-  useEffect(() => {
-    register(name || "Marker", id || uuid.v4(), treePath);
-  }, []);
-
-  const thisLayer = layers.find((layer) => layer.id === id);
+  const { children } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -56,7 +49,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <TransformLayer {...props} visible={thisLayer?.visible}>
+    <TransformLayer {...props}>
       <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
         <meshStandardMaterial

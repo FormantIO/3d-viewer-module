@@ -13,8 +13,10 @@ import {
 } from "@formant/universe-core";
 import { DataSourceBuilder } from "../model/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+import { UIDataContext } from "../UIDataContext";
+import * as uuid from "uuid";
 
-interface ITransformLayerProps extends IUniverseLayerProps { }
+interface ITransformLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -78,8 +80,15 @@ export function TransformLayer(props: ITransformLayerProps) {
   if (layerData) {
     deviceId = layerData.deviceId;
   }
-  const { children, positioning, visible } = props;
+  const { children, positioning, visible, name, id, treePath } = props;
   const groupRef = useRef<THREE.Group>(null!);
+
+  const { register, layers } = useContext(UIDataContext);
+  useEffect(() => {
+    register(name || "Layer", id || uuid.v4(), treePath);
+  }, []);
+  const thisLayer = layers.find((layer) => layer.id === id);
+
   useEffect(() => {
     const p = positioning || PositioningBuilder.fixed(0, 0, 0);
     if (groupRef.current) {
@@ -209,5 +218,13 @@ export function TransformLayer(props: ITransformLayerProps) {
     }
   }, [groupRef, positioning]);
 
-  return <group visible={visible} ref={groupRef} name={props.id}>{children}</group>;
+  return (
+    <group
+      visible={visible || thisLayer?.visible}
+      ref={groupRef}
+      name={props.id}
+    >
+      {children}
+    </group>
+  );
 }

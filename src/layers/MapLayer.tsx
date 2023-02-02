@@ -12,7 +12,7 @@ import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UIDataContext } from "../UIDataContext";
-import * as uuid from 'uuid';
+import * as uuid from "uuid";
 
 const mapStyles = {
   Street: "streets-v11",
@@ -31,13 +31,10 @@ interface IMapLayer extends IUniverseLayerProps {
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType, mapBoxKey } = props;
   const { children } = props;
-  const { name, id, treePath } = props;
   const layerData = useContext(LayerDataContext);
-  const { register, layers } = useContext(UIDataContext);
   const [mapTexture, setMapTexture] = useState<Texture | undefined>();
 
   useEffect(() => {
-    register(name || "Map", id || uuid.v4(), treePath);
     (async () => {
       let location: [number, number];
       if (dataSource) {
@@ -108,9 +105,8 @@ export function MapLayer(props: IMapLayer) {
     })();
   }, []);
   const mapReady = mapTexture !== undefined;
-  const thisLayer = layers.find((layer) => layer.id === id);
   return (
-    <TransformLayer {...props} visible={thisLayer?.visible}>
+    <TransformLayer {...props}>
       {mapReady && (
         <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />

@@ -25,8 +25,6 @@ import { GeometryWorld } from "../objects/GeometryWorld";
 import { UniverseDataContext } from "../UniverseDataContext";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
-import { UIDataContext } from "../UIDataContext";
-import * as uuid from 'uuid';
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
@@ -49,8 +47,7 @@ const getOrCreateMaterial = (r: number, g: number, b: number, a: number) => {
 };
 
 export function GeometryLayer(props: IGeometryLayer) {
-  const { children, dataSource, name, id, treePath } = props;
-  const { register, layers } = useContext(UIDataContext);
+  const { children, dataSource } = props;
   const world = new GeometryWorld();
 
   const worldGeometry: Map<string, Mesh | Line | Sprite> = new Map();
@@ -58,13 +55,6 @@ export function GeometryLayer(props: IGeometryLayer) {
   const root = new Object3D();
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
-
-  useEffect(() => {
-    register(name || 'Geometry', id || uuid.v4(), treePath);
-  }, [])
-
-  const thisLayer = layers.find(layer => layer.id === id);
-
 
   useEffect(() => {
     universeData.subscribeToGeometry(
@@ -255,7 +245,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     );
   });
   return (
-    <TransformLayer {...props} visible={thisLayer?.visible}>
+    <TransformLayer {...props}>
       <primitive object={root} />
       {children}
     </TransformLayer>

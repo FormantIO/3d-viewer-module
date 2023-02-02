@@ -7,9 +7,9 @@ import { FormantColors } from "../FormantColors";
 import { TransformLayer } from "./TransformLayer";
 import { IUniverseLayerProps } from "./types";
 import { UIDataContext } from "../UIDataContext";
-import * as uuid from 'uuid';
+import * as uuid from "uuid";
 
-interface IGroundLayer extends IUniverseLayerProps { }
+interface IGroundLayer extends IUniverseLayerProps {}
 
 function SilverCircle({ width }: { width: number }) {
   return (
@@ -20,18 +20,10 @@ function SilverCircle({ width }: { width: number }) {
 }
 
 export function GroundLayer(props: IGroundLayer) {
-  const { children, name, id, treePath } = props;
-  const { register, layers } = React.useContext(UIDataContext);
-
-  useEffect(() => {
-    register(name || 'Ground', id || uuid.v4(), treePath);
-  }, [])
-
-  const thisLayer = layers.find(layer => layer.id === id);
-
+  const { children } = props;
 
   return (
-    <TransformLayer {...props} visible={thisLayer?.visible}>
+    <TransformLayer {...props}>
       <Axis />
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />
