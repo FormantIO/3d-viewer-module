@@ -2,15 +2,11 @@ import { Universe } from "./layers/common/Universe";
 import { MarkerLayer } from "./layers/MarkerLayer";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { GeometryLayer } from "./layers/GeometryLayer";
-import { DataVisualizationLayer } from "./layers/DataVisualizationLayer";
-import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
 import { LayerDataContext } from "./layers/common/LayerDataContext";
-import { ExampleUniverseData } from "./layers/common/ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
-import { RouteMakerLayer } from "./layers/RouteMakerLayer";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
 import * as uuid from "uuid";
@@ -20,16 +16,13 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { parsePositioning } from "./config";
-import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { TelemetryUniverseData } from "@formant/universe-connector";
-import { UIDataContext } from "./layers/common/UIDataContext";
 import EmptyLayer from "./layers/EmptyLayer";
 
 const query = new URLSearchParams(window.location.search);
-const demoMode = query.get("auth") === null;
 const currentDeviceId = query.get("device");
 
-function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
+function buildScene(config: Viewer3DConfiguration): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
   let mapLayers: React.ReactNode[] = [];
@@ -131,18 +124,15 @@ function buildUniverse(config: Viewer3DConfiguration): React.ReactNode {
   return devices;
 }
 
-export function App() {
+export function Viewer() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [configuration, setConfiguration] = useState<
     Viewer3DConfiguration | undefined
   >();
-  const [universeData] = useState<IUniverseData>(() => {
-    return demoMode ? new ExampleUniverseData() : new TelemetryUniverseData();
-  });
+  const [universeData] = useState<IUniverseData>(
+    () => new TelemetryUniverseData()
+  );
   useEffect(() => {
-    if (demoMode) {
-      return;
-    }
     (async () => {
       await Authentication.waitTilAuthenticated();
       setAuthenticated(true);
@@ -161,56 +151,12 @@ export function App() {
       });
     })();
   }, []);
-  if (demoMode) {
-    return (
-      <UniverseDataContext.Provider value={universeData}>
-        <Universe>
-          <ambientLight />
-          <GroundLayer
-            positioning={PositioningBuilder.fixed(0, 0.1, 0)}
-            id={uuid.v4()}
-          />
-          <LayerDataContext.Provider
-            value={{
-              deviceId: "ekobot_device",
-            }}
-          >
-            <RouteMakerLayer size={200} id={uuid.v4()} />
-            <MapLayer
-              latitude={59.9139}
-              longitude={10.7522}
-              size={200}
-              mapType="Satellite Street"
-              mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
-              id={uuid.v4()}
-            />
-            <DataVisualizationLayer
-              positioning={PositioningBuilder.localization("eko.loc")}
-            >
-              <MarkerLayer
-                positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
-                id={uuid.v4()}
-              />
-              <GeometryLayer
-                dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
-                id={uuid.v4()}
-              />
-              <PointCloudLayer
-                positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
-                id={uuid.v4()}
-              />
-            </DataVisualizationLayer>
-          </LayerDataContext.Provider>
-        </Universe>
-      </UniverseDataContext.Provider>
-    );
-  }
   if (authenticated && configuration) {
     return (
       <UniverseDataContext.Provider value={universeData}>
         <Universe>
           <ambientLight />
-          {buildUniverse(configuration)};
+          {buildScene(configuration)};
         </Universe>
       </UniverseDataContext.Provider>
     );

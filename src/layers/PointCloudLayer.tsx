@@ -5,19 +5,11 @@ import { UIDataContext } from "./common/UIDataContext";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerDataContext } from "./common/LayerDataContext";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 
 interface IPointCloudProps extends IUniverseLayerProps {}
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { children, name, id, treePath } = props;
-  const { register, layers } = useContext(UIDataContext);
-
-  useEffect(() => {
-    register(name || "PointCloud", id || uuid.v4(), treePath);
-  }, []);
-
-  const thisLayer = layers.find((layer) => layer.id === id);
-
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
   const [positions, setPositions] = useState([]);
@@ -41,7 +33,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   }, [layerData, universeData, setPositions]);
 
   return (
-    <TransformLayer {...props} visible={thisLayer?.visible}>
+    <DataVisualizationLayer {...props}>
       {positions.length > 0 && (
         <points>
           <bufferGeometry attach="geometry">
@@ -64,6 +56,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           />
         </points>
       )}
-    </TransformLayer>
+    </DataVisualizationLayer>
   );
 };
