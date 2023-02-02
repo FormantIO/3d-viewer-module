@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules",
+    "init-dev": "yarn clean && yarn",
     "dev": "vite",
     "dev-vr": "vite --host --port 5555 --config ./vite.config.vr.ts",
     "build": "tsc && vite build",
