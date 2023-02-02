@@ -8,7 +8,7 @@ import { UIDataContext } from "../UIDataContext";
 import * as uuid from "uuid";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps { }
+interface IMarkerLayerProps extends IUniverseLayerProps {}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
   const { children, name, id, treePath } = props;
@@ -43,13 +43,13 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     circle.scale.setScalar(2);
     arrow.scale.setScalar(2);
 
-    const scaleFactor = 25;
+    /*const scaleFactor = 25;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /
       scaleFactor;
     circle.scale.setScalar(scale);
-    arrow.scale.setScalar(scale);
+    arrow.scale.setScalar(scale);*/
 
     (circle.material as any).uniforms.uTime.value += delta;
     circle.lookAt(camera.position);
