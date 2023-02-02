@@ -42,29 +42,65 @@ export function Universe(props: IUniverseProps) {
         const target = scene.getObjectByName(targetId);
         if (target) {
           const targetPosition = target.getWorldPosition(new Vector3());
-          m.target.set(targetPosition.x, targetPosition.y, targetPosition.z);
-          m.object.position.set(
+          const currentTarget = m.target.clone();
+          const currentPosition = m.object.position.clone();
+
+          const desiredTarget = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+          const desiredPosition = new Vector3(
             targetPosition.x,
             targetPosition.y,
             DEFAULT_CAMERA_POSITION.z
           );
-          m.update();
+
+          let lerpTarget = currentTarget.clone();
+          let lerpPosition = currentPosition.clone();
+
+          const animationFrame = () => {
+            lerpTarget = currentTarget.lerp(desiredTarget, 0.07);
+            lerpPosition = currentPosition.lerp(desiredPosition, 0.07);
+            m.target.copy(lerpTarget);
+            m.object.position.copy(lerpPosition);
+            m.update();
+
+            if (m.target.distanceToSquared(desiredTarget) > 0.1 ||
+              m.object.position.distanceToSquared(desiredPosition) > 0.1) {
+              requestAnimationFrame(animationFrame);
+            }
+          };
+          requestAnimationFrame(animationFrame);
         }
       }
     },
-    [scene]
+    [scene, mapControlsRef]
   );
 
   const recenter = React.useCallback(() => {
     const m = mapControlsRef.current;
     if (m) {
-      m.target.set(0, 0, 0);
-      m.object.position.set(
+      const target = m.target;
+      const position = m.object.position;
+      const defaultTarget = new Vector3(0, 0, 0);
+      const defaultPosition = new Vector3(
         DEFAULT_CAMERA_POSITION.x,
         DEFAULT_CAMERA_POSITION.y,
         300
       );
-      m.update();
+      let lerpTarget = target.clone();
+      let lerpPosition = position.clone();
+
+      const animationFrame = () => {
+        lerpTarget = target.lerp(defaultTarget, 0.05);
+        lerpPosition = position.lerp(defaultPosition, 0.05);
+        target.copy(lerpTarget);
+        position.copy(lerpPosition);
+        m.update();
+
+        if (target.distanceTo(defaultTarget) > 5 &&
+          position.distanceTo(defaultPosition) > 5) {
+          requestAnimationFrame(animationFrame);
+        }
+      };
+      requestAnimationFrame(animationFrame);
     }
   }, [mapControlsRef]);
 
