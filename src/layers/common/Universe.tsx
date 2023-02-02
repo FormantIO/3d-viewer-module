@@ -22,6 +22,8 @@ import { Scene, Vector3 } from "three";
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
+const DEFAULT_CAMERA_POSITION = new Vector3(0, 40, 40);
+
 
 type IUniverseProps = {
   children?: React.ReactNode;
@@ -42,7 +44,7 @@ export function Universe(props: IUniverseProps) {
           m.object.position.set(
             targetPosition.x,
             targetPosition.y,
-            targetPosition.z + 300
+            DEFAULT_CAMERA_POSITION.z
           );
           m.update();
         }
