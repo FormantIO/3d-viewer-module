@@ -6,10 +6,14 @@ import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerDataContext } from "./common/LayerDataContext";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
+import { UniverseTelemetrySource } from "@formant/universe-core";
 
-interface IPointCloudProps extends IUniverseLayerProps {}
+interface IPointCloudProps extends IUniverseLayerProps {
+  dataSource: UniverseTelemetrySource;
+}
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
+  const { dataSource } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
   const [positions, setPositions] = useState([]);
@@ -21,7 +25,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
     const unsubscribe = universeData.subscribeToPointCloud(
       deviceId,
-      DataSourceBuilder.telemetry("eko.geo", "point cloud"),
+      dataSource,
       (data: any) => {
         if (data.positions) setPositions(data.positions);
       }

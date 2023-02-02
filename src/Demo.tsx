@@ -54,6 +54,7 @@ export function Demo() {
               name="Geometry"
             />
             <PointCloudLayer
+              dataSource={DataSourceBuilder.telemetry("eko.geo", "point cloud")}
               positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
               name="Point Cloud"
             />
