@@ -3,9 +3,11 @@ import React from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
 import { EyeCloseIcon, EyeIcon, LayerIcon } from "./icons";
+import useWindowSize from "../common/useWindowSize";
 
 interface ITreeArea {
   visible: boolean;
+  innerWidth?: number;
 }
 
 const SidebarContainer = styled.div<ITreeArea>`
@@ -19,10 +21,17 @@ const SidebarContainer = styled.div<ITreeArea>`
   transition: all 0.2s ease;
   background-color: #2d3855;
   width: ${(props) =>
-    props.visible || window.innerWidth > 400 ? "240px" : "32px"};
+    props.visible ? "184px" : "32px"};
   overflow: hidden;
   &:hover {
-    width: 240px;
+    width: 184px;
+  }
+  ${(props) => props.innerWidth && props.innerWidth > 452 && `
+    width: 384px;
+    &:hover {
+      width: 384px;
+    }
+  `}
   }
 `;
 
@@ -33,7 +42,7 @@ const ToggleButton = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 40px;
-  padding-right: 8px;
+  padding: 4px 8px;
 
   & svg {
     color: white;
@@ -45,7 +54,7 @@ const LayersWrapper = styled.div<ITreeArea>`
   transition: max-height 0.3s ease-in-out;
   //transition-delay: 0.1s;
   max-height: ${(props) => (props.visible ? "500px" : "0px")};
-  border-top: ${(props) => (props.visible ? "1px solid #1C1E2D" : "none")};
+  border-top: ${(props) => (props.visible ? "1px solid #3B4668" : "none")};
   &:hover {
     overflow-y: auto;
   }
@@ -61,9 +70,9 @@ const LayerRow = styled.div<ILayerRow>`
   cursor: pointer;
   border-bottom: ${(props) =>
     (!props.isChild || props.isLastChild) &&
-    (props.hasChildren ? "none" : "1px solid #1C1E2D")};
-  height: 40px;
-  padding: 0 8px;
+    (props.hasChildren ? "none" : "1px solid #3B4668")};
+  height: 32px;
+  padding: 4px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -84,6 +93,18 @@ const LayerRow = styled.div<ILayerRow>`
   }
 `;
 
+const typographyStyle = {
+  color: "white",
+  fontSize: "16px",
+  fontWeight: 400,
+  lineHeight: "27px",
+  letterSpacing: "1px",
+  fontFamily: "Inter",
+  gap: "8px",
+  display: "flex",
+  alignItems: "center",
+};
+
 const Sidebar = ({
   lookAtTargetId,
 }: {
@@ -92,6 +113,7 @@ const Sidebar = ({
   const { layers, toggleVisibility, setCameraTargetId } =
     React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
+  const [width, height] = useWindowSize();
 
   const onToggleSidebarClicked = () => {
     setVisible(!visible);
@@ -143,17 +165,11 @@ const Sidebar = ({
   };
 
   return (
-    <SidebarContainer visible={visible}>
+    <SidebarContainer visible={visible} innerWidth={width}>
       <ToggleButton onClick={onToggleSidebarClicked}>
         <Typography
           variant="body1"
-          sx={{
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontSize: "12px",
-          }}
+          sx={typographyStyle}
         >
           <LayerIcon /> Layers{" "}
         </Typography>
@@ -171,14 +187,7 @@ const Sidebar = ({
             >
               <Typography
                 variant="body1"
-                sx={{
-                  color: "white",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  fontSize: "12px",
-                  marginLeft: c.treePath ? c.treePath.length * 20 + "px" : 0,
-                }}
+                sx={typographyStyle}
               >
                 <LayerIcon /> {c.name}{" "}
               </Typography>
