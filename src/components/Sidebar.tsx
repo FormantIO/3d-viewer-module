@@ -98,7 +98,7 @@ const LayerRow = styled.div<ILayerRow>`
 
   &:hover {
     & svg {
-      visibility: initial;
+      opacity: 1;
     }
   }
 
@@ -128,12 +128,6 @@ const VisibilityIcon = styled.div<IVisibilityIcon>`
   & svg {
     transition: all 0.1s ease;
     opacity: ${(props) => (props.layerVisible ? 0 : 1)}
-  }
-
-  &:hover {
-    & svg {
-      opacity: 1;
-    }
   }
 `;
 
