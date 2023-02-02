@@ -40,7 +40,6 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
           <GroundLayer
             key={"map" + i}
             positioning={positioning}
-            id={uuid.v4()}
             treePath={getTreePath()}
             name={layer.mapName || "Ground Plane"}
           />
@@ -62,7 +61,6 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
           mapBoxKey={layer.mapboxKey || ""}
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.mapName || "Map"}
-          id={uuid.v4()}
           treePath={getTreePath()}
         />
       );
@@ -77,7 +75,6 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
           <MarkerLayer
             key={"vis" + i}
             positioning={positioning}
-            id={uuid.v4()}
             treePath={getTreePath()}
             name={layer.name || "Marker"}
           />
@@ -95,7 +92,6 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
             key={"geo" + i}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
-            id={uuid.v4()}
             treePath={getTreePath()}
             name={layer.name || "Geometry"}
           />

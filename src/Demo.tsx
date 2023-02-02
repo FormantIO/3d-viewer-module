@@ -25,21 +25,20 @@ export function Demo() {
         <ambientLight />
         <GroundLayer
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}
-          id={uuid.v4()}
+          name="Ground"
         />
         <LayerDataContext.Provider
           value={{
             deviceId: "ekobot_device",
           }}
         >
-          <RouteMakerLayer size={200} id={uuid.v4()} />
+          <RouteMakerLayer size={200} name="Route Builder" />
           <MapLayer
             latitude={59.9139}
             longitude={10.7522}
             size={200}
             mapType="Satellite Street"
             mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
-            id={uuid.v4()}
             name="Map"
           />
           <DataVisualizationLayer
@@ -48,17 +47,14 @@ export function Demo() {
           >
             <MarkerLayer
               positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
-              id={uuid.v4()}
               name="Marker"
             />
             <GeometryLayer
               dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
-              id={uuid.v4()}
               name="Geometry"
             />
             <PointCloudLayer
               positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
-              id={uuid.v4()}
               name="Point Cloud"
             />
           </DataVisualizationLayer>
