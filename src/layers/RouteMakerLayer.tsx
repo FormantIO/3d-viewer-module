@@ -56,10 +56,10 @@ export function RouteMakerLayer(props: IMapLayer) {
         <mesh
           onPointerDown={(e) => {
             let p = e.point;
-            setPoints([...points, [p.x, p.z, -p.y]]);
+            setPoints([...points, [p.x, p.y, p.z + 1]]);
           }}
         >
-          <boxGeometry args={[size, 0.1, size]} />
+          <boxGeometry args={[size, size, 0.1]} />
           <meshPhongMaterial opacity={0} transparent />
         </mesh>
       </Interactive>
