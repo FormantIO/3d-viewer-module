@@ -7,6 +7,19 @@ An open-source module for visualizing spatial data on Formant.  You can use this
 https://user-images.githubusercontent.com/66638393/216462090-7fdfc464-5ae8-46b5-bb41-764afc620706.mov
 
 
+# What technologies do I need to know to use or extend this library?
+
+* Typescript
+* ThreeJS
+* React
+* React Three Fiber
+
+# How do I add a new layer of information?
+
+Adding a new layer of information has two components
+
+* Creating the code for 3D visualization of your layer
+* Adding configuration to the module's schema and connecting the configuration to your layer
 
 # How do I run 3D viewer when i'm developing on it?
 
