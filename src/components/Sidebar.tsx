@@ -2,7 +2,7 @@ import { Icon, Typography } from "@formant/ui-sdk";
 import React from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
-import { LayerIcon } from "./icons";
+import { EyeCloseIcon, EyeIcon, LayerIcon } from "./icons";
 
 interface ITreeArea {
   visible: boolean;
@@ -182,11 +182,14 @@ const Sidebar = ({
               >
                 <LayerIcon /> {c.name}{" "}
               </Typography>
-              <input
-                type="checkbox"
-                checked={c.visible}
-                onChange={() => toggleVisibility(c.id)}
-              />
+              <span onClick={() => toggleVisibility(c.id)}>
+                {c.visible ? (
+                  <EyeIcon />
+
+                ) : (
+                  <EyeCloseIcon />
+                )}
+              </span>
             </LayerRow>
           );
         })}

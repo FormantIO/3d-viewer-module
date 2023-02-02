@@ -13,7 +13,7 @@ import {
 } from "@formant/universe-core";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
-import { UIDataContext } from "./common/UIDataContext";
+import { LayerData, UIDataContext } from "./common/UIDataContext";
 import * as uuid from "uuid";
 import { LayerType } from "./common/LayerTypes";
 
@@ -75,7 +75,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const [positionUnsubscriber, setPositionUnsubscriber] = useState<
     CloseSubscription | undefined
   >();
-  const [layerId, setLayerId] = useState<string | undefined>(undefined);
+  const [thisLayer, setThisLayer] = useState<LayerData | undefined>(undefined);
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerDataContext);
   let deviceId: string | undefined;
@@ -88,10 +88,10 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
     const autoId = id || uuid.v4();
-    setLayerId(autoId)
-    register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
+    const registeredLayer = register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
+    console.log(registeredLayer)
+    setThisLayer(registeredLayer);
   }, []);
-  const thisLayer = layers.find((layer) => layer.id === id);
 
   useEffect(() => {
     const p = positioning || PositioningBuilder.fixed(0, 0, 0);
@@ -220,15 +220,16 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       }
     }
-  }, [groupRef, positioning]);
+  }, [groupRef, positioning, thisLayer]);
 
-  return (
+  return thisLayer ? (
     <group
-      visible={visible || thisLayer?.visible}
+      visible={thisLayer.visible}
       ref={groupRef}
-      name={layerId}
+      name={thisLayer.id}
     >
       {children}
     </group>
-  );
+  ) : (
+    <>  </>);
 }

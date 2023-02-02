@@ -61,6 +61,16 @@ export function Universe(props: IUniverseProps) {
     cameraTargetId,
     setCameraTargetId,
   } = useUI();
+
+  useEffect(() => {
+    layers.forEach((l) => {
+      const sceneObj = scene?.getObjectByName(l.id);
+      if (sceneObj) {
+        sceneObj.visible = l.visible
+      };
+    });
+  }, [layers, scene]);
+
   return (
     <>
       <UIDataContext.Provider

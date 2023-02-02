@@ -11,7 +11,7 @@ export interface LayerData {
 
 interface UIContextData {
     layers: LayerData[];
-    register: (name: string, id: string, type: LayerType, treePath?: number[]) => void;
+    register: (name: string, id: string, type: LayerType, treePath?: number[]) => LayerData;
     toggleVisibility: (id: string) => void;
     cameraTargetId: string;
     setCameraTargetId: (id: string) => void;
@@ -22,7 +22,7 @@ export const UIDataContext =
     React.createContext<UIContextData>(
         {
             layers: [],
-            register: (name: string, id: string, type: LayerType, treePath?: number[]) => { },
+            register: (name: string, id: string, type: LayerType, treePath?: number[]) => { return { name, id, type, visible: true, treePath } },
             toggleVisibility: (id: string) => { },
             cameraTargetId: '',
             setCameraTargetId: (id: string) => { }
@@ -36,6 +36,7 @@ export function useUI(): UIContextData {
 
     const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
         setLayers((prevState) => [...prevState, { name, id, visible: true, type, treePath }]);
+        return { name, id, visible: true, type, treePath };
     }
 
     const toggleVisibility = (id: string) => {
@@ -43,6 +44,7 @@ export function useUI(): UIContextData {
             return prevState.map(c => {
                 if (c.id === id) {
                     const newVisibility = !c.visible;
+                    console.log('toggleVisibility', c, newVisibility)
                     if (c.treePath && c.treePath.length > 0) {
                         const children = prevState.filter(layer => layer.treePath && c.treePath && layer.treePath[0] === c.treePath[0] && layer.treePath.length > c.treePath.length);
                         if (!newVisibility) {
