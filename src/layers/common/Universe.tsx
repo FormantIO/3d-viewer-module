@@ -18,17 +18,19 @@ import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
 import { Scene, Vector3 } from "three";
+import ZoomControls from "../../components/ZoomControls";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
-const DEFAULT_CAMERA_POSITION = new Vector3(0, 40, 40);
+const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 40);
 
 
 type IUniverseProps = {
   children?: React.ReactNode;
 };
 
+let zooming = false;
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const mapControlsRef = React.useRef<any>(null!);
@@ -52,6 +54,70 @@ export function Universe(props: IUniverseProps) {
     },
     [scene]
   );
+
+  const recenter = React.useCallback(() => {
+    const m = mapControlsRef.current;
+    if (m) {
+      m.target.set(0, 0, 0);
+      m.object.position.set(
+        DEFAULT_CAMERA_POSITION.x,
+        DEFAULT_CAMERA_POSITION.y,
+        300
+      );
+      m.update();
+    }
+  }, [mapControlsRef]);
+
+  const zoomCamera = (x: number) => {
+    const m = mapControlsRef.current;
+    if (m) {
+      const position = m.object.position;
+      const target = m.target;
+      const direction = target.clone().sub(position).normalize();
+      const distanceToTarget = position.distanceTo(target);
+      let dampening = 1;
+      if (x > 0 && distanceToTarget < 40) {
+        dampening = 1 - (x / distanceToTarget * 3);
+      }
+      if (distanceToTarget < 10 && x > 0) {
+        return;
+      }
+      m.object.position.copy(position.clone().add(direction.multiplyScalar(x * dampening)))
+      m.update()
+    }
+  };
+
+  const zoomIn = () => {
+    zooming = true;
+    const zoom = () => {
+      if (!zooming || !scene) {
+        // eslint-disable-next-line no-use-before-define
+        clearInterval(interval);
+        return;
+      }
+      zoomCamera(5);
+    };
+    zoom();
+    const interval = setInterval(zoom, 20);
+  };
+
+  const zoomOut = () => {
+    zooming = true;
+    const zoom = () => {
+      if (!zooming || !scene) {
+        // eslint-disable-next-line no-use-before-define
+        clearInterval(interval);
+        return;
+      }
+      zoomCamera(-5);
+    };
+    zoom();
+    const interval = setInterval(zoom, 20);
+  };
+
+  const stopZoom = () => {
+    zooming = false;
+  };
 
   const vr = shouldUseVR;
   const {
@@ -128,6 +194,12 @@ export function Universe(props: IUniverseProps) {
           </XR>
         </Canvas>
         <Sidebar lookAtTargetId={lookAtTargetId} />
+        <ZoomControls
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+          recenter={recenter}
+          stopZoom={stopZoom}
+        />
       </UIDataContext.Provider>
     </>
   );
