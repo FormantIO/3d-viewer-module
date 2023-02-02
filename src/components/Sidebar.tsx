@@ -2,7 +2,7 @@ import { Icon, Typography } from "@formant/ui-sdk";
 import React from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
-import { EyeCloseIcon, EyeIcon, LayerIcon } from "./icons";
+import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
 
 interface ITreeArea {
@@ -75,6 +75,7 @@ interface ILayerRow {
   isLastChild: boolean;
   isChild: boolean;
   innerWidth: number;
+  layerVisible: boolean;
 }
 
 const LayerRow = styled.div<ILayerRow>`
@@ -92,7 +93,7 @@ const LayerRow = styled.div<ILayerRow>`
   & svg,
   p {
     transition: all 0.05s ease;
-    flex-shrink: none;
+    color: ${(props) => (props.layerVisible ? "white" : "#657197")};
   }
 
   &:hover {
@@ -169,28 +170,46 @@ const Sidebar = ({
     return a.treePath.length - b.treePath.length;
   });
 
-  const hasChildren = (layer: any) => {
+  const hasChildren = (layer: LayerData) => {
     return sortedLayers.some(
       (l) =>
         l.treePath &&
+        layer.treePath &&
         l.treePath[0] === layer.treePath[0] &&
         l.treePath.length > layer.treePath.length
     );
   };
 
-  const isLastChild = (layer: any) => {
+  const isLastChild = (layer: LayerData) => {
     if (layer.treePath?.length === 1) return false;
     return !sortedLayers.some(
       (l) =>
         l.treePath &&
+        layer.treePath &&
         l.treePath[0] === layer.treePath[0] &&
         l.treePath[1] > layer.treePath[1]
     );
   };
 
-  const isChild = (layer: any) => {
-    return layer.treePath?.length > 1;
+  const isChild = (layer: LayerData) => {
+    if (layer.treePath) {
+      return layer.treePath.length > 1;
+    }
+    return false;
   };
+
+  const getLayerIcon = (layer: LayerData) => {
+    switch (layer.type) {
+      case "map":
+        return <MapIcon disabled={!layer.visible} />
+      case "geometry":
+        return <CubeIcon disabled={!layer.visible} />
+
+      default:
+        return <LayerIcon disabled={!layer.visible} />
+
+    }
+  }
 
   return (
     <SidebarContainer visible={visible} innerWidth={width}>
@@ -216,10 +235,10 @@ const Sidebar = ({
               isLastChild={isLastChild(c)}
               onDoubleClick={() => onLayerClicked(c)}
               innerWidth={width}
+              layerVisible={c.visible}
             >
               <LayerTitle>
-
-                <LayerIcon />
+                {getLayerIcon(c)}
                 <Typography
                   variant="body1"
                   sx={typographyStyle}
