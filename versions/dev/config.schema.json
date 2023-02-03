@@ -51,11 +51,6 @@
                   "type": "number",
                   "$formant.visible.when": ["mapType", "=", "World Map"]
                 },
-                "mapboxKey": {
-                  "title": "Mapbox key",
-                  "type": "string",
-                  "$formant.visible.when": ["mapType", "=", "World Map"]
-                },
                 "dataSource": {
                   "type": "object",
                   "properties": {
