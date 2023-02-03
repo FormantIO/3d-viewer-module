@@ -2,16 +2,18 @@ import { useContext, useEffect, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerDataContext } from "./common/LayerDataContext";
-import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { UniverseTelemetrySource } from "@formant/universe-core";
+import { PointCloudMaterial } from "./utils/PointCloudMaterial";
+extend({ PointCloudMaterial });
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
 import { LayerType } from "./common/LayerTypes";
+import { extend } from "@react-three/fiber";
 
-interface IPointCloudProps extends IUniverseLayerProps { }
+interface IPointCloudProps extends IUniverseLayerProps {}
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
@@ -50,7 +52,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             />
           </bufferGeometry>
 
-          <pointsMaterial
+          {/* <pointsMaterial
             attach="material"
             color={[4, 3.0, 1]}
             size={0.1}
@@ -58,7 +60,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             transparent={false}
             alphaTest={0.5}
             opacity={1.0}
-          />
+          /> */}
+
+          <pointCloudMaterial args={[10, "#0bc6ff", "#cf34bb"]} />
         </points>
       )}
     </DataVisualizationLayer>
