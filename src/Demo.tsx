@@ -35,13 +35,13 @@ export function Demo() {
             deviceId: "ekobot_device",
           }}
         >
-          { experimentalMode && <RouteMakerLayer size={200} name="Route Builder" /> }
+          {experimentalMode && <RouteMakerLayer size={200} name="Route Builder" />}
           <MapLayer
             latitude={59.9139}
             longitude={10.7522}
             size={200}
             mapType="Satellite Street"
-            mapBoxKey="pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuZm10NDA0M3MzZG53dWpjZ2k4d2kifQ.VOITHlgENYusw8tSYUlJ2w"
+            mapBoxKey=""
             name="Map"
           />
           <DataVisualizationLayer

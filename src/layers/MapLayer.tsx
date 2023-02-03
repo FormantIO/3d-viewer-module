@@ -61,7 +61,7 @@ export function MapLayer(props: IMapLayer) {
         width: 1280,
         height: 1280,
         bearing: 0,
-        accessToken: definedAndNotNull(mapBoxKey) || URL_SCOPED_TOKEN,
+        accessToken: mapBoxKey || URL_SCOPED_TOKEN,
       };
       const { username, styleId, width, height, accessToken } = mapBoxConfig;
       const distance = size / 2;
