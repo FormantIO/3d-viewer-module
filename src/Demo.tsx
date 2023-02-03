@@ -15,6 +15,9 @@ import * as uuid from "uuid";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 
+const query = new URLSearchParams(window.location.search);
+const experimentalMode = query.get("experimental") === "true";
+
 export function Demo() {
   const [universeData] = useState<IUniverseData>(
     () => new ExampleUniverseData()
@@ -32,7 +35,7 @@ export function Demo() {
             deviceId: "ekobot_device",
           }}
         >
-          <RouteMakerLayer size={200} name="Route Builder" />
+          { experimentalMode && <RouteMakerLayer size={200} name="Route Builder" /> }
           <MapLayer
             latitude={59.9139}
             longitude={10.7522}
