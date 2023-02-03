@@ -35,6 +35,10 @@ const SidebarContainer = styled.div<ITreeArea>`
     }
   `}
   }
+
+  & * {
+    user-select: none;
+  }
 `;
 
 interface IToggleButton {
