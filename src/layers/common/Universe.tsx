@@ -76,6 +76,8 @@ export function Universe(props: IUniverseProps) {
 
   const recenter = React.useCallback(() => {
     const m = mapControlsRef.current;
+    console.log(m)
+    return;
     if (m) {
       const target = m.target;
       const position = m.object.position;
@@ -91,6 +93,7 @@ export function Universe(props: IUniverseProps) {
       const animationFrame = () => {
         lerpTarget = target.lerp(defaultTarget, 0.05);
         lerpPosition = position.lerp(defaultPosition, 0.05);
+
         target.copy(lerpTarget);
         position.copy(lerpPosition);
         m.update();
