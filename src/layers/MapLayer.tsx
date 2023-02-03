@@ -13,6 +13,8 @@ import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { LayerType } from "./common/LayerTypes";
 
+const URL_SCOPED_TOKEN = "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
+
 const mapStyles = {
   Street: "streets-v11",
   Satellite: "satellite-v9",
@@ -59,7 +61,7 @@ export function MapLayer(props: IMapLayer) {
         width: 1280,
         height: 1280,
         bearing: 0,
-        accessToken: mapBoxKey,
+        accessToken: definedAndNotNull(mapBoxKey) || URL_SCOPED_TOKEN,
       };
       const { username, styleId, width, height, accessToken } = mapBoxConfig;
       const distance = size / 2;
