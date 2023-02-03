@@ -17,7 +17,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Scene, Vector3 } from "three";
+import { MathUtils, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 
 const query = new URLSearchParams(window.location.search);
@@ -76,8 +76,7 @@ export function Universe(props: IUniverseProps) {
 
   const recenter = React.useCallback(() => {
     const m = mapControlsRef.current;
-    console.log(m)
-    return;
+
     if (m) {
       const target = m.target;
       const position = m.object.position;
@@ -89,17 +88,23 @@ export function Universe(props: IUniverseProps) {
       );
       let lerpTarget = target.clone();
       let lerpPosition = position.clone();
+      let lerpRotation = m.getAzimuthalAngle();
+      m.object.useEuler = true;
+      m.object.rotation.set(0, 0, 0);
+      m.object.z = 0;
 
       const animationFrame = () => {
         lerpTarget = target.lerp(defaultTarget, 0.05);
         lerpPosition = position.lerp(defaultPosition, 0.05);
+        lerpRotation = MathUtils.lerp(lerpRotation, 0, 0.05);
 
         target.copy(lerpTarget);
         position.copy(lerpPosition);
+        m.setAzimuthalAngle(lerpRotation);
         m.update();
 
-        if (target.distanceTo(defaultTarget) > 5 &&
-          position.distanceTo(defaultPosition) > 5) {
+        if (Math.abs(target.distanceTo(defaultTarget)) > 5 ||
+          Math.abs(position.distanceTo(defaultPosition)) > 5 || m.getAzimuthalAngle() > 0.1) {
           requestAnimationFrame(animationFrame);
         }
       };
