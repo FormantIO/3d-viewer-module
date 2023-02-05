@@ -132,7 +132,6 @@ export function Viewer() {
   useEffect(() => {
     (async () => {
       await Authentication.waitTilAuthenticated();
-      setAuthenticated(true);
       const currentConfig = await FormantApp.getCurrentModuleConfiguration();
       if (currentConfig) {
         setConfiguration(JSON.parse(currentConfig) as Viewer3DConfiguration);
@@ -146,6 +145,7 @@ export function Viewer() {
         const d = new Date(event.time);
         universeData.setTime(d);
       });
+      setAuthenticated(true);
     })();
   }, []);
   if (authenticated && configuration) {
