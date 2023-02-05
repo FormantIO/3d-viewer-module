@@ -158,5 +158,6 @@ export function Viewer() {
       </UniverseDataContext.Provider>
     );
   }
-  return <MissingConfig />;
+  if (authenticated && !configuration) return <MissingConfig />;
+  return <div />;
 }

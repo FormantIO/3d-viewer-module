@@ -4,6 +4,7 @@ import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
 import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
+import { FormantColors } from "../layers/utils/FormantColors";
 
 interface ITreeArea {
   visible: boolean;
@@ -21,14 +22,16 @@ const SidebarContainer = styled.div<ITreeArea>`
   max-height: 100%;
   transition: all 0.2s ease;
   background-color: #2d3855;
-  width: ${(props) =>
-    props.visible ? "184px" : "32px"};
+  width: ${(props) => (props.visible ? "184px" : "32px")};
   overflow: hidden;
   &:hover {
     width: 184px;
   }
 
-  ${(props) => props.innerWidth && props.innerWidth > 452 && `
+  ${(props) =>
+    props.innerWidth &&
+    props.innerWidth > 452 &&
+    `
     width: 384px;
     &:hover {
       width: 384px;
@@ -52,7 +55,7 @@ const ToggleButton = styled.div<IToggleButton>`
   justify-content: space-between;
   width: 100%;
   padding: 4px 7px;
-  height: ${(props) => (props.innerWidth > 452 ? "40px" : "32px")};
+  height: "32px";
 
   & svg {
     color: white;
@@ -69,7 +72,7 @@ const LayersWrapper = styled.div<ILayersWrapper>`
   overflow-y: hidden;
   transition: height 0.3s ease-in-out;
   //transition-delay: 0.1s;
-  height: ${(props) => (props.visible ? props.layerCount * (props.innerWidth > 452 ? 40 : 32) + "px" : "0px")};
+  height: ${(props) => (props.visible ? "auto" : "0px")};
   border-top: ${(props) => (props.visible ? "1px solid #3B4668" : "none")};
   overflow: hidden;
 `;
@@ -87,7 +90,7 @@ const LayerRow = styled.div<ILayerRow>`
   border-bottom: ${(props) =>
     (!props.isChild || props.isLastChild) &&
     (props.hasChildren ? "none" : "1px solid #3B4668")};
-  height: ${(props) => (props.innerWidth > 452 ? "40px" : "32px")};
+  height: "32px";
   padding: 4px 8px;
   display: flex;
   justify-content: space-between;
@@ -97,7 +100,8 @@ const LayerRow = styled.div<ILayerRow>`
   & svg,
   p {
     transition: all 0.05s ease;
-    color: ${(props) => (props.layerVisible ? "white" : "#657197")};
+    color: ${(props) =>
+      props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -116,9 +120,8 @@ const LayerTitle = styled.div`
   gap: 8px;
   align-items: center;
   overflow: hidden;
-  
 
-    & svg {
+  & svg {
     width: 18px;
     height: 18px;
   }
@@ -131,15 +134,13 @@ interface IVisibilityIcon {
 const VisibilityIcon = styled.div<IVisibilityIcon>`
   & svg {
     transition: all 0.1s ease;
-    opacity: ${(props) => (props.layerVisible ? 0 : 1)}
+    opacity: ${(props) => (props.layerVisible ? 0 : 1)};
   }
 `;
 
-
 const typographyStyle = {
-  color: "white",
-  fontSize: "16px",
-  fontWeight: 400,
+  color: FormantColors.silver,
+  fontSize: "0.9375rem",
   lineHeight: "24px",
   letterSpacing: "1px",
   fontFamily: "Inter",
@@ -166,7 +167,14 @@ const Sidebar = ({
 
   const onLayerClicked = (layer: LayerData) => {
     if (layer.type === "empty" && hasChildren(layer)) {
-      const markerChild = layers.find(l => l.treePath && layer.treePath && l.treePath[0] === layer.treePath[0] && l.treePath.length === 2 && l.type === "marker");
+      const markerChild = layers.find(
+        (l) =>
+          l.treePath &&
+          layer.treePath &&
+          l.treePath[0] === layer.treePath[0] &&
+          l.treePath.length === 2 &&
+          l.type === "marker"
+      );
       if (markerChild) {
         lookAtTargetId(markerChild.id);
         return;
@@ -217,31 +225,31 @@ const Sidebar = ({
   const getLayerIcon = (layer: LayerData) => {
     switch (layer.type) {
       case "map":
-        return <MapIcon disabled={!layer.visible} />
+        return <MapIcon disabled={!layer.visible} />;
       case "geometry":
-        return <CubeIcon disabled={!layer.visible} />
+        return <CubeIcon disabled={!layer.visible} />;
 
       default:
-        return <LayerIcon disabled={!layer.visible} />
-
+        return <LayerIcon disabled={!layer.visible} />;
     }
-  }
+  };
 
   return (
     <SidebarContainer visible={visible} innerWidth={width}>
       <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
         <LayerTitle>
           <LayerIcon />
-          <Typography
-            variant="body1"
-            sx={typographyStyle}
-          >
+          <Typography variant="body1" sx={typographyStyle}>
             Layers
           </Typography>
         </LayerTitle>
         <Icon name={visible ? "chevron-up" : "chevron-down"} />
       </ToggleButton>
-      <LayersWrapper visible={visible} layerCount={sortedLayers.length} innerWidth={width}>
+      <LayersWrapper
+        visible={visible}
+        layerCount={sortedLayers.length}
+        innerWidth={width}
+      >
         {sortedLayers.map((c) => {
           return (
             <LayerRow
@@ -255,20 +263,15 @@ const Sidebar = ({
             >
               <LayerTitle>
                 {getLayerIcon(c)}
-                <Typography
-                  variant="body1"
-                  sx={typographyStyle}
-                >
+                <Typography variant="body1" sx={typographyStyle}>
                   {c.name}
                 </Typography>
               </LayerTitle>
-              <VisibilityIcon onClick={() => toggleVisibility(c.id)} layerVisible={c.visible}>
-                {c.visible ? (
-                  <EyeIcon />
-
-                ) : (
-                  <EyeCloseIcon />
-                )}
+              <VisibilityIcon
+                onClick={() => toggleVisibility(c.id)}
+                layerVisible={c.visible}
+              >
+                {c.visible ? <EyeIcon /> : <EyeCloseIcon />}
               </VisibilityIcon>
             </LayerRow>
           );
