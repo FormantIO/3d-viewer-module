@@ -551,10 +551,10 @@
     sass "^1.51.0"
     styled-components "^5.3.5"
 
-"@formant/universe-connector@0.0.18":
-  version "0.0.18"
-  resolved "https://registry.npmjs.org/@formant/universe-connector/-/universe-connector-0.0.18.tgz"
-  integrity sha512-us+i2GQgMNSLmB51l649fkCKB9so3/TrvGcb70OTDLCGrL/lEDpbd0zViinC03YaGF922ZStp3A5tRqu10k+wQ==
+"@formant/universe-connector@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.19.tgz#71f1e61e76ee2203c01c827f2557e6632e8e5c89"
+  integrity sha512-1VLyuQ5ZhTFZ5Ti8DoallNEtiWX+ZXsA/u5/lbVONOdLeXmQcic1VS/2l4qpJi/MG/8aiNFGoTcSAjo2zimIqg==
   dependencies:
     "@formant/data-sdk" "0.0.117"
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"

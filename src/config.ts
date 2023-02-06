@@ -35,6 +35,10 @@ export type Viewer3DConfiguration = {
   devices?: {
     name?: string;
     positioning?: Viewer3DConfiguarationPositioning;
+    pointCloudLayers?: {
+      name?: string;
+      dataSource?: Viewer3DConfigurationDataSource;
+    }[];
     mapLayers?: {
       mapType?: "Ground Plane" | "World Map";
       worldMapType?: "Satellite" | "Street" | "Satellite Street";

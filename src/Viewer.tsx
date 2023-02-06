@@ -11,6 +11,7 @@ import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
 import * as uuid from "uuid";
 import {
+  defined,
   definedAndNotNull,
   IUniverseData,
   UniverseTelemetrySource,
@@ -19,6 +20,8 @@ import { parsePositioning } from "./config";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import EmptyLayer from "./layers/EmptyLayer";
 import { MissingConfig } from "./components/MissingConfig";
+import { PointCloudLayer } from "./layers/PointCloudLayer";
+import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -81,6 +84,17 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
           />
         );
       }
+    });
+    (device.pointCloudLayers || []).forEach((layer, i) => {
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      deviceLayers.push(
+        <PointCloudLayer
+          key={"pointcloud" + i}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Point Cloud"}
+        />
+      );
     });
     (device.geometryLayers || []).forEach((layer, i) => {
       const positioning = layer.positioning

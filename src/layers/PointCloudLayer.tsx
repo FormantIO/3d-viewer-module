@@ -8,12 +8,10 @@ import { PointCloudMaterial } from "./utils/PointCloudMaterial";
 extend({ PointCloudMaterial });
 
 interface IPointCloudProps extends IUniverseLayerProps {
-  dataSource: UniverseTelemetrySource;
+  dataSource?: UniverseTelemetrySource;
 }
 import { LayerType } from "./common/LayerTypes";
 import { extend } from "@react-three/fiber";
-
-interface IPointCloudProps extends IUniverseLayerProps {}
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
@@ -26,17 +24,20 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
     const { deviceId } = layerData;
 
-    const unsubscribe = universeData.subscribeToPointCloud(
-      deviceId,
-      dataSource,
-      (data: any) => {
-        if (data.positions) setPositions(data.positions);
-      }
-    );
+    if (dataSource) {
+      dataSource.streamType = "localization";
+      const unsubscribe = universeData.subscribeToPointCloud(
+        deviceId,
+        dataSource,
+        (data: any) => {
+          if (data.positions) setPositions(data.positions);
+        }
+      );
 
-    return () => {
-      unsubscribe();
-    };
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [layerData, universeData, setPositions]);
 
   return (
