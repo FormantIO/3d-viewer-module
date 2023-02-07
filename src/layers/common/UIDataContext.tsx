@@ -36,7 +36,6 @@ export function useUI(): UIContextData {
 
     const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
         const visible = JSON.parse(sessionStorage.getItem(`${id}-visible`) || 'true');
-        console.log(`Setting visibility to ${visible} for layer ${name} with id ${id} and type ${type} and treePath ${treePath}`)
         const layer = { name, id, visible, type, treePath };
 
         setLayers(prevState => [...prevState, layer]);
