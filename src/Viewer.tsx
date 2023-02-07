@@ -148,12 +148,18 @@ export function Viewer() {
       await Authentication.waitTilAuthenticated();
       const currentConfig = await FormantApp.getCurrentModuleConfiguration();
       if (currentConfig) {
-        setConfiguration(JSON.parse(currentConfig) as Viewer3DConfiguration);
+        const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
+        if (checkConfiguration(parsedConfig)) {
+          setConfiguration(parsedConfig);
+        }
       }
       FormantApp.addModuleConfigurationListener((config) => {
-        setConfiguration(
-          JSON.parse(config.configuration) as Viewer3DConfiguration
-        );
+        const parsedConfig = JSON.parse(config.configuration) as Viewer3DConfiguration;
+        if (!checkConfiguration(parsedConfig)) {
+          setConfiguration(undefined);
+          return;
+        }
+        setConfiguration(parsedConfig);
       });
       FormantApp.addModuleDataListener((event) => {
         const d = new Date(event.time);
@@ -162,6 +168,12 @@ export function Viewer() {
       setAuthenticated(true);
     })();
   }, []);
+
+  const checkConfiguration = (config: Viewer3DConfiguration) => {
+    if (!config.devices || !config.devices.length) return false;
+    return true;
+  }
+
   if (authenticated && configuration) {
     return (
       <UniverseDataContext.Provider value={universeData}>
