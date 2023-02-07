@@ -3,7 +3,7 @@ import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
-import { IUniverseData } from "@formant/universe-core";
+import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
@@ -57,7 +57,7 @@ export function Viewer() {
       <UniverseDataContext.Provider value={universeData}>
         <Universe>
           <ambientLight />
-          {buildScene(configuration, currentDeviceId)};
+          {buildScene(configuration, definedAndNotNull(currentDeviceId))};
         </Universe>
       </UniverseDataContext.Provider>
     );
