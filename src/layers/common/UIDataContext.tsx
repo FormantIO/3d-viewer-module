@@ -35,15 +35,20 @@ export function useUI(): UIContextData {
     const [cameraTargetId, setCameraTargetId] = React.useState<string>('');
 
     const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
-        setLayers((prevState) => [...prevState, { name, id, visible: true, type, treePath }]);
-        return { name, id, visible: true, type, treePath };
-    }
+        const visible = JSON.parse(sessionStorage.getItem(`${id}-visible`) || 'true');
+        console.log(`Setting visibility to ${visible} for layer ${name} with id ${id} and type ${type} and treePath ${treePath}`)
+        const layer = { name, id, visible, type, treePath };
+
+        setLayers(prevState => [...prevState, layer]);
+        return layer;
+    };
 
     const toggleVisibility = (id: string) => {
         setLayers(prevState => {
             return prevState.map(c => {
                 if (c.id === id) {
                     const newVisibility = !c.visible;
+                    sessionStorage.setItem(`${c.id}-visible`, newVisibility.toString());
                     if (c.treePath && c.treePath.length > 0) {
                         const children = prevState.filter(layer => layer.treePath && c.treePath && layer.treePath[0] === c.treePath[0] && layer.treePath.length > c.treePath.length);
                         if (!newVisibility) {
