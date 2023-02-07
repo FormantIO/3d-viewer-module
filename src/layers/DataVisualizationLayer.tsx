@@ -14,7 +14,7 @@ import {
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import { LayerData, UIDataContext } from "./common/UIDataContext";
-import * as uuid from "uuid";
+import * as stringUuid from "uuid-by-string";
 import { LayerType } from "./common/LayerTypes";
 
 interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
@@ -87,7 +87,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
 
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
-    const autoId = id || uuid.v4();
+    const autoId = id || stringUuid(JSON.stringify({ name, type, treePath }));
     const registeredLayer = register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
     setThisLayer(registeredLayer);
   }, []);

@@ -9,9 +9,7 @@ import { MapLayer } from "./layers/MapLayer";
 import { useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { parseDataSource, Viewer3DConfiguration } from "./config";
-import * as uuid from "uuid";
 import {
-  defined,
   definedAndNotNull,
   IUniverseData,
   UniverseTelemetrySource,
@@ -21,7 +19,6 @@ import { TelemetryUniverseData } from "@formant/universe-connector";
 import EmptyLayer from "./layers/EmptyLayer";
 import { MissingConfig } from "./components/MissingConfig";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -122,7 +119,7 @@ function buildScene(config: Viewer3DConfiguration): React.ReactNode {
       >
         <EmptyLayer
           name={device.name}
-          id={currentDeviceId || uuid.v4()}
+          id={currentDeviceId || undefined}
           treePath={[devices.length]}
         >
           {mapLayers}
