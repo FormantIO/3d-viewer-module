@@ -11,7 +11,7 @@ export interface LayerData {
 
 interface UIContextData {
     layers: LayerData[];
-    register: (name: string, id: string, type: LayerType, treePath?: number[]) => LayerData;
+    register: (name: string, id: string, type: LayerType, treePath?: number[], defaultVisibility?: boolean) => LayerData;
     toggleVisibility: (id: string) => void;
     cameraTargetId: string;
     setCameraTargetId: (id: string) => void;
@@ -22,7 +22,7 @@ export const UIDataContext =
     React.createContext<UIContextData>(
         {
             layers: [],
-            register: (name: string, id: string, type: LayerType, treePath?: number[]) => { return { name, id, type, visible: true, treePath } },
+            register: (name: string, id: string, type: LayerType, treePath?: number[], defaultVisibility?: boolean) => { return { name, id, type, visible: true, treePath } },
             toggleVisibility: (id: string) => { },
             cameraTargetId: '',
             setCameraTargetId: (id: string) => { }
@@ -34,9 +34,11 @@ export function useUI(): UIContextData {
     const [layers, setLayers] = React.useState<LayerData[]>([]);
     const [cameraTargetId, setCameraTargetId] = React.useState<string>('');
 
-    const register = (name: string, id: string, type: LayerType, treePath?: number[]) => {
-        const visible = JSON.parse(sessionStorage.getItem(`${id}-visible`) || 'true');
-        const layer = { name, id, visible, type, treePath };
+    const register = (name: string, id: string, type: LayerType, treePath?: number[], defaultVisibility?: boolean) => {
+        const storedVisibility = JSON.parse(sessionStorage.getItem(`${id}-visible`) || 'null');
+        const visible = storedVisibility === null ? defaultVisibility : storedVisibility;
+        const layer = { name, id, visible: visible === undefined ? true : visible, type, treePath };
+
 
         setLayers(prevState => [...prevState, layer]);
         return layer;

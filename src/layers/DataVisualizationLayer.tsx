@@ -87,8 +87,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
 
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
-    const autoId = id || getUuid(JSON.stringify({ name, type, treePath }));
-    const registeredLayer = register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
+    const autoId = id || getUuid(JSON.stringify({ name, type, treePath, deviceId }));
+    const registeredLayer = register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath, visible);
     setThisLayer(registeredLayer);
   }, []);
 
