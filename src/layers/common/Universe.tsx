@@ -19,6 +19,7 @@ import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
 import { MathUtils, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
+import { LayerType } from "./LayerTypes";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -33,10 +34,11 @@ type IUniverseProps = {
 let zooming = false;
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
+  const [hasCentered, setHasCentered] = React.useState(false);
   const mapControlsRef = React.useRef<any>(null!);
 
   const lookAtTargetId = React.useCallback(
-    (targetId: string) => {
+    (targetId: stringn) => {
       const m = mapControlsRef.current;
       if (m && scene) {
         const target = scene.getObjectByName(targetId);
@@ -179,6 +181,15 @@ export function Universe(props: IUniverseProps) {
         sceneObj.visible = l.visible
       };
     });
+    if (!hasCentered) {
+      const deviceMarker = layers.find((l) => l.type === LayerType.MARKER);
+      if (deviceMarker) {
+        setTimeout(() => {
+          lookAtTargetId(deviceMarker.id);
+        }, 4000);
+        setHasCentered(true);
+      }
+    }
   }, [layers, scene]);
 
   return (
