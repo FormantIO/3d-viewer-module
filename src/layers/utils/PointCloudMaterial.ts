@@ -57,7 +57,7 @@ export class PointCloudMaterial extends ShaderMaterial {
         
         vec3 pos = normalize( vPosition);
 
-        float h = pos.x + pos.y + 0.2;
+        float h = pos.x + pos.y + 1.2;
 
         vec3 color = mix(color1, color2, max( h, 0.0 ) );
 

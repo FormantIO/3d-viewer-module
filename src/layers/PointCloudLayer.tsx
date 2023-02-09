@@ -63,7 +63,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             opacity={1.0}
           /> */}
 
-          <pointCloudMaterial args={[10, "#0bc6ff", "#cf34bb"]} />
+          <pointCloudMaterial args={[5, "#13bff3", "#cf34bb"]} />
         </points>
       )}
     </DataVisualizationLayer>

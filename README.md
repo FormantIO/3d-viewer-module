@@ -2,57 +2,26 @@
 
 An open-source module for visualizing spatial data on Formant.  You can use this viewer to build up complex 3D scenes driven by Formant data for both real-time and historical viewing.  Additionally, you can fork this repo to create viewers with your own custom layers for interaction and visualization.
 
-
-
-https://user-images.githubusercontent.com/66638393/216462090-7fdfc464-5ae8-46b5-bb41-764afc620706.mov
-
-
-# What technologies do I need to know to use or extend this library?
+# Technologies Used
 
 * Typescript
 * ThreeJS
 * React
 * React Three Fiber
 
-# How do I add a new layer of information?
+# Examples and Documentation
 
-Adding a new layer of information has two components
+* [Introduction to 3D Viewer](https://docs.formant.io/docs/3d-viewer)
+<img src="https://user-images.githubusercontent.com/66638393/217696414-56af0957-de44-4b78-9b0b-7a77b6484d15.png" width="200"/>
 
-* Creating the code for 3D visualization of your layer
-* Adding configuration to the module's schema and connecting the configuration to your layer
+* [Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-layer-in-3d-viewer)
+<img width="200" src="https://user-images.githubusercontent.com/66638393/217696316-4c2a9d23-1f47-4f1d-8f27-c82855269781.png">
 
-## Simple Example
+* [Create a module configuration](https://docs.formant.io/recipes/create-a-simple-module-configuration)
+<img width="200" alt="Screen Shot 2023-02-08 at 5 56 05 PM" src="https://user-images.githubusercontent.com/66638393/217697145-165b4924-8615-4b78-8052-64651fce43df.png">
 
-Here's a simple non-data driven example of creating a visualization of a ground plane :
+* [How to get a module configuration and updates](https://docs.formant.io/recipes/how-to-get-a-module-configuration-and-updates)
 
-```typescript
-interface IGroundLayer extends IUniverseLayerProps { 
-  color: string
-}
-
-function SilverCircle({ width, color }: { width: number, color: string }) {
-  return (
-    <Ring args={[width - 0.005, width, 60]}>
-      <meshStandardMaterial color={FormantColors.steel03} />
-    </Ring>
-  );
-}
-
-export function GroundLayer(props: IGroundLayer) {
-  const { color } = props;
-
-  return (
-    <DataVisualizationLayer {...props} type={LayerType.GROUND}>
-      <Axis />
-      {range(0, 100).map((i) => (
-        <SilverCircle key={i} width={i} color />
-      ))}
-    </DataVisualizationLayer>
-  );
-}
-```
-
-Notice the component takes in properties for determing the color of the rings that represent the ground.  These properties can be connected to configuration values of the module.
 
 # How do I run 3D viewer when i'm developing on it?
 
