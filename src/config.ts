@@ -1,16 +1,16 @@
-import { Authentication, App } from "@formant/data-sdk";
-import { TelemetryUniverseData } from "@formant/universe-connector";
-import { StreamType, UniverseDataSource } from "@formant/universe-core";
-import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
-import { Positioning } from "./layers/common/Positioning";
-import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
+import { Authentication, App } from '@formant/data-sdk';
+import { TelemetryUniverseData } from '@formant/universe-connector';
+import { StreamType, UniverseDataSource } from '@formant/universe-core';
+import { DataSourceBuilder } from './layers/utils/DataSourceBuilder';
+import { Positioning } from './layers/common/Positioning';
+import { PositioningBuilder } from './layers/utils/PositioningBuilder';
 
 // get query strings
 const urlParams = new URLSearchParams(window.location.search);
-const deviceId = urlParams.get("device") ?? undefined;
+const deviceId = urlParams.get('device') ?? undefined;
 
 export type Viewer3DConfiguarationPositioning = {
-  positioningType?: "Fixed" | "Gps" | "Odometry" | "Transform Tree" | "Hud";
+  positioningType?: 'Fixed' | 'Gps' | 'Odometry' | 'Transform Tree' | 'Hud';
   x?: number;
   y?: number;
   z?: number;
@@ -38,10 +38,11 @@ export type Viewer3DConfiguration = {
     pointCloudLayers?: {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
+      defaultVisibility?: boolean;
     }[];
     mapLayers?: {
-      mapType?: "Ground Plane" | "World Map";
-      worldMapType?: "Satellite" | "Street" | "Satellite Street";
+      mapType?: 'Ground Plane' | 'World Map';
+      worldMapType?: 'Satellite' | 'Street' | 'Satellite Street';
       mapName?: string;
       mapSize?: string;
       longitude?: string;
@@ -49,18 +50,22 @@ export type Viewer3DConfiguration = {
       mapboxKey?: string;
       dataSource?: Viewer3DConfigurationDataSource;
       positioning?: Viewer3DConfiguarationPositioning;
+      defaultVisibility?: boolean;
     }[];
     deviceVisualLayers?: {
       name?: string;
-      visualType?: "Circle";
+      visualType?: 'Circle';
       dataSource?: Viewer3DConfigurationDataSource;
       positioning?: Viewer3DConfiguarationPositioning;
+      defaultVisibility?: boolean;
     }[];
     geometryLayers?: {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
       positioning?: Viewer3DConfiguarationPositioning;
+      defaultVisibility?: boolean;
     }[];
+    defaultVisibility?: boolean;
   }[];
 };
 
@@ -70,7 +75,7 @@ export function parseDataSource(
   if (dataSource.telemetryStreamName) {
     return DataSourceBuilder.telemetry(
       dataSource.telemetryStreamName,
-      (dataSource.telemetryStreamType as StreamType) || "json",
+      (dataSource.telemetryStreamType as StreamType) || 'json',
       dataSource.latestDataPoint
     );
   }
@@ -81,25 +86,25 @@ export function parsePositioning(
   positioning: Viewer3DConfiguarationPositioning
 ): Positioning {
   switch (positioning.positioningType) {
-    case "Fixed":
+    case 'Fixed':
       return PositioningBuilder.fixed(
         positioning.x || 0,
         positioning.y || 0,
         positioning.z || 0
       );
-    case "Gps":
-      return PositioningBuilder.gps(positioning.gpsStream || "", {
+    case 'Gps':
+      return PositioningBuilder.gps(positioning.gpsStream || '', {
         long: positioning.relativeLongitude || 0,
         lat: positioning.relativeLatitude || 0,
       });
-    case "Odometry":
+    case 'Odometry':
       return PositioningBuilder.localization(
-        positioning.localizationStream || ""
+        positioning.localizationStream || ''
       );
-    case "Transform Tree":
+    case 'Transform Tree':
       return PositioningBuilder.tranformTree(
-        positioning.transformTreeStream || "",
-        positioning.transformTreeEndPoint || ""
+        positioning.transformTreeStream || '',
+        positioning.transformTreeEndPoint || ''
       );
     default:
       return PositioningBuilder.fixed(0, 0, 0);

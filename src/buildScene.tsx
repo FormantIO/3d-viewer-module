@@ -39,6 +39,7 @@ export function buildScene(
             positioning={positioning}
             treePath={getTreePath()}
             name={layer.mapName || "Ground Plane"}
+            visible={layer.defaultVisibility}
           />
         );
       }
@@ -59,6 +60,7 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.mapName || "Map"}
           treePath={getTreePath()}
+          visible={layer.defaultVisibility}
         />
       );
     });
@@ -74,6 +76,7 @@ export function buildScene(
             positioning={positioning}
             treePath={getTreePath()}
             name={layer.name || "Marker"}
+            visible={layer.defaultVisibility}
           />
         );
       }
@@ -86,6 +89,7 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Point Cloud"}
+          visible={layer.defaultVisibility}
         />
       );
     });
@@ -102,6 +106,7 @@ export function buildScene(
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={getTreePath()}
             name={layer.name || "Geometry"}
+            visible={layer.defaultVisibility}
           />
         );
       }
@@ -117,6 +122,7 @@ export function buildScene(
           name={device.name}
           id={currentDeviceId || undefined}
           treePath={[devices.length]}
+          visible={device.defaultVisibility}
         >
           {mapLayers}
           {deviceLayers}

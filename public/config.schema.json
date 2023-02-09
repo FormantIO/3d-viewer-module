@@ -36,6 +36,11 @@
                       "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
                     }
                   }
+                },
+                "defaultVisibility": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Show this layer by default"
                 }
               }
             }
@@ -183,6 +188,11 @@
                       ]
                     }
                   }
+                },
+                "defaultVisibility": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Show this layer by default"
                 }
               }
             }
@@ -305,6 +315,11 @@
                       ]
                     }
                   }
+                },
+                "defaultVisibility": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Show this layer by default"
                 }
               }
             }
@@ -417,6 +432,11 @@
                       ]
                     }
                   }
+                },
+                "defaultVisibility": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Show this layer by default"
                 }
               }
             }
@@ -500,6 +520,11 @@
                 ]
               }
             }
+          },
+          "defaultVisibility": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show this layer by default"
           }
         }
       }
