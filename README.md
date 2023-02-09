@@ -12,9 +12,9 @@ An open-source module for visualizing spatial data on Formant.  You can use this
 # Examples and Documentation
 
 * [Introduction to 3D Viewer](https://docs.formant.io/docs/3d-viewer)
-![b8c3f63-3dviewr](https://user-images.githubusercontent.com/66638393/217696414-56af0957-de44-4b78-9b0b-7a77b6484d15.png)
+<img src="https://user-images.githubusercontent.com/66638393/217696414-56af0957-de44-4b78-9b0b-7a77b6484d15.png)" width="150"/>
 * [Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-layer-in-3d-viewer)
-<img width="508" alt="Screen Shot 2023-02-08 at 5 50 46 PM" src="https://user-images.githubusercontent.com/66638393/217696316-4c2a9d23-1f47-4f1d-8f27-c82855269781.png">
+<img width="150" src="https://user-images.githubusercontent.com/66638393/217696316-4c2a9d23-1f47-4f1d-8f27-c82855269781.png">
 
 
 # How do I run 3D viewer when i'm developing on it?
