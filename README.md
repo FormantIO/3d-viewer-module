@@ -20,6 +20,8 @@ An open-source module for visualizing spatial data on Formant.  You can use this
 * [Create a module configuration](https://docs.formant.io/recipes/create-a-simple-module-configuration)
 <img width="200" alt="Screen Shot 2023-02-08 at 5 56 05 PM" src="https://user-images.githubusercontent.com/66638393/217697145-165b4924-8615-4b78-8052-64651fce43df.png">
 
+* [How to get a module configuration and updates](https://docs.formant.io/recipes/how-to-get-a-module-configuration-and-updates)
+
 
 # How do I run 3D viewer when i'm developing on it?
 
