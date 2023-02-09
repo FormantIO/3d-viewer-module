@@ -38,7 +38,7 @@ export function Universe(props: IUniverseProps) {
   const mapControlsRef = React.useRef<any>(null!);
 
   const lookAtTargetId = React.useCallback(
-    (targetId: stringn) => {
+    (targetId: string) => {
       const m = mapControlsRef.current;
       if (m && scene) {
         const target = scene.getObjectByName(targetId);
