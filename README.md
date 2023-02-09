@@ -33,6 +33,7 @@ At a very high level there's 3 important things you need to do:
 * Add a new module:
   * Put in the url of your 3D viewer
   * Put in the url of your `config.schema.json`   
+* You will now be able to add modules to your views and configure them as other modules
 
 # Examples and Documentation
 
