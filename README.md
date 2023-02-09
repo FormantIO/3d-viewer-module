@@ -22,6 +22,14 @@ An open-source module for visualizing spatial data on Formant.  You can use this
 
 * [How to get a module configuration and updates](https://docs.formant.io/recipes/how-to-get-a-module-configuration-and-updates)
 
+# Important locations
+
+`src/layers/` - This is where the data visualizations live and where you can put yours
+`public/config.schema.json` - This is the configuration file used for this module that drives the 3D viewers configuration screen
+`src/Viewer.tsx` - This is the scene that is put together for the module
+`src/buildScene.tsx` - This file helps convert a configuration into the various layers of the scene
+`src/Demo.tsx` - This is a scene that can be used for quickly iterating on viewer and a layer locally
+`src/layers/common/ExampleUniverseData.ts` - This is a simulated data endpoint you can use to simulate data and receiving calls from your layers
 
 # How do I run 3D viewer when i'm developing on it?
 
