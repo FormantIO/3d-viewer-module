@@ -11,8 +11,8 @@ An open-source module for visualizing spatial data on Formant.  You can use this
 
 # Examples and Documentation
 
-[Introduction to 3D Viewer](https://docs.formant.io/docs/3d-viewer)
-[Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-layer-in-3d-viewer)
+* [Introduction to 3D Viewer](https://docs.formant.io/docs/3d-viewer)
+* [Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-layer-in-3d-viewer)
 
 # How do I run 3D viewer when i'm developing on it?
 
