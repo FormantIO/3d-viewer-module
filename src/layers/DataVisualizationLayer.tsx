@@ -226,11 +226,13 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     }
   }, [groupRef, positioning, thisLayer]);
 
-  return thisLayer ? (
-    <group visible={thisLayer.visible} ref={groupRef} name={thisLayer.id}>
+  return (
+    <group
+      visible={thisLayer ? thisLayer.visible : true}
+      ref={groupRef}
+      name={thisLayer ? thisLayer.id : ""}
+    >
       {children}
     </group>
-  ) : (
-    <> </>
   );
 }
