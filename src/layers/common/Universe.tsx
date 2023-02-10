@@ -28,6 +28,7 @@ const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 40);
 
 type IUniverseProps = {
   children?: React.ReactNode;
+  configHash: string;
 };
 
 let zooming = false;
@@ -35,6 +36,19 @@ export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const [hasCentered, setHasCentered] = React.useState(false);
   const mapControlsRef = React.useRef<any>(null!);
+  const vr = shouldUseVR;
+  const {
+    layers,
+    register,
+    toggleVisibility,
+    cameraTargetId,
+    setCameraTargetId,
+    reset
+  } = useUI();
+
+  useEffect(() => {
+    reset();
+  }, [props.configHash]);
 
   const lookAtTargetId = React.useCallback(
     (targetId: string) => {
@@ -175,15 +189,6 @@ export function Universe(props: IUniverseProps) {
     zooming = false;
   };
 
-  const vr = shouldUseVR;
-  const {
-    layers,
-    register,
-    toggleVisibility,
-    cameraTargetId,
-    setCameraTargetId,
-  } = useUI();
-
   useEffect(() => {
     layers.forEach((l) => {
       const sceneObj = scene?.getObjectByName(l.id);
@@ -211,6 +216,7 @@ export function Universe(props: IUniverseProps) {
           toggleVisibility,
           cameraTargetId,
           setCameraTargetId,
+          reset
         }}
       >
         {vr && <VRButton />}

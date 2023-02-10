@@ -17,7 +17,7 @@ import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 

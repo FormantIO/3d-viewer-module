@@ -1,5 +1,5 @@
 import { Icon, Typography } from "@formant/ui-sdk";
-import React from "react";
+import React, { useEffect } from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
 import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
@@ -101,7 +101,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-      props.layerVisible ? FormantColors.silver : "#657197"};
+    props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -156,9 +156,10 @@ const Sidebar = ({
 }: {
   lookAtTargetId: (targetId: string) => void;
 }) => {
-  const { layers, toggleVisibility, setCameraTargetId } =
+  const { layers, toggleVisibility } =
     React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
+  const [sortedLayers, setSortedLayers] = React.useState<LayerData[]>([]);
   const [width, height] = useWindowSize();
 
   const onToggleSidebarClicked = () => {
@@ -183,16 +184,20 @@ const Sidebar = ({
     lookAtTargetId(layer.id);
   };
 
-  const sortedLayers = layers.sort((a, b) => {
-    if (!a.treePath || !b.treePath) return 0;
-    const minLength = Math.min(a.treePath.length, b.treePath.length);
-    for (let i = 0; i < minLength; i++) {
-      if (a.treePath[i] !== b.treePath[i]) {
-        return a.treePath[i] - b.treePath[i];
+  useEffect(() => {
+    const _sortedLayers = layers.sort((a, b) => {
+      if (!a.treePath || !b.treePath) return 0;
+      const minLength = Math.min(a.treePath.length, b.treePath.length);
+      for (let i = 0; i < minLength; i++) {
+        if (a.treePath[i] !== b.treePath[i]) {
+          return a.treePath[i] - b.treePath[i];
+        }
       }
-    }
-    return a.treePath.length - b.treePath.length;
-  });
+      return a.treePath.length - b.treePath.length;
+    });
+    setSortedLayers(_sortedLayers);
+
+  }, [layers]);
 
   const hasChildren = (layer: LayerData) => {
     return sortedLayers.some(

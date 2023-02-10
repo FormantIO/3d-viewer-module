@@ -1,12 +1,13 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
+import getUuidByString from "uuid-by-string";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -52,15 +53,20 @@ export function Viewer() {
     return true;
   };
 
-  if (authenticated && configuration) {
-    return (
+  const scene = useCallback(
+    (config: Viewer3DConfiguration) => (
       <UniverseDataContext.Provider value={universeData}>
-        <Universe>
+        <Universe configHash={getUuidByString(JSON.stringify(config))}>
           <ambientLight />
-          {buildScene(configuration, definedAndNotNull(currentDeviceId))};
+          {buildScene(config, definedAndNotNull(currentDeviceId))};
         </Universe>
       </UniverseDataContext.Provider>
-    );
+    ),
+    [universeData, currentDeviceId, configuration]
+  );
+
+  if (authenticated && configuration) {
+    return scene(configuration);
   }
   if (authenticated && !configuration) return <MissingConfig />;
   return <div />;

@@ -15,6 +15,7 @@ import { MapLayer } from "./layers/MapLayer";
 import { MarkerLayer } from "./layers/MarkerLayer";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
+import getUuidByString from "uuid-by-string";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -27,6 +28,7 @@ export function buildScene(
     devices.length,
     deviceLayers.length + mapLayers.length,
   ];
+  const configHash = getUuidByString(JSON.stringify(config));
   (config.devices || []).forEach((device, di) => {
     mapLayers = (device.mapLayers || []).map((layer, i) => {
       const positioning = layer.positioning
@@ -35,7 +37,7 @@ export function buildScene(
       if (layer.mapType === "Ground Plane") {
         return (
           <GroundLayer
-            key={"map" + i}
+            key={"ground" + i + configHash}
             positioning={positioning}
             treePath={getTreePath()}
             name={layer.mapName || "Ground Plane"}
@@ -49,7 +51,7 @@ export function buildScene(
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       return (
         <MapLayer
-          key={"map" + i}
+          key={"map" + i + configHash}
           positioning={positioning}
           mapType={layer.worldMapType || "Satellite"}
           size={parseFloat(layer.mapSize || "200")}
@@ -70,7 +72,7 @@ export function buildScene(
       if (layer.visualType === "Circle") {
         deviceLayers.push(
           <MarkerLayer
-            key={"vis" + i}
+            key={"vis" + i + configHash}
             positioning={positioning}
             treePath={getTreePath()}
             name={layer.name || "Marker"}
@@ -82,7 +84,7 @@ export function buildScene(
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       deviceLayers.push(
         <PointCloudLayer
-          key={"pointcloud" + i}
+          key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Point Cloud"}
@@ -97,7 +99,7 @@ export function buildScene(
       if (dataSource) {
         deviceLayers.push(
           <GeometryLayer
-            key={"geo" + i}
+            key={"geo" + i + configHash}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={getTreePath()}
@@ -108,7 +110,7 @@ export function buildScene(
     });
     devices.push(
       <LayerContext.Provider
-        key={"data" + di}
+        key={"data" + di + configHash}
         value={{
           deviceId: definedAndNotNull(currentDeviceId),
         }}
