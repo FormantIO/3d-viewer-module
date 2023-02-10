@@ -66,23 +66,10 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} type={LayerType.POINTCLOUD}>
-      {positions.length > 0 && (
-        <points>
-          <bufferGeometry attach="geometry" ref={pointGeo} />
-
-          {/* <pointsMaterial
-            attach="material"
-            color={[4, 3.0, 1]}
-            size={0.1}
-            sizeAttenuation
-            transparent={false}
-            alphaTest={0.5}
-            opacity={1.0}
-          /> */}
-
-          <pointCloudMaterial args={[5, "#13bff3", "#cf34bb"]} />
-        </points>
-      )}
+      <points>
+        <bufferGeometry attach="geometry" ref={pointGeo} />
+        <pointCloudMaterial args={[5, "#18d2ff", "#ea719d"]} />
+      </points>
     </DataVisualizationLayer>
   );
 };
