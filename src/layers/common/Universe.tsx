@@ -26,7 +26,6 @@ const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
 const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 40);
 
-
 type IUniverseProps = {
   children?: React.ReactNode;
 };
@@ -47,7 +46,11 @@ export function Universe(props: IUniverseProps) {
           const currentTarget = m.target.clone();
           const currentPosition = m.object.position.clone();
 
-          const desiredTarget = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+          const desiredTarget = new Vector3(
+            targetPosition.x,
+            targetPosition.y,
+            targetPosition.z
+          );
           const desiredPosition = new Vector3(
             targetPosition.x,
             targetPosition.y,
@@ -64,8 +67,10 @@ export function Universe(props: IUniverseProps) {
             m.object.position.copy(lerpPosition);
             m.update();
 
-            if (m.target.distanceToSquared(desiredTarget) > 0.1 ||
-              m.object.position.distanceToSquared(desiredPosition) > 0.1) {
+            if (
+              m.target.distanceToSquared(desiredTarget) > 0.1 ||
+              m.object.position.distanceToSquared(desiredPosition) > 0.1
+            ) {
               requestAnimationFrame(animationFrame);
             }
           };
@@ -105,8 +110,11 @@ export function Universe(props: IUniverseProps) {
         m.setAzimuthalAngle(lerpRotation);
         m.update();
 
-        if (Math.abs(target.distanceTo(defaultTarget)) > 5 ||
-          Math.abs(position.distanceTo(defaultPosition)) > 5 || m.getAzimuthalAngle() > 0.1) {
+        if (
+          Math.abs(target.distanceTo(defaultTarget)) > 5 ||
+          Math.abs(position.distanceTo(defaultPosition)) > 5 ||
+          m.getAzimuthalAngle() > 0.1
+        ) {
           requestAnimationFrame(animationFrame);
         }
       };
@@ -123,13 +131,15 @@ export function Universe(props: IUniverseProps) {
       const distanceToTarget = position.distanceTo(target);
       let dampening = 1;
       if (x > 0 && distanceToTarget < 40) {
-        dampening = 1 - (x / distanceToTarget * 3);
+        dampening = 1 - (x / distanceToTarget) * 3;
       }
       if (distanceToTarget < 10 && x > 0) {
         return;
       }
-      m.object.position.copy(position.clone().add(direction.multiplyScalar(x * dampening)))
-      m.update()
+      m.object.position.copy(
+        position.clone().add(direction.multiplyScalar(x * dampening))
+      );
+      m.update();
     }
   };
 
@@ -178,8 +188,8 @@ export function Universe(props: IUniverseProps) {
     layers.forEach((l) => {
       const sceneObj = scene?.getObjectByName(l.id);
       if (sceneObj) {
-        sceneObj.visible = l.visible
-      };
+        sceneObj.visible = l.visible;
+      }
     });
     if (!hasCentered) {
       const deviceMarker = layers.find((l) => l.type === LayerType.MARKER);
@@ -211,7 +221,12 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
-            <MapControls enableDamping={false} ref={mapControlsRef} minDistance={10} maxPolarAngle={(Math.PI / 2) - 0.1} />
+            <MapControls
+              enableDamping={false}
+              ref={mapControlsRef}
+              minDistance={1}
+              maxPolarAngle={Math.PI / 2 - 0.1}
+            />
             <PerspectiveCamera
               makeDefault
               position={[0, 0, 300]}
