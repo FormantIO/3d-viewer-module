@@ -6,7 +6,7 @@ import { DataVisualizationLayer } from "./layers/DataVisualizationLayer";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
-import { LayerDataContext } from "./layers/common/LayerDataContext";
+import { LayerContext } from "./layers/common/LayerContext";
 import { ExampleUniverseData } from "./layers/common/ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
@@ -30,12 +30,14 @@ export function Demo() {
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}
           name="Ground"
         />
-        <LayerDataContext.Provider
+        <LayerContext.Provider
           value={{
             deviceId: "ekobot_device",
           }}
         >
-          {experimentalMode && <RouteMakerLayer size={200} name="Route Builder" />}
+          {experimentalMode && (
+            <RouteMakerLayer size={200} name="Route Builder" />
+          )}
           <MapLayer
             latitude={59.9139}
             longitude={10.7522}
@@ -62,7 +64,7 @@ export function Demo() {
               name="Point Cloud"
             />
           </DataVisualizationLayer>
-        </LayerDataContext.Provider>
+        </LayerContext.Provider>
       </Universe>
     </UniverseDataContext.Provider>
   );

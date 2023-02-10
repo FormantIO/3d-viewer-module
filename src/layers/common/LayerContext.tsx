@@ -3,9 +3,10 @@ import React from "react";
 import { EmptyUniverseData } from "./EmptyUniverseData";
 import { Device } from "@formant/data-sdk";
 
-export type LayerDataDeviceContext = {
+export type LayerDeviceContext = {
   deviceId: string;
 };
 
-export const LayerDataContext =
-  React.createContext<LayerDataDeviceContext | null>(null);
+export const LayerContext = React.createContext<LayerDeviceContext | null>(
+  null
+);

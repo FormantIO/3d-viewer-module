@@ -7,13 +7,14 @@ import {
 import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useState } from "react";
 import { Texture } from "three";
-import { LayerDataContext } from "./common/LayerDataContext";
+import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { LayerType } from "./common/LayerTypes";
 
-const URL_SCOPED_TOKEN = "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
+const URL_SCOPED_TOKEN =
+  "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
 
 const mapStyles = {
   Street: "streets-v11",
@@ -32,7 +33,7 @@ interface IMapLayer extends IUniverseLayerProps {
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType, mapBoxKey } = props;
   const { children } = props;
-  const layerData = useContext(LayerDataContext);
+  const layerData = useContext(LayerContext);
   const [mapTexture, setMapTexture] = useState<Texture | undefined>();
 
   useEffect(() => {

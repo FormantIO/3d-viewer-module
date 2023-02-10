@@ -20,7 +20,7 @@ import {
   Texture,
   Vector3,
 } from "three";
-import { LayerDataContext } from "./common/LayerDataContext";
+import { LayerContext } from "./common/LayerContext";
 import { GeometryWorld } from "./objects/GeometryWorld";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
@@ -55,7 +55,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
   const root = new Object3D();
   const universeData = useContext(UniverseDataContext);
-  const layerData = useContext(LayerDataContext);
+  const layerData = useContext(LayerContext);
 
   useEffect(() => {
     universeData.subscribeToGeometry(

@@ -3,7 +3,7 @@ import { getDistance } from "geolib";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { PositioningBuilder } from "./utils/PositioningBuilder";
-import { LayerDataContext } from "./common/LayerDataContext";
+import { LayerContext } from "./common/LayerContext";
 import {
   CloseSubscription,
   defined,
@@ -17,7 +17,7 @@ import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -77,7 +77,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   >();
   const [thisLayer, setThisLayer] = useState<LayerData | undefined>(undefined);
   const universeData = useContext(UniverseDataContext);
-  const layerData = useContext(LayerDataContext);
+  const layerData = useContext(LayerContext);
   let deviceId: string | undefined;
   if (layerData) {
     deviceId = layerData.deviceId;
@@ -88,7 +88,12 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
     const autoId = id || getUuid(JSON.stringify({ name, type, treePath }));
-    const registeredLayer = register(name || "Layer", autoId, type || LayerType.UNDEFINED, treePath);
+    const registeredLayer = register(
+      name || "Layer",
+      autoId,
+      type || LayerType.UNDEFINED,
+      treePath
+    );
     setThisLayer(registeredLayer);
   }, []);
 
@@ -222,13 +227,10 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   }, [groupRef, positioning, thisLayer]);
 
   return thisLayer ? (
-    <group
-      visible={thisLayer.visible}
-      ref={groupRef}
-      name={thisLayer.id}
-    >
+    <group visible={thisLayer.visible} ref={groupRef} name={thisLayer.id}>
       {children}
     </group>
   ) : (
-    <>  </>);
+    <> </>
+  );
 }

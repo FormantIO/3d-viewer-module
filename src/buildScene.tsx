@@ -7,7 +7,7 @@ import {
   parsePositioning,
   Viewer3DConfiguration,
 } from "./config";
-import { LayerDataContext } from "./layers/common/LayerDataContext";
+import { LayerContext } from "./layers/common/LayerContext";
 import EmptyLayer from "./layers/EmptyLayer";
 import { GeometryLayer } from "./layers/GeometryLayer";
 import { GroundLayer } from "./layers/GroundLayer";
@@ -107,7 +107,7 @@ export function buildScene(
       }
     });
     devices.push(
-      <LayerDataContext.Provider
+      <LayerContext.Provider
         key={"data" + di}
         value={{
           deviceId: definedAndNotNull(currentDeviceId),
@@ -121,7 +121,7 @@ export function buildScene(
           {mapLayers}
           {deviceLayers}
         </EmptyLayer>
-      </LayerDataContext.Provider>
+      </LayerContext.Provider>
     );
     deviceLayers = [];
   });

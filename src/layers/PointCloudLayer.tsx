@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
-import { LayerDataContext } from "./common/LayerDataContext";
+import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { UniverseTelemetrySource } from "@formant/universe-core";
 import { PointCloudMaterial } from "./utils/PointCloudMaterial";
@@ -16,7 +16,7 @@ import { extend } from "@react-three/fiber";
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
   const universeData = useContext(UniverseDataContext);
-  const layerData = useContext(LayerDataContext);
+  const layerData = useContext(LayerContext);
   const [positions, setPositions] = useState([]);
 
   useEffect(() => {
