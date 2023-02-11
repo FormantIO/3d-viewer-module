@@ -18,9 +18,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [positions, setPositions] = useState<Float32Array>(
-    new Float32Array([])
-  );
+
   const pointGeo = useRef<BufferGeometry>(null!);
 
   useEffect(() => {
@@ -62,13 +60,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         unsubscribe();
       };
     }
-  }, [layerData, universeData, setPositions]);
+  }, [layerData, universeData]);
 
   return (
     <DataVisualizationLayer {...props} type={LayerType.POINTCLOUD}>
       <points>
         <bufferGeometry attach="geometry" ref={pointGeo} />
-        <pointCloudMaterial args={[5, "#18d2ff", "#ea719d"]} />
+        <pointCloudMaterial args={[1.5, "#18d2ff", "#ea719d"]} />
       </points>
     </DataVisualizationLayer>
   );
