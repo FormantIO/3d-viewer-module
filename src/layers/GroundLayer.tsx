@@ -1,12 +1,15 @@
 import { ThreeElements, useFrame } from "@react-three/fiber";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Ring } from "@react-three/drei";
 import { range } from "../common/range";
 import { Axis } from "./objects/Axis";
 import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-interface IGroundLayer extends IUniverseLayerProps {}
+import { AxisLabels } from "./objects/AxisLabels";
+interface IGroundLayer extends IUniverseLayerProps {
+  flatAxis?: boolean;
+}
 
 function SilverCircle({ width }: { width: number }) {
   return (
@@ -17,11 +20,16 @@ function SilverCircle({ width }: { width: number }) {
 }
 
 export function GroundLayer(props: IGroundLayer) {
-  const { children } = props;
+  const { children, flatAxis } = props;
+
+  const axisLayers = useMemo(() => {
+    return new AxisLabels(flatAxis || false);
+  }, []);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
       <Axis />
+      <primitive object={axisLayers} />
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />
       ))}
