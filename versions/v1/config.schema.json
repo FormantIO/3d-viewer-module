@@ -5,7 +5,6 @@
   "properties": {
     "devices": {
       "title": "Add Device Source",
-
       "type": "array",
       "$formant.itemName": "Device Source",
       "items": {
