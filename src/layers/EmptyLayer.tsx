@@ -1,16 +1,17 @@
-import { useContext, useEffect } from "react";
-import { UIDataContext } from "./common/UIDataContext";
+import { LayerType } from "./common/LayerTypes";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import * as uuid from "uuid";
-import { LayerType } from "./common/LayerTypes";
 
-interface IEmptyLayer extends IUniverseLayerProps { }
+interface IEmptyLayer extends IUniverseLayerProps {}
 
 const EmptyLayer = (props: IEmptyLayer) => {
-    const { children, name, id, treePath, type } = props;
+  const { children, name, id, treePath, type } = props;
 
-    return <DataVisualizationLayer {...props} type={type || LayerType.EMPTY} >{children}</DataVisualizationLayer>;
+  return (
+    <DataVisualizationLayer {...props} type={LayerType.CONTAINER}>
+      {children}
+    </DataVisualizationLayer>
+  );
 };
 
 export default EmptyLayer;

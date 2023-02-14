@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
 import { FormantColors } from "../layers/utils/FormantColors";
+import { LayerType } from "../layers/common/LayerTypes";
 
 interface ITreeArea {
   visible: boolean;
@@ -101,7 +102,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-    props.layerVisible ? FormantColors.silver : "#657197"};
+      props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -156,8 +157,7 @@ const Sidebar = ({
 }: {
   lookAtTargetId: (targetId: string) => void;
 }) => {
-  const { layers, toggleVisibility } =
-    React.useContext(UIDataContext);
+  const { layers, toggleVisibility } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
   const [sortedLayers, setSortedLayers] = React.useState<LayerData[]>([]);
   const [width, height] = useWindowSize();
@@ -167,14 +167,14 @@ const Sidebar = ({
   };
 
   const onLayerClicked = (layer: LayerData) => {
-    if (layer.type === "empty" && hasChildren(layer)) {
+    if (layer.type === LayerType.CONTAINER && hasChildren(layer)) {
       const markerChild = layers.find(
         (l) =>
           l.treePath &&
           layer.treePath &&
           l.treePath[0] === layer.treePath[0] &&
           l.treePath.length === 2 &&
-          l.type === "marker"
+          l.type === LayerType.TRACKABLE
       );
       if (markerChild) {
         lookAtTargetId(markerChild.id);
@@ -196,7 +196,6 @@ const Sidebar = ({
       return a.treePath.length - b.treePath.length;
     });
     setSortedLayers(_sortedLayers);
-
   }, [layers]);
 
   const hasChildren = (layer: LayerData) => {
@@ -228,14 +227,10 @@ const Sidebar = ({
   };
 
   const getLayerIcon = (layer: LayerData) => {
-    switch (layer.type) {
-      case "map":
-        return <MapIcon disabled={!layer.visible} />;
-      case "geometry":
-        return <CubeIcon disabled={!layer.visible} />;
-
-      default:
-        return <LayerIcon disabled={!layer.visible} />;
+    if (layer.iconUrl) {
+      return <img width="18" height="18" src={layer.iconUrl} />;
+    } else {
+      return <LayerIcon disabled={!layer.visible} />;
     }
   };
 

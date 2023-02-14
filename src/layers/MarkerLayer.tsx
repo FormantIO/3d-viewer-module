@@ -4,12 +4,9 @@ import { useFrame, extend } from "@react-three/fiber";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
-import { UIDataContext } from "./common/UIDataContext";
-import * as uuid from "uuid";
-import { LayerType } from "./common/LayerTypes";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps { }
+interface IMarkerLayerProps extends IUniverseLayerProps {}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
   const { children } = props;
@@ -50,7 +47,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <DataVisualizationLayer {...props} type={LayerType.MARKER}>
+    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
       <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
         <shapeGeometry args={[arrowShape]} />
         <meshStandardMaterial

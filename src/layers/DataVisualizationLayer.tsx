@@ -82,7 +82,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   if (layerData) {
     deviceId = layerData.deviceId;
   }
-  const { children, positioning, visible, name, id, treePath, type } = props;
+  const { children, positioning, visible, name, id, treePath, type, iconUrl } =
+    props;
   const groupRef = useRef<THREE.Group>(null!);
 
   const { register, layers } = useContext(UIDataContext);
@@ -91,7 +92,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     const registeredLayer = register(
       name || "Layer",
       autoId,
-      type || LayerType.UNDEFINED,
+      type || LayerType.OTHER,
+      iconUrl,
       treePath
     );
     setThisLayer(registeredLayer);

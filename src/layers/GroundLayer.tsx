@@ -6,11 +6,7 @@ import { Axis } from "./objects/Axis";
 import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import { UIDataContext } from "./common/UIDataContext";
-import * as uuid from "uuid";
-import { LayerType } from "./common/LayerTypes";
-
-interface IGroundLayer extends IUniverseLayerProps { }
+interface IGroundLayer extends IUniverseLayerProps {}
 
 function SilverCircle({ width }: { width: number }) {
   return (
@@ -24,7 +20,7 @@ export function GroundLayer(props: IGroundLayer) {
   const { children } = props;
 
   return (
-    <DataVisualizationLayer {...props} type={LayerType.GROUND}>
+    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
       <Axis />
       {range(0, 100).map((i) => (
         <SilverCircle key={i} width={i} />

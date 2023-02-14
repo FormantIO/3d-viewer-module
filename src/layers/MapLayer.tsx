@@ -12,7 +12,6 @@ import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
-import { LayerType } from "./common/LayerTypes";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 
 const URL_SCOPED_TOKEN =
@@ -126,7 +125,7 @@ export function MapLayer(props: IMapLayer) {
   }, []);
   const mapReady = mapTexture !== undefined;
   return (
-    <DataVisualizationLayer {...props} type={LayerType.MAP}>
+    <DataVisualizationLayer {...props} iconUrl="../icons/map.svg">
       {mapReady && (
         <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />

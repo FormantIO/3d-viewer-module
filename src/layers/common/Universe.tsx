@@ -43,7 +43,7 @@ export function Universe(props: IUniverseProps) {
     toggleVisibility,
     cameraTargetId,
     setCameraTargetId,
-    reset
+    reset,
   } = useUI();
 
   useEffect(() => {
@@ -197,7 +197,7 @@ export function Universe(props: IUniverseProps) {
       }
     });
     if (!hasCentered) {
-      const deviceMarker = layers.find((l) => l.type === LayerType.MARKER);
+      const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
       if (deviceMarker) {
         setTimeout(() => {
           lookAtTargetId(deviceMarker.id);
@@ -216,7 +216,7 @@ export function Universe(props: IUniverseProps) {
           toggleVisibility,
           cameraTargetId,
           setCameraTargetId,
-          reset
+          reset,
         }}
       >
         {vr && <VRButton />}

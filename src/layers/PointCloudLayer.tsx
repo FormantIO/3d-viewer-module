@@ -15,7 +15,6 @@ extend({ PointCloudMaterial });
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
-import { LayerType } from "./common/LayerTypes";
 import { extend } from "@react-three/fiber";
 import { BufferAttribute, BufferGeometry } from "three";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
@@ -70,7 +69,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   }, [layerData, universeData]);
 
   return (
-    <DataVisualizationLayer {...props} type={LayerType.POINTCLOUD}>
+    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
       <points>
         <bufferGeometry attach="geometry" ref={pointGeo} />
         <pointCloudMaterial args={[1.5, "#18d2ff", "#ea719d"]} />
