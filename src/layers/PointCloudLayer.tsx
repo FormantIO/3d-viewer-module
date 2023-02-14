@@ -3,7 +3,12 @@ import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { IPcd, UniverseTelemetrySource } from "@formant/universe-core";
+import {
+  defined,
+  IPcd,
+  IPointCloud,
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
 import { PointCloudMaterial } from "./utils/PointCloudMaterial";
 extend({ PointCloudMaterial });
 
@@ -13,6 +18,7 @@ interface IPointCloudProps extends IUniverseLayerProps {
 import { LayerType } from "./common/LayerTypes";
 import { extend } from "@react-three/fiber";
 import { BufferAttribute, BufferGeometry } from "three";
+import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
@@ -42,9 +48,10 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       const unsubscribe = universeData.subscribeToPointCloud(
         deviceId,
         dataSource,
-        (data: IPcd | Symbol) => {
+        (data: IUniversePointCloud | Symbol) => {
           if (typeof data === "symbol") return;
-          const pcd = data as IPcd;
+          const pc = data as IUniversePointCloud;
+          const pcd = defined(pc.pcd);
           if (pcd.positions && pcd.positions.length && pointGeo.current) {
             const geo = pointGeo.current;
             geo.setDrawRange(0, pcd.positions ? pcd.positions.length / 3 : 0);

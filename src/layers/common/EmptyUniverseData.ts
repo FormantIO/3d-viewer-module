@@ -2,7 +2,6 @@ import {
   CloseSubscription,
   DataSourceState,
   Interaction,
-  IOdometry,
   IPose,
   IRealtimeStream,
   ITelemetryRosStream,
@@ -16,11 +15,22 @@ import {
   IMarker3DArray,
   INumericSetEntry,
   ITransformNode,
-  IGridMap,
   IPcd,
+  IUniverseOdometry,
+  IUniverseGridMap,
 } from "@formant/universe-core";
+import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
+import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 
 export class EmptyUniverseData implements IUniverseData {
+  subscribeToPath(
+    deviceId: string,
+    source: UniverseDataSource,
+    callback: (data: Symbol | IUniversePath) => void
+  ): CloseSubscription {
+    throw new Error("Method not implemented.");
+  }
+
   addInteraction(interaction: Interaction) {
     throw new Error("Method not implemented.");
   }
@@ -95,7 +105,7 @@ export class EmptyUniverseData implements IUniverseData {
   subscribeToPointCloud(
     deviceId: string,
     source: UniverseDataSource,
-    callback: (data: Symbol | IPcd) => void
+    callback: (data: Symbol | IUniversePointCloud) => void
   ): CloseSubscription {
     throw new Error("Method not implemented.");
   }
@@ -103,7 +113,7 @@ export class EmptyUniverseData implements IUniverseData {
   subscribeToOdometry(
     deviceId: string,
     source: UniverseDataSource,
-    callback: (data: Symbol | IOdometry) => void
+    callback: (data: Symbol | IUniverseOdometry) => void
   ): CloseSubscription {
     throw new Error("Method not implemented.");
   }
@@ -135,7 +145,7 @@ export class EmptyUniverseData implements IUniverseData {
   subscribeToGridMap(
     deviceId: string,
     source: UniverseDataSource,
-    callback: (data: Symbol | IGridMap) => void
+    callback: (data: Symbol | IUniverseGridMap) => void
   ): CloseSubscription {
     throw new Error("Method not implemented.");
   }

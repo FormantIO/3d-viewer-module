@@ -2,6 +2,7 @@ import { Fleet } from "@formant/data-sdk";
 import {
   defined,
   definedAndNotNull,
+  ILocation,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { computeDestinationPoint } from "geolib";
@@ -12,6 +13,7 @@ import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { LayerType } from "./common/LayerTypes";
+import { UniverseDataContext } from "./common/UniverseDataContext";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -33,29 +35,19 @@ interface IMapLayer extends IUniverseLayerProps {
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType, mapBoxKey } = props;
   const { children } = props;
+  const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [mapTexture, setMapTexture] = useState<Texture | undefined>();
+  const [currentLocation, setCurrentLocation] = useState<
+    [number, number] | undefined
+  >(undefined);
 
   useEffect(() => {
     (async () => {
-      let location: [number, number];
-      if (dataSource) {
-        const device = await Fleet.getDevice(
-          definedAndNotNull(layerData).deviceId
-        );
-        const results = await device.getTelemetry(
-          defined(dataSource).streamName,
-          new Date(Date.now() - 10000),
-          new Date()
-        );
-        location = [
-          Number(results[0].points[0][1].longitude),
-          Number(results[0].points[0][1].latitude),
-        ];
-      } else {
-        location = [Number(longitude), Number(latitude)];
+      if (currentLocation === undefined) {
+        return;
       }
-
+      const location = currentLocation;
       const mapBoxConfig = {
         username: "mapbox",
         styleId: mapStyles[mapType],
@@ -104,6 +96,32 @@ export function MapLayer(props: IMapLayer) {
           `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${width}x${height}@2x?logo=false&access_token=${accessToken}`
         )
       );
+    })();
+  }, [currentLocation]);
+
+  useEffect(() => {
+    (async () => {
+      let location: [number, number];
+      if (dataSource) {
+        dataSource.streamType = "location";
+        universeData.subscribeToLocation(
+          defined(layerData?.deviceId),
+          dataSource,
+          (data) => {
+            if (typeof data === "symbol") return;
+            const loc = data as ILocation;
+            if (
+              currentLocation === undefined ||
+              (currentLocation && currentLocation[0] !== loc.longitude) ||
+              currentLocation[1] !== loc.latitude
+            ) {
+              setCurrentLocation([loc.longitude, loc.latitude]);
+            }
+          }
+        );
+      } else {
+        location = [Number(longitude), Number(latitude)];
+      }
     })();
   }, []);
   const mapReady = mapTexture !== undefined;

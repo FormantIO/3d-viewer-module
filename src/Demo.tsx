@@ -24,7 +24,7 @@ export function Demo() {
   );
   return (
     <UniverseDataContext.Provider value={universeData}>
-      <Universe>
+      <Universe configHash="fasd">
         <ambientLight />
         <GroundLayer
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}

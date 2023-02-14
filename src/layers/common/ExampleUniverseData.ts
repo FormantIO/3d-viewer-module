@@ -9,9 +9,7 @@ import {
   UniverseDataSource,
   DataStatus,
   IMarker3DArray,
-  IGridMap,
   IMap,
-  IOdometry,
   IPcd,
   IPose,
   IUniverseData,
@@ -21,9 +19,13 @@ import {
   ITransformNode,
   ILocation,
   IJointState,
+  IUniverseGridMap,
+  IUniverseOdometry,
 } from "@formant/universe-core";
 import { SplineCurve, Vector2 } from "three";
 import seedrandom from "seedrandom";
+import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
+import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
 
 export const SPOT_ID = "abc";
 export const ARM1_ID = "asdfadsfas";
@@ -31,6 +33,14 @@ export const ARM2_ID = "124fasd";
 export const ARM3_ID = "77hrtesgdafdsh";
 
 export class ExampleUniverseData implements IUniverseData {
+  subscribeToPath(
+    deviceId: string,
+    source: UniverseDataSource,
+    callback: (data: Symbol | IUniversePath) => void
+  ): CloseSubscription {
+    throw new Error("Method not implemented.");
+  }
+
   subscribeToImage(
     _deviceId: string,
     _source: UniverseDataSource,
@@ -74,7 +84,7 @@ export class ExampleUniverseData implements IUniverseData {
   subscribeToOdometry(
     _deviceId: string,
     _source: UniverseDataSource,
-    callback: (data: IOdometry) => void
+    callback: (data: IUniverseOdometry) => void
   ): CloseSubscription {
     setInterval(() => {
       callback({
@@ -179,7 +189,7 @@ export class ExampleUniverseData implements IUniverseData {
   subscribeToGridMap(
     _deviceId: string,
     _source: UniverseDataSource,
-    _callback: (data: IGridMap | DataStatus) => void
+    _callback: (data: IUniverseGridMap | DataStatus) => void
   ): CloseSubscription {
     throw new Error("Method not implemented.");
   }
@@ -321,7 +331,7 @@ export class ExampleUniverseData implements IUniverseData {
   subscribeToPointCloud(
     _deviceId: string,
     _source: UniverseDataSource,
-    _callback: (data: IPcd | DataStatus) => void
+    _callback: (data: IUniversePointCloud | DataStatus) => void
   ): () => void {
     const points: number[] = [];
     for (let i = 0; i < 100; i += 1) {
@@ -343,7 +353,7 @@ export class ExampleUniverseData implements IUniverseData {
       },
       positions: new Float32Array(points),
     };
-    _callback(pcd);
+    _callback({ pcd });
     return () => {};
   }
 

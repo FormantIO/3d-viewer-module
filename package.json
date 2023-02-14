@@ -14,8 +14,8 @@
   "dependencies": {
     "@formant/data-sdk": "0.0.117",
     "@formant/ui-sdk": "0.0.31",
-    "@formant/universe-connector": "0.0.19",
-    "@formant/universe-core": "0.0.12",
+    "@formant/universe-connector": "^0.0.23",
+    "@formant/universe-core": "^0.0.15",
     "@react-three/drei": "^9.56.5",
     "@react-three/fiber": "^8.10.1",
     "@react-three/postprocessing": "^2.7.0",

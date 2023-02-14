@@ -551,23 +551,23 @@
     sass "^1.51.0"
     styled-components "^5.3.5"
 
-"@formant/universe-connector@0.0.19":
-  version "0.0.19"
-  resolved "https://registry.npmjs.org/@formant/universe-connector/-/universe-connector-0.0.19.tgz"
-  integrity sha512-1VLyuQ5ZhTFZ5Ti8DoallNEtiWX+ZXsA/u5/lbVONOdLeXmQcic1VS/2l4qpJi/MG/8aiNFGoTcSAjo2zimIqg==
+"@formant/universe-connector@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.23.tgz#c87603c0ecb49697279dbc306ff2d3f7a6e28d0c"
+  integrity sha512-Mu3hkmELXUDADQpHlF1PdaWj45n4uX0xF+RZJAwo53TXBE0/U/rE19j8oh7x16Cy5hIDD7gkKUpzK3By53RsoQ==
   dependencies:
     "@formant/data-sdk" "0.0.117"
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
-    "@formant/universe-core" "0.0.12"
+    "@formant/universe-core" "0.0.15"
     date-fns "^2.29.3"
     lzfjs "^1.0.1"
     validator "^13.7.0"
 
-"@formant/universe-core@0.0.12":
-  version "0.0.12"
-  resolved "https://registry.npmjs.org/@formant/universe-core/-/universe-core-0.0.12.tgz"
-  integrity sha512-fq/f8z/shggnV1Nt+mL2BkMO9ODQm5RId5faUde4dKBWjuecEnyh7YrpneRznxJHPhOpGXXMNZ9FdZS2VQv8WA==
+"@formant/universe-core@0.0.15", "@formant/universe-core@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.15.tgz#59f2952b18e75e794a8e976fd981db631f7d66bd"
+  integrity sha512-8dQusXhW4ZbZX0ddztBMZ5PrdMVtjr7i0T/3lSQWBrY+jIlRmrkfOVYsa5u8DgdIWYm3pbvj96m/IkVbkAyIEQ==
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
@@ -1777,7 +1777,7 @@ string.prototype.codepointat@^0.2.1:
   resolved "https://registry.npmjs.org/string.prototype.codepointat/-/string.prototype.codepointat-0.2.1.tgz"
   integrity sha512-2cBVCj6I4IOvEnjgO/hWqXjqBGsY+zwPmHl12Srk9IXSZ56Jwwmy+66XO5Iut/oQVR7t5ihYdLB0GMa4alEUcg==
 
-styled-components@^5.3.5, styled-components@^5.3.6:
+styled-components@^5.3.5:
   version "5.3.6"
   resolved "https://registry.npmjs.org/styled-components/-/styled-components-5.3.6.tgz"
   integrity sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==

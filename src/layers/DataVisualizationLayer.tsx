@@ -8,8 +8,8 @@ import {
   CloseSubscription,
   defined,
   ILocation,
-  IOdometry,
   ITransformNode,
+  IUniverseOdometry,
 } from "@formant/universe-core";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
@@ -17,7 +17,7 @@ import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -176,7 +176,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
               console.warn("unhandled empty odometry");
               return;
             }
-            const odom = d as IOdometry;
+            const odom = d as IUniverseOdometry;
             const pos = odom.pose.translation;
             const rot = odom.pose.rotation;
             g.position.set(pos.x, pos.y, pos.z);
