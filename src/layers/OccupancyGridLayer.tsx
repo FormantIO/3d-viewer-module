@@ -19,6 +19,7 @@ import {
 } from "three";
 import { IQuaternion, IVector3 } from "@formant/data-sdk";
 import { useThree } from "@react-three/fiber";
+import { FormantColors } from "./utils/FormantColors";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -105,12 +106,11 @@ function createTexture({ width, height, data }: IUniverseGridMap) {
   canvas.height = 128;
   const ctx = canvas.getContext("2d")!;
 
-  const mappedColor = "#1b2541";
-  const occupiedColor = "#4f5f96";
+  const { mapColor, occupiedColor } = FormantColors;
 
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      ctx.fillStyle = data[i * width + j] > 0 ? mappedColor : occupiedColor;
+      ctx.fillStyle = data[i * width + j] > 0 ? mapColor : occupiedColor;
       ctx.fillRect(i, j, 1, 1);
     }
   }
