@@ -225,7 +225,8 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (data: T | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    _callback(JSON.stringify({ abc: "123", xyz: [10, 9, 8] }) as any);
+    return () => {};
   }
 
   subscribeToText(
@@ -233,7 +234,8 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (text: string | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    _callback("Hello world!");
+    return () => {};
   }
 
   getStatistics(): Promise<IUniverseStatistics> {
