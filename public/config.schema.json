@@ -66,6 +66,32 @@
               }
             }
           },
+          "localPathLayers": {
+            "title": "Local Path",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "telemetryStreamName": {
+                      "type": "string",
+                      "$formant.streams.byType": "localization"
+                    },
+                    "latestDataPoint": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "mapLayers": {
             "title": "Add Map",
             "type": "array",

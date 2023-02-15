@@ -43,6 +43,10 @@ export type Viewer3DConfiguration = {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
+    localPathLayers?: {
+      name?: string;
+      dataSource?: Viewer3DConfigurationDataSource;
+    }[];
     mapLayers?: {
       mapType?: "Ground Plane" | "World Map";
       worldMapType?: "Satellite" | "Street" | "Satellite Street";
