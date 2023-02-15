@@ -92,7 +92,7 @@ export function buildScene(
         />
       );
     });
-    (device.pointCloudLayers || []).forEach((layer, i) => {
+    (device.occupancyGridLayers || []).forEach((layer, i) => {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       deviceLayers.push(
         <OccupancyGridLayer
