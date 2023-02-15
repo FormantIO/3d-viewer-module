@@ -16,6 +16,7 @@ import { MarkerLayer } from "./layers/MarkerLayer";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
+import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -88,6 +89,17 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Point Cloud"}
+        />
+      );
+    });
+    (device.pointCloudLayers || []).forEach((layer, i) => {
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      deviceLayers.push(
+        <OccupancyGridLayer
+          key={"occupancy_grid" + i + configHash}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Occupancy Grid"}
         />
       );
     });
