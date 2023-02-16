@@ -66,8 +66,8 @@
               }
             }
           },
-          "localPathLayers": {
-            "title": "Local Path",
+          "pathLayers": {
+            "title": "Path",
             "type": "array",
             "items": {
               "type": "object",

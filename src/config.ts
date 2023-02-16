@@ -43,7 +43,7 @@ export type Viewer3DConfiguration = {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
-    localPathLayers?: {
+    pathLayers?: {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
