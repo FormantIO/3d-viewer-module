@@ -11,6 +11,11 @@
       "items": {
         "type": "object",
         "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "$formant.placeholder": "Optional layer name"
+          },
           "layerType": {
             "type": "string",
             "enum": [
@@ -21,41 +26,28 @@
               "Occupancy Grid"
             ]
           },
-          "terrainName": {
-            "type": "string",
-            "title": "Name",
-            "default": "Terrain",
-            "$formant.visible.when": ["layerType", "=", "Terrain"]
-          },
           "terrainType": {
-            "title": "Map Type",
+            "title": "Terrain type",
             "type": "string",
             "enum": ["Ground Plane", "World Map"],
             "$formant.visible.when": ["layerType", "=", "Terrain"]
           },
           "terrainMapType": {
-            "title": "World Map Type",
+            "title": "World map type",
             "type": "string",
             "enum": ["Satellite", "Street", "Satellite Street"],
-            "$formant.visible.when": ["mapType", "=", "World Map"]
-          },
-          "terrainMaplongitude": {
-            "title": "Longitude (if not using stream)",
-            "type": "number",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
-          },
-          "terrainMapLatitude": {
-            "title": "Latitude (if not using stream)",
-            "type": "number",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "default": "Satellite",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
           },
           "terrainMapSize": {
-            "title": "Map Edge Length (meters)",
+            "title": "Map edge length (meters)",
             "type": "number",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "default": 1000,
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
           },
           "terrainDataSource": {
             "type": "object",
+            "title": "Data source",
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
@@ -69,26 +61,26 @@
             },
             "$formant.visible.when": ["layerType", "=", "Terrain"]
           },
-          "positionIndicatorName": {
-            "type": "string",
-            "title": "Name",
-            "default": "Position Indicator",
-            "$formant.visible.when": ["layerType", "=", "Position Indicator"]
+          "terrainMaplongitude": {
+            "title": "Default longitude (optional)",
+            "type": "number",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
+          },
+          "terrainMapLatitude": {
+            "title": "Default latitude (optional)",
+            "type": "number",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
           },
           "positionIndicatorVisualType": {
             "type": "string",
+            "title": "Visual type",
             "enum": ["Circle"],
             "default": "Circle",
             "$formant.visible.when": ["layerType", "=", "Position Indicator"]
           },
-          "geometryName": {
-            "type": "string",
-            "default": "Geometry",
-            "title": "Name",
-            "$formant.visible.when": ["layerType", "=", "Geometry"]
-          },
           "geometryDataSource": {
             "type": "object",
+            "title": "Data source",
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
@@ -102,14 +94,9 @@
             },
             "$formant.visible.when": ["layerType", "=", "Geometry"]
           },
-          "pointCloudName": {
-            "type": "string",
-            "title": "Name",
-            "default": "Point Cloud",
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
-          },
           "pointCloudDataSource": {
             "type": "object",
+            "title": "Data source",
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
@@ -122,15 +109,10 @@
               }
             },
             "$formant.visible.when": ["layerType", "=", "Point Cloud"]
-          },
-          "occupancyGridName": {
-            "type": "string",
-            "title": "Name",
-            "default": "Occupancy Grid",
-            "$formant.visible.when": ["layerType", "=", "Occupancy Grid"]
           },
           "occupancyGridDataSource": {
             "type": "object",
+            "title": "Data source",
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
@@ -144,43 +126,32 @@
             },
             "$formant.visible.when": ["layerType", "=", "Occupancy Grid"]
           },
-          "positioning": {
-            "$formant.itemName": "Positioning",
+          "transform": {
+            "title": "Transform",
+            "$formant.itemName": "Transform",
             "type": "object",
             "properties": {
               "positioningType": {
                 "type": "string",
-                "enum": ["Fixed", "Gps", "Odometry", "Transform Tree", "Hud"],
-                "default": "fixed"
+                "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+                "default": "Cartesian"
               },
               "x": {
                 "title": "X-axis",
                 "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
               },
               "y": {
                 "title": "Y-axis",
 
                 "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
               },
               "z": {
                 "title": "Z-axis",
 
                 "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
-              },
-              "hudX": {
-                "title": "X-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Hud"]
-              },
-              "hudY": {
-                "title": "Y-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Hud"]
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
               },
               "relativeLatitude": {
                 "type": "number",
