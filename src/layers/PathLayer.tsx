@@ -6,7 +6,7 @@ import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { UniverseTelemetrySource } from "@formant/universe-core";
 import * as THREE from "three";
 import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
-import { transformMatrix } from "./utils/utils";
+import { transformMatrix } from "./utils/transformMatrix";
 import { FormantColors } from "./utils/FormantColors";
 
 interface ILocalPathProps extends IUniverseLayerProps {

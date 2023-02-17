@@ -1,53 +1,56 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
+import { transformMatrix } from "./utils/transformMatrix";
 import {
   IUniverseGridMap,
-  ITransform,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 
 import {
-  CanvasTexture,
+  Color,
+  DataTexture,
   Matrix4,
+  Mesh,
   MeshBasicMaterial,
-  NearestFilter,
-  Quaternion,
-  Vector3,
+  PlaneGeometry,
 } from "three";
-import { IQuaternion, IVector3 } from "@formant/data-sdk";
-import { useThree } from "@react-three/fiber";
 import { FormantColors } from "./utils/FormantColors";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
 
+const convertColor = (c: string) => {
+  const col = new Color(c);
+  return [
+    Math.floor(col.r * 255),
+    Math.floor(col.g * 255),
+    Math.floor(col.b * 255),
+  ];
+};
+const mapColor = convertColor(FormantColors.mapColor);
+const occupiedColor = convertColor(FormantColors.occupiedColor);
+
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
 
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const { camera } = useThree();
-  camera.position.set(0, 5, 0);
+  const [obj, setObj] = useState(new Mesh());
 
   useEffect(() => {
-    let mesh = meshRef.current;
-
-    const timer = window.setTimeout(() => {
-      mesh = meshRef.current;
-    }, 1000);
-
     if (!layerData || !dataSource) return;
 
     const { deviceId } = layerData;
-
     dataSource.streamType = "localization";
 
-    if (!mesh) return;
+    const gridMat = new MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+    const mesh = new Mesh(new PlaneGeometry(), gridMat);
+    mesh.visible = false;
+    setObj(mesh);
 
     const unsubscribe = universeData.subscribeToGridMap(
       deviceId,
@@ -57,77 +60,49 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           throw new Error("unhandled data status");
         }
 
-        const { origin, width, height, resolution } =
+        const { origin, width, height, resolution, data, worldToLocal } =
           gridData as IUniverseGridMap;
-
-        if (!mesh) return;
 
         mesh.matrixAutoUpdate = false;
 
-        console.log(origin);
-
-        mesh.matrix.copy(
-          transformMatrix(origin).multiply(
-            new Matrix4().makeScale(width * resolution, height * resolution, 1)
-          )
+        const newMatrix = transformMatrix(origin).multiply(
+          new Matrix4().makeScale(width * resolution, height * resolution, 1)
         );
 
-        const oldMat = mesh.material as MeshBasicMaterial;
+        if (worldToLocal) newMatrix.multiply(transformMatrix(worldToLocal));
 
-        mesh.material = new MeshBasicMaterial({
-          map: createTexture(gridData as IUniverseGridMap),
-          transparent: true,
-          opacity: 0.5,
-        });
+        mesh.matrix.copy(newMatrix);
 
-        oldMat.dispose();
+        const size = width * height;
+        const textureData = new Uint8Array(4 * size);
+
+        for (let i = 0; i < size; i++) {
+          const stride = i * 4;
+          textureData[stride] = data[i] > 0 ? mapColor[0] : occupiedColor[0];
+          textureData[stride + 1] =
+            data[i] > 0 ? mapColor[1] : occupiedColor[1];
+          textureData[stride + 2] =
+            data[i] > 0 ? mapColor[2] : occupiedColor[2];
+
+          textureData[stride + 3] = 255; // alpha
+        }
+        const texture = new DataTexture(textureData, width, height);
+        texture.needsUpdate = true;
+        gridMat.map = texture;
+        gridMat.needsUpdate = true;
+
+        mesh.visible = true;
       }
     );
 
     return () => {
-      clearTimeout(timer);
       unsubscribe();
     };
-  }, [layerData, universeData, meshRef]);
+  }, [layerData, universeData]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
-      <mesh ref={meshRef}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial color={"#4e5a80"} />
-      </mesh>
+      <primitive object={obj} />
     </DataVisualizationLayer>
   );
 };
-
-function createTexture({ width, height, data }: IUniverseGridMap) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext("2d")!;
-
-  const { mapColor, occupiedColor } = FormantColors;
-
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      ctx.fillStyle = data[i * width + j] > 0 ? mapColor : occupiedColor;
-      ctx.fillRect(i, j, 1, 1);
-    }
-  }
-  const texture = new CanvasTexture(canvas);
-  texture.flipY = false;
-  texture.magFilter = NearestFilter;
-  texture.minFilter = NearestFilter;
-  texture.anisotropy = 16;
-
-  return texture;
-}
-
-function transformMatrix({ translation, rotation }: ITransform): Matrix4 {
-  const vector = ({ x, y, z }: IVector3) => new Vector3(x, y, z);
-  const quaternion = ({ x, y, z, w }: IQuaternion) =>
-    new Quaternion(x, y, z, w);
-  return new Matrix4()
-    .multiply(new Matrix4().setPosition(vector(translation)))
-    .multiply(new Matrix4().makeRotationFromQuaternion(quaternion(rotation)));
-}
