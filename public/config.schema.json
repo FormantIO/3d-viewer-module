@@ -23,7 +23,8 @@
               "Position Indicator",
               "Geometry",
               "Point Cloud",
-              "Occupancy Grid"
+              "Occupancy Grid",
+              "Path"
             ]
           },
           "terrainType": {
@@ -126,6 +127,21 @@
             },
             "$formant.visible.when": ["layerType", "=", "Occupancy Grid"]
           },
+          "pathDataSource": {
+            "type": "object",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "localization"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Path"]
+          },
           "transform": {
             "title": "Transform",
             "$formant.itemName": "Transform",
@@ -169,6 +185,11 @@
               "localizationStream": {
                 "type": "string",
                 "$formant.streams.byType": "localization",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "localizationWorldToLocal": {
+                "type": "boolean",
+                "default": true,
                 "$formant.visible.when": ["positioningType", "=", "Odometry"]
               },
               "localizationRealtimeStream": {

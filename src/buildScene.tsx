@@ -17,6 +17,7 @@ import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
+import { PathLayer } from "./layers/PathLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -100,6 +101,17 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Occupancy Grid"}
+        />
+      );
+    });
+    (device.pathLayers || []).forEach((layer, i) => {
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      deviceLayers.push(
+        <PathLayer
+          key={"local_path_layer" + i + configHash}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Local Path "}
         />
       );
     });

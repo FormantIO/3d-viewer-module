@@ -21,6 +21,7 @@ export type Viewer3DConfiguarationPositioning = {
   gpsStream?: string;
   localizationStream?: string;
   localizationRealtimeStream?: string;
+  localizationWorldToLocal?: boolean;
   transformTreeStream?: string;
   transformTreeEndPoint?: string;
 };
@@ -40,6 +41,10 @@ export type Viewer3DConfiguration = {
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
     occupancyGridLayers?: {
+      name?: string;
+      dataSource?: Viewer3DConfigurationDataSource;
+    }[];
+    pathLayers?: {
       name?: string;
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
@@ -97,9 +102,7 @@ export function parsePositioning(
         lat: positioning.relativeLatitude || 0,
       });
     case "Odometry":
-      return PositioningBuilder.localization(
-        positioning.localizationStream || ""
-      );
+      return PositioningBuilder.odometry(positioning.localizationStream || "");
     case "Transform Tree":
       return PositioningBuilder.tranformTree(
         positioning.transformTreeStream || "",

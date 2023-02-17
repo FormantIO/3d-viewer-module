@@ -16,6 +16,7 @@ import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
+import { transformMatrix } from "./utils/transformMatrix";
 
 interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
@@ -107,7 +108,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         positionUnsubscriber();
         setPositionUnsubscriber(undefined);
       }
-      if (p.type === "fixed") {
+      if (p.type === "cartesian") {
         const { x, y, z } = p;
         g.position.set(x, y, z);
       } else if (p.type === "gps") {
@@ -163,12 +164,12 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
-        if (p.stream) {
-          d = DataSourceBuilder.telemetry(p.stream, "localization");
+        if (p.stream && p.streamType === "localization") {
+          d = DataSourceBuilder.telemetry(p.stream, p.streamType);
         } else if (p.rtcStream) {
           d = DataSourceBuilder.realtime(p.rtcStream, "json");
         } else {
-          throw new Error("invalid odometry positioning");
+          throw new Error("invalid odometry positioning stream type");
         }
         const unsubscribe = universeData.subscribeToOdometry(
           defined(deviceId, "odometry positioning requires a device id"),
@@ -185,6 +186,10 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
             g.setRotationFromQuaternion(
               new Quaternion(rot.x, rot.y, rot.z, rot.w)
             );
+            if (p.useWorldToLocalTransform && odom.worldToLocal) {
+              const worldToLocalMatrix = transformMatrix(odom.worldToLocal);
+              g.matrix.copy(worldToLocalMatrix);
+            }
           }
         );
         setPositionUnsubscriber(() => unsubscribe);

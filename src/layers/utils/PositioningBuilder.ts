@@ -1,12 +1,21 @@
+import { StreamType } from "@formant/universe-core";
 import { Positioning } from "../common/Positioning";
 
 export class PositioningBuilder {
   static fixed(x: number, y: number, z: number): Positioning {
-    return { type: "fixed", x, y, z };
+    return { type: "cartesian", x, y, z };
   }
 
-  static localization(stream: string): Positioning {
-    return { type: "odometry", stream };
+  static odometry(
+    stream: string,
+    localizationWorldToLocal?: boolean
+  ): Positioning {
+    return {
+      type: "odometry",
+      stream,
+      streamType: "localization",
+      useWorldToLocalTransform: localizationWorldToLocal,
+    };
   }
 
   static gps(
