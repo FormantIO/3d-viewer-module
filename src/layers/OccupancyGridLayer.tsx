@@ -89,6 +89,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           textureData[stride + 3] = 255; // alpha
         }
         const texture = new DataTexture(textureData, width, height);
+        texture.flipY = true;
         texture.needsUpdate = true;
         gridMat.map = texture;
         gridMat.needsUpdate = true;
