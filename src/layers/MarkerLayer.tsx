@@ -48,23 +48,26 @@ export function MarkerLayer(props: IMarkerLayerProps) {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
-      <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
-        <shapeGeometry args={[arrowShape]} />
-        <meshStandardMaterial
-          color="white"
-          emissive="white"
-          emissiveIntensity={2}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh name="circle" ref={circleRef}>
-        <circleGeometry args={[0.8, 20]} />
-        <markerMaterial
-          transparent={true}
-          side={THREE.FrontSide}
-          depthTest={false}
-        />
-      </mesh>
+      <group scale={0.2}>
+        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
+          <shapeGeometry args={[arrowShape]} />
+          <meshStandardMaterial
+            color="white"
+            emissive="white"
+            emissiveIntensity={2}
+            toneMapped={false}
+          />
+        </mesh>
+        <mesh name="circle" ref={circleRef}>
+          <circleGeometry args={[0.8, 20]} />
+          <markerMaterial
+            transparent={true}
+            side={THREE.FrontSide}
+            depthTest={false}
+          />
+        </mesh>
+      </group>
+
       {children}
     </DataVisualizationLayer>
   );
