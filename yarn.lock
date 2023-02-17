@@ -1112,6 +1112,31 @@ color-name@1.1.3:
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.3.tgz"
   integrity sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==
 
+color-name@^1.0.0:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
+  integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
+
+color-parse@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/color-parse/-/color-parse-1.4.2.tgz#78651f5d34df1a57f997643d86f7f87268ad4eb5"
+  integrity sha512-RI7s49/8yqDj3fECFZjUI1Yi0z/Gq1py43oNJivAIIDSyJiOZLfYCRQEgn8HEVAj++PcRe8AnL2XF0fRJ3BTnA==
+  dependencies:
+    color-name "^1.0.0"
+
+color-rgba@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/color-rgba/-/color-rgba-2.4.0.tgz#ae85819c530262c29fc2da129fc7c8f9efc57015"
+  integrity sha512-Nti4qbzr/z2LbUWySr7H9dk3Rl7gZt7ihHAxlgT4Ho90EXWkjtkL1avTleu9yeGuqrt/chxTB6GKK8nZZ6V0+Q==
+  dependencies:
+    color-parse "^1.4.2"
+    color-space "^2.0.0"
+
+color-space@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/color-space/-/color-space-2.0.0.tgz#ae7813abcbe3dabda9e3e2266b0675f688b24977"
+  integrity sha512-Bu8P/usGNuVWushjxcuaGSkhT+L2KX0cvgMGMTF0KJ7lFeqonhsntT68d6Yu3uwZzCmbF7KTB9EV67AGcUXhJw==
+
 convert-source-map@^1.5.0, convert-source-map@^1.7.0:
   version "1.9.0"
   resolved "https://registry.npmjs.org/convert-source-map/-/convert-source-map-1.9.0.tgz"
@@ -1387,6 +1412,11 @@ its-fine@^1.0.6:
   integrity sha512-MagTA9/J6kN3aEQsQu6by3nyrttCm0whCOYo4SfiNzOfYgcr1cb29mJ3zgluaJboaWOL/lHzJeMXi/QGSCfX1Q==
   dependencies:
     "@types/react-reconciler" "^0.28.0"
+
+jq-web@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/jq-web/-/jq-web-0.5.1.tgz#4456cd3be4c2688c43f287b1fec2e3ea29e427e3"
+  integrity sha512-3Fa3E6g3U1O1j46ljy0EM10yRr4txzILga8J7bqOG8F89gZ6Lilz82WG9z6TItWpYEO0YGa4W8yFGj+NMM1xqQ==
 
 js-md5@^0.7.3:
   version "0.7.3"

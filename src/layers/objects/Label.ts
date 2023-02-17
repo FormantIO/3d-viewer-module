@@ -1,5 +1,6 @@
 import { definedAndNotNull } from "@formant/universe-core";
 import { Group, Sprite, SpriteMaterial, Texture } from "three";
+import { FormantColors } from "../utils/FormantColors";
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -34,7 +35,12 @@ export class Label extends Group {
 
   currentText: string;
 
-  constructor(text: string, private sizeAttenuate: boolean = true) {
+  constructor(
+    text: string,
+    private sizeAttenuate: boolean = true,
+    private color: string = FormantColors.module,
+    private textColor: string = FormantColors.silver
+  ) {
     super();
     this.currentText = text;
     this.update();
@@ -71,13 +77,13 @@ export class Label extends Group {
       textWidth + padding,
       textHeight + padding,
       10,
-      "#2d3855"
+      this.color
     );
     context.globalAlpha = 1;
 
     // background color
     context.font = font;
-    context.fillStyle = "#bac4e2";
+    context.fillStyle = this.textColor;
     context.fillText(message, 0 + 10, fontsize + 10);
 
     // canvas contents will be used for a texture
