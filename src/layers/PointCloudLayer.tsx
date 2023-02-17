@@ -9,6 +9,7 @@ import {
   IPointCloud,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
+import { transformMatrix } from "./utils/transformMatrix";
 import { PointCloudMaterial } from "./utils/PointCloudMaterial";
 extend({ PointCloudMaterial });
 
@@ -51,6 +52,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           if (typeof data === "symbol") return;
           const pc = data as IUniversePointCloud;
           const pcd = defined(pc.pcd);
+          const worldToLocal = defined(pc.worldToLocal);
           if (pcd.positions && pcd.positions.length && pointGeo.current) {
             const geo = pointGeo.current;
             geo.setDrawRange(0, pcd.positions ? pcd.positions.length / 3 : 0);
@@ -58,6 +60,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             const positionAttr = geo.attributes.position as BufferAttribute;
             positionAttr.set(points, 0);
             positionAttr.needsUpdate = true;
+
+            if (worldToLocal) geo.applyMatrix4(transformMatrix(worldToLocal));
           }
         }
       );
