@@ -47,7 +47,7 @@ export function Demo() {
             name="Map"
           />
           <DataVisualizationLayer
-            positioning={PositioningBuilder.localization("eko.loc")}
+            positioning={PositioningBuilder.odometry("eko.loc")}
             name="Ekobot"
           >
             <MarkerLayer

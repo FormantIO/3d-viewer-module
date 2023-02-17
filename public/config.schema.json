@@ -209,6 +209,15 @@
                         "Odometry"
                       ]
                     },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
                     "localizationRealtimeStream": {
                       "type": "string",
                       "$formant.visible.when": [
@@ -331,6 +340,15 @@
                         "Odometry"
                       ]
                     },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
                     "localizationRealtimeStream": {
                       "type": "string",
                       "$formant.visible.when": [
@@ -443,6 +461,15 @@
                         "Odometry"
                       ]
                     },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
                     "localizationRealtimeStream": {
                       "type": "string",
                       "$formant.visible.when": [
@@ -528,6 +555,11 @@
               "localizationStream": {
                 "type": "string",
                 "$formant.streams.byType": "localization",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "localizationWorldToLocal": {
+                "type": "boolean",
+                "default": true,
                 "$formant.visible.when": ["positioningType", "=", "Odometry"]
               },
               "localizationRealtimeStream": {
