@@ -3,7 +3,11 @@ import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { defined, UniverseTelemetrySource } from "@formant/universe-core";
+import {
+  defined,
+  ITransform,
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
   BufferAttribute,
@@ -128,7 +132,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
           if (typeof data === "symbol") return;
           const pc = data as IUniversePointCloud;
           const { header, positions, colors } = defined(pc.pcd);
-          const worldToLocal = defined(pc.worldToLocal);
+          const identityTransform: ITransform = {
+            translation: { x: 0, y: 0, z: 0 },
+            rotation: { x: 0, y: 0, z: 0, w: 1 },
+          };
+          const worldToLocal = pc.worldToLocal
+            ? pc.worldToLocal
+            : identityTransform;
 
           if (positions && header.points > 0) {
             geometry.setAttribute(
