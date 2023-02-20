@@ -11,7 +11,6 @@ import { ExampleUniverseData } from "./layers/common/ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
-import * as uuid from "uuid";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 

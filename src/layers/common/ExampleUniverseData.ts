@@ -26,6 +26,7 @@ import { SplineCurve, Vector2 } from "three";
 import seedrandom from "seedrandom";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
+import { RigidBodyDesc, World } from "@dimforge/rapier3d";
 
 export const SPOT_ID = "abc";
 export const ARM1_ID = "asdfadsfas";
@@ -33,6 +34,27 @@ export const ARM2_ID = "124fasd";
 export const ARM3_ID = "77hrtesgdafdsh";
 
 export class ExampleUniverseData implements IUniverseData {
+  construtor() {
+    // create rapier3d world
+    const world = new World({ x: 0, y: -9.81, z: 0 });
+    // create a rigid body
+    let rigidBodyDesc = RigidBodyDesc.dynamic()
+      // The rigid body translation.
+      // Default: zero vector.
+      .setTranslation(0.0, 5.0, 0)
+      // The rigid body rotation.
+      // Default: no rotation.
+      .setRotation({ x: 0, y: 0, z: 0, w: 1 });
+    const body = world.createRigidBody(rigidBodyDesc);
+
+    // run world simulation
+    setInterval(() => {
+      world.step();
+      const pos = world.getRigidBody(body.handle).translation;
+      console.log(pos);
+    }, 16);
+  }
+
   subscribeToPath(
     deviceId: string,
     source: UniverseDataSource,
