@@ -9,6 +9,7 @@
     "dev": "vite",
     "dev-vr": "vite --host --port 5555 --config ./vite.config.vr.ts",
     "build": "tsc && vite build",
+    "build-lib": "tsc && vite build --config ./vite.config.lib.ts",
     "preview": "vite preview"
   },
   "dependencies": {
