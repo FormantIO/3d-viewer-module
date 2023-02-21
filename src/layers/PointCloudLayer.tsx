@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -14,7 +14,6 @@ import {
   BufferGeometry,
   CustomBlending,
   MaxEquation,
-  Object3D,
   Points,
   ShaderMaterial,
   TextureLoader,
@@ -34,7 +33,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   const texture = useLoader(TextureLoader, "./point.png");
   const [obj, setObj] = useState<Points>(new Points());
-  const groupRef = useRef<Object3D>(null!);
 
   useEffect(() => {
     if (!layerData) return;
@@ -180,9 +178,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             pointMat.uniforms.density.value = density;
             pointMat.needsUpdate = true;
 
-            const group = groupRef.current;
-            group.matrixAutoUpdate = true;
-            if (worldToLocal) group.matrix.copy(transformMatrix(worldToLocal));
+            points.matrixAutoUpdate = false;
+            points.matrix.copy(transformMatrix(worldToLocal));
+            console.log("*** worldToLocal  ***", worldToLocal);
           }
         }
       );
@@ -195,7 +193,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
-      <primitive object={obj} ref={groupRef} />
+      <primitive object={obj} />
     </DataVisualizationLayer>
   );
 };

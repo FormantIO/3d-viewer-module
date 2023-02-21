@@ -65,13 +65,13 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
         mesh.matrixAutoUpdate = false;
 
-        const newMatrix = new Matrix4().makeScale(
-          width * resolution,
-          height * resolution,
-          1
+        origin.translation.x += (width * resolution) / 2;
+        origin.translation.y += (height * resolution) / 2;
+
+        const newMatrix = transformMatrix(origin).multiply(
+          new Matrix4().makeScale(width * resolution, height * resolution, 1)
         );
         if (worldToLocal) newMatrix.multiply(transformMatrix(worldToLocal));
-        console.log(worldToLocal);
 
         mesh.matrix.copy(newMatrix);
 
