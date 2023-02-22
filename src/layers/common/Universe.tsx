@@ -32,6 +32,7 @@ type IUniverseProps = {
 };
 
 let zooming = false;
+let autoCameraMoving = false;
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const [hasCentered, setHasCentered] = React.useState(false);
@@ -56,6 +57,7 @@ export function Universe(props: IUniverseProps) {
       if (m && scene) {
         const target = scene.getObjectByName(targetId);
         if (target) {
+          autoCameraMoving = true;
           const targetPosition = target.getWorldPosition(new Vector3());
           const currentTarget = m.target.clone();
           const currentPosition = m.object.position.clone();
@@ -80,12 +82,17 @@ export function Universe(props: IUniverseProps) {
             m.target.copy(lerpTarget);
             m.object.position.copy(lerpPosition);
             m.update();
+            if (!autoCameraMoving) {
+              return;
+            }
 
             if (
               m.target.distanceToSquared(desiredTarget) > 0.1 ||
               m.object.position.distanceToSquared(desiredPosition) > 0.1
             ) {
               requestAnimationFrame(animationFrame);
+            } else {
+              autoCameraMoving = false;
             }
           };
           requestAnimationFrame(animationFrame);
@@ -99,6 +106,7 @@ export function Universe(props: IUniverseProps) {
     const m = mapControlsRef.current;
 
     if (m) {
+      autoCameraMoving = true;
       const target = m.target;
       const position = m.object.position;
       const defaultTarget = new Vector3(0, 0, 0);
@@ -123,6 +131,9 @@ export function Universe(props: IUniverseProps) {
         position.copy(lerpPosition);
         m.setAzimuthalAngle(lerpRotation);
         m.update();
+        if (!autoCameraMoving) {
+          return;
+        }
 
         if (
           Math.abs(target.distanceTo(defaultTarget)) > 5 ||
@@ -130,6 +141,8 @@ export function Universe(props: IUniverseProps) {
           m.getAzimuthalAngle() > 0.1
         ) {
           requestAnimationFrame(animationFrame);
+        } else {
+          autoCameraMoving = false;
         }
       };
       requestAnimationFrame(animationFrame);
@@ -224,6 +237,7 @@ export function Universe(props: IUniverseProps) {
           onCreated={(state) => {
             setScene(state.scene);
           }}
+          onMouseDownCapture={() => { autoCameraMoving = false }}
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
