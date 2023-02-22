@@ -21,7 +21,7 @@
               "type": "object",
               "$formant.itemName": "Map",
               "properties": {
-                "mapName": {
+                "name": {
                   "type": "string"
                 },
                 "mapType": {
@@ -125,6 +125,15 @@
                     "localizationStream": {
                       "type": "string",
                       "$formant.streams.byType": "localization",
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
                       "$formant.visible.when": [
                         "positioningType",
                         "=",
@@ -253,6 +262,15 @@
                         "Odometry"
                       ]
                     },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
                     "localizationRealtimeStream": {
                       "type": "string",
                       "$formant.visible.when": [
@@ -365,6 +383,15 @@
                         "Odometry"
                       ]
                     },
+                    "localizationWorldToLocal": {
+                      "type": "boolean",
+                      "default": true,
+                      "$formant.visible.when": [
+                        "positioningType",
+                        "=",
+                        "Odometry"
+                      ]
+                    },
                     "localizationRealtimeStream": {
                       "type": "string",
                       "$formant.visible.when": [
@@ -392,86 +419,6 @@
                     }
                   }
                 }
-              }
-            }
-          },
-          "positioning": {
-            "$formant.itemName": "Positioning",
-            "type": "object",
-            "properties": {
-              "positioningType": {
-                "type": "string",
-                "enum": ["Fixed", "Gps", "Odometry", "Transform Tree", "Hud"],
-                "default": "fixed"
-              },
-              "x": {
-                "title": "X-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
-              },
-              "y": {
-                "title": "Y-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
-              },
-              "z": {
-                "title": "Z-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Fixed"]
-              },
-              "hudX": {
-                "title": "X-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Hud"]
-              },
-              "hudY": {
-                "title": "Y-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Hud"]
-              },
-              "relativeLatitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "relativeLongitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "gpsStream": {
-                "type": "string",
-                "$formant.streams.byType": "location",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "localizationStream": {
-                "type": "string",
-                "$formant.streams.byType": "localization",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "localizationRealtimeStream": {
-                "type": "string",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "transformTreeStream": {
-                "type": "string",
-                "$formant.streams.byType": "transform tree",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
-              },
-              "transformTreeEndPoint": {
-                "type": "string",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
               }
             }
           }
