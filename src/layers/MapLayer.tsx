@@ -120,6 +120,7 @@ export function MapLayer(props: IMapLayer) {
         );
       } else {
         location = [Number(longitude), Number(latitude)];
+        setCurrentLocation(location);
       }
     })();
   }, []);
