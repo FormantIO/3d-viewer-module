@@ -99,7 +99,7 @@
               "type": "object",
               "$formant.itemName": "Map",
               "properties": {
-                "mapName": {
+                "name": {
                   "type": "string"
                 },
                 "mapType": {
