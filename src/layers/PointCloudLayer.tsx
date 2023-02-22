@@ -180,7 +180,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             points.matrixAutoUpdate = false;
             points.matrix.copy(transformMatrix(worldToLocal));
-            console.log("*** worldToLocal  ***", worldToLocal);
           }
         }
       );

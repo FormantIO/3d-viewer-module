@@ -27,6 +27,8 @@ import seedrandom from "seedrandom";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
 import { RigidBodyDesc, World } from "@dimforge/rapier3d";
+import { pointCloud, occupancyMap } from "./exampleData";
+import { clone } from "../../common/clone";
 
 export const SPOT_ID = "abc";
 export const ARM1_ID = "asdfadsfas";
@@ -35,7 +37,7 @@ export const ARM3_ID = "77hrtesgdafdsh";
 
 export class ExampleUniverseData implements IUniverseData {
   construtor() {
-    // create rapier3d world
+    /* // create rapier3d world
     const world = new World({ x: 0, y: -9.81, z: 0 });
     // create a rigid body
     let rigidBodyDesc = RigidBodyDesc.dynamic()
@@ -51,8 +53,8 @@ export class ExampleUniverseData implements IUniverseData {
     setInterval(() => {
       world.step();
       const pos = world.getRigidBody(body.handle).translation;
-      console.log(pos);
     }, 16);
+    */
   }
 
   subscribeToPath(
@@ -60,7 +62,66 @@ export class ExampleUniverseData implements IUniverseData {
     source: UniverseDataSource,
     callback: (data: Symbol | IUniversePath) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    setInterval(() => {
+      const path: IUniversePath = {
+        worldToLocal: {
+          translation: {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          rotation: {
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
+        },
+        poses: [
+          {
+            translation: {
+              x: 3.3545788855933396,
+              y: -2.1870991935927204,
+              z: 0.154354741654536,
+            },
+            rotation: {
+              x: -0.0007247281610034406,
+              y: 0.006989157758653164,
+              z: 0.9746800661087036,
+              w: 0.2234935611486435,
+            },
+          },
+          {
+            translation: {
+              x: 4.3545788855933396,
+              y: -1.1870991935927204,
+              z: 0.154354741654536,
+            },
+            rotation: {
+              x: -0.0007247281610034406,
+              y: 0.006989157758653164,
+              z: 0.9746800661087036,
+              w: 0.2234935611486435,
+            },
+          },
+          {
+            translation: {
+              x: 5.3545788855933396,
+              y: 1.1870991935927204,
+              z: 0.154354741654536,
+            },
+            rotation: {
+              x: -0.0007247281610034406,
+              y: 0.006989157758653164,
+              z: 0.9746800661087036,
+              w: 0.2234935611486435,
+            },
+          },
+        ],
+      };
+      callback(path);
+    }, 1000);
+    return () => {};
   }
 
   subscribeToImage(
@@ -110,9 +171,31 @@ export class ExampleUniverseData implements IUniverseData {
   ): CloseSubscription {
     setInterval(() => {
       callback({
+        worldToLocal: {
+          translation: {
+            x: 0,
+            y: 0,
+            z: 0,
+          },
+          rotation: {
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
+        },
         pose: {
-          translation: { x: 0, y: 0, z: 0 },
-          rotation: { x: 0, y: 0, z: 0, w: 1 },
+          translation: {
+            x: 3.3545788855933396,
+            y: -2.1870991935927204,
+            z: 0.154354741654536,
+          },
+          rotation: {
+            x: -0.0007247281610034406,
+            y: 0.006989157758653164,
+            z: 0.9746800661087036,
+            w: 0.2234935611486435,
+          },
         },
         covariance: [],
       });
@@ -213,7 +296,12 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     _callback: (data: IUniverseGridMap | DataStatus) => void
   ): CloseSubscription {
-    throw new Error("Method not implemented.");
+    const intervalMap = setInterval(() => {
+      _callback(clone(occupancyMap as IUniverseGridMap));
+    }, 1000);
+    return () => {
+      clearInterval(intervalMap);
+    };
   }
 
   subscribeToVideo(
@@ -351,32 +439,14 @@ export class ExampleUniverseData implements IUniverseData {
   }
 
   subscribeToPointCloud(
-    _deviceId: string,
-    _source: UniverseDataSource,
-    _callback: (data: IUniversePointCloud | DataStatus) => void
+    deviceId: string,
+    source: UniverseDataSource,
+    callback: (data: IUniversePointCloud | DataStatus) => void
   ): () => void {
-    const points: number[] = [];
-    for (let i = 0; i < 100; i += 1) {
-      points.push(Math.random() - 0.5);
-      points.push(Math.random() - 0.5);
-      points.push(Math.random() - 0.5);
-    }
-    const pcd: IPcd = {
-      header: {
-        version: "1",
-        fields: [],
-        size: [],
-        type: [],
-        count: [],
-        height: 0,
-        width: 0,
-        points: 0,
-        data: "ascii",
-      },
-      positions: new Float32Array(points),
-    };
-    _callback({ pcd });
-    return () => {};
+    const intervaluHandle = setInterval(() => {
+      callback(clone(pointCloud as unknown as IUniversePointCloud));
+    }, 1000);
+    return () => clearInterval(intervaluHandle);
   }
 
   subscribeToGeometry(

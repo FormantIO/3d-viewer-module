@@ -13,6 +13,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
+import { OccupancyGridLayer, PathLayer } from "./lib";
 
 const query = new URLSearchParams(window.location.search);
 const experimentalMode = query.get("experimental") === "true";
@@ -37,30 +38,32 @@ export function Demo() {
           {experimentalMode && (
             <RouteMakerLayer size={200} name="Route Builder" />
           )}
-          <MapLayer
-            latitude={59.9139}
-            longitude={10.7522}
-            size={200}
-            mapType="Satellite Street"
-            mapBoxKey=""
-            name="Map"
-          />
-          <DataVisualizationLayer
-            positioning={PositioningBuilder.odometry("eko.loc")}
-            name="Ekobot"
-          >
+          <DataVisualizationLayer name="Ekobot">
             <MarkerLayer
-              positioning={PositioningBuilder.fixed(1, 0.1, 0.4)}
+              positioning={PositioningBuilder.odometry("walter.localization")}
               name="Marker"
             />
-            <GeometryLayer
-              dataSource={DataSourceBuilder.telemetry("eko.geo", "json")}
-              name="Geometry"
+            <OccupancyGridLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Occupancy Grid"
             />
             <PointCloudLayer
-              dataSource={DataSourceBuilder.telemetry("eko.geo", "point cloud")}
-              positioning={PositioningBuilder.fixed(-1, 0.1, 0.4)}
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
               name="Point Cloud"
+            />
+
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Path"
             />
           </DataVisualizationLayer>
         </LayerContext.Provider>
