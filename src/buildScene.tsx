@@ -42,7 +42,7 @@ export function buildScene(
             key={"ground" + i + configHash}
             positioning={positioning}
             treePath={getTreePath()}
-            name={layer.mapName || "Ground Plane"}
+            name={layer.name || "Ground Plane"}
           />
         );
       }
@@ -61,7 +61,7 @@ export function buildScene(
           longitude={parseFloat(layer.longitude || defaultLong)}
           mapBoxKey={layer.mapboxKey || ""}
           dataSource={dataSource as UniverseTelemetrySource}
-          name={layer.mapName || "Map"}
+          name={layer.name || "Map"}
           treePath={getTreePath()}
         />
       );
