@@ -6,7 +6,7 @@ import { IUniverseLayerProps } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps {}
+interface IMarkerLayerProps extends IUniverseLayerProps { }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
   const { children } = props;
@@ -47,7 +47,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group scale={0.2}>
         <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
           <shapeGeometry args={[arrowShape]} />

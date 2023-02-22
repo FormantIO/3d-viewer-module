@@ -27,7 +27,7 @@ export function GroundLayer(props: IGroundLayer) {
   }, []);
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <Axis />
       <primitive object={axisLayers} />
       {range(0, 100).map((i) => (

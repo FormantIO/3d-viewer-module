@@ -8,7 +8,7 @@
     "init-dev": "yarn clean && yarn",
     "dev": "vite",
     "dev-vr": "vite --host --port 5555 --config ./vite.config.vr.ts",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --base './'",
     "build-lib": "tsc && vite build --config ./vite.config.lib.ts",
     "preview": "vite preview"
   },

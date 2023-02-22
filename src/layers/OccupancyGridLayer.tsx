@@ -104,7 +104,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   }, [layerData, universeData]);
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <primitive object={obj} />
     </DataVisualizationLayer>
   );

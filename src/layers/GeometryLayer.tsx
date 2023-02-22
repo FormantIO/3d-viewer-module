@@ -245,7 +245,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     );
   });
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <primitive object={root} />
       {children}
     </DataVisualizationLayer>

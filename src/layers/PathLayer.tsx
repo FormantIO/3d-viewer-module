@@ -85,7 +85,7 @@ export const PathLayer = (props: ILocalPathProps) => {
   }, [layerData, universeData, setObj]);
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/3d_object.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <primitive object={obj} />
     </DataVisualizationLayer>
   );

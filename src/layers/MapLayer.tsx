@@ -125,7 +125,7 @@ export function MapLayer(props: IMapLayer) {
   }, []);
   const mapReady = mapTexture !== undefined;
   return (
-    <DataVisualizationLayer {...props} iconUrl="../icons/map.svg">
+    <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
       {mapReady && (
         <mesh>
           <planeGeometry attach="geometry" args={[size, size]} />
