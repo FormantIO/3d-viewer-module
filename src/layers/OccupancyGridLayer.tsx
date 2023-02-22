@@ -47,7 +47,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     const { deviceId } = layerData;
     dataSource.streamType = "localization";
 
-    const gridMat = new MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+    const gridMat = new MeshBasicMaterial({ transparent: true });
     const mesh = new Mesh(new PlaneGeometry(), gridMat);
     mesh.visible = false;
     setObj(mesh);
@@ -60,8 +60,15 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           throw new Error("unhandled data status");
         }
 
-        const { origin, width, height, resolution, data, worldToLocal } =
-          gridData as IUniverseGridMap;
+        const {
+          origin,
+          width,
+          height,
+          resolution,
+          data,
+          worldToLocal,
+          canvas,
+        } = gridData as IUniverseGridMap;
 
         mesh.matrixAutoUpdate = false;
 
@@ -78,6 +85,10 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         const size = width * height;
         const textureData = new Uint8Array(4 * size);
 
+        const pixelDataFromCanvas = (
+          canvas && canvas.getContext("2d")
+        )?.getImageData(0, 0, width, height).data;
+
         for (let i = 0; i < size; i++) {
           const stride = i * 4;
           textureData[stride] = data[i] > 0 ? mapColor[0] : occupiedColor[0];
@@ -87,6 +98,9 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
             data[i] > 0 ? mapColor[2] : occupiedColor[2];
 
           textureData[stride + 3] = 255; // alpha
+          if (pixelDataFromCanvas) {
+            textureData[stride + 3] = pixelDataFromCanvas[stride + 3];
+          }
         }
         const texture = new DataTexture(textureData, width, height);
         texture.flipY = true;
