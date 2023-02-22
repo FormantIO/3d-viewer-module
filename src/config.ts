@@ -51,7 +51,7 @@ export type Viewer3DConfiguration = {
     mapLayers?: {
       mapType?: "Ground Plane" | "World Map";
       worldMapType?: "Satellite" | "Street" | "Satellite Street";
-      mapName?: string;
+      name?: string;
       mapSize?: string;
       longitude?: string;
       latitude?: string;
