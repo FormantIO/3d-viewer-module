@@ -6,6 +6,7 @@ import { UniverseDataContext } from "../layers/common/UniverseDataContext";
 import { Universe } from "../layers/common/Universe";
 import getUuidByString from "uuid-by-string";
 import { buildScene } from "../buildScene";
+import HighlightedTextarea from "./HighlightedTextArea";
 
 
 const DebugWrapper = styled.div`
@@ -81,6 +82,23 @@ const JSONContainer = styled.div<IJSONContainer>`
     }
 `;
 
+const AddMenuContainer = styled.div`
+    position: absolute;
+    bottom: 47px;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+
+    label {
+        color: white;
+    }
+`;
+
 interface IDebugContainer {
     config?: Viewer3DConfiguration;
     universeData: IUniverseData;
@@ -111,18 +129,91 @@ const defaultConfig = `
 
 const DebugContainer = (props: IDebugContainer) => {
     const [showJSONEditor, setShowJSONEditor] = React.useState(false);
+    const [showAddMenu, setShowAddMenu] = React.useState(false);
     const [config, setConfig] = React.useState<Viewer3DConfiguration>(JSON.parse(defaultConfig));
     const [editorContent, setEditorContent] = React.useState(defaultConfig);
     const [isJSONValid, setIsJSONValid] = React.useState(true);
+    const [highlightedText, setHighlightedText] = React.useState('');
+    const [layerType, setLayerType] = React.useState('map');
+    const [positioningType, setPositioningType] = React.useState('fixed');
+    const [useDatasource, setUseDatasource] = React.useState(false);
+
+    const addNewLayer = (type: string, positioning: string, useDatasource: boolean) => {
+        setShowAddMenu(false);
+        const newConfig = JSON.parse(JSON.stringify(config));
+        let positioningObj = {};
+        let newLayer = {};
+        switch (positioning) {
+            case 'fixed':
+                positioningObj = {
+                    positioningType: 'fixed',
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+                break;
+            case 'gps':
+                positioningObj = {
+                    positioningType: 'gps',
+                    latitude: 0,
+                    longitude: 0,
+                    altitude: 0
+                };
+                break;
+            case 'odometry':
+                positioningObj = {
+                    localizationWorldToLocal: true,
+                    positioningType: "Odometry",
+                    localizationStream: "localizationStream"
+                };
+                break;
+            default:
+                break;
+        };
+
+        switch (type) {
+            case 'map':
+                newLayer = {
+                    name: 'new-map-layer',
+                    mapType: 'World Map',
+                    longitude: "-90",
+                    latitude: "40",
+                    mapSize: "150",
+                    positioning: positioningObj,
+                    datasource: useDatasource ? {
+                        latestDataPoint: false,
+                        telemetryStreamName: 'telemetryStream'
+                    } : undefined
+                }
+                newConfig.devices[0].mapLayers.push(newLayer);
+                break;
+            case 'ground':
+                newLayer = {
+                    name: 'new-ground-layer',
+                    mapType: 'Ground Plane',
+                    positioning: positioningObj
+                }
+                newConfig.devices[0].mapLayers.push(newLayer);
+                break;
+            default:
+
+                break;
+        }
+        //setHighlightedText(JSON.stringify(newLayer, null, 2));
+        setConfig(newConfig);
+        setEditorContent(JSON.stringify(newConfig, null, 2));
+        setShowJSONEditor(true);
+    };
+
 
     const copyConfigToEditor = () => {
         setEditorContent(JSON.stringify(props.config, null, 2));
     };
 
-    const handleJSONEditorChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setEditorContent(event.target.value);
+    const handleJSONEditorChange = (value: string) => {
+        setEditorContent(value);
         try {
-            JSON.parse(event.target.value);
+            JSON.parse(value);
             setIsJSONValid(true);
         } catch (e) {
             setIsJSONValid(false);
@@ -157,18 +248,52 @@ const DebugContainer = (props: IDebugContainer) => {
             <marquee>Debug mode!</marquee>
             {scene(config)}
             <ButtonsContainer>
+                <button onClick={() => setShowAddMenu(!showAddMenu)}>Add new...</button>
                 <button onClick={() => setShowJSONEditor(!showJSONEditor)}>Toggle JSON Editor</button>
-                <button onClick={copyConfigToEditor}>Copy Config to Editor</button>
-
+                <button onClick={copyConfigToEditor}>Copy Device Config to Editor</button>
+                <button onClick={() => { setConfig(JSON.parse(defaultConfig)); setEditorContent(defaultConfig) }}>Reset Config</button>
             </ButtonsContainer>
             {showJSONEditor && <JSONContainer isJSONValid={isJSONValid}>
-                <textarea value={editorContent} onChange={handleJSONEditorChange} />
+                <HighlightedTextarea value={editorContent} highlight={highlightedText} onChange={handleJSONEditorChange} isValidJSON={isJSONValid} />
                 <div>
                     <button disabled={!isJSONValid} onClick={saveJSONEditor}>Save</button>
                     <button onClick={() => setShowJSONEditor(!showJSONEditor)}>Close JSON Editor</button>
                 </div>
             </JSONContainer>
             }
+
+            {showAddMenu && <AddMenuContainer>
+                <select name="layer"
+                    value={layerType}
+                    onChange={(e) => setLayerType(e.target.value)}
+                >
+                    <option value="ground">groundlayer</option>
+                    <option value="map">satmap</option>
+                    <option>markerArray</option>
+                    <option>geolocation marker</option>
+                    <option>device path</option>
+                    <option>occupancy grid</option>
+                    <option>point cloud</option>
+                </select>
+                <span>
+                    <input type="checkbox" name="datasource"
+                        checked={useDatasource}
+                        onChange={(e) => setUseDatasource(e.target.checked)}
+                    />
+                    <label htmlFor="datasource" >use Datasource</label>
+                </span>
+                <label htmlFor="positioning">Positioning</label>
+                <select name="positioning"
+                    value={positioningType}
+                    onChange={(e) => setPositioningType(e.target.value)}
+                >
+                    <option value="fixed">Fixed</option>
+                    <option value="gps">Gps</option>
+                    <option value="odometry">Odometry</option>
+                </select>
+                <button onClick={() => addNewLayer(layerType, positioningType, useDatasource)}>Add Layer</button>
+                <button onClick={() => setShowAddMenu(!showAddMenu)}>Close</button>
+            </AddMenuContainer>}
         </DebugWrapper >
 
     )
