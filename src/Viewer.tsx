@@ -8,6 +8,7 @@ import { TelemetryUniverseData } from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
+import DebugContainer from "./components/DebugContainer";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -20,6 +21,9 @@ export function Viewer() {
   const [universeData] = useState<IUniverseData>(
     () => new TelemetryUniverseData()
   );
+  const [typedString, setTypedString] = useState('');
+  const [debugMode, setDebugMode] = useState(false);
+
   useEffect(() => {
     (async () => {
       await Authentication.waitTilAuthenticated();
@@ -57,6 +61,26 @@ export function Viewer() {
     return true;
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    const key = event.key.toLowerCase();
+    const newTypedString = typedString + key;
+    setTypedString((string) => string + key);
+
+    if (newTypedString.endsWith('debug')) {
+      console.log('Debug mode activated!');
+      setDebugMode(true);
+      setTypedString('');
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [typedString]);
+
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
       <UniverseDataContext.Provider value={universeData}>
@@ -68,6 +92,12 @@ export function Viewer() {
     ),
     [universeData, currentDeviceId, configuration]
   );
+
+  if (debugMode) {
+    return (
+      <DebugContainer config={configuration} universeData={universeData} />
+    );
+  }
 
   if (authenticated && configuration) {
     return scene(configuration);

@@ -240,6 +240,7 @@ export function Universe(props: IUniverseProps) {
     }
   }, [layers, scene]);
 
+
   return (
     <>
       <UIDataContext.Provider
