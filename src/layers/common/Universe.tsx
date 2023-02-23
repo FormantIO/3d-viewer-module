@@ -2,6 +2,7 @@ import { Canvas, ThreeElements, useFrame, useThree } from "@react-three/fiber";
 import {
   MapControls,
   OrbitControls,
+  OrthographicCamera,
   PerspectiveCamera,
 } from "@react-three/drei";
 import React, { useEffect } from "react";
@@ -45,6 +46,8 @@ export function Universe(props: IUniverseProps) {
     cameraTargetId,
     setCameraTargetId,
     reset,
+    toggleEditMode,
+    isEditing,
   } = useUI();
 
   useEffect(() => {
@@ -230,6 +233,8 @@ export function Universe(props: IUniverseProps) {
           cameraTargetId,
           setCameraTargetId,
           reset,
+          toggleEditMode,
+          isEditing,
         }}
       >
         {vr && <VRButton />}
@@ -237,7 +242,9 @@ export function Universe(props: IUniverseProps) {
           onCreated={(state) => {
             setScene(state.scene);
           }}
-          onMouseDownCapture={() => { autoCameraMoving = false }}
+          onMouseDownCapture={() => {
+            autoCameraMoving = false;
+          }}
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
@@ -246,11 +253,13 @@ export function Universe(props: IUniverseProps) {
               ref={mapControlsRef}
               minDistance={1}
               maxPolarAngle={Math.PI / 2 - 0.1}
+              enabled={!isEditing}
             />
-            <PerspectiveCamera
+            <OrthographicCamera
               makeDefault
-              position={[0, 0, 300]}
+              position={[0, 0, 30]}
               up={[0, 0, 1]}
+              near={-100}
               far={5000}
             />
             <group>{props.children}</group>
@@ -289,6 +298,8 @@ export function Universe(props: IUniverseProps) {
           zoomOut={zoomOut}
           recenter={recenter}
           stopZoom={stopZoom}
+          toggleEditMode={toggleEditMode}
+          isEditing={isEditing}
         />
       </UIDataContext.Provider>
     </>

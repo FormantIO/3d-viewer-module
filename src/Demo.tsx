@@ -57,7 +57,6 @@ export function Demo() {
               )}
               name="Point Cloud"
             />
-
             <PathLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",
@@ -65,6 +64,7 @@ export function Demo() {
               )}
               name="Path"
             />
+            <RouteMakerLayer size={200} name="Route Builder" />
           </DataVisualizationLayer>
         </LayerContext.Provider>
       </Universe>

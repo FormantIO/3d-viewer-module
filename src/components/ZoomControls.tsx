@@ -1,5 +1,6 @@
 import { Icon } from "@formant/ui-sdk";
 import styled from "styled-components";
+import { FormantColors } from "../layers/utils/FormantColors";
 
 const Controls = styled.div`
   display: flex;
@@ -45,41 +46,47 @@ const ControlGroup = styled.div`
 
     & > svg {
       vertical-align: middle;
-      fill: #BAC4E2
+      fill: #bac4e2;
     }
   }
 `;
 
 interface IZoomControls {
-    zoomIn: () => void;
-    zoomOut: () => void;
-    recenter: () => void;
-    stopZoom: () => void;
-};
+  zoomIn: () => void;
+  zoomOut: () => void;
+  recenter: () => void;
+  stopZoom: () => void;
+  toggleEditMode: () => void;
+  isEditing: boolean;
+}
 
 const ZoomControls = (props: IZoomControls) => {
-    const { zoomIn, zoomOut, recenter, stopZoom } = props;
-    return (
-        <Controls>
-            <ControlGroup>
-                <button type="button" onMouseDown={zoomIn} onMouseUp={stopZoom}>
-                    <Icon name="plus" />
-                </button>
-                <button
-                    type="button"
-                    onMouseDown={zoomOut}
-                    onMouseUp={stopZoom}
-                >
-                    <Icon name="minus" />
-                </button>
-            </ControlGroup>
-            <ControlGroup onClick={recenter}>
-                <button type="button">
-                    <Icon name="recenter" />
-                </button>
-            </ControlGroup>
-        </Controls>
-    );
+  const { zoomIn, zoomOut, recenter, stopZoom, toggleEditMode } = props;
+  return (
+    <Controls>
+      <ControlGroup>
+        <button type="button" onMouseDown={zoomIn} onMouseUp={stopZoom}>
+          <Icon name="plus" />
+        </button>
+        <button type="button" onMouseDown={zoomOut} onMouseUp={stopZoom}>
+          <Icon name="minus" />
+        </button>
+      </ControlGroup>
+      <ControlGroup onClick={recenter}>
+        <button type="button">
+          <Icon name="recenter" />
+        </button>
+      </ControlGroup>
+      <ControlGroup onClick={toggleEditMode}>
+        <button type="button">
+          <Icon
+            name="edit"
+            sx={props.isEditing ? { stroke: FormantColors.primary } : {}}
+          />
+        </button>
+      </ControlGroup>
+    </Controls>
+  );
 };
 
 export default ZoomControls;

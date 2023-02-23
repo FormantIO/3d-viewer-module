@@ -23,6 +23,8 @@ interface UIContextData {
   cameraTargetId: string;
   setCameraTargetId: (id: string) => void;
   reset: () => void;
+  toggleEditMode: () => void;
+  isEditing: boolean;
 }
 
 export const UIDataContext = React.createContext<UIContextData>({
@@ -40,11 +42,14 @@ export const UIDataContext = React.createContext<UIContextData>({
   cameraTargetId: "",
   setCameraTargetId: (id: string) => {},
   reset: () => {},
+  toggleEditMode: () => {},
+  isEditing: false,
 });
 
 export function useUI(): UIContextData {
   const [layers, setLayers] = React.useState<LayerData[]>([]);
   const [cameraTargetId, setCameraTargetId] = React.useState<string>("");
+  const [isEditing, setIsEditing] = React.useState<boolean>(false);
 
   const register = (
     name: string,
@@ -106,6 +111,10 @@ export function useUI(): UIContextData {
     });
   };
 
+  const toggleEditMode = () => {
+    setIsEditing((prevState) => !prevState);
+  };
+
   return {
     layers,
     register,
@@ -113,5 +122,7 @@ export function useUI(): UIContextData {
     cameraTargetId,
     setCameraTargetId,
     reset,
+    toggleEditMode,
+    isEditing,
   };
 }
