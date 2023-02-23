@@ -74,6 +74,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
         origin.translation.x += (width * resolution) / 2;
         origin.translation.y += (height * resolution) / 2;
+        origin.translation.z -= 0.5;
 
         const newMatrix = transformMatrix(origin).multiply(
           new Matrix4().makeScale(width * resolution, height * resolution, 1)

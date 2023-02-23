@@ -34,7 +34,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     circle.scale.setScalar(2);
     arrow.scale.setScalar(2);
 
-    const scaleFactor = 8;
+    const scaleFactor = 30;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /
@@ -48,7 +48,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <group scale={0.2}>
+      <group>
         <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
