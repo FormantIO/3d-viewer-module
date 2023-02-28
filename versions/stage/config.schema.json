@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "3D viewer",
+  "type": "object",
+  "properties": {
+    "layers": {
+      "title": "Layers",
+      "type": "array",
+      "$formant.itemName": "Add to Layers",
+      "description": "Each layer represents a data visualization. These data visualizations can be connected to streams and transformed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "$formant.placeholder": "Optional layer name"
+          },
+          "layerType": {
+            "type": "string",
+            "enum": [
+              "Terrain",
+              "Position Indicator",
+              "Geometry",
+              "Point Cloud",
+              "Occupancy Grid",
+              "Path"
+            ]
+          },
+          "terrainType": {
+            "title": "Terrain type",
+            "type": "string",
+            "enum": ["Ground Plane", "World Map"],
+            "$formant.visible.when": ["layerType", "=", "Terrain"]
+          },
+          "terrainMapType": {
+            "title": "World map type",
+            "type": "string",
+            "enum": ["Satellite", "Street", "Satellite Street"],
+            "default": "Satellite",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
+          },
+          "terrainMapSize": {
+            "title": "Map edge length (meters)",
+            "type": "number",
+            "default": 1000,
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
+          },
+          "terrainDataSource": {
+            "type": "object",
+            "title": "Data source",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "location"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Terrain"]
+          },
+          "terrainMaplongitude": {
+            "title": "Default longitude (optional)",
+            "type": "number",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
+          },
+          "terrainMapLatitude": {
+            "title": "Default latitude (optional)",
+            "type": "number",
+            "$formant.visible.when": ["terrainType", "=", "World Map"]
+          },
+          "positionIndicatorVisualType": {
+            "type": "string",
+            "title": "Visual type",
+            "enum": ["Circle"],
+            "default": "Circle",
+            "$formant.visible.when": ["layerType", "=", "Position Indicator"]
+          },
+          "geometryDataSource": {
+            "type": "object",
+            "title": "Data source",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "json"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Geometry"]
+          },
+          "pointCloudDataSource": {
+            "type": "object",
+            "title": "Data source",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "localization"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+          },
+          "occupancyGridDataSource": {
+            "type": "object",
+            "title": "Data source",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "localization"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Occupancy Grid"]
+          },
+          "pathDataSource": {
+            "type": "object",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "localization"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": ["layerType", "=", "Path"]
+          },
+          "transform": {
+            "title": "Transform",
+            "$formant.itemName": "Transform",
+            "type": "object",
+            "properties": {
+              "positioningType": {
+                "type": "string",
+                "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+                "default": "Cartesian"
+              },
+              "x": {
+                "title": "X-axis",
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
+              },
+              "y": {
+                "title": "Y-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
+              },
+              "z": {
+                "title": "Z-axis",
+
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
+              },
+              "relativeLatitude": {
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "relativeLongitude": {
+                "type": "number",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "gpsStream": {
+                "type": "string",
+                "$formant.streams.byType": "location",
+                "$formant.visible.when": ["positioningType", "=", "Gps"]
+              },
+              "localizationStream": {
+                "type": "string",
+                "$formant.streams.byType": "localization",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "localizationWorldToLocal": {
+                "type": "boolean",
+                "default": true,
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "localizationRealtimeStream": {
+                "type": "string",
+                "$formant.visible.when": ["positioningType", "=", "Odometry"]
+              },
+              "transformTreeStream": {
+                "type": "string",
+                "$formant.streams.byType": "transform tree",
+                "$formant.visible.when": [
+                  "positioningType",
+                  "=",
+                  "Transform Tree"
+                ]
+              },
+              "transformTreeEndPoint": {
+                "type": "string",
+                "$formant.visible.when": [
+                  "positioningType",
+                  "=",
+                  "Transform Tree"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
