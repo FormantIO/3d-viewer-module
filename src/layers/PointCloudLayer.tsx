@@ -24,22 +24,29 @@ import { useLoader } from "@react-three/fiber";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  pointShape: "Circle" | "Rectangle";
+  pointSize: number;
+  decayTime: number;
+  color1: string;
+  color2: string;
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource } = props;
+  const { dataSource, pointShape, pointSize, decayTime, color1, color2 } =
+    props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
 
-  const texture = useLoader(TextureLoader, "./point.png");
+  const circleMap = useLoader(TextureLoader, "./point-circle.png");
+  const rectMap = useLoader(TextureLoader, "./point-rect.png");
   const [obj, setObj] = useState<Points>(new Points());
 
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
 
-    const color1 = defined(Color.fromString("#729fda"));
-    const color2 = defined(Color.fromString("#F89973"));
+    const col1 = defined(Color.fromString(color1));
+    const col2 = defined(Color.fromString(color2));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
@@ -72,8 +79,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         // map compress intensity dynamic range to 0.5 - 2.0
         float intensityNormalized = intensityMin != intensityMax ? map(intensity, intensityMin, intensityMax, minLuminocity, maxLuminocity) : 1.0;
         
-        vec3 color1 = ${glColor(color1)};
-        vec3 color2 = ${glColor(color2)};
+        vec3 color1 = ${glColor(col1)};
+        vec3 color2 = ${glColor(col2)};
     
         // set luminocity to compressed intensity
         color1.b = intensityNormalized;
@@ -105,8 +112,10 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       vertexShader,
       fragmentShader,
       uniforms: {
-        pointCloudTexture: { value: texture },
-        pointScale: { value: 1.0 },
+        pointCloudTexture: {
+          value: pointShape === "Circle" ? circleMap : rectMap,
+        },
+        pointScale: { value: 1 + pointSize / 10 },
         radius: { value: 1.0 },
         intensityMin: { value: 0.0 },
         intensityMax: { value: 0.0 },
@@ -121,6 +130,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     points.frustumCulled = false;
     setObj(points);
 
+    let timer: number = 0;
+
     if (dataSource) {
       dataSource.streamType = "localization";
       const unsubscribe = universeData.subscribeToPointCloud(
@@ -128,6 +139,15 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         dataSource,
         (data: IUniversePointCloud | Symbol) => {
           if (typeof data === "symbol") return;
+
+          points.visible = true;
+
+          if (timer) clearTimeout(timer);
+
+          timer = window.setTimeout(() => {
+            points.visible = false;
+          }, decayTime * 1000);
+
           const pc = data as IUniversePointCloud;
           const { header, positions, colors } = defined(pc.pcd);
           const identityTransform: ITransform = {

@@ -23,6 +23,23 @@
                 "name": {
                   "type": "string"
                 },
+                "pointSize": {
+                  "type": "number"
+                },
+                "pointShape": {
+                  "type": "string",
+                  "default": "Circle",
+                  "enum": ["Circle", "Rectangle"]
+                },
+                "decayTime": {
+                  "type": "number"
+                },
+                "color1": {
+                  "type": "string"
+                },
+                "color2": {
+                  "type": "string"
+                },
                 "dataSource": {
                   "type": "object",
                   "properties": {

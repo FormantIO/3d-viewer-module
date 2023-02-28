@@ -38,6 +38,11 @@ export type Viewer3DConfiguration = {
     positioning?: Viewer3DConfiguarationPositioning;
     pointCloudLayers?: {
       name?: string;
+      pointSize?: number;
+      pointShape?: "Circle" | "Rectangle";
+      decayTime?: number;
+      color1?: string;
+      color2?: string;
       dataSource?: Viewer3DConfigurationDataSource;
     }[];
     occupancyGridLayers?: {
