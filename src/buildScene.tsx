@@ -84,12 +84,18 @@ export function buildScene(
     });
     (device.pointCloudLayers || []).forEach((layer, i) => {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      const { pointShape, pointSize, decayTime, color1, color2 } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Point Cloud"}
+          pointShape={pointShape || "Circle"}
+          pointSize={pointSize || 0}
+          decayTime={decayTime || 1}
+          color1={color1 || "#729fda"}
+          color2={color2 || "#F89973"}
         />
       );
     });

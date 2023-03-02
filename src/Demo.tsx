@@ -56,6 +56,11 @@ export function Demo() {
                 "localization"
               )}
               name="Point Cloud"
+              pointShape="Rectangle"
+              pointSize={1}
+              decayTime={1}
+              color1={"#729fda"}
+              color2={"#F89973"}
             />
             <PathLayer
               dataSource={DataSourceBuilder.telemetry(
