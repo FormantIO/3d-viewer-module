@@ -48,7 +48,7 @@
             },
             "$formant.visible.when": ["layerType", "=", "Terrain"]
           },
-          "gpsMaplongitude": {
+          "gpsMapLongitude": {
             "title": "Default longitude (optional)",
             "type": "number",
             "$formant.visible.when": ["mapType", "=", "GPS Map"]

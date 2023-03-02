@@ -31,47 +31,60 @@ export function buildScene(
     deviceLayers.length + mapLayers.length,
   ];
   const configHash = getUuidByString(JSON.stringify(config));
-  (config.devices || []).forEach((device, di) => {
-    mapLayers = (device.mapLayers || []).map((layer, i) => {
-      const positioning = layer.positioning
-        ? parsePositioning(layer.positioning)
-        : PositioningBuilder.fixed(0, 0, 0);
-      if (layer.mapType === "Ground Plane") {
-        return (
-          <GroundLayer
-            key={"ground" + i + configHash}
-            positioning={positioning}
-            treePath={getTreePath()}
-            name={layer.name || "Ground Plane"}
-          />
-        );
-      }
+  mapLayers = (config.maps || []).map((layer, i) => {
+    const positioning = layer.transform
+      ? parsePositioning(layer.transform)
+      : PositioningBuilder.fixed(0, 0, 0);
+    if (layer.mapType === "Ground Plane") {
+      return (
+        <GroundLayer
+          key={"ground" + i + configHash}
+          positioning={positioning}
+          treePath={getTreePath()}
+          name={layer.name || "Ground Plane"}
+        />
+      );
+    } else if (layer.mapType === "GPS Map") {
       // Portland long lat
-      const defaultLong = "-122.6765";
-      const defaultLat = "45.5231";
+      const defaultLong = -122.6765;
+      const defaultLat = 45.5231;
 
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      const dataSource =
+        layer.gpsMapDataSource && parseDataSource(layer.gpsMapDataSource);
       return (
         <MapLayer
           key={"map" + i + configHash}
           positioning={positioning}
-          mapType={layer.worldMapType || "Satellite"}
-          size={parseFloat(layer.mapSize || "200")}
-          latitude={parseFloat(layer.latitude || defaultLat)}
-          longitude={parseFloat(layer.longitude || defaultLong)}
-          mapBoxKey={layer.mapboxKey || ""}
+          mapType={layer.gpsMapType || "Satellite"}
+          size={layer.gpsMapSize || 200}
+          latitude={layer.gpsMapLatitude || defaultLat}
+          longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.name || "Map"}
           treePath={getTreePath()}
         />
       );
-    });
-    (device.deviceVisualLayers || []).forEach((layer, i) => {
-      const positioning = layer.positioning
-        ? parsePositioning(layer.positioning)
+    } else if (layer.mapType === "Occupancy Map") {
+      const dataSource =
+        layer.occupancyMapDataSource &&
+        parseDataSource(layer.occupancyMapDataSource);
+      return (
+        <OccupancyGridLayer
+          key={"occupancy_grid" + i + configHash}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Occupancy Grid"}
+        />
+      );
+    }
+    throw new Error("Unknown map type");
+  });
+  (config.visualizations || []).forEach((layer, i) => {
+    if (layer.visualizationType === "Position Indicator") {
+      const positioning = layer.transform
+        ? parsePositioning(layer.transform)
         : PositioningBuilder.fixed(0, 0, 0);
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
-      if (layer.visualType === "Circle") {
+      if (layer.positionIndicatorVisualType === "Circle") {
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
@@ -81,10 +94,28 @@ export function buildScene(
           />
         );
       }
-    });
-    (device.pointCloudLayers || []).forEach((layer, i) => {
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
-      const { pointShape, pointSize, decayTime, color1, color2 } = layer;
+    } else if (layer.visualizationType === "Path") {
+      const dataSource =
+        layer.pathDataSource && parseDataSource(layer.pathDataSource);
+      deviceLayers.push(
+        <PathLayer
+          key={"local_path_layer" + i + configHash}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Local Path "}
+        />
+      );
+    } else if (layer.visualizationType === "Point Cloud") {
+      const dataSource =
+        layer.pointCloudDataSource &&
+        parseDataSource(layer.pointCloudDataSource);
+      const {
+        pointCloudShape: pointShape,
+        pointCloudSize: pointSize,
+        pointCloudDecayTime: decayTime,
+        pointCloudColor1: color1,
+        pointCloudColor2: color2,
+      } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
@@ -98,34 +129,12 @@ export function buildScene(
           color2={color2 || "#F89973"}
         />
       );
-    });
-    (device.occupancyGridLayers || []).forEach((layer, i) => {
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
-      deviceLayers.push(
-        <OccupancyGridLayer
-          key={"occupancy_grid" + i + configHash}
-          dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
-          name={layer.name || "Occupancy Grid"}
-        />
-      );
-    });
-    (device.pathLayers || []).forEach((layer, i) => {
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
-      deviceLayers.push(
-        <PathLayer
-          key={"local_path_layer" + i + configHash}
-          dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
-          name={layer.name || "Local Path "}
-        />
-      );
-    });
-    (device.geometryLayers || []).forEach((layer, i) => {
-      const positioning = layer.positioning
-        ? parsePositioning(layer.positioning)
+    } else if (layer.visualizationType === "Geometry") {
+      const positioning = layer.transform
+        ? parsePositioning(layer.transform)
         : PositioningBuilder.fixed(0, 0, 0);
-      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      const dataSource =
+        layer.geometryDataSource && parseDataSource(layer.geometryDataSource);
       if (dataSource) {
         deviceLayers.push(
           <GeometryLayer
@@ -137,25 +146,41 @@ export function buildScene(
           />
         );
       }
-    });
-    devices.push(
-      <LayerContext.Provider
-        key={"data" + di + configHash}
-        value={{
-          deviceId: definedAndNotNull(currentDeviceId),
-        }}
-      >
-        <EmptyLayer
-          name={device.name}
-          id={currentDeviceId || undefined}
-          treePath={[devices.length]}
-        >
-          {mapLayers}
-          {deviceLayers}
-        </EmptyLayer>
-      </LayerContext.Provider>
-    );
-    deviceLayers = [];
+    }
+    throw new Error("Unknown visualization type");
   });
+  devices.push(
+    <LayerContext.Provider
+      key={"maps"}
+      value={{
+        deviceId: definedAndNotNull(currentDeviceId),
+      }}
+    >
+      <EmptyLayer
+        name={"Map"}
+        id={currentDeviceId || undefined}
+        treePath={[devices.length]}
+      >
+        {mapLayers}
+      </EmptyLayer>
+    </LayerContext.Provider>
+  );
+  devices.push(
+    <LayerContext.Provider
+      key={"visualizations"}
+      value={{
+        deviceId: definedAndNotNull(currentDeviceId),
+      }}
+    >
+      <EmptyLayer
+        name={"Visualizations"}
+        id={currentDeviceId || undefined}
+        treePath={[devices.length]}
+      >
+        {deviceLayers}
+      </EmptyLayer>
+    </LayerContext.Provider>
+  );
+  deviceLayers = [];
   return devices;
 }
