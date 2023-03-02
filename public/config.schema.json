@@ -46,7 +46,7 @@
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
               }
             },
-            "$formant.visible.when": ["layerType", "=", "Terrain"]
+            "$formant.visible.when": ["visualizationType", "=", "Terrain"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude (optional)",
@@ -160,7 +160,7 @@
             "type": "string",
             "title": "Name"
           },
-          "layerType": {
+          "visualizationType": {
             "type": "string",
             "enum": ["Position Indicator", "Geometry", "Point Cloud", "Path"]
           },
@@ -169,7 +169,11 @@
             "title": "Visual type",
             "enum": ["Circle"],
             "default": "Circle",
-            "$formant.visible.when": ["layerType", "=", "Position Indicator"]
+            "$formant.visible.when": [
+              "visualizationType",
+              "=",
+              "Position Indicator"
+            ]
           },
           "geometryDataSource": {
             "type": "object",
@@ -185,7 +189,7 @@
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
               }
             },
-            "$formant.visible.when": ["layerType", "=", "Geometry"]
+            "$formant.visible.when": ["visualizationType", "=", "Geometry"]
           },
           "pathDataSource": {
             "type": "object",
@@ -200,32 +204,32 @@
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
               }
             },
-            "$formant.visible.when": ["layerType", "=", "Path"]
+            "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pointCloudSize": {
             "type": "number",
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudShape": {
             "type": "string",
             "default": "Circle",
             "enum": ["Circle", "Rectangle"],
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudDecayTime": {
             "title": "Decay time",
             "type": "number",
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudColor1": {
             "title": "Color 1",
             "type": "string",
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudColor2": {
             "title": "Color 2",
             "type": "string",
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudDataSource": {
             "title": "Data source",
@@ -241,7 +245,7 @@
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
               }
             },
-            "$formant.visible.when": ["layerType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "transform": {
             "title": "Transform",

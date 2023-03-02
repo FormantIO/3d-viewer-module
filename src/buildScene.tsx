@@ -146,9 +146,11 @@ export function buildScene(
           />
         );
       }
+    } else {
+      throw new Error("Unknown visualization type");
     }
-    throw new Error("Unknown visualization type");
   });
+  debugger;
   devices.push(
     <LayerContext.Provider
       key={"maps"}
@@ -157,7 +159,7 @@ export function buildScene(
       }}
     >
       <EmptyLayer
-        name={"Map"}
+        name={"Maps"}
         id={currentDeviceId || undefined}
         treePath={[devices.length]}
       >
