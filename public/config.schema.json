@@ -17,22 +17,22 @@
           "mapType": {
             "title": "Terrain type",
             "type": "string",
-            "enum": ["Ground Plane", "World Map", "Occupancy"]
+            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
           },
-          "worldMapType": {
+          "gpsMapType": {
             "title": "World map type",
             "type": "string",
             "enum": ["Satellite", "Street", "Satellite Street"],
             "default": "Satellite",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "worldMapSize": {
+          "gpsMapSize": {
             "title": "Map edge length (meters)",
             "type": "number",
             "default": 1000,
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "worldDataSource": {
+          "gpsMapDataSource": {
             "type": "object",
             "title": "Data source",
             "properties": {
@@ -48,19 +48,19 @@
             },
             "$formant.visible.when": ["layerType", "=", "Terrain"]
           },
-          "worldMaplongitude": {
+          "gpsMaplongitude": {
             "title": "Default longitude (optional)",
             "type": "number",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "worldMapLatitude": {
+          "gpsMapLatitude": {
             "title": "Default latitude (optional)",
             "type": "number",
-            "$formant.visible.when": ["mapType", "=", "World Map"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "occupancyDataSource": {
+          "occupancyMapDataSource": {
             "type": "object",
-            "$formant.visible.when": ["mapType", "=", "Occupancy"],
+            "$formant.visible.when": ["mapType", "=", "Occupancy Map"],
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
@@ -162,13 +162,7 @@
           },
           "layerType": {
             "type": "string",
-            "enum": [
-              "Position Indicator",
-              "Geometry",
-              "Point Cloud",
-              "Occupancy Grid",
-              "Path"
-            ]
+            "enum": ["Position Indicator", "Geometry", "Point Cloud", "Path"]
           },
           "positionIndicatorVisualType": {
             "type": "string",
