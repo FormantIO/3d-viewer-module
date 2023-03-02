@@ -5,23 +5,17 @@ import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 
-// get query strings
-const urlParams = new URLSearchParams(window.location.search);
-const deviceId = urlParams.get("device") ?? undefined;
-
-export type Viewer3DConfiguarationPositioning = {
-  positioningType?: "Fixed" | "Gps" | "Odometry" | "Transform Tree" | "Hud";
+export type Viewer3DConfiguarationTransform = {
+  positioningType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
   x?: number;
   y?: number;
   z?: number;
-  hudX?: number;
-  hudY?: number;
   relativeLatitude?: number;
   relativeLongitude?: number;
   gpsStream?: string;
   localizationStream?: string;
-  localizationRealtimeStream?: string;
   localizationWorldToLocal?: boolean;
+  localizationRealtimeStream?: string;
   transformTreeStream?: string;
   transformTreeEndPoint?: string;
 };
@@ -32,50 +26,40 @@ export type Viewer3DConfigurationDataSource = {
   latestDataPoint?: boolean;
 };
 
+export type Viewer3DVisualization = {
+  name?: string;
+  visualizationType?:
+    | "Position Indicator"
+    | "Geometry"
+    | "Point Cloud"
+    | "Path";
+  positionIndicatorVisualType?: "Circle";
+  geometryDataSource?: Viewer3DConfigurationDataSource;
+  pathDataSource?: Viewer3DConfigurationDataSource;
+  pointCloudSize?: number;
+  pointCloudShape?: "Circle" | "Rectangle";
+  pointCloudDecayTime?: number;
+  pointCloudColor1?: string;
+  pointCloudColor2?: string;
+  pointCloudDataSource?: Viewer3DConfigurationDataSource;
+  transform?: Viewer3DConfiguarationTransform;
+};
+
+export type Viewer3DMap = {
+  name?: string;
+  mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
+  gpsMapType?: "Satellite" | "Street" | "Satellite Street";
+  gpsMapSize?: number;
+  gpsMapDataSource?: Viewer3DConfigurationDataSource;
+  gpsMapLongitude?: number;
+  gpsMapLatitude?: number;
+  occupancyMapDataSource?: Viewer3DConfigurationDataSource;
+  transform?: Viewer3DConfiguarationTransform;
+};
+
 export type Viewer3DConfiguration = {
-  devices?: {
-    name?: string;
-    positioning?: Viewer3DConfiguarationPositioning;
-    pointCloudLayers?: {
-      name?: string;
-      pointSize?: number;
-      pointShape?: "Circle" | "Rectangle";
-      decayTime?: number;
-      color1?: string;
-      color2?: string;
-      dataSource?: Viewer3DConfigurationDataSource;
-    }[];
-    occupancyGridLayers?: {
-      name?: string;
-      dataSource?: Viewer3DConfigurationDataSource;
-    }[];
-    pathLayers?: {
-      name?: string;
-      dataSource?: Viewer3DConfigurationDataSource;
-    }[];
-    mapLayers?: {
-      mapType?: "Ground Plane" | "World Map";
-      worldMapType?: "Satellite" | "Street" | "Satellite Street";
-      name?: string;
-      mapSize?: string;
-      longitude?: string;
-      latitude?: string;
-      mapboxKey?: string;
-      dataSource?: Viewer3DConfigurationDataSource;
-      positioning?: Viewer3DConfiguarationPositioning;
-    }[];
-    deviceVisualLayers?: {
-      name?: string;
-      visualType?: "Circle";
-      dataSource?: Viewer3DConfigurationDataSource;
-      positioning?: Viewer3DConfiguarationPositioning;
-    }[];
-    geometryLayers?: {
-      name?: string;
-      dataSource?: Viewer3DConfigurationDataSource;
-      positioning?: Viewer3DConfiguarationPositioning;
-    }[];
-  }[];
+  maps: Viewer3DMap[];
+  visualizations: Viewer3DVisualization[];
 };
 
 export function parseDataSource(
@@ -92,10 +76,10 @@ export function parseDataSource(
 }
 
 export function parsePositioning(
-  positioning: Viewer3DConfiguarationPositioning
+  positioning: Viewer3DConfiguarationTransform
 ): Positioning {
   switch (positioning.positioningType) {
-    case "Fixed":
+    case "Cartesian":
       return PositioningBuilder.fixed(
         positioning.x || 0,
         positioning.y || 0,
