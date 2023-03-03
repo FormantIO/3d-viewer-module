@@ -6,13 +6,14 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { computeDestinationPoint } from "geolib";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
+import { useBounds } from "./common/CustomBounds";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -39,6 +40,7 @@ export function MapLayer(props: IMapLayer) {
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | undefined
   >(undefined);
+  const bounds = useBounds();
 
   useEffect(() => {
     (async () => {
@@ -123,7 +125,15 @@ export function MapLayer(props: IMapLayer) {
       }
     })();
   }, []);
+
   const mapReady = mapTexture !== undefined;
+
+  useLayoutEffect(() => {
+    if (mapReady) {
+      bounds.refresh().clip().fit();
+    }
+  }, [mapReady])
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
       {mapReady && (

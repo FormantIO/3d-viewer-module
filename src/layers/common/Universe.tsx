@@ -3,6 +3,7 @@ import {
   MapControls,
   OrbitControls,
   PerspectiveCamera,
+  useHelper,
 } from "@react-three/drei";
 import React, { useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
@@ -17,14 +18,16 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { MathUtils, Scene, Vector3 } from "three";
+import { Euler, MathUtils, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
+import { ControlsContext } from "./ControlsContext";
+import { Bounds } from "./CustomBounds";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
-const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 40);
+const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 20);
 
 type IUniverseProps = {
   children?: React.ReactNode;
@@ -103,6 +106,12 @@ export function Universe(props: IUniverseProps) {
     },
     [scene, mapControlsRef]
   );
+
+  const centerOnDevice = React.useCallback(() => {
+    const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
+    if (deviceMarker)
+      lookAtTargetId(deviceMarker.id);
+  }, [layers, lookAtTargetId]);
 
   const recenter = React.useCallback(() => {
     const m = mapControlsRef.current;
@@ -215,7 +224,7 @@ export function Universe(props: IUniverseProps) {
       const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
       if (deviceMarker) {
         setTimeout(() => {
-          lookAtTargetId(deviceMarker.id);
+          //lookAtTargetId(deviceMarker.id);
         }, 4000);
         setHasCentered(true);
       }
@@ -247,58 +256,65 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
-            <MapControls
-              enableDamping={false}
-              ref={mapControlsRef}
-              minDistance={1}
-              maxPolarAngle={Math.PI / 2 - 0.1}
-            />
-            <PerspectiveCamera
-              makeDefault
-              position={[0, 0, 300]}
-              up={[0, 0, 1]}
-              far={5000}
-            />
-            <group>{props.children}</group>
-            {fancy && (
-              <EffectComposer>
-                {/* <DepthOfField
+            <ControlsContext.Provider value={{ mapControlsRef }}>
+              <PerspectiveCamera
+                makeDefault
+                position={[0, 0, 300]}
+                up={[0, 0, 1]}
+                far={5000}
+
+              />
+              <MapControls
+                makeDefault
+                enableDamping={false}
+                ref={mapControlsRef}
+                minDistance={1}
+                maxPolarAngle={Math.PI / 2 - 0.1}
+                attach={"controls"}
+              />
+              <Bounds clip fit observe margin={1.5} damping={6}>
+                <group>{props.children}</group>
+              </Bounds>
+              {fancy && (
+                <EffectComposer>
+                  {/* <DepthOfField
                   focusDistance={0}
                   focalLength={0.02}
                   bokehScale={2}
                   height={480}
                 /> */}
-                <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
-                <Noise opacity={0.02} />
-                <Vignette
-                  offset={0.3}
-                  darkness={0.9}
-                  blendFunction={BlendFunction.NORMAL}
-                />
-              </EffectComposer>
-            )}
-            {vr && (
-              <>
-                <Controllers rayMaterial={{ color: "red" }} />
-                <Hands />
-                <mesh>
-                  <boxGeometry />
-                  <meshBasicMaterial color="blue" />
-                </mesh>
-              </>
-            )}
+                  <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
+                  <Noise opacity={0.02} />
+                  <Vignette
+                    offset={0.3}
+                    darkness={0.9}
+                    blendFunction={BlendFunction.NORMAL}
+                  />
+                </EffectComposer>
+              )}
+              {vr && (
+                <>
+                  <Controllers rayMaterial={{ color: "red" }} />
+                  <Hands />
+                  <mesh>
+                    <boxGeometry />
+                    <meshBasicMaterial color="blue" />
+                  </mesh>
+                </>
+              )}
+            </ControlsContext.Provider>
           </XR>
         </Canvas>
         <Sidebar lookAtTargetId={lookAtTargetId} />
         <ZoomControls
           zoomIn={zoomIn}
           zoomOut={zoomOut}
-          recenter={recenter}
+          recenter={centerOnDevice}
           stopZoom={stopZoom}
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-      </UIDataContext.Provider>
+      </UIDataContext.Provider >
     </>
   );
 }

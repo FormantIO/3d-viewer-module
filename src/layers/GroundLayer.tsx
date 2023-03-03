@@ -27,13 +27,16 @@ export function GroundLayer(props: IGroundLayer) {
   }, []);
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <Axis />
-      <primitive object={axisLayers} />
-      {range(0, 100).map((i) => (
-        <SilverCircle key={i} width={i} />
-      ))}
-      {children}
-    </DataVisualizationLayer>
+    <group name="axis">
+      <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
+        <Axis />
+        <primitive object={axisLayers} />
+        {range(0, 100).map((i) => (
+          <SilverCircle key={i} width={i} />
+        ))}
+        {children}
+      </DataVisualizationLayer>
+    </group>
+
   );
 }

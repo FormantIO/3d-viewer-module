@@ -30,6 +30,15 @@ export function Demo() {
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}
           name="Ground"
         />
+        <MapLayer
+          mapType="Satellite"
+          positioning={PositioningBuilder.fixed(0, 0, -3)}
+          name="Map"
+          size={500}
+          mapBoxKey=""
+          longitude={-122.6765}
+          latitude={45.5231}
+        />
         <LayerContext.Provider
           value={{
             deviceId: "ekobot_device",
