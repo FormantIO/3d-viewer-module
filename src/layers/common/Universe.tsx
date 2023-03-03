@@ -252,6 +252,7 @@ export function Universe(props: IUniverseProps) {
               ref={mapControlsRef}
               minDistance={1}
               maxPolarAngle={Math.PI / 2 - 0.1}
+              makeDefault
             />
             <PerspectiveCamera
               makeDefault
