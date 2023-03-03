@@ -272,7 +272,7 @@ export function Universe(props: IUniverseProps) {
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
-              <Bounds clip fit observe margin={1.5} damping={6}>
+              <Bounds clip observe margin={1.5} damping={6}>
                 <group>{props.children}</group>
               </Bounds>
               {fancy && (

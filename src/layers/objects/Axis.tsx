@@ -17,7 +17,7 @@ export function Axis() {
         lineWidth={1}
       />
       <Line
-        points={[0, 0, 0, 0, 0, size]}
+        points={[0, 0, 0, 0, 0, 20]}
         color={FormantColors.blue}
         lineWidth={1}
       />

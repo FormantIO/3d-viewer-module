@@ -91,17 +91,22 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       return false;
     }
 
-    function expandBoxByObjectWithPosition(box: THREE.Box3, object: THREE.Mesh) {
+    function expandBoxByObjectWithPosition(box: THREE.Box3, object: THREE.Group) {
       const position = new THREE.Vector3();
-      position.setFromMatrixPosition(object.matrixWorld);
-      box.expandByPoint(position);
-      if (object.geometry) {
-        object.geometry.computeBoundingBox();
-        if (object.geometry.boundingBox === null) return; // is that even possible?
-        const geometryBoundingBox = object.geometry.boundingBox.clone();
-        geometryBoundingBox.applyMatrix4(object.matrixWorld);
-        box.union(geometryBoundingBox);
-      }
+      object.updateMatrixWorld(); // Update the world matrices of the group and its children
+      object.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          position.setFromMatrixPosition(child.matrixWorld);
+          box.expandByPoint(position);
+          if (child.geometry) {
+            child.geometry.computeBoundingBox();
+            if (child.geometry.boundingBox === null) return;
+            const geometryBoundingBox = child.geometry.boundingBox.clone();
+            geometryBoundingBox.applyMatrix4(child.matrixWorld);
+            box.union(geometryBoundingBox);
+          }
+        }
+      });
     }
 
     return {
@@ -110,15 +115,14 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         if (isBox3(object)) box.copy(object)
         else {
           const target = object || ref.current
-          target.updateWorldMatrix(true, true)
           box.expandByObject(target);
           if (object === undefined) {
             const targetGroup = target.children[0]; // target is a group containing everything, target.children[0] is the actual target
             targetGroup.updateWorldMatrix(true, true);
             const tempBox = new THREE.Box3();
             // traverse all children except axis and targetGroup
-            targetGroup.traverse((child: any) => {
-              if (child.name !== 'axis' && !isDescendantOfAxis(child) && child.uuid !== targetGroup.uuid && child.isMesh) {
+            targetGroup.children.forEach((child: any) => {
+              if (child.name !== 'axis') {
                 const childBox = new THREE.Box3();
                 childBox.setFromObject(child);
                 expandBoxByObjectWithPosition(tempBox, child);
@@ -144,7 +148,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       },
       clip() {
         const { distance } = getSize()
-        if (controls) controls.maxDistance = distance * margin;
+        if (controls) controls.maxDistance = distance * 10;
         camera.near = distance / 100
         camera.far = distance * 100
         camera.updateProjectionMatrix()
