@@ -15,11 +15,20 @@ import { Euler, Group, Matrix4, Mesh, Quaternion, Vector3 } from "three";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { FormantColors } from "./utils/FormantColors";
 import { ThreeEvent, useThree } from "@react-three/fiber";
-import { Line, PivotControls } from "@react-three/drei";
+import { Line, PivotControls, Html } from "@react-three/drei";
+import { Box, Button } from "@formant/ui-sdk";
+import { Checkbox } from "@mui/material";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
+
+type WaypointData = {
+  pointIndex: number;
+  message: string;
+  scrubberOn: boolean;
+  pose: IPose;
+};
 
 export const WaypointsLayer = (props: IPointCloudProps) => {
   const { dataSource } = props;
@@ -28,7 +37,11 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
 
   const [points, setPoints] = useState<IPose[]>([]);
 
-  const waypointRefs = useRef<(Group | null)[]>([]);
+  // For selected waypoint
+  const [count, setCount] = useState<number | null>(null);
+
+  // Waypoint Metadata
+  const [store] = useState<WaypointData[]>([]);
 
   useEffect(() => {
     if (!layerData) return;
@@ -51,7 +64,10 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
   const mouseDownHandler = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation();
-      if (!e.shiftKey) return;
+      if (!e.shiftKey) {
+        setCount(null);
+        return;
+      }
       let p = e.point;
       setPoints([
         ...points,
@@ -78,7 +94,7 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group>
-        <mesh onPointerDown={mouseDownHandler} ref={plane}>
+        <mesh name="plane" onPointerDown={mouseDownHandler} ref={plane}>
           <planeGeometry args={[200, 200]} />
           <meshStandardMaterial color={FormantColors.green} />
         </mesh>
@@ -87,11 +103,17 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
           {points.map((pose: IPose, idx: number) => (
             <Waypoint
               key={idx}
+              index={idx}
               pose={pose}
-              onPose={(updatedPose) => {
+              store={store}
+              setCount={setCount}
+              selected={count === idx}
+              onPose={(updatedPose: IPose) => {
                 const newPoints = [...points];
                 newPoints[idx] = updatedPose;
                 setPoints(newPoints);
+
+                store[idx].pose = updatedPose;
               }}
             />
           ))}
@@ -117,10 +139,26 @@ interface Props {
   pose: IPose;
   onPose: (pose: IPose) => void;
   toggle?: boolean;
+  store: WaypointData[];
+  setCount: (s: number) => void;
+  index: number;
+  selected: boolean;
 }
 
 const Waypoint = forwardRef<Group, Props>((props, ref) => {
-  const { pose } = props;
+  const { pose, index, selected, store, setCount } = props;
+
+  useEffect(() => {
+    store[index] = {
+      pointIndex: index,
+      message: "",
+      scrubberOn: false,
+      pose,
+    };
+  }, [store]);
+
+  const [message, setMessage] = useState("");
+  const [scrubberOn, setScrubberOn] = useState(false);
 
   const [hover, setHover] = useState(false);
   const [color, setColor] = useState("white");
@@ -142,13 +180,14 @@ const Waypoint = forwardRef<Group, Props>((props, ref) => {
   const matrix = new Matrix4();
 
   useEffect(() => {
-    setColor(hover ? "red" : "white");
-  }, [hover, setColor]);
+    setColor(hover && !selected ? "red" : selected ? "green" : "white");
+  }, [hover, selected, setColor]);
 
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       <PivotControls
         ref={pivotRef}
+        visible={selected}
         lineWidth={4}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
@@ -199,6 +238,9 @@ const Waypoint = forwardRef<Group, Props>((props, ref) => {
         <group ref={targetRef} />
         <group ref={ref}>
           <mesh
+            onClick={() => {
+              setCount(index);
+            }}
             onPointerOver={() => setHover(true)}
             onPointerLeave={() => setHover(false)}
           >
@@ -207,6 +249,55 @@ const Waypoint = forwardRef<Group, Props>((props, ref) => {
           </mesh>
         </group>
       </PivotControls>
+
+      {selected && (
+        <Html
+          style={{
+            width: "250px",
+            color: "#2d2a2a",
+            padding: "10px",
+            background: "rgba(202, 214, 214, 0.6)",
+            borderRadius: "10px",
+            margin: "30px",
+          }}
+        >
+          <Box component={"div"} display={"flex"} flexDirection="column">
+            <Box component={"div"} mt="10px">
+              <label>Message: </label>
+              <input
+                value={message}
+                onChange={(e) => {
+                  store[index].message = e.target.value;
+                  setMessage(e.target.value);
+                }}
+              />
+            </Box>
+            <div>
+              <label>Scrubber On</label>
+              <Checkbox
+                color="primary"
+                checked={scrubberOn}
+                onChange={(e) => {
+                  store[index].scrubberOn = e.target.checked;
+                  setScrubberOn(e.target.checked);
+                }}
+              />
+            </div>
+            <div>
+              <Button
+                variant="contained"
+                size={"small"}
+                color="primary"
+                onClick={() => {
+                  alert(JSON.stringify(store));
+                }}
+              >
+                Send
+              </Button>
+            </div>
+          </Box>
+        </Html>
+      )}
     </group>
   );
 });
