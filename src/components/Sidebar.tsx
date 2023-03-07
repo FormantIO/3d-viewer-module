@@ -16,7 +16,7 @@ interface ITreeArea {
 const SidebarContainer = styled.div<ITreeArea>`
   border-radius: 4px;
   position: absolute;
-  z-index: 1;
+  z-index: 101;
   left: 14px;
   top: 16px;
   display: grid;
@@ -102,7 +102,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-      props.layerVisible ? FormantColors.silver : "#657197"};
+    props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {

@@ -139,6 +139,7 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
             borderRadius: "10px",
             margin: "30px",
           }}
+          zIndexRange={[100, 0]}
         >
           <Box component={"div"} display={"flex"} flexDirection="column">
             <Box component={"div"} mt="10px">
