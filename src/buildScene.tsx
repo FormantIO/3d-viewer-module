@@ -18,6 +18,7 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
+import { WaypointsLayer } from "./layers/WaypointsLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -82,6 +83,7 @@ export function buildScene(
         );
       }
     });
+
     (device.pointCloudLayers || []).forEach((layer, i) => {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       const { pointShape, pointSize, decayTime, color1, color2 } = layer;
@@ -99,6 +101,7 @@ export function buildScene(
         />
       );
     });
+
     (device.occupancyGridLayers || []).forEach((layer, i) => {
       const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
       deviceLayers.push(
@@ -121,6 +124,19 @@ export function buildScene(
         />
       );
     });
+
+    (device.waypointsLayers || []).forEach((layer, i) => {
+      const dataSource = layer.dataSource && parseDataSource(layer.dataSource);
+      deviceLayers.push(
+        <WaypointsLayer
+          key={"waypoint" + i + configHash}
+          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          treePath={getTreePath()}
+          name={layer.name || "Waypoints"}
+        />
+      );
+    });
+
     (device.geometryLayers || []).forEach((layer, i) => {
       const positioning = layer.positioning
         ? parsePositioning(layer.positioning)

@@ -71,7 +71,7 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}
         anchor={[0, 0, 0]}
-        scale={20}
+        scale={1.8}
         matrix={matrix}
         autoTransform={false}
         onDragStart={() => {
@@ -122,7 +122,7 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
             onPointerOver={() => setHover(true)}
             onPointerLeave={() => setHover(false)}
           >
-            <coneGeometry args={[4, 15, 32]} />
+            <coneGeometry args={[0.3, 1, 12]} />
             <meshBasicMaterial color={color} />
           </mesh>
         </group>
@@ -131,6 +131,7 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
       {selected && (
         <Html
           style={{
+            position: "absolute",
             width: "250px",
             color: "#2d2a2a",
             padding: "10px",

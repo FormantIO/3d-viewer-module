@@ -79,7 +79,7 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <mesh name="plane" onPointerDown={mouseDownHandler} ref={plane}>
-        <planeGeometry args={[200, 200]} />
+        <planeGeometry args={[10, 10]} />
         <meshStandardMaterial color={FormantColors.green} />
       </mesh>
 
@@ -105,8 +105,9 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
         {points.length > 0 && (
           <Line
             points={points.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={5}
-            color="red"
+            lineWidth={1}
+            color="white"
+            forceSinglePass={undefined}
           />
         )}
       </group>
