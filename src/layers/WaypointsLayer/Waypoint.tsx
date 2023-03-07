@@ -1,139 +1,10 @@
-import {
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { IUniverseLayerProps } from "./types";
-import { UniverseDataContext } from "./common/UniverseDataContext";
-import { LayerContext } from "./common/LayerContext";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
+import { forwardRef, useEffect, useRef, useState } from "react";
+import { IPose } from "@formant/universe-core";
 import { Euler, Group, Matrix4, Mesh, Quaternion, Vector3 } from "three";
-import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
-import { FormantColors } from "./utils/FormantColors";
-import { ThreeEvent, useThree } from "@react-three/fiber";
-import { Line, PivotControls, Html } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { PivotControls, Html } from "@react-three/drei";
 import { Box, Button } from "@formant/ui-sdk";
 import { Checkbox } from "@mui/material";
-
-interface IPointCloudProps extends IUniverseLayerProps {
-  dataSource?: UniverseTelemetrySource;
-}
-
-type WaypointData = {
-  pointIndex: number;
-  message: string;
-  scrubberOn: boolean;
-  pose: IPose;
-};
-
-export const WaypointsLayer = (props: IPointCloudProps) => {
-  const { dataSource } = props;
-  const universeData = useContext(UniverseDataContext);
-  const layerData = useContext(LayerContext);
-
-  const [points, setPoints] = useState<IPose[]>([]);
-
-  // For selected waypoint
-  const [count, setCount] = useState<number | null>(null);
-
-  // Waypoint Metadata
-  const [store] = useState<WaypointData[]>([]);
-
-  useEffect(() => {
-    if (!layerData) return;
-    const { deviceId } = layerData;
-
-    if (dataSource) {
-      dataSource.streamType = "localization";
-      const unsubscribe = universeData.subscribeToPointCloud(
-        deviceId,
-        dataSource,
-        (data: IUniversePointCloud | Symbol) => {}
-      );
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [layerData, universeData]);
-
-  const mouseDownHandler = useCallback(
-    (e: ThreeEvent<PointerEvent>) => {
-      e.stopPropagation();
-      if (!e.shiftKey) {
-        setCount(null);
-        return;
-      }
-      let p = e.point;
-      setPoints([
-        ...points,
-        {
-          translation: {
-            x: p.x,
-            y: p.y,
-            z: p.z + 0.125,
-          },
-          rotation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
-        },
-      ]);
-    },
-    [points, setPoints]
-  );
-
-  const plane = useRef<Mesh>(null!);
-
-  return (
-    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <group>
-        <mesh name="plane" onPointerDown={mouseDownHandler} ref={plane}>
-          <planeGeometry args={[200, 200]} />
-          <meshStandardMaterial color={FormantColors.green} />
-        </mesh>
-
-        <group name="waypoints">
-          {points.map((pose: IPose, idx: number) => (
-            <Waypoint
-              key={idx}
-              index={idx}
-              pose={pose}
-              store={store}
-              setCount={setCount}
-              selected={count === idx}
-              onPose={(updatedPose: IPose) => {
-                const newPoints = [...points];
-                newPoints[idx] = updatedPose;
-                setPoints(newPoints);
-
-                store[idx].pose = updatedPose;
-              }}
-            />
-          ))}
-
-          {points.length > 0 && (
-            <Line
-              points={points.map(({ translation: { x, y, z } }) => [x, y, z])}
-              lineWidth={5}
-              color="red"
-            />
-          )}
-        </group>
-
-        {/* {selectedWaypointIdx && (
-          <PivotControls object={waypointRefs.current[selectedWaypointIdx]} />
-        )} */}
-      </group>
-    </DataVisualizationLayer>
-  );
-};
 
 interface Props {
   pose: IPose;
@@ -145,7 +16,14 @@ interface Props {
   selected: boolean;
 }
 
-const Waypoint = forwardRef<Group, Props>((props, ref) => {
+export type WaypointData = {
+  pointIndex: number;
+  message: string;
+  scrubberOn: boolean;
+  pose: IPose;
+};
+
+export const Waypoint = forwardRef<Group, Props>((props, ref) => {
   const { pose, index, selected, store, setCount } = props;
 
   useEffect(() => {
