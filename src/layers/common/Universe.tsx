@@ -1,11 +1,9 @@
 import { Canvas, ThreeElements, useFrame, useThree } from "@react-three/fiber";
 import {
   MapControls,
-  OrbitControls,
   PerspectiveCamera,
-  useHelper,
 } from "@react-three/drei";
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
   EffectComposer,
@@ -36,6 +34,15 @@ type IUniverseProps = {
 
 let zooming = false;
 let autoCameraMoving = false;
+
+const WaitForControls = ({ children }: { children: ReactNode }) => {
+  const { controls } = useThree();
+  if (controls) {
+    return <>{children}</>;
+  }
+  return null;
+};
+
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const [hasCentered, setHasCentered] = React.useState(false);
@@ -231,6 +238,7 @@ export function Universe(props: IUniverseProps) {
     }
   }, [layers, scene]);
 
+
   return (
     <>
       <UIDataContext.Provider
@@ -272,9 +280,11 @@ export function Universe(props: IUniverseProps) {
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
-              <Bounds clip observe margin={1.5} damping={6}>
-                <group>{props.children}</group>
-              </Bounds>
+              <WaitForControls>
+                <Bounds clip observe margin={1.5} damping={6}>
+                  <group>{props.children}</group>
+                </Bounds>
+              </WaitForControls>
               {fancy && (
                 <EffectComposer>
                   {/* <DepthOfField

@@ -147,8 +147,11 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         return this
       },
       clip() {
-        const { distance } = getSize()
-        if (controls) controls.maxDistance = distance * 10;
+        const { distance } = getSize();
+        if (controls) {
+          controls.maxDistance = distance * 10;
+          controls.update();
+        }
         camera.near = distance / 100
         camera.far = distance * 100
         camera.updateProjectionMatrix()
@@ -176,15 +179,16 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       },
       fit() {
         if (!current.animating) {
-          current.camera.copy(camera.position)
+          current.camera.copy(new THREE.Vector3(0, 0, 50))
         }
         if (controls) current.focus.copy(controls.target)
 
-        const { center, distance } = getSize()
-        const direction = camera.getWorldDirection(new THREE.Vector3(0, 0, 0));
 
-        goal.camera.copy(center).setZ(Math.max(distance, 15)).sub(direction);
-        goal.focus.copy(center)
+        const { center, distance } = getSize()
+        const direction = camera.getWorldDirection(new THREE.Vector3()).round(); // direction is the direction the camera is facing
+
+        goal.camera.copy(center).sub(direction).setZ(Math.max(distance, 15));
+        goal.focus.copy(center).sub(direction).setZ(0);
 
         if (isOrthographic(camera)) {
           current.zoom = camera.zoom
@@ -266,7 +270,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         camera.zoom = current.zoom
         camera.updateProjectionMatrix()
       }
-
       if (!controls) {
         camera.lookAt(current.focus)
       } else {
