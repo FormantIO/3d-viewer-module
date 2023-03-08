@@ -30,12 +30,20 @@ interface IMapLayer extends IUniverseLayerProps {
   mapType: "Street" | "Satellite" | "Satellite Street";
 }
 
+const defaultTexture = new Texture(
+  new ImageData(1, 1)
+);
+
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType } = props;
   const { children } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [mapTexture, setMapTexture] = useState<Texture | undefined>();
+  const [mapTexture, setMapTexture] = useState<Texture>(
+    new Texture()
+  );
+  const [mapTextures, setMapTextures] = useState<Texture[]>([]);
+
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | undefined
   >(undefined);
@@ -89,11 +97,18 @@ export function MapLayer(props: IMapLayer) {
         EARTH_RADIUS_IN_METERS
       ).longitude.toFixed(9);
 
-      setMapTexture(
-        await loadTexture(
-          `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${width}x${height}@2x?logo=false&access_token=${accessToken}`
-        )
-      );
+      const buildMapUrl = (imgRes: number, doubleRes: boolean) => {
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? '@2x' : ''}?logo=false&access_token=${accessToken}`;
+      };
+      const resolutions = [160, 320, 640, 1280];
+      const textures: Texture[] = [];
+
+      Promise.all(resolutions.map(async (res, index) => {
+        const texture = await loadTexture(buildMapUrl(res, true));
+        textures.push(texture);
+        setMapTextures([...textures]);
+      }));
+
     })();
   }, [currentLocation]);
 
@@ -123,15 +138,12 @@ export function MapLayer(props: IMapLayer) {
       }
     })();
   }, []);
-  const mapReady = mapTexture !== undefined;
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      {mapReady && (
-        <mesh>
-          <planeGeometry attach="geometry" args={[size, size]} />
-          <meshStandardMaterial map={mapTexture} />
-        </mesh>
-      )}
+      <mesh>
+        <planeGeometry attach="geometry" args={[size, size]} />
+        <meshStandardMaterial map={mapTextures[mapTextures.length - 1] || new Texture()} />
+      </mesh>
       {children}
     </DataVisualizationLayer>
   );
