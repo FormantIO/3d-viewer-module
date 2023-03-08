@@ -1,18 +1,18 @@
-import { Fleet } from "@formant/data-sdk";
 import {
   defined,
-  definedAndNotNull,
   ILocation,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { computeDestinationPoint } from "geolib";
-import { useContext, useEffect, useState } from "react";
-import { Texture } from "three";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Color, ShaderMaterial, Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
+import { extend, useFrame } from "@react-three/fiber";
+import { shaderMaterial } from "@react-three/drei";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -30,9 +30,28 @@ interface IMapLayer extends IUniverseLayerProps {
   mapType: "Street" | "Satellite" | "Satellite Street";
 }
 
-const defaultTexture = new Texture(
-  new ImageData(1, 1)
+const ColorShiftMaterial = shaderMaterial(
+  { time: 0, color: new Color('#2D3855') },
+  // vertex shader
+  /*glsl*/`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  // fragment shader
+  /*glsl*/`
+    uniform float time;
+    uniform vec3 color;
+    varying vec2 vUv;
+    void main() {
+      gl_FragColor.rgba = vec4(0.05 * sin(vUv.yxx + time * 2.0) + color, 1.0);
+    }
+  `
 );
+
+extend({ ColorShiftMaterial });
 
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType } = props;
@@ -47,6 +66,7 @@ export function MapLayer(props: IMapLayer) {
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | undefined
   >(undefined);
+  const materialRef = useRef<ShaderMaterial>(null);
 
   useEffect(() => {
     (async () => {
@@ -104,8 +124,8 @@ export function MapLayer(props: IMapLayer) {
       const textures: Texture[] = [];
 
       Promise.all(resolutions.map(async (res, index) => {
-        const texture = await loadTexture(buildMapUrl(res, true));
-        textures.push(texture);
+        const texture = await loadTexture(buildMapUrl(res, index === resolutions.length - 1));
+        textures[index] = texture;
         setMapTextures([...textures]);
       }));
 
@@ -138,11 +158,25 @@ export function MapLayer(props: IMapLayer) {
       }
     })();
   }, []);
+
+  useFrame(({ clock }) => {
+    if (materialRef.current) {
+      const material = materialRef.current;
+      material.uniforms.time.value = clock.elapsedTime;
+    }
+  });
+
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
       <mesh>
         <planeGeometry attach="geometry" args={[size, size]} />
-        <meshStandardMaterial map={mapTextures[mapTextures.length - 1] || new Texture()} />
+        {mapTextures.length > 0 ? (
+          <meshStandardMaterial map={mapTextures[mapTextures.length - 1]} />
+        ) : (
+          /* @ts-ignore -- extend() extends JSX but keeps giving TS warning */
+          <colorShiftMaterial ref={materialRef} />
+        )}
       </mesh>
       {children}
     </DataVisualizationLayer>

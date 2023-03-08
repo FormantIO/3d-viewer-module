@@ -34,7 +34,7 @@ export function Demo() {
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}
           name="Map"
           latitude={37.422}
-          longitude={-122.194}
+          longitude={-122.074}
           mapType="Satellite"
           size={1000}
         />
