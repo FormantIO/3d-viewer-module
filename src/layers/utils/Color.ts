@@ -1,10 +1,18 @@
+import { FormantColors } from "./FormantColors";
+
 export class Color {
   public h: number;
   public s: number;
   public l: number;
 
   public static fromString(color: string): Color | undefined {
-    const match = /#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color);
+    let c: string = "#729fda";
+    if (!color.includes("#")) {
+      c = Object.keys(FormantColors).includes(color)
+        ? (FormantColors as any)[color]
+        : c;
+    }
+    const match = /#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(c);
     if (match) {
       return new Color(
         parseInt(match[1], 16),
