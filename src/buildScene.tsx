@@ -18,6 +18,7 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
+import { WaypointsLayer } from "./layers/WaypointsLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -129,6 +130,8 @@ export function buildScene(
           color2={color2 || "#F89973"}
         />
       );
+    } else if (layer.visualizationType === "Waypoints") {
+      deviceLayers.push(<WaypointsLayer key={"waypoints" + i + configHash} />);
     } else if (layer.visualizationType === "Geometry") {
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
@@ -150,7 +153,6 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
-  debugger;
   devices.push(
     <LayerContext.Provider
       key={"maps"}

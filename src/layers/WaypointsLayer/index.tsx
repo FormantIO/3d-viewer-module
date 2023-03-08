@@ -5,21 +5,16 @@ import { LayerContext } from "../common/LayerContext";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
 import { Mesh } from "three";
-import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { Waypoint, WaypointData } from "./Waypoint";
 
-interface IPointCloudProps extends IUniverseLayerProps {
+interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
 
-export const WaypointsLayer = (props: IPointCloudProps) => {
-  const { dataSource } = props;
-  const universeData = useContext(UniverseDataContext);
-  const layerData = useContext(LayerContext);
-
+export const WaypointsLayer = (props: IWaypointsProps) => {
   const [points, setPoints] = useState<IPose[]>([]);
 
   // For selected waypoint
@@ -27,24 +22,6 @@ export const WaypointsLayer = (props: IPointCloudProps) => {
 
   // Waypoint Metadata
   const [store] = useState<WaypointData[]>([]);
-
-  useEffect(() => {
-    if (!layerData) return;
-    const { deviceId } = layerData;
-
-    if (dataSource) {
-      dataSource.streamType = "localization";
-      const unsubscribe = universeData.subscribeToPointCloud(
-        deviceId,
-        dataSource,
-        (data: IUniversePointCloud | Symbol) => {}
-      );
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [layerData, universeData]);
 
   const mouseDownHandler = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
