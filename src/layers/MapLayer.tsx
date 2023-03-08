@@ -28,11 +28,10 @@ interface IMapLayer extends IUniverseLayerProps {
   longitude?: number;
   size: number;
   mapType: "Street" | "Satellite" | "Satellite Street";
-  mapBoxKey: string;
 }
 
 export function MapLayer(props: IMapLayer) {
-  const { dataSource, size, latitude, longitude, mapType, mapBoxKey } = props;
+  const { dataSource, size, latitude, longitude, mapType } = props;
   const { children } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
@@ -53,7 +52,7 @@ export function MapLayer(props: IMapLayer) {
         width: 1280,
         height: 1280,
         bearing: 0,
-        accessToken: mapBoxKey || URL_SCOPED_TOKEN,
+        accessToken: URL_SCOPED_TOKEN,
       };
       const { username, styleId, width, height, accessToken } = mapBoxConfig;
       const distance = size / 2;

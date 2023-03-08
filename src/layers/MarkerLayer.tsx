@@ -34,7 +34,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     circle.scale.setScalar(2);
     arrow.scale.setScalar(2);
 
-    const scaleFactor = 30;
+    const scaleFactor = 12;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /

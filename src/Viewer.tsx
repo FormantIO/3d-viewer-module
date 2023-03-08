@@ -49,7 +49,11 @@ export function Viewer() {
   }, []);
 
   const checkConfiguration = (config: Viewer3DConfiguration) => {
-    if (!config.devices || !config.devices.length) return false;
+    if (
+      (!config.maps || !config.maps.length) &&
+      (!config.visualizations || !config.visualizations.length)
+    )
+      return false;
     return true;
   };
 

@@ -57,7 +57,8 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
       dataSource,
       (gridData: Symbol | IUniverseGridMap) => {
         if (typeof gridData === "symbol") {
-          throw new Error("unhandled data status");
+          console.warn("empty data for grid");
+          return;
         }
 
         const {
