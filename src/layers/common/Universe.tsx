@@ -167,27 +167,31 @@ export function Universe(props: IUniverseProps) {
     }
   }, [mapControlsRef]);
 
-  const zoomCamera = (x: number) => {
+  const zoomCamera = (delta: number) => {
     const m = mapControlsRef.current;
     if (m) {
-      const position = m.object.position;
-      const target = m.target;
-      const direction = target.clone().sub(position).normalize();
-      const distanceToTarget = position.distanceTo(target);
+      const distance = m.target.distanceTo(m.object.position);
+      const maxDistance = m.maxDistance;
+      const minDistance = 3;
+      const zoomSpeed = 0.05;
       let dampening = 1;
-      if (x > 0 && distanceToTarget < 40) {
-        dampening = 1 - (x / distanceToTarget) * 3;
+
+      // Apply dampening when close to target or max distance
+      if (distance < minDistance || distance > maxDistance - minDistance) {
+        dampening = 1 - (zoomSpeed / distance) * 3;
       }
-      if (distanceToTarget < 10 && x > 0) {
-        return;
-      }
-      m.object.position.copy(
-        position.clone().add(direction.multiplyScalar(x * dampening))
-      );
+
+      // Compute new distance and clamp it to the [minDistance, maxDistance] range
+      let newDistance = distance - delta * zoomSpeed * distance;
+      newDistance = Math.max(minDistance, Math.min(maxDistance, newDistance));
+
+      // Set new camera position
+      const direction = m.target.clone().sub(m.object.position).normalize();
+      const newPosition = m.target.clone().sub(direction.multiplyScalar(newDistance));
+      m.object.position.copy(newPosition);
       m.update();
     }
   };
-
   const zoomIn = () => {
     zooming = true;
     const zoom = () => {
@@ -196,7 +200,7 @@ export function Universe(props: IUniverseProps) {
         clearInterval(interval);
         return;
       }
-      zoomCamera(5);
+      zoomCamera(1);
     };
     zoom();
     const interval = setInterval(zoom, 20);
@@ -210,7 +214,7 @@ export function Universe(props: IUniverseProps) {
         clearInterval(interval);
         return;
       }
-      zoomCamera(-5);
+      zoomCamera(-1);
     };
     zoom();
     const interval = setInterval(zoom, 20);

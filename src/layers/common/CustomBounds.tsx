@@ -152,7 +152,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           controls.maxDistance = distance * 10;
           controls.update();
         }
-        camera.near = distance / 100
+        camera.near = distance / 1000
         camera.far = distance * 100
         camera.updateProjectionMatrix()
         if (controls) controls.update()
