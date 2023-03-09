@@ -18,6 +18,7 @@ import {
   PlaneGeometry,
 } from "three";
 import { FormantColors } from "./utils/FormantColors";
+import { useBounds } from "./common/CustomBounds";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -38,8 +39,13 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
+  const bounds = useBounds();
 
   const [obj, setObj] = useState(new Mesh());
+
+  const gridMat = new MeshBasicMaterial({ transparent: true });
+  const mesh = new Mesh(new PlaneGeometry(), gridMat);
+  mesh.visible = false;
 
   useEffect(() => {
     if (!layerData || !dataSource) return;
@@ -47,9 +53,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     const { deviceId } = layerData;
     dataSource.streamType = "localization";
 
-    const gridMat = new MeshBasicMaterial({ transparent: true });
-    const mesh = new Mesh(new PlaneGeometry(), gridMat);
-    mesh.visible = false;
     setObj(mesh);
 
     const unsubscribe = universeData.subscribeToGridMap(
@@ -110,7 +113,11 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         gridMat.map = texture;
         gridMat.needsUpdate = true;
 
-        mesh.visible = true;
+        if (!mesh.visible) {
+          mesh.visible = true;
+          bounds.refresh().clip().fit();
+        }
+
       }
     );
 
