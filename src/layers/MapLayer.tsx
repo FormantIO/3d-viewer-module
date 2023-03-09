@@ -6,8 +6,6 @@ import {
 import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Color, ShaderMaterial, Texture } from "three";
-import { useContext, useEffect, useState } from "react";
-import { Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
