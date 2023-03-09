@@ -77,7 +77,7 @@ export function Demo() {
               )}
               name="Path"
             />
-            <RouteMakerLayer size={200} name="Route Builder" />
+            {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
         </LayerContext.Provider>
       </Universe>

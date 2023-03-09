@@ -6,6 +6,8 @@ import {
 import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Color, ShaderMaterial, Texture } from "three";
+import { useContext, useEffect, useState } from "react";
+import { Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
@@ -13,6 +15,7 @@ import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { extend, useFrame } from "@react-three/fiber";
 import { shaderMaterial } from "@react-three/drei";
+import { useBounds } from "./common/CustomBounds";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -67,6 +70,7 @@ export function MapLayer(props: IMapLayer) {
     [number, number] | undefined
   >(undefined);
   const materialRef = useRef<ShaderMaterial>(null);
+  const bounds = useBounds();
 
   useEffect(() => {
     (async () => {
@@ -128,6 +132,7 @@ export function MapLayer(props: IMapLayer) {
         textures[index] = texture;
         setMapTextures([...textures]);
       }));
+      bounds.refresh().clip().fit();
 
     })();
   }, [currentLocation]);
@@ -165,7 +170,6 @@ export function MapLayer(props: IMapLayer) {
       material.uniforms.time.value = clock.elapsedTime;
     }
   });
-
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
