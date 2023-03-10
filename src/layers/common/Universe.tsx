@@ -1,8 +1,5 @@
 import { Canvas, ThreeElements, useFrame, useThree } from "@react-three/fiber";
-import {
-  MapControls,
-  PerspectiveCamera,
-} from "@react-three/drei";
+import { MapControls, PerspectiveCamera } from "@react-three/drei";
 import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
@@ -116,8 +113,7 @@ export function Universe(props: IUniverseProps) {
 
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
-    if (deviceMarker)
-      lookAtTargetId(deviceMarker.id);
+    if (deviceMarker) lookAtTargetId(deviceMarker.id);
   }, [layers, lookAtTargetId]);
 
   const recenter = React.useCallback(() => {
@@ -187,7 +183,9 @@ export function Universe(props: IUniverseProps) {
 
       // Set new camera position
       const direction = m.target.clone().sub(m.object.position).normalize();
-      const newPosition = m.target.clone().sub(direction.multiplyScalar(newDistance));
+      const newPosition = m.target
+        .clone()
+        .sub(direction.multiplyScalar(newDistance));
       m.object.position.copy(newPosition);
       m.update();
     }
@@ -242,7 +240,6 @@ export function Universe(props: IUniverseProps) {
     }
   }, [layers, scene]);
 
-
   return (
     <>
       <UIDataContext.Provider
@@ -274,13 +271,12 @@ export function Universe(props: IUniverseProps) {
                 position={[0, 0, 300]}
                 up={[0, 0, 1]}
                 far={5000}
-
               />
               <MapControls
                 makeDefault
                 enableDamping={false}
                 ref={mapControlsRef}
-                minDistance={1}
+                minDistance={5}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
@@ -328,7 +324,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-      </UIDataContext.Provider >
+      </UIDataContext.Provider>
     </>
   );
 }

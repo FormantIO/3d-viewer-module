@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
@@ -7,10 +7,12 @@ import { MarkerMaterial } from "./utils/MarkerMaterial";
 import { LayerType } from "./common/LayerTypes";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps { }
+interface IMarkerLayerProps extends IUniverseLayerProps {
+  size: number;
+}
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children } = props;
+  const { children, size } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -32,10 +34,8 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     const circle = circleRef.current;
     const arrow = arrowRef.current;
     if (!circle || !arrow) return;
-    circle.scale.setScalar(2);
-    arrow.scale.setScalar(2);
 
-    const scaleFactor = 12;
+    const scaleFactor = 30 - size * 2;
 
     const scale =
       scaleVector.subVectors(circle.position, camera.position).length() /
@@ -48,15 +48,25 @@ export function MarkerLayer(props: IMarkerLayerProps) {
   });
 
   return (
-    <DataVisualizationLayer {...props} type={LayerType.TRACKABLE} iconUrl="icons/3d_object.svg">
+    <DataVisualizationLayer
+      {...props}
+      type={LayerType.TRACKABLE}
+      iconUrl="icons/3d_object.svg"
+    >
       <group>
-        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
+        <mesh
+          ref={arrowRef}
+          name="arrow"
+          rotation={[0, 0, -Math.PI / 2]}
+          renderOrder={1}
+        >
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
             color="white"
             emissive="white"
             emissiveIntensity={2}
             toneMapped={false}
+            depthTest={false}
           />
         </mesh>
         <mesh name="circle" ref={circleRef}>

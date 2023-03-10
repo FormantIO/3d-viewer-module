@@ -84,10 +84,12 @@ export function buildScene(
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
         : PositioningBuilder.fixed(0, 0, 0);
+      console.log(layer.markerSize);
       if (layer.positionIndicatorVisualType === "Circle") {
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
+            size={layer.markerSize || 0}
             positioning={positioning}
             treePath={getTreePath()}
             name={layer.name || "Marker"}
@@ -110,11 +112,11 @@ export function buildScene(
         layer.pointCloudDataSource &&
         parseDataSource(layer.pointCloudDataSource);
       const {
-        pointCloudShape: pointShape,
-        pointCloudSize: pointSize,
-        pointCloudDecayTime: decayTime,
-        pointCloudColor1: color1,
-        pointCloudColor2: color2,
+        pointCloudShape,
+        pointCloudSize,
+        pointCloudDecayTime,
+        pointCloudColor1,
+        pointCloudColor2,
       } = layer;
       deviceLayers.push(
         <PointCloudLayer
@@ -122,11 +124,11 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={getTreePath()}
           name={layer.name || "Point Cloud"}
-          pointShape={pointShape || "Circle"}
-          pointSize={pointSize || 0}
-          decayTime={decayTime || 1}
-          color1={color1 || "#729fda"}
-          color2={color2 || "#F89973"}
+          pointShape={pointCloudShape || "Circle"}
+          pointSize={pointCloudSize || 0}
+          decayTime={pointCloudDecayTime || 1}
+          color1={pointCloudColor1 || "#729fda"}
+          color2={pointCloudColor2 || "#F89973"}
         />
       );
     } else if (layer.visualizationType === "Geometry") {
@@ -150,7 +152,7 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
-  debugger;
+
   devices.push(
     <LayerContext.Provider
       key={"maps"}

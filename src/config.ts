@@ -34,6 +34,7 @@ export type Viewer3DVisualization = {
     | "Point Cloud"
     | "Path";
   positionIndicatorVisualType?: "Circle";
+  markerSize?: number;
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudSize?: number;
