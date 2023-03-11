@@ -158,7 +158,6 @@ export function buildScene(
     >
       <EmptyLayer
         name={"Maps"}
-        id={currentDeviceId || undefined}
         treePath={[0]}
       >
         {mapLayers}
@@ -174,7 +173,6 @@ export function buildScene(
     >
       <EmptyLayer
         name={"Visualizations"}
-        id={currentDeviceId || undefined}
         treePath={[1]}
       >
         {deviceLayers}
