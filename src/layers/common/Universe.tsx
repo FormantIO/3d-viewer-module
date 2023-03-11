@@ -259,6 +259,7 @@ export function Universe(props: IUniverseProps) {
           onCreated={(state) => {
             setScene(state.scene);
             state.gl.toneMapping = NoToneMapping;
+
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
@@ -283,6 +284,7 @@ export function Universe(props: IUniverseProps) {
                 attach={"controls"}
               />
               <WaitForControls>
+                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current.maxDistance]} />
                 <Bounds clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
