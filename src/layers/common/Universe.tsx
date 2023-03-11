@@ -262,6 +262,7 @@ export function Universe(props: IUniverseProps) {
           onMouseDownCapture={() => {
             autoCameraMoving = false;
           }}
+          dpr={[1, 2]}
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
@@ -300,6 +301,7 @@ export function Universe(props: IUniverseProps) {
                     darkness={0.9}
                     blendFunction={BlendFunction.NORMAL}
                   />
+
                 </EffectComposer>
               )}
               {vr && (
