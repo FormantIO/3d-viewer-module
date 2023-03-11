@@ -1,11 +1,12 @@
 import { Color, EllipseCurve, Vector3 } from "three";
 import { Line } from "@react-three/drei";
+import { FormantColors } from "../utils/FormantColors";
 
 const range = (start: number, end: number) =>
     end <= start ? [] : new Array(end - start).fill(0).map((_, i) => i + start);
 
 
-export function PolarGrid({ majorCircleColor = new Color(0x2d3753), minorCircleColor = new Color(0x3b4569) }) {
+export function PolarGrid({ majorCircleColor = new Color(0x2e3854), minorCircleColor = new Color(0x364060) }) {
     const lines: JSX.Element[] = [];
 
     range(-1, 2).forEach((magnitude: number, index: number) => {
@@ -17,8 +18,9 @@ export function PolarGrid({ majorCircleColor = new Color(0x2d3753), minorCircleC
                 <Line
                     key={`line-${magnitude}-${i}`}
                     points={generatePoints(r, 36)}
-                    color={major ? majorCircleColor : minorCircleColor}
-                    lineWidth={1}
+                    color={!major ? majorCircleColor : minorCircleColor}
+                    lineWidth={major ? 0.7 : 0.5}
+                    opacity={0.5}
                     dashed={false}
                 />
             );

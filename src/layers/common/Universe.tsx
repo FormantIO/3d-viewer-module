@@ -13,7 +13,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Euler, MathUtils, Scene, Vector3 } from "three";
+import { Color, Euler, MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext } from "./ControlsContext";
@@ -258,6 +258,7 @@ export function Universe(props: IUniverseProps) {
         <Canvas
           onCreated={(state) => {
             setScene(state.scene);
+            state.gl.toneMapping = NoToneMapping;
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
@@ -265,7 +266,7 @@ export function Universe(props: IUniverseProps) {
           dpr={[1, 2]}
         >
           <XR>
-            <color attach="background" args={[FormantColors.flagship]} />
+            <color attach="background" args={[FormantColors.steel01]} />
             <ControlsContext.Provider value={{ mapControlsRef }}>
               <PerspectiveCamera
                 makeDefault
