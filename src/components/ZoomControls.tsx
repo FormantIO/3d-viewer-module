@@ -60,6 +60,8 @@ interface IZoomControls {
   isEditing: boolean;
 }
 
+const enableEditMode = window.location.search.includes("editFeature=true");
+
 const ZoomControls = (props: IZoomControls) => {
   const { zoomIn, zoomOut, recenter, stopZoom, toggleEditMode } = props;
   return (
@@ -77,14 +79,17 @@ const ZoomControls = (props: IZoomControls) => {
           <Icon name="recenter" />
         </button>
       </ControlGroup>
-      <ControlGroup onClick={toggleEditMode}>
-        <button type="button">
-          <Icon
-            name="edit"
-            sx={props.isEditing ? { stroke: FormantColors.primary } : {}}
-          />
-        </button>
-      </ControlGroup>
+      {enableEditMode && (
+        <ControlGroup onClick={toggleEditMode}>
+          <button type="button">
+            <Icon
+              name="edit"
+              sx={props.isEditing ? { stroke: FormantColors.primary } : {}}
+            />
+          </button>
+        </ControlGroup>
+      )}
+
     </Controls>
   );
 };
