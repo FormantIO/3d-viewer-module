@@ -70,8 +70,8 @@ export class Label extends Group {
       0,
       textWidth + padding,
       textHeight + padding,
-      10,
-      "#2d3855"
+      20,
+      "#2B334D20"
     );
     context.globalAlpha = 1;
 
@@ -89,6 +89,7 @@ export class Label extends Group {
       map: texture,
       depthTest: false,
       sizeAttenuation: this.sizeAttenuate,
+      transparent: true,
     });
     this.material = spriteMaterial;
 
