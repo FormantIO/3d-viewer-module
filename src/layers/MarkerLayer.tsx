@@ -66,7 +66,6 @@ export function MarkerLayer(props: IMarkerLayerProps) {
             emissive="white"
             emissiveIntensity={2}
             toneMapped={false}
-            depthTest={false}
           />
         </mesh>
         <mesh name="circle" ref={circleRef}>
