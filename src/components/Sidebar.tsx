@@ -269,7 +269,7 @@ const Sidebar = ({
                 </Typography>
               </LayerTitle>
               <VisibilityIcon
-                onClick={() => toggleVisibility(c.id)}
+                onClick={(e) => { e.stopPropagation(); toggleVisibility(c.id) }}
                 layerVisible={c.visible}
               >
                 {c.visible ? <EyeIcon /> : <EyeCloseIcon />}
