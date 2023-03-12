@@ -284,7 +284,7 @@ export function Universe(props: IUniverseProps) {
                 attach={"controls"}
               />
               <WaitForControls>
-                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current.maxDistance]} />
+                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current?.maxDistance || 500]} />
                 <Bounds clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
