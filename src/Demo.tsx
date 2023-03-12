@@ -50,6 +50,7 @@ export function Demo() {
             <MarkerLayer
               positioning={PositioningBuilder.odometry("walter.localization")}
               name="Marker"
+              size={10}
             />
             <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
