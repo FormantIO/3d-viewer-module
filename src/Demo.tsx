@@ -14,6 +14,7 @@ import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { OccupancyGridLayer, PathLayer } from "./lib";
+import { WaypointsLayer } from "./layers/WaypointsLayer";
 
 const query = new URLSearchParams(window.location.search);
 const experimentalMode = query.get("experimental") === "true";
@@ -78,6 +79,7 @@ export function Demo() {
               )}
               name="Path"
             />
+            <WaypointsLayer />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
         </LayerContext.Provider>

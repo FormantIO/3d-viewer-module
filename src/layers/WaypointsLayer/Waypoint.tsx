@@ -5,6 +5,7 @@ import { useThree } from "@react-three/fiber";
 import { PivotControls, Html } from "@react-three/drei";
 import { Box, Button } from "@formant/ui-sdk";
 import { Checkbox } from "@mui/material";
+import { Marker } from "./Marker";
 
 interface Props {
   pose: IPose;
@@ -115,7 +116,7 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
       >
         <group ref={targetRef} />
         <group ref={ref}>
-          <mesh
+          {/* <mesh
             onClick={() => {
               setCount(index);
             }}
@@ -124,7 +125,12 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
           >
             <coneGeometry args={[0.3, 1, 12]} />
             <meshBasicMaterial color={color} />
-          </mesh>
+          </mesh> */}
+          <Marker
+            onClick={() => {
+              setCount(index);
+            }}
+          />
         </group>
       </PivotControls>
 

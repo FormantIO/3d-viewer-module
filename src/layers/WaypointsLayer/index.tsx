@@ -1,14 +1,13 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IUniverseLayerProps } from "../types";
-import { UniverseDataContext } from "../common/UniverseDataContext";
-import { LayerContext } from "../common/LayerContext";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
 import { Mesh } from "three";
 import { FormantColors } from "../utils/FormantColors";
-import { ThreeEvent } from "@react-three/fiber";
+import { ThreeEvent, useThree } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { Waypoint, WaypointData } from "./Waypoint";
+import { useControlsContext } from "../common/ControlsContext";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -22,6 +21,19 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
 
   // Waypoint Metadata
   const [store] = useState<WaypointData[]>([]);
+
+  const { camera } = useThree();
+
+  const {
+    state: { isWaypointVisible },
+    updateState,
+  } = useControlsContext();
+
+  useEffect(() => {
+    camera.position.z = 15;
+    // console.log(camera);
+    updateState({ isWaypointVisible: true });
+  }, [camera, updateState]);
 
   const mouseDownHandler = useCallback(
     (e: ThreeEvent<PointerEvent>) => {

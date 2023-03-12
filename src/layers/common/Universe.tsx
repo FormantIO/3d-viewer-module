@@ -16,8 +16,9 @@ import { UIDataContext, useUI } from "./UIDataContext";
 import { Euler, MathUtils, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
-import { ControlsContext } from "./ControlsContext";
+import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
+import { WaypointPanel } from "../../components/WaypointPanel";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -56,8 +57,15 @@ export function Universe(props: IUniverseProps) {
     toggleEditMode,
   } = useUI();
 
+  const controlsStates = useControlsContextStates();
+  const {
+    state: { isWaypointVisible },
+    store,
+  } = controlsStates;
+
   useEffect(() => {
     reset();
+    store.mapControls = mapControlsRef.current;
   }, [props.configHash]);
 
   const lookAtTargetId = React.useCallback(
@@ -265,7 +273,7 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.flagship]} />
-            <ControlsContext.Provider value={{ mapControlsRef }}>
+            <ControlsContext.Provider value={controlsStates}>
               <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 300]}
@@ -324,6 +332,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
+        {isWaypointVisible && <WaypointPanel controlsStates={controlsStates} />}
       </UIDataContext.Provider>
     </>
   );

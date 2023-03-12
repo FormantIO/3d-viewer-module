@@ -38,7 +38,6 @@ const SidebarContainer = styled.div<ITreeArea>`
       width: 384px;
     }
   `}
-  }
 
   & * {
     user-select: none;
@@ -102,7 +101,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-    props.layerVisible ? FormantColors.silver : "#657197"};
+      props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
