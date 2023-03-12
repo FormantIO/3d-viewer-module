@@ -21,7 +21,7 @@ export function GroundLayer(props: IGroundLayer) {
   }, []);
 
   return (
-    <group name="axis">
+    <group name="axis" renderOrder={1}>
       <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
         <Axis />
         <primitive object={axisLayers} />

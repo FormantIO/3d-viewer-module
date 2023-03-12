@@ -256,6 +256,7 @@ export function Universe(props: IUniverseProps) {
       >
         {vr && <VRButton />}
         <Canvas
+          gl={{ logarithmicDepthBuffer: true }}
           onCreated={(state) => {
             setScene(state.scene);
             state.gl.toneMapping = NoToneMapping;
@@ -274,6 +275,7 @@ export function Universe(props: IUniverseProps) {
                 position={[0, 0, 300]}
                 up={[0, 0, 1]}
                 far={5000}
+                near={0.1}
               />
               <MapControls
                 makeDefault
