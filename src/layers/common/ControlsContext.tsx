@@ -1,14 +1,20 @@
 import React from "react";
+import { WaypointData } from "../WaypointsLayer/Waypoint";
 
 interface StateProps {
   isWaypointVisible: boolean;
   isWaypointEditing: boolean;
+  selectedWaypoint: number | null;
+}
+
+interface StoreProps {
+  waypoints: WaypointData[];
 }
 
 export interface ControlsContextProps {
   state: StateProps;
   updateState: (s: Partial<StateProps>) => void;
-  store: Object; // store camera controls or any data.
+  store: StoreProps; // store camera controls or any data.
 }
 
 export const ControlsContext = React.createContext<ControlsContextProps>(
@@ -24,8 +30,11 @@ export function useControlsContextStates() {
   const [state, setState] = React.useState<StateProps>({
     isWaypointVisible: false,
     isWaypointEditing: false,
+    selectedWaypoint: null,
   });
-  const storeRef = React.useRef<any>({});
+  const storeRef = React.useRef<StoreProps>({
+    waypoints: [],
+  });
 
   const updateState = React.useCallback(
     (newItem: Partial<StateProps>) =>

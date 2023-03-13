@@ -1,20 +1,16 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { IPose } from "@formant/universe-core";
-import { Euler, Group, Matrix4, Mesh, Quaternion, Vector3 } from "three";
+import { Euler, Group, Matrix4, Quaternion, Vector3 } from "three";
 import { useThree } from "@react-three/fiber";
-import { PivotControls, Html } from "@react-three/drei";
-import { Box, Button } from "@formant/ui-sdk";
-import { Checkbox } from "@mui/material";
+import { PivotControls } from "@react-three/drei";
 import { Marker } from "./Marker";
+import { useControlsContext } from "../common/ControlsContext";
 
 interface Props {
   pose: IPose;
   onPose: (pose: IPose) => void;
   toggle?: boolean;
-  store: WaypointData[];
-  setCount: (s: number) => void;
-  index: number;
-  selected: boolean;
+  pointIndex: number;
 }
 
 export type WaypointData = {
@@ -25,22 +21,22 @@ export type WaypointData = {
 };
 
 export const Waypoint = forwardRef<Group, Props>((props, ref) => {
-  const { pose, index, selected, store, setCount } = props;
+  const { pose, pointIndex } = props;
+  const {
+    store,
+    updateState,
+    state: { selectedWaypoint },
+  } = useControlsContext();
 
+  // Init each waypoint metadata
   useEffect(() => {
-    store[index] = {
-      pointIndex: index,
+    store.waypoints[pointIndex] = {
+      pointIndex,
       message: "",
       scrubberOn: false,
       pose,
     };
   }, [store]);
-
-  const [message, setMessage] = useState("");
-  const [scrubberOn, setScrubberOn] = useState(false);
-
-  const [hover, setHover] = useState(false);
-  const [color, setColor] = useState("white");
 
   const { controls } = useThree();
 
@@ -58,15 +54,14 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
   const groupRef = useRef<THREE.Group>(null!);
   const matrix = new Matrix4();
 
-  useEffect(() => {
-    setColor(hover && !selected ? "red" : selected ? "green" : "white");
-  }, [hover, selected, setColor]);
+  const markerClickHandler = () =>
+    updateState({ selectedWaypoint: pointIndex });
 
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       <PivotControls
         ref={pivotRef}
-        visible={selected}
+        visible={selectedWaypoint === pointIndex}
         lineWidth={4}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
@@ -116,74 +111,9 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
       >
         <group ref={targetRef} />
         <group ref={ref}>
-          {/* <mesh
-            onClick={() => {
-              setCount(index);
-            }}
-            onPointerOver={() => setHover(true)}
-            onPointerLeave={() => setHover(false)}
-          >
-            <coneGeometry args={[0.3, 1, 12]} />
-            <meshBasicMaterial color={color} />
-          </mesh> */}
-          <Marker
-            onClick={() => {
-              setCount(index);
-            }}
-          />
+          <Marker onClick={markerClickHandler} />
         </group>
       </PivotControls>
-
-      {selected && (
-        <Html
-          style={{
-            position: "absolute",
-            width: "250px",
-            color: "#2d2a2a",
-            padding: "10px",
-            background: "rgba(202, 214, 214, 0.6)",
-            borderRadius: "10px",
-            margin: "30px",
-          }}
-          zIndexRange={[100, 0]}
-        >
-          <Box component={"div"} display={"flex"} flexDirection="column">
-            <Box component={"div"} mt="10px">
-              <label>Message: </label>
-              <input
-                value={message}
-                onChange={(e) => {
-                  store[index].message = e.target.value;
-                  setMessage(e.target.value);
-                }}
-              />
-            </Box>
-            <div>
-              <label>Scrubber On</label>
-              <Checkbox
-                color="primary"
-                checked={scrubberOn}
-                onChange={(e) => {
-                  store[index].scrubberOn = e.target.checked;
-                  setScrubberOn(e.target.checked);
-                }}
-              />
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                size={"small"}
-                color="primary"
-                onClick={() => {
-                  alert(JSON.stringify(store));
-                }}
-              >
-                Send
-              </Button>
-            </div>
-          </Box>
-        </Html>
-      )}
     </group>
   );
 });

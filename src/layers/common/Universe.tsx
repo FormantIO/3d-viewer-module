@@ -65,8 +65,7 @@ export function Universe(props: IUniverseProps) {
 
   useEffect(() => {
     reset();
-    store.mapControls = mapControlsRef.current;
-  }, [props.configHash]);
+  }, [props.configHash, store]);
 
   const lookAtTargetId = React.useCallback(
     (targetId: string) => {
@@ -283,7 +282,6 @@ export function Universe(props: IUniverseProps) {
               <MapControls
                 makeDefault
                 enableDamping={false}
-                ref={mapControlsRef}
                 minDistance={5}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}

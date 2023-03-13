@@ -4,9 +4,9 @@ import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
 import { Mesh } from "three";
 import { FormantColors } from "../utils/FormantColors";
-import { ThreeEvent, useThree } from "@react-three/fiber";
+import { ThreeEvent } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
-import { Waypoint, WaypointData } from "./Waypoint";
+import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
 
 interface IWaypointsProps extends IUniverseLayerProps {
@@ -15,31 +15,20 @@ interface IWaypointsProps extends IUniverseLayerProps {
 
 export const WaypointsLayer = (props: IWaypointsProps) => {
   const [points, setPoints] = useState<IPose[]>([]);
-
-  // For selected waypoint
-  const [count, setCount] = useState<number | null>(null);
-
-  // Waypoint Metadata
-  const [store] = useState<WaypointData[]>([]);
-
-  const { camera } = useThree();
-
-  const {
-    state: { isWaypointVisible },
-    updateState,
-  } = useControlsContext();
+  const { store, updateState } = useControlsContext();
 
   useEffect(() => {
-    camera.position.z = 15;
-    // console.log(camera);
-    updateState({ isWaypointVisible: true });
-  }, [camera, updateState]);
+    updateState({ isWaypointVisible: true }); // Show UI
+    return () => {
+      store.waypoints = [];
+    };
+  }, [store, updateState]);
 
   const mouseDownHandler = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation();
       if (!e.shiftKey) {
-        setCount(null);
+        updateState({ selectedWaypoint: null }); // Remove gizmo
         return;
       }
       let p = e.point;
@@ -63,6 +52,13 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     [points, setPoints]
   );
 
+  const poseChangeHandler = (updatedPose: IPose, index: number) => {
+    const newPoints = [...points];
+    newPoints[index] = updatedPose;
+    setPoints(newPoints);
+    store.waypoints[index].pose = updatedPose;
+  };
+
   const plane = useRef<Mesh>(null!);
 
   return (
@@ -76,18 +72,9 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         {points.map((pose: IPose, idx: number) => (
           <Waypoint
             key={idx}
-            index={idx}
+            pointIndex={idx}
             pose={pose}
-            store={store}
-            setCount={setCount}
-            selected={count === idx}
-            onPose={(updatedPose: IPose) => {
-              const newPoints = [...points];
-              newPoints[idx] = updatedPose;
-              setPoints(newPoints);
-
-              store[idx].pose = updatedPose;
-            }}
+            onPose={(p: IPose) => poseChangeHandler(p, idx)}
           />
         ))}
 

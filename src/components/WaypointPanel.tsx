@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -15,7 +15,7 @@ const Container = styled.div`
   left: 0px;
   width: 100%;
   height: 100%;
-  background-color: #000000;
+  pointer-events: none;
 `;
 
 const PanelContainer = styled.div`
@@ -29,6 +29,7 @@ const PanelContainer = styled.div`
   border-radius: 10px;
   padding: 20px;
   color: white;
+  pointer-events: all;
 `;
 
 const ButtonsContainer = styled.div`
@@ -39,6 +40,7 @@ const ButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 0 10px;
+  pointer-events: all;
 `;
 
 const STextField = styled(TextField)(() => ({
@@ -68,12 +70,56 @@ interface Props {
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   const {
-    state: { isWaypointEditing },
+    state: { isWaypointEditing, selectedWaypoint },
+    store,
     updateState,
   } = controlsStates;
 
   const [scrubberOn, setScrubberOn] = React.useState(false);
   const [message, setMessage] = React.useState("");
+
+  const checkBoxHandler = (e: any) => setScrubberOn(e.target.checked);
+  const showEditing = () => updateState({ isWaypointEditing: true });
+  const closeEditing = () => updateState({ isWaypointEditing: false });
+
+  const editBtnHandler = () => {
+    if (selectedWaypoint === null) {
+      alert("Select Waypoint To Edit");
+      closeEditing();
+    } else {
+      showEditing();
+    }
+  };
+
+  const saveBtnHandler = () => {
+    if (selectedWaypoint === null) return;
+    const { waypoints } = store;
+    const tempPoint = waypoints[selectedWaypoint];
+    store.waypoints[selectedWaypoint] = {
+      ...tempPoint,
+      message,
+      scrubberOn,
+    };
+    closeEditing();
+  };
+
+  const sendBtnHandler = () => {
+    const { waypoints } = store;
+    if (waypoints.length > 0) {
+      // Send
+      alert(JSON.stringify(waypoints));
+    } else {
+      alert("Create Waypoints To Send.");
+    }
+  };
+
+  // Update editing panel
+  useEffect(() => {
+    if (selectedWaypoint === null) return;
+    const w = store.waypoints[selectedWaypoint];
+    setMessage(w.message);
+    setScrubberOn(w.scrubberOn);
+  }, [setMessage, setScrubberOn, selectedWaypoint]);
 
   return (
     <Container>
@@ -91,12 +137,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
           <FormControlLabel
             sx={{ marginTop: "5px" }}
             control={
-              <SCheckbox
-                value={scrubberOn}
-                onChange={(e) => {
-                  setScrubberOn(e.target.value === "true");
-                }}
-              />
+              <SCheckbox checked={scrubberOn} onChange={checkBoxHandler} />
             }
             label="Scrubber On"
           />
@@ -106,18 +147,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
             justifyContent={"end"}
             alignItems="center"
           >
-            <SButton
-              variant="contained"
-              onClick={() => {
-                updateState({ isWaypointEditing: false });
-              }}
-            >
+            <SButton variant="contained" onClick={saveBtnHandler}>
               Save
             </SButton>
             <SButton
               variant="contained"
               sx={{ marginLeft: "5px" }}
-              onClick={() => updateState({ isWaypointEditing: false })}
+              onClick={closeEditing}
             >
               Cancel
             </SButton>
@@ -125,13 +161,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
         </PanelContainer>
       )}
       <ButtonsContainer>
-        <SButton
-          variant="contained"
-          onClick={() => updateState({ isWaypointEditing: true })}
-        >
+        <SButton variant="contained" onClick={editBtnHandler}>
           Edit
         </SButton>
-        <SButton variant="contained">Send</SButton>
+        <SButton variant="contained" onClick={sendBtnHandler}>
+          Send
+        </SButton>
       </ButtonsContainer>
     </Container>
   );
