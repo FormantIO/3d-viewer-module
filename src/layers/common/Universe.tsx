@@ -13,7 +13,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Euler, MathUtils, Scene, Vector3 } from "three";
+import { Color, Euler, MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext } from "./ControlsContext";
@@ -256,21 +256,26 @@ export function Universe(props: IUniverseProps) {
       >
         {vr && <VRButton />}
         <Canvas
+          gl={{ logarithmicDepthBuffer: true }}
           onCreated={(state) => {
             setScene(state.scene);
+            state.gl.toneMapping = NoToneMapping;
+
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
           }}
+          dpr={[1, 2]}
         >
           <XR>
-            <color attach="background" args={[FormantColors.flagship]} />
+            <color attach="background" args={[FormantColors.steel01]} />
             <ControlsContext.Provider value={{ mapControlsRef }}>
               <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 300]}
                 up={[0, 0, 1]}
                 far={5000}
+                near={0.1}
               />
               <MapControls
                 makeDefault
@@ -281,6 +286,7 @@ export function Universe(props: IUniverseProps) {
                 attach={"controls"}
               />
               <WaitForControls>
+                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current?.maxDistance || 500]} />
                 <Bounds clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
@@ -300,6 +306,7 @@ export function Universe(props: IUniverseProps) {
                     darkness={0.9}
                     blendFunction={BlendFunction.NORMAL}
                   />
+
                 </EffectComposer>
               )}
               {vr && (

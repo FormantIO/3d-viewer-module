@@ -53,12 +53,11 @@ export function MarkerLayer(props: IMarkerLayerProps) {
       type={LayerType.TRACKABLE}
       iconUrl="icons/3d_object.svg"
     >
-      <group>
+      <group renderOrder={2}>
         <mesh
           ref={arrowRef}
           name="arrow"
           rotation={[0, 0, -Math.PI / 2]}
-          renderOrder={1}
         >
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial

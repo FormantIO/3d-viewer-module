@@ -6,6 +6,7 @@ import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
+import getUuidByString from "uuid-by-string";
 
 interface ITreeArea {
   visible: boolean;
@@ -102,7 +103,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-      props.layerVisible ? FormantColors.silver : "#657197"};
+    props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -235,7 +236,7 @@ const Sidebar = ({
   };
 
   return (
-    <SidebarContainer visible={visible} innerWidth={width}>
+    <SidebarContainer visible={visible} innerWidth={width} key={getUuidByString(JSON.stringify(sortedLayers))}>
       <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
         <LayerTitle>
           <LayerIcon />
@@ -268,7 +269,7 @@ const Sidebar = ({
                 </Typography>
               </LayerTitle>
               <VisibilityIcon
-                onClick={() => toggleVisibility(c.id)}
+                onClick={(e) => { e.stopPropagation(); toggleVisibility(c.id) }}
                 layerVisible={c.visible}
               >
                 {c.visible ? <EyeIcon /> : <EyeCloseIcon />}

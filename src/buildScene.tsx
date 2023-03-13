@@ -26,21 +26,18 @@ export function buildScene(
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
   let mapLayers: React.ReactNode[] = [];
-  const getTreePath = () => [
-    devices.length,
-    deviceLayers.length + mapLayers.length,
-  ];
+
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transform
       ? parsePositioning(layer.transform)
-      : PositioningBuilder.fixed(0, 0, 0);
+      : PositioningBuilder.fixed(0, 0, 0 - (i + 1) * 0.005);
     if (layer.mapType === "Ground Plane") {
       return (
         <GroundLayer
           key={"ground" + i + configHash}
           positioning={positioning}
-          treePath={getTreePath()}
+          treePath={[0, i]}
           name={layer.name || "Ground Plane"}
         />
       );
@@ -61,7 +58,7 @@ export function buildScene(
           longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.name || "Map"}
-          treePath={getTreePath()}
+          treePath={[0, i]}
         />
       );
     } else if (layer.mapType === "Occupancy Map") {
@@ -72,7 +69,7 @@ export function buildScene(
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[0, i]}
           name={layer.name || "Occupancy Grid"}
         />
       );
@@ -84,14 +81,13 @@ export function buildScene(
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
         : PositioningBuilder.fixed(0, 0, 0);
-      console.log(layer.markerSize);
       if (layer.positionIndicatorVisualType === "Circle") {
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
             size={layer.markerSize || 0}
             positioning={positioning}
-            treePath={getTreePath()}
+            treePath={[1, i]}
             name={layer.name || "Marker"}
           />
         );
@@ -103,7 +99,7 @@ export function buildScene(
         <PathLayer
           key={"local_path_layer" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[1, i]}
           name={layer.name || "Local Path "}
         />
       );
@@ -122,7 +118,7 @@ export function buildScene(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[1, i]}
           name={layer.name || "Point Cloud"}
           pointShape={pointCloudShape || "Circle"}
           pointSize={pointCloudSize || 0}
@@ -143,7 +139,7 @@ export function buildScene(
             key={"geo" + i + configHash}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
-            treePath={getTreePath()}
+            treePath={[1, i]}
             name={layer.name || "Geometry"}
           />
         );
@@ -162,8 +158,7 @@ export function buildScene(
     >
       <EmptyLayer
         name={"Maps"}
-        id={currentDeviceId || undefined}
-        treePath={[devices.length]}
+        treePath={[0]}
       >
         {mapLayers}
       </EmptyLayer>
@@ -178,8 +173,7 @@ export function buildScene(
     >
       <EmptyLayer
         name={"Visualizations"}
-        id={currentDeviceId || undefined}
-        treePath={[devices.length]}
+        treePath={[1]}
       >
         {deviceLayers}
       </EmptyLayer>
