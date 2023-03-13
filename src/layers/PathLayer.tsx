@@ -11,14 +11,14 @@ import { FormantColors } from "./utils/FormantColors";
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  pathWidth: number;
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource } = props;
+  const { dataSource, pathWidth } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [obj, setObj] = useState(new THREE.Group());
-
+  const [obj, setObj] = useState(new THREE.Mesh());
   useEffect(() => {
     if (!layerData) return;
 
@@ -38,44 +38,28 @@ export const PathLayer = (props: ILocalPathProps) => {
 
         const positions = poses.map((pose) => pose.translation);
 
-        const mesh = new THREE.InstancedMesh(
-          new THREE.SphereGeometry(0.01),
-          new THREE.MeshBasicMaterial({
-            color: new THREE.Color(FormantColors.blue),
-          }),
-          positions.length
-        );
-
-        const tempMatrix = new THREE.Matrix4();
-        positions.forEach((pos, idx) => {
-          tempMatrix.setPosition(pos.x, pos.y, pos.z);
-          mesh.setMatrixAt(idx, tempMatrix);
-        });
-
-        mesh.matrixAutoUpdate = false;
-
         const worldToLocalMatrix = transformMatrix(worldToLocal);
-        mesh.matrix.copy(worldToLocalMatrix);
-
-        const group = new THREE.Group();
 
         const points = positions.map(
           (pos) => new THREE.Vector3(pos.x, pos.y, pos.z)
         );
-        const geo = new THREE.BufferGeometry().setFromPoints(points);
 
-        const line = new THREE.Line(
-          geo,
-          new THREE.LineBasicMaterial({
-            color: FormantColors.blue,
-            linewidth: 2,
-          })
+        const w = pathWidth > 10 ? 10 : pathWidth < 1 ? 1 : pathWidth;
+
+        const curve = new THREE.CatmullRomCurve3(points);
+        const pathGeometry = new THREE.TubeGeometry(
+          curve,
+          20,
+          (0.01 / 2) * w,
+          8
         );
-        line.matrixAutoUpdate = false;
-        line.matrix.copy(worldToLocalMatrix);
+        const pathMaterial = new THREE.MeshBasicMaterial();
+        pathMaterial.color = new THREE.Color(FormantColors.blue);
+        const pathMesh = new THREE.Mesh(pathGeometry, pathMaterial);
+        pathMesh.matrixAutoUpdate = false;
+        pathMesh.matrix.copy(worldToLocalMatrix);
 
-        group.add(mesh, line);
-        setObj(group);
+        setObj(pathMesh);
       }
     );
 
