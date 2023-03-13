@@ -149,7 +149,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       clip() {
         const { distance } = getSize();
         if (controls) {
-          controls.maxDistance = distance * 10;
+          controls.maxDistance = Math.max(distance * 10, 1000);
           controls.update();
         }
         //camera.near = distance / 1000
