@@ -224,7 +224,7 @@ const DebugContainer = (props: IDebugContainer) => {
     const scene = useCallback(
         (config: Viewer3DConfiguration) => (
             <UniverseDataContext.Provider value={props.universeData}>
-                <Universe configHash={getUuidByString(JSON.stringify(config))}>
+                <Universe configHash={getUuidByString(JSON.stringify(config))} key={getUuidByString(JSON.stringify(config))} >
                     <ambientLight />
                     {buildScene(config, 'debug-device')};
                 </Universe>
