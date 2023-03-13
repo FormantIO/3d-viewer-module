@@ -86,6 +86,7 @@ export function buildScene(
           <MarkerLayer
             key={"vis" + i + configHash}
             size={layer.markerSize || 0}
+            sizeType={layer.markerSizeType || "static"}
             positioning={positioning}
             treePath={[1, i]}
             name={layer.name || "Marker"}
@@ -156,10 +157,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer
-        name={"Maps"}
-        treePath={[0]}
-      >
+      <EmptyLayer name={"Maps"} treePath={[0]}>
         {mapLayers}
       </EmptyLayer>
     </LayerContext.Provider>
@@ -171,10 +169,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer
-        name={"Visualizations"}
-        treePath={[1]}
-      >
+      <EmptyLayer name={"Visualizations"} treePath={[1]}>
         {deviceLayers}
       </EmptyLayer>
     </LayerContext.Provider>
