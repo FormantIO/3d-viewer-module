@@ -9,10 +9,11 @@ extend({ MarkerMaterial });
 
 interface IMarkerLayerProps extends IUniverseLayerProps {
   size: number;
+  sizeType: "dynamic" | "static";
 }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children, size } = props;
+  const { children, size, sizeType } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -37,11 +38,13 @@ export function MarkerLayer(props: IMarkerLayerProps) {
 
     const scaleFactor = 30 - size * 2;
 
-    const scale =
-      scaleVector.subVectors(circle.position, camera.position).length() /
-      scaleFactor;
-    circle.scale.setScalar(scale);
-    arrow.scale.setScalar(scale);
+    if (sizeType === "static") {
+      const scale =
+        scaleVector.subVectors(circle.position, camera.position).length() /
+        scaleFactor;
+      circle.scale.setScalar(scale);
+      arrow.scale.setScalar(scale);
+    }
 
     (circle.material as any).uniforms.uTime.value += delta;
     circle.lookAt(camera.position);
@@ -54,11 +57,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
       iconUrl="icons/3d_object.svg"
     >
       <group renderOrder={2}>
-        <mesh
-          ref={arrowRef}
-          name="arrow"
-          rotation={[0, 0, -Math.PI / 2]}
-        >
+        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
             color="white"

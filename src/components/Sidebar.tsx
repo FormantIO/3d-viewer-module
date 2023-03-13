@@ -39,7 +39,6 @@ const SidebarContainer = styled.div<ITreeArea>`
       width: 384px;
     }
   `}
-  }
 
   & * {
     user-select: none;
@@ -103,7 +102,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props) =>
-    props.layerVisible ? FormantColors.silver : "#657197"};
+      props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -236,7 +235,11 @@ const Sidebar = ({
   };
 
   return (
-    <SidebarContainer visible={visible} innerWidth={width} key={getUuidByString(JSON.stringify(sortedLayers))}>
+    <SidebarContainer
+      visible={visible}
+      innerWidth={width}
+      key={getUuidByString(JSON.stringify(sortedLayers))}
+    >
       <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
         <LayerTitle>
           <LayerIcon />
@@ -269,7 +272,10 @@ const Sidebar = ({
                 </Typography>
               </LayerTitle>
               <VisibilityIcon
-                onClick={(e) => { e.stopPropagation(); toggleVisibility(c.id) }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleVisibility(c.id);
+                }}
                 layerVisible={c.visible}
               >
                 {c.visible ? <EyeIcon /> : <EyeCloseIcon />}

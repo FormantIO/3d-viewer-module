@@ -186,6 +186,17 @@
               "Position Indicator"
             ]
           },
+          "markerSizeType": {
+            "type": "string",
+            "title": "Marker Size Type",
+            "enum": ["dynamic", "static"],
+            "default": "static",
+            "$formant.visible.when": [
+              "visualizationType",
+              "=",
+              "Position Indicator"
+            ]
+          },
           "geometryDataSource": {
             "type": "object",
             "title": "Data source",
