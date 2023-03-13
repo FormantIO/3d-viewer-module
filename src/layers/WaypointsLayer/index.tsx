@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
@@ -14,8 +14,7 @@ interface IWaypointsProps extends IUniverseLayerProps {
 }
 
 export const WaypointsLayer = (props: IWaypointsProps) => {
-  const [points, setPoints] = useState<IPose[]>([]);
-  const { store, updateState } = useControlsContext();
+  const { store, updateState, waypoints, setWaypoints } = useControlsContext();
 
   useEffect(() => {
     updateState({ isWaypointVisible: true }); // Show UI
@@ -24,38 +23,35 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     };
   }, [store, updateState]);
 
-  const mouseDownHandler = useCallback(
-    (e: ThreeEvent<PointerEvent>) => {
-      e.stopPropagation();
-      if (!e.shiftKey) {
-        updateState({ selectedWaypoint: null }); // Remove gizmo
-        return;
-      }
-      let p = e.point;
-      setPoints([
-        ...points,
-        {
-          translation: {
-            x: p.x,
-            y: p.y,
-            z: p.z + 0.125,
-          },
-          rotation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
+  const mouseDownHandler = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    if (!e.shiftKey) {
+      updateState({ selectedWaypoint: null }); // Remove gizmo
+      return;
+    }
+    let p = e.point;
+    setWaypoints([
+      ...waypoints,
+      {
+        translation: {
+          x: p.x,
+          y: p.y,
+          z: p.z + 0.125,
         },
-      ]);
-    },
-    [points, setPoints]
-  );
+        rotation: {
+          x: 0,
+          y: 0,
+          z: 0,
+          w: 1,
+        },
+      },
+    ]);
+  };
 
   const poseChangeHandler = (updatedPose: IPose, index: number) => {
-    const newPoints = [...points];
+    const newPoints = [...waypoints];
     newPoints[index] = updatedPose;
-    setPoints(newPoints);
+    setWaypoints(newPoints);
     store.waypoints[index].pose = updatedPose;
   };
 
@@ -65,11 +61,15 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <mesh name="plane" onPointerDown={mouseDownHandler} ref={plane}>
         <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color={FormantColors.green} />
+        <meshStandardMaterial
+          color={FormantColors.green}
+          transparent={true}
+          opacity={0.6}
+        />
       </mesh>
 
       <group name="waypoints">
-        {points.map((pose: IPose, idx: number) => (
+        {waypoints.map((pose: IPose, idx: number) => (
           <Waypoint
             key={idx}
             pointIndex={idx}
@@ -78,9 +78,9 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
           />
         ))}
 
-        {points.length > 0 && (
+        {waypoints.length > 0 && (
           <Line
-            points={points.map(({ translation: { x, y, z } }) => [x, y, z])}
+            points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
             lineWidth={1}
             color="white"
             forceSinglePass={undefined}

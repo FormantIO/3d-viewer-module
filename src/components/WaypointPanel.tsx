@@ -72,6 +72,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   const {
     state: { isWaypointEditing, selectedWaypoint },
     store,
+    setWaypoints,
     updateState,
   } = controlsStates;
 
@@ -100,6 +101,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
       message,
       scrubberOn,
     };
+    closeEditing();
+  };
+
+  const removeBtnHandler = () => {
+    if (selectedWaypoint === null) return;
+    setWaypoints((prev) => prev.filter((_, idx) => idx !== selectedWaypoint));
     closeEditing();
   };
 
@@ -144,7 +151,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
           <Box
             component={"div"}
             display="flex"
-            justifyContent={"end"}
+            justifyContent={"space-between"}
             alignItems="center"
           >
             <SButton variant="contained" onClick={saveBtnHandler}>
@@ -152,9 +159,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
             </SButton>
             <SButton
               variant="contained"
-              sx={{ marginLeft: "5px" }}
-              onClick={closeEditing}
+              color="warning"
+              onClick={removeBtnHandler}
             >
+              Remove
+            </SButton>
+            <SButton variant="contained" onClick={closeEditing}>
               Cancel
             </SButton>
           </Box>

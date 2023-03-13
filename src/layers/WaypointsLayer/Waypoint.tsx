@@ -1,9 +1,8 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import { IPose } from "@formant/universe-core";
-import { Euler, Group, Matrix4, Quaternion, Vector3 } from "three";
+import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { PivotControls } from "@react-three/drei";
-import { Marker } from "./Marker";
 import { useControlsContext } from "../common/ControlsContext";
 
 interface Props {
@@ -20,7 +19,7 @@ export type WaypointData = {
   pose: IPose;
 };
 
-export const Waypoint = forwardRef<Group, Props>((props, ref) => {
+export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const { pose, pointIndex } = props;
   const {
     store,
@@ -40,22 +39,32 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
 
   const { controls } = useThree();
 
-  const position = new Vector3(
+  const position = new THREE.Vector3(
     pose.translation.x,
     pose.translation.y,
     pose.translation.z
   );
-  const rotation = new Euler();
-  const pq = new Quaternion();
+  const rotation = new THREE.Euler();
+  const pq = new THREE.Quaternion();
   pq.set(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w);
   rotation.setFromQuaternion(pq);
   const targetRef = useRef<THREE.Group>(null!);
   const pivotRef = useRef<THREE.Group>(null!);
   const groupRef = useRef<THREE.Group>(null!);
-  const matrix = new Matrix4();
+  const matrix = new THREE.Matrix4();
 
-  const markerClickHandler = () =>
-    updateState({ selectedWaypoint: pointIndex });
+  const arrowShape = React.useMemo(() => {
+    const c = new THREE.QuadraticBezierCurve(
+      new THREE.Vector2(-0.4, 0.2),
+      new THREE.Vector2(0, 0.6),
+      new THREE.Vector2(0.4, 0.2)
+    );
+    const points = c.getPoints(7);
+    points.push(new THREE.Vector2(0, 0.8));
+    return new THREE.Shape(points);
+  }, []);
+
+  const onClick = () => updateState({ selectedWaypoint: pointIndex });
 
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
@@ -67,9 +76,10 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}
         anchor={[0, 0, 0]}
-        scale={1.8}
+        scale={100}
         matrix={matrix}
         autoTransform={false}
+        fixed={true}
         onDragStart={() => {
           if (!controls) return;
           (controls as any).enabled = false;
@@ -78,16 +88,16 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
           matrix.copy(m);
           if (targetRef.current && groupRef.current && pivotRef.current) {
             // get rotation out of matrix
-            const targetEuler = new Euler();
+            const targetEuler = new THREE.Euler();
             targetEuler.setFromRotationMatrix(matrix);
             // add base rotation
             targetEuler.x += rotation.x;
             targetEuler.y += rotation.y;
             targetEuler.z += rotation.z;
-            const n = new Quaternion();
+            const n = new THREE.Quaternion();
             n.setFromEuler(targetEuler);
-            const groupWorldPos = new Vector3();
-            const targetWorldPos = new Vector3();
+            const groupWorldPos = new THREE.Vector3();
+            const targetWorldPos = new THREE.Vector3();
             groupRef.current.getWorldPosition(groupWorldPos);
             targetRef.current.getWorldPosition(targetWorldPos);
             const targetOffset = targetWorldPos.sub(groupWorldPos);
@@ -109,11 +119,22 @@ export const Waypoint = forwardRef<Group, Props>((props, ref) => {
           }
         }}
       >
-        <group ref={targetRef} />
-        <group ref={ref}>
-          <Marker onClick={markerClickHandler} />
+        <group ref={targetRef}>
+          <mesh name="circle" onClick={onClick}>
+            <circleGeometry args={[0.3, 20]} />
+            <meshBasicMaterial
+              color={selectedWaypoint === pointIndex ? "red" : "white"}
+              transparent={true}
+              opacity={0.75}
+            />
+          </mesh>
         </group>
       </PivotControls>
+
+      <mesh name="arrow" rotation={[0, 0, -Math.PI / 2]} onClick={onClick}>
+        <shapeGeometry args={[arrowShape]} />
+        <meshStandardMaterial color="white" transparent={true} opacity={0.75} />
+      </mesh>
     </group>
   );
 });

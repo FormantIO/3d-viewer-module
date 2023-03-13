@@ -1,3 +1,4 @@
+import { IPose } from "@formant/universe-core";
 import React from "react";
 import { WaypointData } from "../WaypointsLayer/Waypoint";
 
@@ -12,9 +13,11 @@ interface StoreProps {
 }
 
 export interface ControlsContextProps {
+  waypoints: IPose[];
+  setWaypoints: React.Dispatch<React.SetStateAction<IPose[]>>;
   state: StateProps;
   updateState: (s: Partial<StateProps>) => void;
-  store: StoreProps; // store camera controls or any data.
+  store: StoreProps;
 }
 
 export const ControlsContext = React.createContext<ControlsContextProps>(
@@ -27,6 +30,7 @@ export function useControlsContext() {
 }
 
 export function useControlsContextStates() {
+  const [waypoints, setWaypoints] = React.useState<IPose[]>([]);
   const [state, setState] = React.useState<StateProps>({
     isWaypointVisible: false,
     isWaypointEditing: false,
@@ -42,6 +46,8 @@ export function useControlsContextStates() {
     []
   );
   return {
+    waypoints,
+    setWaypoints,
     state,
     updateState,
     store: storeRef.current,
