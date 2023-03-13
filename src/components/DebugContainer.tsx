@@ -106,24 +106,15 @@ interface IDebugContainer {
 
 const defaultConfig = `
     {
-	"devices":[
-		{
-			"name":"debug-device",
-			
-			"mapLayers":[
-				{
-					"name":"ground-debug",
-					"mapType": "Ground Plane",
-					"positioning":{
-						"positioningType": "fixed",
-						"x":0.0,
-						"y":0.0,
-						"z":0.0
-					}
-				}
-			]
-		}
-	]
+  "maps": [
+    {
+      "mapType": "Ground Plane",
+      "name": "ground"
+    }
+  ],
+  "visualizations": [
+    
+  ]
 }
 `;
 
@@ -193,7 +184,7 @@ const DebugContainer = (props: IDebugContainer) => {
                     mapType: 'Ground Plane',
                     positioning: positioningObj
                 }
-                newConfig.devices[0].mapLayers.push(newLayer);
+                newConfig.maps.push(newLayer);
                 break;
             default:
 
@@ -252,6 +243,7 @@ const DebugContainer = (props: IDebugContainer) => {
                 <button onClick={() => setShowJSONEditor(!showJSONEditor)}>Toggle JSON Editor</button>
                 <button onClick={copyConfigToEditor}>Copy Device Config to Editor</button>
                 <button onClick={() => { setConfig(JSON.parse(defaultConfig)); setEditorContent(defaultConfig) }}>Reset Config</button>
+                <button onClick={() => { }} >Toggle bounding boxes</button>
             </ButtonsContainer>
             {showJSONEditor && <JSONContainer isJSONValid={isJSONValid}>
                 <HighlightedTextarea value={editorContent} highlight={highlightedText} onChange={handleJSONEditorChange} isValidJSON={isJSONValid} />
@@ -269,11 +261,11 @@ const DebugContainer = (props: IDebugContainer) => {
                 >
                     <option value="ground">groundlayer</option>
                     <option value="map">satmap</option>
-                    <option>markerArray</option>
+                    {/* <option>markerArray</option>
                     <option>geolocation marker</option>
                     <option>device path</option>
                     <option>occupancy grid</option>
-                    <option>point cloud</option>
+                    <option>point cloud</option> */}
                 </select>
                 <span>
                     <input type="checkbox" name="datasource"
