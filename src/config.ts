@@ -39,11 +39,8 @@ export type Viewer3DVisualization = {
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
   pathWidth?: number;
-  pointCloudSize?: number;
-  pointCloudShape?: "Circle" | "Rectangle";
   pointCloudDecayTime?: number;
-  pointCloudColor1?: string;
-  pointCloudColor2?: string;
+  colorPalette?: "Formant" | "Device Default";
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
   transform?: Viewer3DConfiguarationTransform;
 };

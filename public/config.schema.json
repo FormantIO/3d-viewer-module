@@ -234,29 +234,17 @@
             "description": "Input a number between 1 to 10",
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
-          "pointCloudSize": {
-            "type": "number",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudShape": {
+          "colorPalette": {
             "type": "string",
-            "default": "Circle",
-            "enum": ["Circle", "Rectangle"],
+            "default": "Formant",
+            "enum": ["Formant", "Default"],
+            "description": "Select color of point cloud",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudDecayTime": {
             "title": "Decay time",
             "type": "number",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudColor1": {
-            "title": "Color 1",
-            "type": "string",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudColor2": {
-            "title": "Color 2",
-            "type": "string",
+            "description": "Unit of decay time is a second. ",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudDataSource": {

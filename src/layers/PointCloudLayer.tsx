@@ -25,28 +25,24 @@ import { useLoader } from "@react-three/fiber";
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   pointShape: "Circle" | "Rectangle";
-  pointSize: number;
   decayTime: number;
-  color1: string;
-  color2: string;
+  colorPalette: "Formant" | "Default";
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, pointShape, pointSize, decayTime, color1, color2 } =
-    props;
+  const { dataSource, decayTime, colorPalette } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
 
   const circleMap = useLoader(TextureLoader, "./point-circle.png");
-  const rectMap = useLoader(TextureLoader, "./point-rect.png");
   const [obj, setObj] = useState<Points>(new Points());
 
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
 
-    const col1 = defined(Color.fromString(color1));
-    const col2 = defined(Color.fromString(color2));
+    const col1 = defined(Color.fromString("#729fda"));
+    const col2 = defined(Color.fromString("#F89973"));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
@@ -113,9 +109,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       fragmentShader,
       uniforms: {
         pointCloudTexture: {
-          value: pointShape === "Circle" ? circleMap : rectMap,
+          value: circleMap,
         },
-        pointScale: { value: 1 + pointSize / 10 },
+        pointScale: { value: 1 },
         radius: { value: 1.0 },
         intensityMin: { value: 0.0 },
         intensityMax: { value: 0.0 },

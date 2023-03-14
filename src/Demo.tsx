@@ -67,10 +67,8 @@ export function Demo() {
               )}
               name="Point Cloud"
               pointShape="Rectangle"
-              pointSize={1}
               decayTime={1}
-              color1={"#729fda"}
-              color2={"#F89973"}
+              colorPalette={"Formant"}
             />
             <PathLayer
               dataSource={DataSourceBuilder.telemetry(

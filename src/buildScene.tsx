@@ -110,24 +110,15 @@ export function buildScene(
       const dataSource =
         layer.pointCloudDataSource &&
         parseDataSource(layer.pointCloudDataSource);
-      const {
-        pointCloudShape,
-        pointCloudSize,
-        pointCloudDecayTime,
-        pointCloudColor1,
-        pointCloudColor2,
-      } = layer;
+      const { pointCloudDecayTime, colorPalette } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[1, i]}
           name={layer.name || "Point Cloud"}
-          pointShape={pointCloudShape || "Circle"}
-          pointSize={pointCloudSize || 0}
           decayTime={pointCloudDecayTime || 1}
-          color1={pointCloudColor1 || "#729fda"}
-          color2={pointCloudColor2 || "#F89973"}
+          colorPalette={colorPalette || "Formant"}
         />
       );
     } else if (layer.visualizationType === "Geometry") {
