@@ -66,7 +66,6 @@ export function Demo() {
                 "localization"
               )}
               name="Point Cloud"
-              pointShape="Rectangle"
               decayTime={1}
               colorPalette={"Formant"}
             />

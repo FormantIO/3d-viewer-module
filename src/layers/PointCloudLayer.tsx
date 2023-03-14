@@ -21,12 +21,12 @@ import {
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { Color } from "./utils/Color";
 import { useLoader } from "@react-three/fiber";
+import { FormantColors } from "./utils/FormantColors";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
-  pointShape: "Circle" | "Rectangle";
   decayTime: number;
-  colorPalette: "Formant" | "Default";
+  colorPalette: "Formant" | "Device Default";
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
@@ -41,8 +41,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     if (!layerData) return;
     const { deviceId } = layerData;
 
-    const col1 = defined(Color.fromString("#729fda"));
-    const col2 = defined(Color.fromString("#F89973"));
+    const col1 = defined(Color.fromString(FormantColors.primary));
+    // const col2 = defined(Color.fromString(FormantColors.critical));
+    const col2 = defined(Color.fromString("#ff0000"));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
