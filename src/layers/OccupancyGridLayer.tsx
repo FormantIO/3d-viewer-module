@@ -116,7 +116,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
         if (!mesh.visible && size) {
           setIsReady(true);
-          console.log(width);
           obj.current.visible = true;
         }
 
