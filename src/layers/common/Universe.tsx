@@ -281,13 +281,14 @@ export function Universe(props: IUniverseProps) {
                 makeDefault
                 enableDamping={false}
                 ref={mapControlsRef}
-                minDistance={5}
+                minDistance={0.5}
+                maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
               <WaitForControls>
-                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current?.maxDistance || 500]} />
-                <Bounds clip observe margin={1.5} damping={6}>
+                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current?.maxDistance * 5 || 500]} />
+                <Bounds fit clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>

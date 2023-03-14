@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -37,23 +37,22 @@ const occupiedColor = convertColor(FormantColors.occupiedColor);
 
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
+  const [isReady, setIsReady] = useState(false);
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 
-  const [obj, setObj] = useState(new Mesh());
-
   const gridMat = new MeshBasicMaterial({ transparent: true });
   const mesh = new Mesh(new PlaneGeometry(), gridMat);
   mesh.visible = false;
+
+  const obj = useRef<Mesh>(mesh);
 
   useEffect(() => {
     if (!layerData || !dataSource) return;
 
     const { deviceId } = layerData;
     dataSource.streamType = "localization";
-
-    setObj(mesh);
 
     const unsubscribe = universeData.subscribeToGridMap(
       deviceId,
@@ -74,11 +73,13 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           canvas,
         } = gridData as IUniverseGridMap;
 
+
+        const mesh = obj.current;
         mesh.matrixAutoUpdate = false;
 
         origin.translation.x += (width * resolution) / 2;
         origin.translation.y += (height * resolution) / 2;
-        origin.translation.z -= 0.5;
+        origin.translation.z -= 0.01;
 
         const newMatrix = transformMatrix(origin).multiply(
           new Matrix4().makeScale(width * resolution, height * resolution, 1)
@@ -113,9 +114,10 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         gridMat.map = texture;
         gridMat.needsUpdate = true;
 
-        if (!mesh.visible) {
-          mesh.visible = true;
-          bounds.refresh().clip().fit();
+        if (!mesh.visible && size) {
+          setIsReady(true);
+          console.log(width);
+          obj.current.visible = true;
         }
 
       }
@@ -126,9 +128,21 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     };
   }, [layerData, universeData]);
 
+  useLayoutEffect(() => {
+    if (isReady) {
+      bounds.refresh().fit().clip();
+    }
+  }, [isReady]);
+
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <primitive object={obj} />
+      {isReady && (
+        <>
+          <primitive object={obj.current} />
+        </>
+      )}
+
     </DataVisualizationLayer>
   );
 };
