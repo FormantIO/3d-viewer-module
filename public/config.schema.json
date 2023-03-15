@@ -175,28 +175,6 @@
               "Position Indicator"
             ]
           },
-          "markerSize": {
-            "type": "string",
-            "title": "Marker Size",
-            "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            "default": 5,
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Position Indicator"
-            ]
-          },
-          "markerSizeType": {
-            "type": "string",
-            "title": "Marker Size Type",
-            "enum": ["dynamic", "static"],
-            "default": "static",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Position Indicator"
-            ]
-          },
           "geometryDataSource": {
             "type": "object",
             "title": "Data source",
@@ -226,6 +204,12 @@
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
               }
             },
+            "$formant.visible.when": ["visualizationType", "=", "Path"]
+          },
+          "pathWidth": {
+            "title": "Path Width",
+            "type": "number",
+            "description": "Input a number between 1 to 10",
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pointCloudSize": {

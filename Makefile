@@ -1,5 +1,9 @@
 build:
 	npm run build
+dev: build
+	rm -rf versions/dev/*
+	mv dist/* versions/dev/
+	rm -rf dist	
 stage: build
 	rm -rf versions/stage/*
 	mv dist/* versions/stage/
