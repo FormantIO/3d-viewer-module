@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,11 +20,11 @@ const Container = styled.div`
 
 const PanelContainer = styled.div`
   position: absolute;
-  top: 40%;
-  left: 50%;
+  bottom: 10px;
+  left: 10px;
   width: 300px;
-  height: 180px;
-  transform: translate(-50%, -50%);
+  height: 320px;
+  /* transform: translate(-50%, -50%); */
   background-color: #2d3855;
   border-radius: 10px;
   padding: 20px;
@@ -76,38 +76,17 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     updateState,
   } = controlsStates;
 
-  const [scrubberOn, setScrubberOn] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+  const [velocity, setVelocity] = useState<string>("");
+  const [brushModes, setBrushModes] = useState<string>("");
+  const [leftBrush, setLeftBrush] = React.useState<boolean>(false);
+  const [rightBrush, setRightBrush] = React.useState<boolean>(false);
+  const [dustSuppression, setDustSuppression] = React.useState<string>("");
 
-  const checkBoxHandler = (e: any) => setScrubberOn(e.target.checked);
-  const showEditing = () => updateState({ isWaypointEditing: true });
-  const closeEditing = () => updateState({ isWaypointEditing: false });
-
-  const editBtnHandler = () => {
-    if (selectedWaypoint === null) {
-      alert("Select Waypoint To Edit");
-      closeEditing();
-    } else {
-      showEditing();
-    }
-  };
-
-  const saveBtnHandler = () => {
-    if (selectedWaypoint === null) return;
-    const { waypoints } = store;
-    const tempPoint = waypoints[selectedWaypoint];
-    store.waypoints[selectedWaypoint] = {
-      ...tempPoint,
-      message,
-      scrubberOn,
-    };
-    closeEditing();
-  };
+  const saveStates = () => {};
 
   const removeBtnHandler = () => {
     if (selectedWaypoint === null) return;
     setWaypoints((prev) => prev.filter((_, idx) => idx !== selectedWaypoint));
-    closeEditing();
   };
 
   const sendBtnHandler = () => {
@@ -120,64 +99,117 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     }
   };
 
+  // Feed data to waypoint
+  useEffect(() => {
+    if (selectedWaypoint === null) {
+      return;
+    }
+    const { waypoints } = store;
+    const tempPoint = waypoints[selectedWaypoint];
+    store.waypoints[selectedWaypoint] = {
+      ...tempPoint,
+      leftBrush,
+      rightBrush,
+      velocity: parseInt(velocity),
+      brushModes: parseInt(brushModes),
+      dustSuppression: parseInt(dustSuppression),
+    };
+  }, [velocity, brushModes, dustSuppression, leftBrush, rightBrush, store]);
+
   // Update editing panel
   useEffect(() => {
-    if (selectedWaypoint === null) return;
-    const w = store.waypoints[selectedWaypoint];
-    setMessage(w.message);
-    setScrubberOn(w.scrubberOn);
-  }, [setMessage, setScrubberOn, selectedWaypoint]);
+    if (selectedWaypoint !== null) {
+      const w = store.waypoints[selectedWaypoint];
+      setRightBrush(w.rightBrush);
+      setLeftBrush(w.leftBrush);
+      setVelocity(w.velocity ? w.velocity.toString() : "");
+      setBrushModes(w.brushModes ? w.brushModes.toString() : "");
+      setDustSuppression(w.dustSuppression ? w.dustSuppression.toString() : "");
+    } else {
+      setRightBrush(false);
+      setLeftBrush(false);
+      setVelocity("");
+      setBrushModes("");
+      setDustSuppression("");
+    }
+  }, [setLeftBrush, selectedWaypoint]);
 
   return (
     <Container>
-      {isWaypointEditing && (
-        <PanelContainer>
-          <STextField
-            label="Message"
-            maxRows={1}
-            multiline
-            sx={{ color: "white", width: "100%" }}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
+      <PanelContainer>
+        <STextField
+          label="Velocity"
+          maxRows={1}
+          multiline
+          sx={{ color: "white", width: "100%" }}
+          value={velocity}
+          onChange={(e) => setVelocity(e.target.value)}
+        />
 
-          <FormControlLabel
-            sx={{ marginTop: "5px" }}
-            control={
-              <SCheckbox checked={scrubberOn} onChange={checkBoxHandler} />
-            }
-            label="Scrubber On"
-          />
-          <Box
-            component={"div"}
-            display="flex"
-            justifyContent={"space-between"}
-            alignItems="center"
+        <STextField
+          label="Brush Modes"
+          maxRows={1}
+          multiline
+          sx={{ color: "white", width: "100%", marginTop: "10px" }}
+          value={brushModes}
+          onChange={(e) => setBrushModes(e.target.value)}
+        />
+
+        <STextField
+          label="Dust Suppression"
+          maxRows={1}
+          multiline
+          sx={{ color: "white", width: "100%", marginTop: "10px" }}
+          value={dustSuppression}
+          onChange={(e) => {
+            setDustSuppression(e.target.value);
+          }}
+        />
+
+        <FormControlLabel
+          sx={{ marginTop: "5px" }}
+          control={
+            <SCheckbox
+              checked={leftBrush}
+              onChange={(e: any) => {
+                setLeftBrush(e.target.checked);
+              }}
+            />
+          }
+          label="Left Brush"
+        />
+        <FormControlLabel
+          sx={{ marginTop: "5px" }}
+          control={
+            <SCheckbox
+              checked={rightBrush}
+              onChange={(e: any) => {
+                setRightBrush(e.target.checked);
+              }}
+            />
+          }
+          label="Right Brush"
+        />
+
+        <Box
+          component={"div"}
+          display="flex"
+          justifyContent={"space-between"}
+          alignItems="center"
+          mt={1}
+        >
+          <SButton
+            variant="contained"
+            color="warning"
+            onClick={removeBtnHandler}
           >
-            <SButton variant="contained" onClick={saveBtnHandler}>
-              Save
-            </SButton>
-            <SButton
-              variant="contained"
-              color="warning"
-              onClick={removeBtnHandler}
-            >
-              Remove
-            </SButton>
-            <SButton variant="contained" onClick={closeEditing}>
-              Cancel
-            </SButton>
-          </Box>
-        </PanelContainer>
-      )}
-      <ButtonsContainer>
-        <SButton variant="contained" onClick={editBtnHandler}>
-          Edit
-        </SButton>
-        <SButton variant="contained" onClick={sendBtnHandler}>
-          Send
-        </SButton>
-      </ButtonsContainer>
+            Remove
+          </SButton>
+          <SButton variant="contained" onClick={sendBtnHandler}>
+            Send
+          </SButton>
+        </Box>
+      </PanelContainer>
     </Container>
   );
 };

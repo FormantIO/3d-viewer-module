@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from "react";
 import { IPose } from "@formant/universe-core";
 import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { PivotControls } from "@react-three/drei";
 import { useControlsContext } from "../common/ControlsContext";
 
@@ -14,8 +14,11 @@ interface Props {
 
 export type WaypointData = {
   pointIndex: number;
-  message: string;
-  scrubberOn: boolean;
+  velocity?: number;
+  brushModes?: number;
+  leftBrush: boolean;
+  rightBrush: boolean;
+  dustSuppression?: number;
   pose: IPose;
 };
 
@@ -31,9 +34,9 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   useEffect(() => {
     store.waypoints[pointIndex] = {
       pointIndex,
-      message: "",
-      scrubberOn: false,
       pose,
+      leftBrush: false,
+      rightBrush: false,
     };
   }, [store]);
 
@@ -66,6 +69,13 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
 
   const onClick = () => updateState({ selectedWaypoint: pointIndex });
 
+  useFrame(({ camera }) => {
+    if (!groupRef.current) return;
+    const marker = groupRef.current;
+    const scale = marker.position.distanceTo(camera.position) / 25;
+    marker.scale.setScalar(scale);
+  });
+
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       <PivotControls
@@ -76,15 +86,15 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}
         anchor={[0, 0, 0]}
-        scale={100}
+        scale={3}
         matrix={matrix}
         autoTransform={false}
-        fixed={true}
         onDragStart={() => {
           if (!controls) return;
           (controls as any).enabled = false;
         }}
         onDrag={(m) => {
+          if (selectedWaypoint !== pointIndex) return;
           matrix.copy(m);
           if (targetRef.current && groupRef.current && pivotRef.current) {
             // get rotation out of matrix
@@ -120,20 +130,25 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         }}
       >
         <group ref={targetRef}>
-          <mesh name="circle" onClick={onClick}>
-            <circleGeometry args={[0.3, 20]} />
+          <mesh name="circle" onClick={onClick} position-z={0.1}>
+            <circleGeometry args={[0.4, 20]} />
             <meshBasicMaterial
-              color={selectedWaypoint === pointIndex ? "red" : "white"}
-              transparent={true}
-              opacity={0.75}
+              color={selectedWaypoint === pointIndex ? "red" : "#fff70e"}
             />
           </mesh>
         </group>
       </PivotControls>
 
-      <mesh name="arrow" rotation={[0, 0, -Math.PI / 2]} onClick={onClick}>
+      <mesh
+        name="arrow"
+        rotation={[0, 0, -Math.PI / 2]}
+        onClick={onClick}
+        scale={1.5}
+      >
         <shapeGeometry args={[arrowShape]} />
-        <meshStandardMaterial color="white" transparent={true} opacity={0.75} />
+        <meshStandardMaterial
+          color={selectedWaypoint === pointIndex ? "red" : "#fff70e"}
+        />
       </mesh>
     </group>
   );

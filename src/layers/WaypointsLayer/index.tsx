@@ -59,8 +59,13 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <mesh name="plane" onPointerDown={mouseDownHandler} ref={plane}>
-        <planeGeometry args={[10, 10]} />
+      <mesh
+        name="plane"
+        onPointerDown={mouseDownHandler}
+        ref={plane}
+        visible={false}
+      >
+        <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
           color={FormantColors.green}
           transparent={true}
@@ -81,9 +86,8 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         {waypoints.length > 0 && (
           <Line
             points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={1}
-            color="white"
-            forceSinglePass={undefined}
+            lineWidth={4}
+            color="red"
           />
         )}
       </group>
