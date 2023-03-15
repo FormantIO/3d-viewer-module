@@ -60,7 +60,7 @@ export const PathLayer = (props: ILocalPathProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group ref={groupRef}>
         {points.length > 0 && (
-          <Line points={points} lineWidth={3} color={FormantColors.blue} />
+          <Line points={points} lineWidth={10} color={FormantColors.blue} />
         )}
       </group>
     </DataVisualizationLayer>
