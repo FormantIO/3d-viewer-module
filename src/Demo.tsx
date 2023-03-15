@@ -78,7 +78,6 @@ export function Demo() {
                 "localization"
               )}
               name="Path"
-              pathWidth={5}
             />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
