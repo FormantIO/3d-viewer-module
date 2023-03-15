@@ -9,11 +9,10 @@ extend({ MarkerMaterial });
 
 interface IMarkerLayerProps extends IUniverseLayerProps {
   size: number;
-  sizeType: "dynamic" | "static";
 }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children, size, sizeType } = props;
+  const { children } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -36,15 +35,13 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     const arrow = arrowRef.current;
     if (!circle || !arrow) return;
 
-    const scaleFactor = 30 - size * 2;
+    const scaleFactor = 35;
 
-    if (sizeType === "static") {
-      const scale =
-        scaleVector.subVectors(circle.position, camera.position).length() /
-        scaleFactor;
-      circle.scale.setScalar(scale);
-      arrow.scale.setScalar(scale);
-    }
+    const distanceFromCamera = circle.position.distanceTo(camera.position);
+
+    const scale = distanceFromCamera / scaleFactor;
+    circle.scale.setScalar(scale);
+    arrow.scale.setScalar(scale);
 
     (circle.material as any).uniforms.uTime.value += delta;
     circle.lookAt(camera.position);
@@ -72,6 +69,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
             transparent={true}
             side={THREE.FrontSide}
             depthTest={false}
+            depthWrite={false}
           />
         </mesh>
       </group>
