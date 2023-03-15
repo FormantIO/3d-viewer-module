@@ -1,10 +1,9 @@
-import { Canvas, ThreeElements, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { MapControls, PerspectiveCamera } from "@react-three/drei";
 import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
   EffectComposer,
-  // DepthOfField,
   Bloom,
   Noise,
   Vignette,
@@ -13,7 +12,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Color, Euler, MathUtils, NoToneMapping, Scene, Vector3 } from "three";
+import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext } from "./ControlsContext";
@@ -260,7 +259,6 @@ export function Universe(props: IUniverseProps) {
           onCreated={(state) => {
             setScene(state.scene);
             state.gl.toneMapping = NoToneMapping;
-
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
@@ -281,25 +279,26 @@ export function Universe(props: IUniverseProps) {
                 makeDefault
                 enableDamping={false}
                 ref={mapControlsRef}
-                minDistance={0.5}
+                minDistance={2}
                 maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
               <WaitForControls>
-                <fog attach="fog" args={[FormantColors.steel01, 0.5, mapControlsRef.current?.maxDistance * 5 || 500]} />
+                <fog
+                  attach="fog"
+                  args={[
+                    FormantColors.steel01,
+                    0.5,
+                    mapControlsRef.current?.maxDistance * 5 || 500,
+                  ]}
+                />
                 <Bounds fit clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>
               {fancy && (
                 <EffectComposer>
-                  {/* <DepthOfField
-                  focusDistance={0}
-                  focalLength={0.02}
-                  bokehScale={2}
-                  height={480}
-                /> */}
                   <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
                   <Noise opacity={0.02} />
                   <Vignette
@@ -307,7 +306,6 @@ export function Universe(props: IUniverseProps) {
                     darkness={0.9}
                     blendFunction={BlendFunction.NORMAL}
                   />
-
                 </EffectComposer>
               )}
               {vr && (
