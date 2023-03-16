@@ -86,7 +86,6 @@ export function buildScene(
           <MarkerLayer
             key={"vis" + i + configHash}
             size={layer.markerSize || 0}
-            sizeType={layer.markerSizeType || "static"}
             positioning={positioning}
             treePath={[1, i]}
             name={layer.name || "Marker"}
@@ -96,14 +95,12 @@ export function buildScene(
     } else if (layer.visualizationType === "Path") {
       const dataSource =
         layer.pathDataSource && parseDataSource(layer.pathDataSource);
-      const { pathWidth } = layer;
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[1, i]}
           name={layer.name || "Local Path "}
-          pathWidth={pathWidth || 5}
         />
       );
     } else if (layer.visualizationType === "Point Cloud") {
