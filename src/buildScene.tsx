@@ -18,6 +18,8 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
+import { LayerType } from "./layers/common/LayerTypes";
+import { cloneElement, isValidElement } from "react";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -25,7 +27,9 @@ export function buildScene(
 ): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
-  let mapLayers: React.ReactNode[] = [];
+  // add type to map Layers IUniverseLayerProps
+  let mapLayers: JSX.Element[] = [];
+
 
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
@@ -39,6 +43,7 @@ export function buildScene(
           positioning={positioning}
           treePath={[0, i]}
           name={layer.name || "Ground Plane"}
+          type={LayerType.AXIS}
         />
       );
     } else if (layer.mapType === "GPS Map") {
@@ -151,6 +156,20 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
+
+  // first map layer that isnt a ground plane is visible, others are hidden, except for the ground plane
+  let firstMapLayer = true;
+  mapLayers = mapLayers.map((layer) => {
+    if (firstMapLayer && layer.props.type !== LayerType.AXIS) {
+      firstMapLayer = false;
+      return cloneElement(layer, { visible: true });
+    } else if (layer.props.type === LayerType.AXIS) {
+      return cloneElement(layer, { visible: true });
+    } else {
+      return cloneElement(layer, { visible: false });
+    }
+  });
+
 
   devices.push(
     <LayerContext.Provider
