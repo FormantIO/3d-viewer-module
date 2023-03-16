@@ -12,7 +12,7 @@ interface IMarkerLayerProps extends IUniverseLayerProps {
 }
 
 export function MarkerLayer(props: IMarkerLayerProps) {
-  const { children, size } = props;
+  const { children } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
   const arrowRef = useRef<THREE.Mesh>(null!);
@@ -28,18 +28,14 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     return new THREE.Shape(points);
   }, []);
 
-  const scaleVector = useMemo(() => new THREE.Vector3(), []);
-
   useFrame(({ camera }, delta) => {
     const circle = circleRef.current;
     const arrow = arrowRef.current;
     if (!circle || !arrow) return;
 
-    const scaleFactor = 30 - size * 2;
-
-    const scale =
-      scaleVector.subVectors(circle.position, camera.position).length() /
-      scaleFactor;
+    const scaleFactor = 35;
+    const distanceFromCamera = circle.position.distanceTo(camera.position);
+    const scale = distanceFromCamera / scaleFactor;
     circle.scale.setScalar(scale);
     arrow.scale.setScalar(scale);
 
@@ -53,13 +49,8 @@ export function MarkerLayer(props: IMarkerLayerProps) {
       type={LayerType.TRACKABLE}
       iconUrl="icons/3d_object.svg"
     >
-      <group>
-        <mesh
-          ref={arrowRef}
-          name="arrow"
-          rotation={[0, 0, -Math.PI / 2]}
-          renderOrder={1}
-        >
+      <group renderOrder={2}>
+        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
             color="white"
@@ -74,6 +65,7 @@ export function MarkerLayer(props: IMarkerLayerProps) {
             transparent={true}
             side={THREE.FrontSide}
             depthTest={false}
+            depthWrite={false}
           />
         </mesh>
       </group>

@@ -7,5 +7,7 @@ export enum LayerType {
   // A trackable layer is a layer that is most likely to be used
   // tracked by the camera
   TRACKABLE = "trackable",
+  // Axis layers are not used to calculate boundaries and have special treatment inside the sidebar
+  AXIS = "axis",
   OTHER = "other",
 }

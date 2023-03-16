@@ -18,7 +18,7 @@ import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 
@@ -85,6 +85,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   }
   const { children, positioning, visible, name, id, treePath, type, iconUrl } =
     props;
+
   const groupRef = useRef<THREE.Group>(null!);
 
   const { register, layers } = useContext(UIDataContext);
@@ -95,7 +96,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
       autoId,
       type || LayerType.OTHER,
       iconUrl,
-      treePath
+      treePath,
+      visible
     );
     setThisLayer(registeredLayer);
   }, []);

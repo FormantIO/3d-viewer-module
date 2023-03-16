@@ -67,6 +67,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
   const [goal] = React.useState(() => ({ focus: new THREE.Vector3(), camera: new THREE.Vector3(), zoom: 1 }))
 
   const [box] = React.useState(() => new THREE.Box3())
+
   const api: BoundsApi = React.useMemo(() => {
     function getSize() {
       const size = box.getSize(new THREE.Vector3())
@@ -76,7 +77,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         ? maxSize * 4
         : maxSize * margin / (2 * Math.tan((Math.PI * camera.fov) / 180))
       const fitWidthDistance = isOrthographic(camera) ? maxSize * 4 : fitHeightDistance / camera.aspect
-      const distance = Math.max(fitHeightDistance, fitWidthDistance) * margin;
+      const distance = Math.max(fitHeightDistance, fitWidthDistance);
       return { box, size, center, distance }
     }
 
@@ -118,10 +119,12 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           box.expandByObject(target);
           if (object === undefined) {
             const targetGroup = target.children[0]; // target is a group containing everything, target.children[0] is the actual target
+            const mapGroup = targetGroup.children[1];
+            const visualizationsGroup = targetGroup.children[2];
             targetGroup.updateWorldMatrix(true, true);
             const tempBox = new THREE.Box3();
             // traverse all children except axis and targetGroup
-            targetGroup.children.forEach((child: any) => {
+            [...mapGroup.children, ...visualizationsGroup.children].forEach((child: any) => {
               if (child.name !== 'axis') {
                 const childBox = new THREE.Box3();
                 childBox.setFromObject(child);
@@ -149,10 +152,10 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       clip() {
         const { distance } = getSize();
         if (controls) {
-          controls.maxDistance = distance * 10;
+          controls.maxDistance = distance * 5;
           controls.update();
         }
-        camera.near = distance / 1000
+        //camera.near = distance / 1000
         camera.far = distance * 100
         camera.updateProjectionMatrix()
         if (controls) controls.update()
@@ -186,9 +189,8 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
         const { center, distance } = getSize()
         const direction = camera.getWorldDirection(new THREE.Vector3()).round(); // direction is the direction the camera is facing
-
-        goal.camera.copy(center).sub(direction).setZ(Math.max(distance, 15));
-        goal.focus.copy(center).sub(direction).setZ(0);
+        goal.camera.copy(center).setZ(Math.max(distance, 15));
+        goal.focus.copy(center).setZ(0);
 
         if (isOrthographic(camera)) {
           current.zoom = camera.zoom
@@ -235,6 +237,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         }
         if (onFitRef.current) onFitRef.current(this.getSize())
         invalidate()
+
         return this
       },
     }
@@ -287,9 +290,11 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
 
   return (
-    <group ref={ref}>
-      <context.Provider value={api}>{children}</context.Provider>
-    </group>
+    <>
+      <group ref={ref}>
+        <context.Provider value={api}>{children}</context.Provider>
+      </group>
+    </>
   )
 }
 

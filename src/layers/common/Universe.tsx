@@ -1,10 +1,9 @@
-import { Canvas, ThreeElements, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { MapControls, PerspectiveCamera } from "@react-three/drei";
 import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
   EffectComposer,
-  // DepthOfField,
   Bloom,
   Noise,
   Vignette,
@@ -13,12 +12,11 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Euler, MathUtils, Scene, Vector3 } from "three";
+import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
-import { ControlsContext, useControlsContextStates } from "./ControlsContext";
+import { ControlsContext } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
-import { WaypointPanel } from "../../components/WaypointPanel";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -57,15 +55,9 @@ export function Universe(props: IUniverseProps) {
     toggleEditMode,
   } = useUI();
 
-  const controlsStates = useControlsContextStates();
-  const {
-    state: { isWaypointVisible },
-    store,
-  } = controlsStates;
-
   useEffect(() => {
     reset();
-  }, [props.configHash, store]);
+  }, [props.configHash]);
 
   const lookAtTargetId = React.useCallback(
     (targetId: string) => {
@@ -263,42 +255,50 @@ export function Universe(props: IUniverseProps) {
       >
         {vr && <VRButton />}
         <Canvas
+          gl={{ logarithmicDepthBuffer: true }}
           onCreated={(state) => {
             setScene(state.scene);
+            state.gl.toneMapping = NoToneMapping;
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
           }}
+          dpr={[1, 2]}
         >
           <XR>
-            <color attach="background" args={[FormantColors.flagship]} />
-            <ControlsContext.Provider value={controlsStates}>
+            <color attach="background" args={[FormantColors.steel01]} />
+            <ControlsContext.Provider value={{ mapControlsRef }}>
               <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 300]}
                 up={[0, 0, 1]}
                 far={5000}
+                near={0.1}
               />
               <MapControls
                 makeDefault
                 enableDamping={false}
-                minDistance={5}
+                ref={mapControlsRef}
+                minDistance={2}
+                maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
               />
               <WaitForControls>
-                <Bounds clip observe margin={1.5} damping={6}>
+                <fog
+                  attach="fog"
+                  args={[
+                    FormantColors.steel01,
+                    0.5,
+                    mapControlsRef.current?.maxDistance * 5 || 500,
+                  ]}
+                />
+                <Bounds fit clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>
               {fancy && (
                 <EffectComposer>
-                  {/* <DepthOfField
-                  focusDistance={0}
-                  focalLength={0.02}
-                  bokehScale={2}
-                  height={480}
-                /> */}
                   <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
                   <Noise opacity={0.02} />
                   <Vignette
@@ -330,7 +330,6 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-        {isWaypointVisible && <WaypointPanel controlsStates={controlsStates} />}
       </UIDataContext.Provider>
     </>
   );

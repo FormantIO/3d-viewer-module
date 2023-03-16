@@ -6,6 +6,7 @@ import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
+import getUuidByString from "uuid-by-string";
 
 interface ITreeArea {
   visible: boolean;
@@ -23,13 +24,13 @@ const SidebarContainer = styled.div<ITreeArea>`
   max-height: 100%;
   transition: all 0.2s ease;
   background-color: #2d3855;
-  width: ${(props) => (props.visible ? "184px" : "32px")};
+  width: ${(props: ITreeArea) => (props.visible ? "184px" : "32px")};
   overflow: hidden;
   &:hover {
     width: 184px;
   }
 
-  ${(props) =>
+  ${(props: ITreeArea) =>
     props.innerWidth &&
     props.innerWidth > 452 &&
     `
@@ -72,8 +73,8 @@ const LayersWrapper = styled.div<ILayersWrapper>`
   overflow-y: hidden;
   transition: height 0.3s ease-in-out;
   //transition-delay: 0.1s;
-  height: ${(props) => (props.visible ? "auto" : "0px")};
-  border-top: ${(props) => (props.visible ? "1px solid #3B4668" : "none")};
+  height: ${(props: ILayersWrapper) => (props.visible ? "auto" : "0px")};
+  border-top: ${(props: ILayersWrapper) => (props.visible ? "1px solid #3B4668" : "none")};
   overflow: hidden;
 `;
 
@@ -87,7 +88,7 @@ interface ILayerRow {
 
 const LayerRow = styled.div<ILayerRow>`
   cursor: pointer;
-  border-bottom: ${(props) =>
+  border-bottom: ${(props: ILayerRow) =>
     (!props.isChild || props.isLastChild) &&
     (props.hasChildren ? "none" : "1px solid #3B4668")};
   height: "32px";
@@ -95,13 +96,13 @@ const LayerRow = styled.div<ILayerRow>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: ${(props) => (props.isChild ? "26px" : "0px")};
+  margin-left: ${(props: ILayerRow) => (props.isChild ? "26px" : "0px")};
 
   & svg,
   p {
     transition: all 0.05s ease;
-    color: ${(props) =>
-      props.layerVisible ? FormantColors.silver : "#657197"};
+    color: ${(props: ILayerRow) =>
+    props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -134,7 +135,7 @@ interface IVisibilityIcon {
 const VisibilityIcon = styled.div<IVisibilityIcon>`
   & svg {
     transition: all 0.1s ease;
-    opacity: ${(props) => (props.layerVisible ? 0 : 1)};
+    opacity: ${(props: IVisibilityIcon) => (props.layerVisible ? 0 : 1)};
   }
 `;
 
@@ -159,6 +160,9 @@ const Sidebar = ({
   const { layers, toggleVisibility } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
   const [sortedLayers, setSortedLayers] = React.useState<LayerData[]>([]);
+  const [layerMap, setLayerMap] = React.useState<{ [key: string]: LayerData }>(
+    {}
+  );
   const [width, height] = useWindowSize();
 
   const onToggleSidebarClicked = () => {
@@ -194,6 +198,11 @@ const Sidebar = ({
       }
       return a.treePath.length - b.treePath.length;
     });
+    const _layerMap: { [key: string]: LayerData } = {};
+    _sortedLayers.forEach((l) => {
+      _layerMap[l.id] = l;
+    });
+    setLayerMap(_layerMap);
     setSortedLayers(_sortedLayers);
   }, [layers]);
 
@@ -233,8 +242,56 @@ const Sidebar = ({
     }
   };
 
+  // get layer by tree path
+  const getLayerByTreePath = (treePath: number[]) => {
+    return sortedLayers.find((l) => {
+      if (!l.treePath) return false;
+      if (l.treePath.length !== treePath.length) return false;
+      for (let i = 0; i < l.treePath.length; i++) {
+        if (l.treePath[i] !== treePath[i]) return false;
+      }
+      return true;
+    });
+  };
+
+  const onToggleLayerClicked = (layer: LayerData) => {
+    toggleVisibility(layer.id);
+
+    // if the clicked layer is a map, hide all other maps
+    const parentLayer = layer.treePath && layer.treePath.length > 1 && getLayerByTreePath([layer.treePath[0]]);
+    if (
+      !parentLayer ||
+      parentLayer.name !== "Maps" ||
+      layer.type === LayerType.AXIS ||
+      layer.visible
+    ) {
+      return;
+    }
+
+    // all other visible maps that arent axis
+    const siblings = Object.values(layerMap).filter((sibling) => {
+      return (
+        sibling.id !== layer.id &&
+        sibling.id !== parentLayer.id &&
+        sibling.treePath &&
+        sibling.treePath[0] === layer.treePath![0] &&
+        sibling.type !== LayerType.AXIS &&
+        sibling.visible
+      );
+    });
+    siblings.forEach((sibling) => {
+      toggleVisibility(sibling.id);
+    });
+  };
+
+
+
   return (
-    <SidebarContainer visible={visible} innerWidth={width}>
+    <SidebarContainer
+      visible={visible}
+      innerWidth={width}
+      key={getUuidByString(JSON.stringify(sortedLayers))}
+    >
       <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
         <LayerTitle>
           <LayerIcon />
@@ -267,7 +324,11 @@ const Sidebar = ({
                 </Typography>
               </LayerTitle>
               <VisibilityIcon
-                onClick={() => toggleVisibility(c.id)}
+                onClick={(e: Event) => {
+                  e.stopPropagation();
+                  onToggleLayerClicked(c);
+
+                }}
                 layerVisible={c.visible}
               >
                 {c.visible ? <EyeIcon /> : <EyeCloseIcon />}

@@ -18,7 +18,8 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
-import { WaypointsLayer } from "./layers/WaypointsLayer";
+import { LayerType } from "./layers/common/LayerTypes";
+import { cloneElement, isValidElement } from "react";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -26,23 +27,23 @@ export function buildScene(
 ): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
-  let mapLayers: React.ReactNode[] = [];
-  const getTreePath = () => [
-    devices.length,
-    deviceLayers.length + mapLayers.length,
-  ];
+  // add type to map Layers IUniverseLayerProps
+  let mapLayers: JSX.Element[] = [];
+
+
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transform
       ? parsePositioning(layer.transform)
-      : PositioningBuilder.fixed(0, 0, 0);
+      : PositioningBuilder.fixed(0, 0, 0 - (i + 1) * 0.005);
     if (layer.mapType === "Ground Plane") {
       return (
         <GroundLayer
           key={"ground" + i + configHash}
           positioning={positioning}
-          treePath={getTreePath()}
+          treePath={[0, i]}
           name={layer.name || "Ground Plane"}
+          type={LayerType.AXIS}
         />
       );
     } else if (layer.mapType === "GPS Map") {
@@ -62,7 +63,7 @@ export function buildScene(
           longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.name || "Map"}
-          treePath={getTreePath()}
+          treePath={[0, i]}
         />
       );
     } else if (layer.mapType === "Occupancy Map") {
@@ -73,7 +74,7 @@ export function buildScene(
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[0, i]}
           name={layer.name || "Occupancy Grid"}
         />
       );
@@ -85,14 +86,13 @@ export function buildScene(
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
         : PositioningBuilder.fixed(0, 0, 0);
-      console.log(layer.markerSize);
       if (layer.positionIndicatorVisualType === "Circle") {
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
             size={layer.markerSize || 0}
             positioning={positioning}
-            treePath={getTreePath()}
+            treePath={[1, i]}
             name={layer.name || "Marker"}
           />
         );
@@ -104,7 +104,7 @@ export function buildScene(
         <PathLayer
           key={"local_path_layer" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[1, i]}
           name={layer.name || "Local Path "}
         />
       );
@@ -123,7 +123,7 @@ export function buildScene(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={getTreePath()}
+          treePath={[1, i]}
           name={layer.name || "Point Cloud"}
           pointShape={pointCloudShape || "Circle"}
           pointSize={pointCloudSize || 0}
@@ -132,8 +132,6 @@ export function buildScene(
           color2={pointCloudColor2 || "#F89973"}
         />
       );
-    } else if (layer.visualizationType === "Waypoints") {
-      deviceLayers.push(<WaypointsLayer key={"waypoints" + i + configHash} />);
     } else if (layer.visualizationType === "Geometry") {
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
@@ -146,7 +144,7 @@ export function buildScene(
             key={"geo" + i + configHash}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
-            treePath={getTreePath()}
+            treePath={[1, i]}
             name={layer.name || "Geometry"}
           />
         );
@@ -155,6 +153,21 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
+
+  // first map layer that isnt a ground plane is visible, others are hidden, except for the ground plane
+  let firstMapLayer = true;
+  mapLayers = mapLayers.map((layer) => {
+    if (firstMapLayer && layer.props.type !== LayerType.AXIS) {
+      firstMapLayer = false;
+      return cloneElement(layer, { visible: true });
+    } else if (layer.props.type === LayerType.AXIS) {
+      return cloneElement(layer, { visible: true });
+    } else {
+      return cloneElement(layer, { visible: false });
+    }
+  });
+
+
   devices.push(
     <LayerContext.Provider
       key={"maps"}
@@ -162,11 +175,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer
-        name={"Maps"}
-        id={currentDeviceId || undefined}
-        treePath={[devices.length]}
-      >
+      <EmptyLayer name={"Maps"} treePath={[0]}>
         {mapLayers}
       </EmptyLayer>
     </LayerContext.Provider>
@@ -178,11 +187,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer
-        name={"Visualizations"}
-        id={currentDeviceId || undefined}
-        treePath={[devices.length]}
-      >
+      <EmptyLayer name={"Visualizations"} treePath={[1]}>
         {deviceLayers}
       </EmptyLayer>
     </LayerContext.Provider>
