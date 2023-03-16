@@ -96,7 +96,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
       autoId,
       type || LayerType.OTHER,
       iconUrl,
-      treePath
+      treePath,
+      visible
     );
     setThisLayer(registeredLayer);
   }, []);
