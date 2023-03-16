@@ -74,7 +74,8 @@ const LayersWrapper = styled.div<ILayersWrapper>`
   transition: height 0.3s ease-in-out;
   //transition-delay: 0.1s;
   height: ${(props: ILayersWrapper) => (props.visible ? "auto" : "0px")};
-  border-top: ${(props: ILayersWrapper) => (props.visible ? "1px solid #3B4668" : "none")};
+  border-top: ${(props: ILayersWrapper) =>
+    props.visible ? "1px solid #3B4668" : "none"};
   overflow: hidden;
 `;
 
@@ -102,7 +103,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props: ILayerRow) =>
-    props.layerVisible ? FormantColors.silver : "#657197"};
+      props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -258,7 +259,10 @@ const Sidebar = ({
     toggleVisibility(layer.id);
 
     // if the clicked layer is a map, hide all other maps
-    const parentLayer = layer.treePath && layer.treePath.length > 1 && getLayerByTreePath([layer.treePath[0]]);
+    const parentLayer =
+      layer.treePath &&
+      layer.treePath.length > 1 &&
+      getLayerByTreePath([layer.treePath[0]]);
     if (
       !parentLayer ||
       parentLayer.name !== "Maps" ||
@@ -283,8 +287,6 @@ const Sidebar = ({
       toggleVisibility(sibling.id);
     });
   };
-
-
 
   return (
     <SidebarContainer
@@ -324,10 +326,9 @@ const Sidebar = ({
                 </Typography>
               </LayerTitle>
               <VisibilityIcon
-                onClick={(e: Event) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                   onToggleLayerClicked(c);
-
                 }}
                 layerVisible={c.visible}
               >

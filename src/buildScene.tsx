@@ -30,7 +30,6 @@ export function buildScene(
   // add type to map Layers IUniverseLayerProps
   let mapLayers: JSX.Element[] = [];
 
-
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transform
@@ -90,7 +89,6 @@ export function buildScene(
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
-            size={layer.markerSize || 0}
             positioning={positioning}
             treePath={[1, i]}
             name={layer.name || "Marker"}
@@ -166,7 +164,6 @@ export function buildScene(
       return cloneElement(layer, { visible: false });
     }
   });
-
 
   devices.push(
     <LayerContext.Provider
