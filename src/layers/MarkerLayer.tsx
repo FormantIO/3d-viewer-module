@@ -7,11 +7,7 @@ import { MarkerMaterial } from "./utils/MarkerMaterial";
 import { LayerType } from "./common/LayerTypes";
 extend({ MarkerMaterial });
 
-interface IMarkerLayerProps extends IUniverseLayerProps {
-  size: number;
-}
-
-export function MarkerLayer(props: IMarkerLayerProps) {
+export function MarkerLayer(props: IUniverseLayerProps) {
   const { children } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
