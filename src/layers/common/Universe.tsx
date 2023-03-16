@@ -15,8 +15,9 @@ import { UIDataContext, useUI } from "./UIDataContext";
 import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
-import { ControlsContext } from "./ControlsContext";
+import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
+import { WaypointPanel } from "../../components/WaypointPanel";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -55,6 +56,10 @@ export function Universe(props: IUniverseProps) {
     toggleEditMode,
   } = useUI();
 
+  const controlsStates = useControlsContextStates();
+  const {
+    state: { isWaypointVisible },
+  } = controlsStates;
   useEffect(() => {
     reset();
   }, [props.configHash]);
@@ -267,7 +272,7 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.steel01]} />
-            <ControlsContext.Provider value={{ mapControlsRef }}>
+            <ControlsContext.Provider value={controlsStates}>
               <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 300]}
@@ -321,6 +326,7 @@ export function Universe(props: IUniverseProps) {
             </ControlsContext.Provider>
           </XR>
         </Canvas>
+        {isWaypointVisible && <WaypointPanel controlsStates={controlsStates} />}
         <Sidebar lookAtTargetId={lookAtTargetId} />
         <ZoomControls
           zoomIn={zoomIn}
