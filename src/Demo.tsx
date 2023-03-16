@@ -50,8 +50,6 @@ export function Demo() {
             <MarkerLayer
               positioning={PositioningBuilder.odometry("walter.localization")}
               name="Marker"
-              size={5}
-              sizeType={"static"}
             />
             <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
@@ -78,7 +76,6 @@ export function Demo() {
                 "localization"
               )}
               name="Path"
-              pathWidth={5}
             />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
