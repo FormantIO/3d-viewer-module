@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
+import { DeviceContext } from "../layers/common/DeviceContext";
 
 const Container = styled.div`
   position: absolute;
@@ -24,7 +25,6 @@ const PanelContainer = styled.div`
   left: 10px;
   width: 300px;
   height: 320px;
-  /* transform: translate(-50%, -50%); */
   background-color: #2d3855;
   border-radius: 10px;
   padding: 20px;
@@ -70,11 +70,11 @@ interface Props {
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   const {
-    state: { isWaypointEditing, selectedWaypoint },
+    state: { selectedWaypoint },
     store,
     setWaypoints,
-    updateState,
   } = controlsStates;
+  const device = useContext(DeviceContext);
 
   const [velocity, setVelocity] = useState<string>("");
   const [brushModes, setBrushModes] = useState<string>("");
@@ -82,17 +82,28 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   const [rightBrush, setRightBrush] = React.useState<boolean>(false);
   const [dustSuppression, setDustSuppression] = React.useState<string>("");
 
-  const saveStates = () => {};
-
   const removeBtnHandler = () => {
     if (selectedWaypoint === null) return;
     setWaypoints((prev) => prev.filter((_, idx) => idx !== selectedWaypoint));
+    const { waypoints } = store;
+    store.waypoints = waypoints.filter((_, idx) => idx !== selectedWaypoint);
+
+    // Update panel when gizmo moving to the next point
+    if (selectedWaypoint < waypoints.length - 1) {
+      const w = store.waypoints[selectedWaypoint];
+      setRightBrush(w.rightBrush);
+      setLeftBrush(w.leftBrush);
+      setVelocity(w.velocity ? w.velocity.toString() : "");
+      setBrushModes(w.brushModes ? w.brushModes.toString() : "");
+      setDustSuppression(w.dustSuppression ? w.dustSuppression.toString() : "");
+    }
   };
 
   const sendBtnHandler = () => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
       // Send
+      // if (device) device.sendCommand("command_name", JSON.stringify(waypoints));
       alert(JSON.stringify(waypoints));
     } else {
       alert("Create Waypoints To Send.");

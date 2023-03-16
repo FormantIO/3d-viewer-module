@@ -20,6 +20,7 @@ import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { cloneElement, isValidElement } from "react";
+import { WaypointsLayer } from "./layers/WaypointsLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -29,7 +30,6 @@ export function buildScene(
   let deviceLayers: React.ReactNode[] = [];
   // add type to map Layers IUniverseLayerProps
   let mapLayers: JSX.Element[] = [];
-
 
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
@@ -132,6 +132,8 @@ export function buildScene(
           color2={pointCloudColor2 || "#F89973"}
         />
       );
+    } else if (layer.visualizationType === "Waypoints") {
+      deviceLayers.push(<WaypointsLayer />);
     } else if (layer.visualizationType === "Geometry") {
       const positioning = layer.transform
         ? parsePositioning(layer.transform)
@@ -166,7 +168,6 @@ export function buildScene(
       return cloneElement(layer, { visible: false });
     }
   });
-
 
   devices.push(
     <LayerContext.Provider

@@ -1,13 +1,19 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
-import { Authentication, App as FormantApp } from "@formant/data-sdk";
+import {
+  Authentication,
+  App as FormantApp,
+  Fleet,
+  Device,
+} from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
+import { DeviceContext } from "./layers/common/DeviceContext";
 
 const query = new URLSearchParams(window.location.search);
 const currentDeviceId = query.get("device");
@@ -20,9 +26,15 @@ export function Viewer() {
   const [universeData] = useState<IUniverseData>(
     () => new TelemetryUniverseData()
   );
+  const [device, setDevice] = useState<Device | null>(null);
   useEffect(() => {
     (async () => {
       await Authentication.waitTilAuthenticated();
+      const _device = currentDeviceId
+        ? await Fleet.getDevice(currentDeviceId)
+        : null;
+      setDevice(_device);
+
       const currentConfig = await FormantApp.getCurrentModuleConfiguration();
       if (currentConfig) {
         const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
@@ -60,10 +72,15 @@ export function Viewer() {
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
       <UniverseDataContext.Provider value={universeData}>
-        <Universe configHash={getUuidByString(JSON.stringify(config))} key={getUuidByString(JSON.stringify(config))}>
-          <ambientLight />
-          {buildScene(config, definedAndNotNull(currentDeviceId))};
-        </Universe>
+        <DeviceContext.Provider value={device}>
+          <Universe
+            configHash={getUuidByString(JSON.stringify(config))}
+            key={getUuidByString(JSON.stringify(config))}
+          >
+            <ambientLight />
+            {buildScene(config, definedAndNotNull(currentDeviceId))};
+          </Universe>
+        </DeviceContext.Provider>
       </UniverseDataContext.Provider>
     ),
     [universeData, currentDeviceId, configuration]

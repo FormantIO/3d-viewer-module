@@ -298,7 +298,7 @@ export function Universe(props: IUniverseProps) {
                     mapControlsRef.current?.maxDistance * 5 || 500,
                   ]}
                 />
-                <Bounds fit clip observe margin={1.5} damping={6}>
+                <Bounds clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>
