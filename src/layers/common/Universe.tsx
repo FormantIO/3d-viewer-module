@@ -1,5 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { MapControls, PerspectiveCamera } from "@react-three/drei";
+import { CameraControls, PerspectiveCamera } from "@react-three/drei";
 import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
@@ -278,7 +278,7 @@ export function Universe(props: IUniverseProps) {
                 far={5000}
                 near={0.1}
               />
-              <MapControls
+              {/* <MapControls
                 makeDefault
                 enableDamping={false}
                 ref={mapControlsRef}
@@ -286,7 +286,19 @@ export function Universe(props: IUniverseProps) {
                 maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
+              //up={[0, 0, 1]}
+
+              /> */}
+              <CameraControls
+                makeDefault
+                ref={mapControlsRef}
+                minDistance={0.5}
+                maxDistance={2000}
+                maxPolarAngle={Math.PI / 2 - 0.1}
+                attach={"controls"}
+
               />
+
               <WaitForControls>
                 <fog
                   attach="fog"

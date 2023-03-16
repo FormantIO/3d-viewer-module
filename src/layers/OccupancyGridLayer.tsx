@@ -135,7 +135,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   }, [layerData, universeData]);
 
   useLayoutEffect(() => {
-    if (isReady) {
+    if (isReady && bounds) {
       bounds.refresh().fit().clip();
     }
   }, [isReady]);
