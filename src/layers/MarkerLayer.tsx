@@ -28,17 +28,13 @@ export function MarkerLayer(props: IMarkerLayerProps) {
     return new THREE.Shape(points);
   }, []);
 
-  const scaleVector = useMemo(() => new THREE.Vector3(), []);
-
   useFrame(({ camera }, delta) => {
     const circle = circleRef.current;
     const arrow = arrowRef.current;
     if (!circle || !arrow) return;
 
     const scaleFactor = 35;
-
     const distanceFromCamera = circle.position.distanceTo(camera.position);
-
     const scale = distanceFromCamera / scaleFactor;
     circle.scale.setScalar(scale);
     arrow.scale.setScalar(scale);
