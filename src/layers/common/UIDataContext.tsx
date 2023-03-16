@@ -17,7 +17,8 @@ interface UIContextData {
     id: string,
     type: LayerType,
     iconUrl?: string,
-    treePath?: number[]
+    treePath?: number[],
+    visible?: boolean,
   ) => LayerData;
   toggleVisibility: (id: string) => void;
   cameraTargetId: string;
@@ -34,15 +35,16 @@ export const UIDataContext = React.createContext<UIContextData>({
     id: string,
     type: LayerType,
     iconUrl?: string,
-    treePath?: number[]
+    treePath?: number[],
+    visible: boolean = true,
   ) => {
-    return { name, id, type, visible: true, treePath };
+    return { name, id, type, visible, treePath };
   },
-  toggleVisibility: (id: string) => {},
+  toggleVisibility: (id: string) => { },
   cameraTargetId: "",
-  setCameraTargetId: (id: string) => {},
-  reset: () => {},
-  toggleEditMode: () => {},
+  setCameraTargetId: (id: string) => { },
+  reset: () => { },
+  toggleEditMode: () => { },
   isEditing: false,
 });
 
@@ -56,11 +58,12 @@ export function useUI(): UIContextData {
     id: string,
     type: LayerType,
     iconUrl?: string,
-    treePath?: number[]
+    treePath?: number[],
+    visible: boolean = true,
   ) => {
-    const visible = JSON.parse(
+    const isVisible = JSON.parse(
       sessionStorage.getItem(`${id}-visible`) || "true"
-    );
+    ) as boolean || visible;
     const layer = { name, id, visible, type, treePath, iconUrl };
     if (layers.some((c) => c.id === id)) {
       return layer;
