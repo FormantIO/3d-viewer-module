@@ -103,7 +103,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
       // Send
-      // if (device) device.sendCommand("command_name", JSON.stringify(waypoints));
+      if (device) {
+        device.sendCommand("send_mission_waypoints", JSON.stringify(waypoints));
+      }
       alert(JSON.stringify(waypoints));
     } else {
       alert("Create Waypoints To Send.");
