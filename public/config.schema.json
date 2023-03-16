@@ -206,12 +206,6 @@
             },
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
-          "pathWidth": {
-            "title": "Path Width",
-            "type": "number",
-            "description": "Input a number between 1 to 10",
-            "$formant.visible.when": ["visualizationType", "=", "Path"]
-          },
           "pointCloudSize": {
             "type": "number",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
