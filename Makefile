@@ -18,7 +18,7 @@ deploy: bump-minor build
 	rm -rf versions/prod
 	mkdir -p versions/prod
 	unzip stage.zip -d versions/prod
-	rm stage.zip
+	rm prod.zip
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
 	git commit -am "v$(shell jq -r .version package.json)"
