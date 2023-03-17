@@ -94,7 +94,7 @@ To update staging branch
 ```
 git checkout refs/tags/stage
 <cherrypick change or modify directly>
-update-stage
+make update-stage
 git checkout master
 make deploy
 ```
