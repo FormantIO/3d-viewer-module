@@ -4,6 +4,7 @@ build:
 bump:
 	npm version patch
 deploy: bump build
+	git add -f dist
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
 	git commit -am "v$(shell jq -r .version package.json)"
