@@ -26,7 +26,7 @@ deploy: bump-minor build
 	git commit -am "v$(shell jq -r .version package.json)"
 	# push to github
 	git push --follow-tag
-cut-stage:
+cut-stage: deploy
 	# checkout new branch stage-<current npm package version> and push to github
 	git checkout -b stage-$(shell jq -r .version package.json)	
 	git push --set-upstream origin stage-$(shell jq -r .version package.json)
