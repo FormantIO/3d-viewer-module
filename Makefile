@@ -33,13 +33,6 @@ cut-stage: deploy
 	git tag -f stage  
 	git push -f origin refs/tags/stage 
 	git checkout master
-cut-prod:
-	# checkout new branch prod-<current npm package version> and push to github
-	git checkout -b prod-$(shell jq -r .version package.json)	
-	git push --set-upstream origin prod-$(shell jq -r .version package.json)
-	git tag -f prod 
-	git push -f origin refs/tags/prod 
-	git checkout master
 update-stage: bump-patch build
 	git add -f dist
 	# tag current commit with version

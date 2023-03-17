@@ -66,10 +66,35 @@ The server will be running on `http://127.0.0.1:5173`
 
 # How to deploy a new version
 
-There's several make commands for bumping version, building, and tagging a new version.
+To cut a new version of dev
 
 ```
+git checkout master
 make deploy
-make deploy-stage
-make deploy-prod
+```
+
+To cut a new version of staging
+
+```
+git checkout master
+make cut-stage
+make deploy
+```
+
+To update staging branch
+
+```
+git checkout refs/tags/stage
+<cherrypick change or modify directly>
+update-stage
+git checkout master
+make deploy
+```
+
+To promote staging to prod
+
+```
+git checkout master
+make promote-stage-to-prod
+make deploy
 ```
