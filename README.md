@@ -69,7 +69,7 @@ The server will be running on `http://127.0.0.1:5173`
 There's several make commands for bumping version, building, and tagging a new version.
 
 ```
-make deploy-prod
+make deploy
 make deploy-stage
-make deploy-dev
+make deploy-prod
 ```

@@ -1,26 +1,46 @@
 build:
 	jq -r .version package.json > public/VERSION
 	npm run build
-bump:
-	npm version patch
-deploy: bump build
+bump-minor:
+	npm version minor
+deploy: bump-minor build
+	git add -f dist
+	# unzip stage.zip into versions/stage
+	wget https://github.com/FormantIO/3d-viewer-module/archive/refs/tags/stage.zip
+	rm -rf versions/stage
+	mkdir -p versions/stage
+	unzip stage.zip -d versions/stage
+	rm stage.zip
+	# unzip into versions/prod
+	wget https://github.com/FormantIO/3d-viewer-module/archive/refs/tags/prod.zip
+	rm -rf versions/prod
+	mkdir -p versions/prod
+	unzip stage.zip -d versions/prod
+	rm stage.zip
+	# tag current commit with version
+	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
+	git commit -am "v$(shell jq -r .version package.json)"
+	# push to github
+	git push --follow-tag
+update-stage: bump-patch build
 	git add -f dist
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
 	git commit -am "v$(shell jq -r .version package.json)"
 	# push to github
 	git push --follow-tag
-deploy-prod: deploy
-	git tag -f -a prod -m "prod"
-	git commit -am "prod v$(shell jq -r .version package.json)"
-	git push --follow-tags
-deploy-stage: deploy
 	git tag -f -a stage -m "stage"
 	git commit -am "stage v$(shell jq -r .version package.json)"
 	git push --follow-tags
-deploy-dev: deploy
-	git tag -f -a dev -m "dev"
-	git commit -am "dev v$(shell jq -r .version package.json)"
+update-prod:  bump-patch build
+	git add -f dist
+	# tag current commit with version
+	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
+	git commit -am "v$(shell jq -r .version package.json)"
+	# push to github
+	git push --follow-tag
+	git tag -f -a stage -m "prod"
+	git commit -am "prod v$(shell jq -r .version package.json)"
 	git push --follow-tags
 run:
 	npm run dev
