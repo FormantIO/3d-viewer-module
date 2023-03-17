@@ -44,14 +44,8 @@ update-stage: bump-patch build
 	git tag -f -a stage -m "stage"
 	git commit -am "stage v$(shell jq -r .version package.json)"
 	git push --follow-tags
-update-prod:  bump-patch build
-	git add -f dist
-	# tag current commit with version
-	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
-	git commit -am "v$(shell jq -r .version package.json)"
-	# push to github
-	git push --follow-tag
-	git tag -f -a stage -m "prod"
+update-prod:  
+	git tag -f -a prod -m "prod"
 	git commit -am "prod v$(shell jq -r .version package.json)"
 	git push --follow-tags
 run:
