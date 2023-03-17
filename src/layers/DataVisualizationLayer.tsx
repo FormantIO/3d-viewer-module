@@ -12,7 +12,7 @@ import {
   IUniverseOdometry,
 } from "@formant/universe-core";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
-import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+import { Box3, BoxGeometry, Euler, Matrix4, Mesh, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";

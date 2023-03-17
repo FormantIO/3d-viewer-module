@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
+import { CameraControls, CameraControlsProps } from '@react-three/drei'
 
 export type SizeProps = {
   box: THREE.Box3
@@ -42,8 +43,8 @@ const isBox3 = (def: any): def is THREE.Box3 => def && (def as THREE.Box3).isBox
 const context = React.createContext<BoundsApi>(null!)
 export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit }: BoundsProps) {
   const ref = React.useRef<THREE.Group>(null!)
-  const { camera, invalidate, size, controls: controlsImpl } = useThree()
-  const controls = controlsImpl as unknown as ControlsProto
+  const { camera, invalidate, size, controls: controlsImpl, scene } = useThree()
+  const controls = controlsImpl as CameraControlsProps
 
   const onFitRef = React.useRef<((data: SizeProps) => void) | undefined>(onFit)
   onFitRef.current = onFit
@@ -67,6 +68,8 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
   const [goal] = React.useState(() => ({ focus: new THREE.Vector3(), camera: new THREE.Vector3(), zoom: 1 }))
 
   const [box] = React.useState(() => new THREE.Box3())
+
+  const [distance, setDistance] = React.useState(10)
 
   const api: BoundsApi = React.useMemo(() => {
     function getSize() {
@@ -112,53 +115,45 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
     return {
       getSize,
-      refresh(object?: THREE.Object3D | THREE.Box3) {
-        if (isBox3(object)) box.copy(object)
-        else {
-          const target = object || ref.current
-          box.expandByObject(target);
-          if (object === undefined) {
-            const targetGroup = target.children[0]; // target is a group containing everything, target.children[0] is the actual target
-            const mapGroup = targetGroup.children[1];
-            const visualizationsGroup = targetGroup.children[2];
-            targetGroup.updateWorldMatrix(true, true);
-            const tempBox = new THREE.Box3();
-            // traverse all children except axis and targetGroup
-            [...mapGroup.children, ...visualizationsGroup.children].forEach((child: any) => {
-              if (child.name !== 'axis') {
-                const childBox = new THREE.Box3();
-                childBox.setFromObject(child);
-                expandBoxByObjectWithPosition(tempBox, child);
-              }
-            });
-            box.copy(tempBox);
+      refresh() {
+        const oldBox = box.clone();
+        const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
+        const mapGroup = targetGroup.children[1];
+        const visualizationsGroup = targetGroup.children[2];
+        mapGroup.updateWorldMatrix(true, true);
+        visualizationsGroup.updateWorldMatrix(true, true);
+        const tempBox = new THREE.Box3();
+        // traverse all children except axis and targetGroup
+        [...mapGroup.children, ...visualizationsGroup.children].forEach((child: THREE.Object3D) => {
+          if (child.name !== 'axis' && child.visible) {
+            const childBox = new THREE.Box3();
+            console.log(child);
+            childBox.setFromObject(child);
+            //expandBoxByObjectWithPosition(tempBox, child);
+            tempBox.union(childBox);
+
           }
-        }
+        });
+        box.copy(tempBox);
         if (box.isEmpty()) {
-          const max = camera.position.length() || 10
-          box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(max, max, max))
+          //const max = camera.position.length() || 10
+          box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1))
         }
-
-        if (controls?.constructor.name === 'OrthographicTrackballControls') {
-          // Put camera on a sphere along which it should move
-          const { distance } = getSize()
-          const direction = camera.position.clone().sub(controls.target).normalize().multiplyScalar(distance)
-          const newPos = controls.target.clone().add(direction)
-          camera.position.copy(newPos)
+        if (!oldBox.equals(box)) {
+          api.clip().fit();
         }
-
         return this
       },
       clip() {
         const { distance } = getSize();
-        if (controls) {
-          controls.maxDistance = distance * 5;
-          controls.update();
-        }
+        setDistance(distance);
+        console.log("distance", distance);
+        controls.maxDistance = distance * 10;
+        controls.minDistance = distance / 100;
+        console.log(controls);
         //camera.near = distance / 1000
         camera.far = distance * 100
         camera.updateProjectionMatrix()
-        if (controls) controls.update()
         invalidate()
         return this
       },
@@ -181,6 +176,22 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         return this
       },
       fit() {
+        if (controls) {
+          console.log("fitting");
+          const boxCenter = box.getCenter(new THREE.Vector3());
+          const { distance } = getSize();
+          const newBox = new THREE.Box3();
+          newBox.copy(box);
+          controls.moveTo?.(boxCenter.x, boxCenter.y, distance, false);
+          controls.setTarget?.(boxCenter.x, boxCenter.y, 0);
+          controls.rotateTo?.(0, -Math.PI);
+          controls.fitToBox?.(newBox, false, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 });
+
+        }
+
+
+
+        return this;
         if (!current.animating) {
           current.camera.copy(new THREE.Vector3(0, 0, 50))
         }
@@ -252,17 +263,48 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     }
   }, [controls])
 
+  const reset = () => {
+    const oldBox = new THREE.Box3()
+    const newBox = new THREE.Box3()
+    oldBox.copy(box);
+    api.refresh();
+    newBox.copy(box);
+    console.log(oldBox, newBox);
+    console.log(controls.getPosition?.(new THREE.Vector3()));
+    console.log(box.getCenter(new THREE.Vector3()));
+    if (!oldBox.equals(newBox)) {
+      console.warn("bounds changed due to reset");
+      api.clip().fit()
+    }
+  }
+
   // Scale pointer on window resize
   const count = React.useRef(0)
   React.useLayoutEffect(() => {
     if (observe || count.current++ === 0) {
-      api.refresh()
-      if (fit) api.fit()
-      if (clip) api.clip()
+      reset();
     }
-  }, [size, clip, fit, observe, camera, controls])
+  }, [size, clip, fit, observe, camera, controls, distance])
+
+  // run refresh when listens to "updatebounds" event
+  React.useEffect(() => {
+    scene.addEventListener("updateBounds", () => {
+      console.log("updateBounds event!!!!!");
+      api.refresh();
+    });
+    return () => {
+      scene.removeEventListener("updateBounds", reset);
+    }
+  }, []);
+
+  // manually refresh after 5 seconds
+  React.useEffect(() => {
+    const timeout = setTimeout(reset, 5000)
+    return () => clearTimeout(timeout)
+  }, [api])
 
   useFrame((state, delta) => {
+    //controls.update?.(5)
     if (current.animating) {
       damp(current.focus, goal.focus, damping, delta)
       damp(current.camera, goal.camera, damping, delta)
@@ -291,9 +333,10 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
   return (
     <>
-      <group ref={ref}>
+      <group ref={ref} onUpdate={() => { console.log(" alskdjaslkdjaskldj") }}>
         <context.Provider value={api}>{children}</context.Provider>
       </group>
+      <box3Helper args={[box]} />
     </>
   )
 }

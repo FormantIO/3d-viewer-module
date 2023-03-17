@@ -10,6 +10,7 @@ import {
 } from "@formant/universe-core";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
+  Box3,
   BufferAttribute,
   BufferGeometry,
   CustomBlending,
@@ -20,8 +21,8 @@ import {
 } from "three";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { Color } from "./utils/Color";
-import { useLoader } from "@react-three/fiber";
 import { useControlsContext } from "./common/ControlsContext";
+import { useLoader, useThree } from "@react-three/fiber";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -44,6 +45,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     if (!pointMatRef.current) return;
     pointMatRef.current.uniforms.pointScale.value = pointSize;
   }, [pointSize]);
+  const [ready, setReady] = useState(false);
+
+  const { scene } = useThree();
 
   useEffect(() => {
     if (!layerData) return;
@@ -134,6 +138,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     setObj(points);
 
     let timer: number = 0;
+    let isReady = false;
 
     if (dataSource) {
       dataSource.streamType = "localization";
@@ -187,6 +192,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             geometry.computeBoundingSphere();
 
+            if (!isReady) {
+              isReady = true;
+              setReady(true);
+              geometry.computeBoundingBox();
+              scene.dispatchEvent({ type: "updateBounds" });
+            }
+
             const numPoints = positions?.length || 0;
             const radius = geometry.boundingSphere
               ? geometry.boundingSphere.radius
@@ -203,6 +215,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             points.matrixAutoUpdate = false;
             points.matrix.copy(transformMatrix(worldToLocal));
+
           }
         }
       );
@@ -215,7 +228,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <primitive object={obj} />
+      {ready && (
+        <primitive object={obj} />
+      )}
     </DataVisualizationLayer>
   );
 };

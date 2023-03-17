@@ -66,13 +66,14 @@ export function Demo() {
               name="Point Cloud"
               decayTime={1}
             />
-            <PathLayer
+            {/* <PathLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",
                 "localization"
               )}
               name="Path"
-            />
+              pathWidth={5}
+            /> */}
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
         </LayerContext.Provider>

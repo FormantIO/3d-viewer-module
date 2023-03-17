@@ -119,6 +119,8 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         texture.needsUpdate = true;
         gridMat.map = texture;
         gridMat.needsUpdate = true;
+        gridMat.opacity = 0.5;
+        mesh.up = new Vector3(0, 0, 1);
 
         mesh.up = new Vector3(0, 0, 1);
 
@@ -136,7 +138,11 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
   useLayoutEffect(() => {
     if (isReady && bounds) {
-      bounds.refresh().fit().clip();
+      // send event to update bounds
+      window.dispatchEvent(new Event("updateBounds"));
+
+
+      //bounds.refresh().fit().clip();
     }
   }, [isReady]);
 

@@ -12,7 +12,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
+import { MOUSE, MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
@@ -44,6 +44,7 @@ export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const [hasCentered, setHasCentered] = React.useState(false);
   const mapControlsRef = React.useRef<any>(null!);
+  const boundsRef = React.useRef<Bounds | null>(null);
   const vr = shouldUseVR;
   const {
     layers,
@@ -229,8 +230,10 @@ export function Universe(props: IUniverseProps) {
       const sceneObj = scene?.getObjectByName(l.id);
       if (sceneObj) {
         sceneObj.visible = l.visible;
+        console.log("im running");
       }
     });
+    //scene?.dispatchEvent({ type: "updateBounds" });
     if (!hasCentered) {
       const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
       if (deviceMarker) {
@@ -241,6 +244,7 @@ export function Universe(props: IUniverseProps) {
       }
     }
   }, [layers, scene]);
+
 
   return (
     <>
@@ -258,10 +262,9 @@ export function Universe(props: IUniverseProps) {
       >
         {vr && <VRButton />}
         <Canvas
-          gl={{ logarithmicDepthBuffer: true }}
           onCreated={(state) => {
             setScene(state.scene);
-            state.gl.toneMapping = NoToneMapping;
+            //state.gl.toneMapping = NoToneMapping;
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
@@ -273,7 +276,7 @@ export function Universe(props: IUniverseProps) {
             <ControlsContext.Provider value={controlsStates}>
               <PerspectiveCamera
                 makeDefault
-                position={[0, 0, 300]}
+                position={[0, 0, 10]}
                 up={[0, 0, 1]}
                 far={5000}
                 near={0.1}
@@ -292,23 +295,27 @@ export function Universe(props: IUniverseProps) {
               <CameraControls
                 makeDefault
                 ref={mapControlsRef}
-                minDistance={0.5}
                 maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
-
+                verticalDragToForward={true}
+                //dollyToCursor={true}
+                infinityDolly={false}
+                minDistance={2}
+                dampingFactor={1}
+                smoothTime={1}
+                mouseButtons={
+                  {
+                    left: 2, // truck
+                    right: 1, // rotate
+                    middle: 2, // truck
+                    wheel: 8 // dolly
+                  }}
               />
 
               <WaitForControls>
-                <fog
-                  attach="fog"
-                  args={[
-                    FormantColors.steel01,
-                    0.5,
-                    mapControlsRef.current?.maxDistance * 5 || 500,
-                  ]}
-                />
-                <Bounds clip observe margin={1.5} damping={6}>
+
+                <Bounds observe margin={1.5} damping={6} ref={boundsRef}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>
