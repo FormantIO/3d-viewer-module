@@ -38,11 +38,7 @@ export type Viewer3DVisualization = {
   markerSizeType?: "dynamic" | "static";
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
-  pointCloudSize?: number;
-  pointCloudShape?: "Circle" | "Rectangle";
   pointCloudDecayTime?: number;
-  pointCloudColor1?: string;
-  pointCloudColor2?: string;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
   transform?: Viewer3DConfiguarationTransform;
 };
