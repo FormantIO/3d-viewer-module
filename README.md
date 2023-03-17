@@ -50,9 +50,13 @@ At a very high level there's 3 important things you need to do:
 
 # Where are versions
 
-Prod https://formantio.github.io/3d-viewer-module/versions/prod/
-Stage https://formantio.github.io/3d-viewer-module/versions/stage/
-Dev https://formantio.github.io/3d-viewer-module/versions/dist/
+Make a table
+
+| Env   | Url                                                          |
+| ----- | ------------------------------------------------------------ |
+| Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  |
+| Stage | https://formantio.github.io/3d-viewer-module/versions/stage/ |
+| Dev   | https://formantio.github.io/3d-viewer-module/versions/dist/  |
 
 # How do I run 3D viewer when i'm developing on it?
 
