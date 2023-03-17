@@ -48,7 +48,8 @@ update-stage: bump-patch build
 	git push
 	git tag -f stage  
 	git push -f origin refs/tags/stage
-update-prod: 
+promote-stage-to-prod: 
+	git checkout refs/tags/stage
 	git tag -f prod  
 	git push -f origin refs/tags/prod
 run:
