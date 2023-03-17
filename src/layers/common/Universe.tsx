@@ -302,8 +302,6 @@ export function Universe(props: IUniverseProps) {
                 //dollyToCursor={true}
                 infinityDolly={false}
                 minDistance={2}
-                dampingFactor={1}
-                smoothTime={1}
                 mouseButtons={
                   {
                     left: 2, // truck

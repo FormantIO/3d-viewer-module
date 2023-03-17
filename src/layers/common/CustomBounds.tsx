@@ -182,74 +182,12 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           const { distance } = getSize();
           const newBox = new THREE.Box3();
           newBox.copy(box);
-          controls.moveTo?.(boxCenter.x, boxCenter.y, distance, false);
-          controls.setTarget?.(boxCenter.x, boxCenter.y, 0);
-          controls.rotateTo?.(0, -Math.PI);
-          controls.fitToBox?.(newBox, false, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 });
-
+          controls.moveTo?.(boxCenter.x, boxCenter.y, distance, true);
+          controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
+          controls.rotateTo?.(0, -Math.PI, true);
+          controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 });
         }
-
-
-
         return this;
-        if (!current.animating) {
-          current.camera.copy(new THREE.Vector3(0, 0, 50))
-        }
-        if (controls) current.focus.copy(controls.target)
-
-
-        const { center, distance } = getSize()
-        const direction = camera.getWorldDirection(new THREE.Vector3()).round(); // direction is the direction the camera is facing
-        goal.camera.copy(center).setZ(Math.max(distance, 15));
-        goal.focus.copy(center).setZ(0);
-
-        if (isOrthographic(camera)) {
-          current.zoom = camera.zoom
-
-          let maxHeight = 0,
-            maxWidth = 0
-          const vertices = [
-            new THREE.Vector3(box.min.x, box.min.y, box.min.z),
-            new THREE.Vector3(box.min.x, box.max.y, box.min.z),
-            new THREE.Vector3(box.min.x, box.min.y, box.max.z),
-            new THREE.Vector3(box.min.x, box.max.y, box.max.z),
-            new THREE.Vector3(box.max.x, box.max.y, box.max.z),
-            new THREE.Vector3(box.max.x, box.max.y, box.min.z),
-            new THREE.Vector3(box.max.x, box.min.y, box.max.z),
-            new THREE.Vector3(box.max.x, box.min.y, box.min.z),
-          ]
-          // Transform the center and each corner to camera space
-          center.applyMatrix4(camera.matrixWorldInverse)
-          for (const v of vertices) {
-            v.applyMatrix4(camera.matrixWorldInverse)
-            maxHeight = Math.max(maxHeight, Math.abs(v.y - center.y))
-            maxWidth = Math.max(maxWidth, Math.abs(v.x - center.x))
-          }
-          maxHeight *= 2
-          maxWidth *= 2
-          const zoomForHeight = (camera.top - camera.bottom) / maxHeight
-          const zoomForWidth = (camera.right - camera.left) / maxWidth
-          goal.zoom = Math.min(zoomForHeight, zoomForWidth) / margin
-          if (!damping) {
-            camera.zoom = goal.zoom
-            camera.updateProjectionMatrix()
-          }
-        }
-
-        if (damping) {
-          current.animating = true
-        } else {
-          camera.position.copy(goal.camera)
-          camera.lookAt(goal.focus)
-          if (controls) {
-            controls.target.copy(goal.focus)
-            controls.update()
-          }
-        }
-        if (onFitRef.current) onFitRef.current(this.getSize())
-        invalidate()
-
-        return this
       },
     }
   }, [box, camera, controls, margin, damping, invalidate])
