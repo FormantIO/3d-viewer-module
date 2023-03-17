@@ -20,8 +20,6 @@ deploy: bump-minor build
 	mkdir -p versions/prod
 	unzip -j prod.zip '3d-viewer-module-prod/dist/*' -d versions/prod
 	rm prod.zip
-	# delete all files in prod except dist folder
-	cd versions/prod && find . -type f ! -name 'dist' -delete
 	git add versions/prod
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
