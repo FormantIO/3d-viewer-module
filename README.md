@@ -50,8 +50,6 @@ At a very high level there's 3 important things you need to do:
 
 # Where are versions
 
-Make a table
-
 | Env   | Url                                                          |
 | ----- | ------------------------------------------------------------ |
 | Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  |
