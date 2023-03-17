@@ -89,7 +89,6 @@ const ZoomControls = (props: IZoomControls) => {
           </button>
         </ControlGroup>
       )}
-
     </Controls>
   );
 };

@@ -15,8 +15,9 @@ import { UIDataContext, useUI } from "./UIDataContext";
 import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
-import { ControlsContext } from "./ControlsContext";
+import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
+import { PointSizeSlider } from "../../components/PcdSizeSlider";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -54,6 +55,8 @@ export function Universe(props: IUniverseProps) {
     isEditing,
     toggleEditMode,
   } = useUI();
+
+  const controlsStates = useControlsContextStates();
 
   useEffect(() => {
     reset();
@@ -267,7 +270,7 @@ export function Universe(props: IUniverseProps) {
         >
           <XR>
             <color attach="background" args={[FormantColors.steel01]} />
-            <ControlsContext.Provider value={{ mapControlsRef }}>
+            <ControlsContext.Provider value={controlsStates}>
               <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 300]}
@@ -293,7 +296,7 @@ export function Universe(props: IUniverseProps) {
                     mapControlsRef.current?.maxDistance * 5 || 500,
                   ]}
                 />
-                <Bounds fit clip observe margin={1.5} damping={6}>
+                <Bounds clip observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>
@@ -330,6 +333,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
+        <PointSizeSlider controlsStates={controlsStates} />
       </UIDataContext.Provider>
     </>
   );
