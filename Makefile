@@ -13,6 +13,8 @@ deploy: bump build
 deploy-stage: deploy
 	# adding stage tag
 	git tag -f -a stage -m "stage"
+	git commit -am "stage v$(shell jq -r .version package.json)"
+	git push --follow-tags
 run:
 	npm run dev
 run-vr:
