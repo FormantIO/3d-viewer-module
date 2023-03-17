@@ -52,6 +52,7 @@ promote-stage-to-prod:
 	git checkout refs/tags/stage
 	git tag -f prod  
 	git push -f origin refs/tags/prod
+	git checkout master
 run:
 	npm run dev
 run-vr:
