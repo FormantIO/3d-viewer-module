@@ -39,6 +39,15 @@ type ControlsProto = {
 const isOrthographic = (def: THREE.Camera): def is THREE.OrthographicCamera =>
   def && (def as THREE.OrthographicCamera).isOrthographicCamera
 const isBox3 = (def: any): def is THREE.Box3 => def && (def as THREE.Box3).isBox3
+const compareBox3 = (box1: THREE.Box3, box2: THREE.Box3): boolean => {
+  const tolerance = 0.1
+  const xDiff = Math.abs(box1.min.x - box2.min.x);
+  const yDiff = Math.abs(box1.min.y - box2.min.y);
+  const widthDiff = Math.abs(box1.max.x - box1.min.x - (box2.max.x - box2.min.x));
+  const heightDiff = Math.abs(box1.max.y - box1.min.y - (box2.max.y - box2.min.y));
+
+  return xDiff <= tolerance && yDiff <= tolerance && widthDiff <= tolerance && heightDiff <= tolerance;
+};
 
 const context = React.createContext<BoundsApi>(null!)
 export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit }: BoundsProps) {
@@ -139,7 +148,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           //const max = camera.position.length() || 10
           box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1))
         }
-        if (!oldBox.equals(box)) {
+        if (!compareBox3(box, oldBox)) {
           api.clip().fit();
         }
         return this
@@ -210,7 +219,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     console.log(oldBox, newBox);
     console.log(controls.getPosition?.(new THREE.Vector3()));
     console.log(box.getCenter(new THREE.Vector3()));
-    if (!oldBox.equals(newBox)) {
+    if (!compareBox3(oldBox, newBox)) {
       console.warn("bounds changed due to reset");
       api.clip().fit()
     }
