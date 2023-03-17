@@ -11,15 +11,17 @@ deploy: bump-minor build
 	wget https://github.com/FormantIO/3d-viewer-module/archive/refs/tags/stage.zip
 	rm -rf versions/stage
 	mkdir -p versions/stage
-	unzip stage.zip -d versions/stage
+	unzip -j stage.zip '3d-viewer-module-stage/dist/*' -d versions/stage
 	rm stage.zip
 	git add versions/stage
 	# unzip into versions/prod
 	wget https://github.com/FormantIO/3d-viewer-module/archive/refs/tags/prod.zip
 	rm -rf versions/prod
 	mkdir -p versions/prod
-	unzip prod.zip -d versions/prod
+	unzip -j prod.zip '3d-viewer-module-prod/dist/*' -d versions/prod
 	rm prod.zip
+	# delete all files in prod except dist folder
+	cd versions/prod && find . -type f ! -name 'dist' -delete
 	git add versions/prod
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
