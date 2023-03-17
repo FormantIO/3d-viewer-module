@@ -93,35 +93,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       return { box, size, center, distance }
     }
 
-    function isDescendantOfAxis(object: THREE.Object3D) {
-      let parent = object.parent;
-      while (parent !== null) {
-        if (parent.name === "axis") {
-          return true;
-        }
-        parent = parent.parent;
-      }
-      return false;
-    }
-
-    function expandBoxByObjectWithPosition(box: THREE.Box3, object: THREE.Group) {
-      const position = new THREE.Vector3();
-      object.updateMatrixWorld(); // Update the world matrices of the group and its children
-      object.traverse(child => {
-        if (child instanceof THREE.Mesh) {
-          position.setFromMatrixPosition(child.matrixWorld);
-          box.expandByPoint(position);
-          if (child.geometry) {
-            child.geometry.computeBoundingBox();
-            if (child.geometry.boundingBox === null) return;
-            const geometryBoundingBox = child.geometry.boundingBox.clone();
-            geometryBoundingBox.applyMatrix4(child.matrixWorld);
-            box.union(geometryBoundingBox);
-          }
-        }
-      });
-    }
-
     return {
       getSize,
       refresh() {
@@ -138,15 +109,13 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
             const childBox = new THREE.Box3();
             console.log(child);
             childBox.setFromObject(child);
-            //expandBoxByObjectWithPosition(tempBox, child);
             tempBox.union(childBox);
 
           }
         });
         box.copy(tempBox);
         if (box.isEmpty()) {
-          //const max = camera.position.length() || 10
-          box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 1))
+          box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 0))
         }
         if (!compareBox3(box, oldBox)) {
           api.clip().fit();
@@ -225,6 +194,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     }
   }
 
+
   // Scale pointer on window resize
   const count = React.useRef(0)
   React.useLayoutEffect(() => {
@@ -239,6 +209,9 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       console.log("updateBounds event!!!!!");
       api.refresh();
     });
+    scene.addEventListener("recenter", () => {
+      api.fit();
+    })
     return () => {
       scene.removeEventListener("updateBounds", reset);
     }
@@ -249,34 +222,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     const timeout = setTimeout(reset, 5000)
     return () => clearTimeout(timeout)
   }, [api])
-
-  useFrame((state, delta) => {
-    //controls.update?.(5)
-    if (current.animating) {
-      damp(current.focus, goal.focus, damping, delta)
-      damp(current.camera, goal.camera, damping, delta)
-      current.zoom = THREE.MathUtils.damp(current.zoom, goal.zoom, damping, delta)
-      camera.position.copy(current.camera)
-
-      if (isOrthographic(camera)) {
-        camera.zoom = current.zoom
-        camera.updateProjectionMatrix()
-      }
-      if (!controls) {
-        camera.lookAt(current.focus)
-      } else {
-        controls.target.copy(current.focus)
-        controls.update()
-      }
-
-      invalidate()
-      if (isOrthographic(camera) && !(Math.abs(current.zoom - goal.zoom) < eps)) return
-      if (!isOrthographic(camera) && !equals(current.camera, goal.camera)) return
-      if (controls && !equals(current.focus, goal.focus)) return
-      current.animating = false
-    }
-  })
-
 
   return (
     <>
