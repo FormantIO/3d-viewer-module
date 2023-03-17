@@ -30,11 +30,17 @@ cut-stage:
 	# checkout new branch stage-<current npm package version> and push to github
 	git checkout -b stage-$(shell jq -r .version package.json)	
 	git push --set-upstream origin stage-$(shell jq -r .version package.json)
+	git tag -f -a stage -m "stage"
+	git commit -am "stage v$(shell jq -r .version package.json)"
+	git push --follow-tags
 	git checkout master
 cut-prod:
 	# checkout new branch prod-<current npm package version> and push to github
 	git checkout -b prod-$(shell jq -r .version package.json)	
 	git push --set-upstream origin prod-$(shell jq -r .version package.json)
+	git tag -f -a prod -m "prod"
+	git commit -am "prod v$(shell jq -r .version package.json)"
+	git push --follow-tags
 	git checkout master
 update-stage: bump-patch build
 	git add -f dist
