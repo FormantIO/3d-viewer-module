@@ -17,7 +17,7 @@ deploy: bump-minor build
 	wget https://github.com/FormantIO/3d-viewer-module/archive/refs/tags/prod.zip
 	rm -rf versions/prod
 	mkdir -p versions/prod
-	unzip stage.zip -d versions/prod
+	unzip prod.zip -d versions/prod
 	rm prod.zip
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
