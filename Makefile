@@ -5,7 +5,7 @@ bump:
 	npm version patch
 deploy: bump build
 	# tag current commit with version
-	git tag -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
+	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
 	git commit -am "v$(shell jq -r .version package.json)"
 	# push to github
 	git push --follow-tags
