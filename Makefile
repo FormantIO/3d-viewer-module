@@ -3,6 +3,8 @@ build:
 	npm run build
 bump-minor:
 	npm version minor
+bump-patch:
+	npm version patch
 deploy: bump-minor build
 	git add -f dist
 	# unzip stage.zip into versions/stage
