@@ -30,32 +30,27 @@ cut-stage: deploy
 	# checkout new branch stage-<current npm package version> and push to github
 	git checkout -b stage-$(shell jq -r .version package.json)	
 	git push --set-upstream origin stage-$(shell jq -r .version package.json)
-	git tag -f -a stage -m "stage"
-	git commit -am "stage v$(shell jq -r .version package.json)"
-	git push --follow-tags
+	git tag -f stage  
+	git push -f origin refs/tags/stage 
 	git checkout master
 cut-prod:
 	# checkout new branch prod-<current npm package version> and push to github
 	git checkout -b prod-$(shell jq -r .version package.json)	
 	git push --set-upstream origin prod-$(shell jq -r .version package.json)
-	git tag -f -a prod -m "prod"
-	git commit -am "prod v$(shell jq -r .version package.json)"
-	git push --follow-tags
+	git tag -f prod 
+	git push -f origin refs/tags/prod 
 	git checkout master
 update-stage: bump-patch build
 	git add -f dist
 	# tag current commit with version
 	git tag -f -a v$(shell jq -r .version package.json) -m "v$(shell jq -r .version package.json)"
 	git commit -am "v$(shell jq -r .version package.json)"
-	# push to github
-	git push --follow-tag
-	git tag -f -a stage -m "stage"
-	git commit -am "stage v$(shell jq -r .version package.json)"
-	git push --follow-tags
+	git push
+	git tag -f stage  
+	git push -f origin refs/tags/stage
 update-prod: 
-	git tag -f -a prod -m "prod"
-	git commit -am "prod v$(shell jq -r .version package.json)"
-	git push --follow-tags
+	git tag -f prod  
+	git push -f origin refs/tags/prod
 run:
 	npm run dev
 run-vr:
