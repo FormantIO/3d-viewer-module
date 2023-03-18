@@ -48,12 +48,18 @@ const compareBox3 = (box1: THREE.Box3, box2: THREE.Box3): boolean => {
 
   return xDiff <= tolerance && yDiff <= tolerance && widthDiff <= tolerance && heightDiff <= tolerance;
 };
+const TAU = Math.PI * 2;
+const getAbsoluteAngle = (targetAngle: number, sourceAngle: number): number => {
+  console.log('targetAngle', targetAngle)
+  console.log('sourceAngle', sourceAngle)
+  const angle = targetAngle - sourceAngle
+  return THREE.MathUtils.euclideanModulo(angle + Math.PI, TAU) - Math.PI;
+}
 
 const context = React.createContext<BoundsApi>(null!)
 export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit }: BoundsProps) {
   const ref = React.useRef<THREE.Group>(null!)
-  const { camera, invalidate, size, controls: controlsImpl, scene } = useThree()
-  const controls = controlsImpl as CameraControlsProps
+  const { camera, invalidate, size, scene, get } = useThree()
 
   const onFitRef = React.useRef<((data: SizeProps) => void) | undefined>(onFit)
   onFitRef.current = onFit
@@ -124,6 +130,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       },
       clip() {
         const { distance } = getSize();
+        const controls = get().controls as CameraControlsProps;
         setDistance(distance);
         console.log("distance", distance);
         controls.maxDistance = distance * 10;
@@ -154,6 +161,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         return this
       },
       fit() {
+        const controls = get().controls as CameraControlsProps;
         if (controls) {
           console.log("fitting");
           const boxCenter = box.getCenter(new THREE.Vector3());
@@ -162,22 +170,22 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           newBox.copy(box);
           controls.moveTo?.(boxCenter.x, boxCenter.y, distance, true);
           controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
-          controls.rotateTo?.(0, -Math.PI, true);
-          controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 });
+          //controls.rotateAzimuthTo?.(getAbsoluteAngle(0, controls.azimuthAngle), true);
+          //controls.rotate?()
+          controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle), -getAbsoluteAngle(-Math.PI, controls.polarAngle), true);
+          console.log(get().controls);
+          console.log(controls);
+          //controls.rotateTo?.(0, -Math.PI, true);
+          // controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
+          //   console.log("fit done");
+          // });
+
+
         }
         return this;
       },
     }
-  }, [box, camera, controls, margin, damping, invalidate])
-
-  React.useLayoutEffect(() => {
-    if (controls) {
-      // Try to prevent drag hijacking
-      const callback = () => (current.animating = false)
-      controls.addEventListener('start', callback)
-      return () => controls.removeEventListener('start', callback)
-    }
-  }, [controls])
+  }, [box, camera, margin, damping, invalidate])
 
   const reset = () => {
     const oldBox = new THREE.Box3()
@@ -186,7 +194,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     api.refresh();
     newBox.copy(box);
     console.log(oldBox, newBox);
-    console.log(controls.getPosition?.(new THREE.Vector3()));
+    //console.log(controls.getPosition?.(new THREE.Vector3()));
     console.log(box.getCenter(new THREE.Vector3()));
     if (!compareBox3(oldBox, newBox)) {
       console.warn("bounds changed due to reset");
@@ -201,7 +209,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     if (observe || count.current++ === 0) {
       reset();
     }
-  }, [size, clip, fit, observe, camera, controls, distance])
+  }, [size, clip, fit, observe, camera, distance])
 
   // run refresh when listens to "updatebounds" event
   React.useEffect(() => {

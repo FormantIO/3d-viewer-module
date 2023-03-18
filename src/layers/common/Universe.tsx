@@ -34,11 +34,12 @@ let autoCameraMoving = false;
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
   const { controls } = useThree();
-  if (controls) {
+  if (controls && controls.active) {
     return <>{children}</>;
   }
   return null;
 };
+
 
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
@@ -66,53 +67,53 @@ export function Universe(props: IUniverseProps) {
     scene?.dispatchEvent({ type: "lookAtTargetId", targetId: targetId });
   }
 
-
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
     if (deviceMarker) lookAtTargetId(deviceMarker.id);
   }, [layers, lookAtTargetId]);
 
   const recenter = () => {
+    console.log(mapControlsRef);
     scene?.dispatchEvent({ type: "recenter" });
   }
 
   const zoomCamera = (delta: number) => {
     const m = mapControlsRef.current;
     if (m) {
-      m.dollyTo(m.distance + delta, true)
+      const distance = m.distance + delta;
+      m.dolly(delta, true);
     }
   };
+
+  let intervalId: NodeJS.Timer;
   const zoomIn = () => {
-    zooming = true;
-    const zoom = () => {
-      if (!zooming || !scene) {
-        // eslint-disable-next-line no-use-before-define
-        clearInterval(interval);
-        return;
+    let zoomSpeed = 1;
+    intervalId = setInterval(() => {
+      zoomCamera(zoomSpeed);
+      if (mapControlsRef.current?.distance >= mapControlsRef.current?.maxDistance) {
+        clearInterval(intervalId);
       }
-      zoomCamera(1);
-    };
-    zoom();
-    const interval = setInterval(zoom, 20);
+    }, 20);
   };
 
   const zoomOut = () => {
-    zooming = true;
-    const zoom = () => {
-      if (!zooming || !scene) {
-        // eslint-disable-next-line no-use-before-define
-        clearInterval(interval);
-        return;
+    let zoomSpeed = 1;
+    let speedIncrease = 0.0;
+    intervalId = setInterval(() => {
+      zoomCamera(-zoomSpeed);
+
+      if (mapControlsRef.current?.distance <= 1) {
+        clearInterval(intervalId);
       }
-      zoomCamera(-1);
-    };
-    zoom();
-    const interval = setInterval(zoom, 20);
+    }, 20);
   };
 
   const stopZoom = () => {
     zooming = false;
+    clearInterval(intervalId);
   };
+
+
 
   useEffect(() => {
     layers.forEach((l) => {
@@ -133,7 +134,6 @@ export function Universe(props: IUniverseProps) {
       }
     }
   }, [layers, scene]);
-
 
   return (
     <>
