@@ -12,7 +12,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { MOUSE, MathUtils, NoToneMapping, Scene, Vector3 } from "three";
+import { Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
@@ -33,8 +33,8 @@ let zooming = false;
 let autoCameraMoving = false;
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
-  const { controls } = useThree();
-  if (controls && controls.active) {
+  const { controls, } = useThree();
+  if (controls) {
     return <>{children}</>;
   }
   return null;
@@ -69,11 +69,14 @@ export function Universe(props: IUniverseProps) {
 
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
-    if (deviceMarker) lookAtTargetId(deviceMarker.id);
+    if (deviceMarker) {
+      lookAtTargetId(deviceMarker.id);
+    } else {
+      recenter();
+    }
   }, [layers, lookAtTargetId]);
 
   const recenter = () => {
-    console.log(mapControlsRef);
     scene?.dispatchEvent({ type: "recenter" });
   }
 
@@ -120,7 +123,6 @@ export function Universe(props: IUniverseProps) {
       const sceneObj = scene?.getObjectByName(l.id);
       if (sceneObj) {
         sceneObj.visible = l.visible;
-        console.log("im running");
       }
     });
     //scene?.dispatchEvent({ type: "updateBounds" });
@@ -153,12 +155,12 @@ export function Universe(props: IUniverseProps) {
         <Canvas
           onCreated={(state) => {
             setScene(state.scene);
-            //state.gl.toneMapping = NoToneMapping;
           }}
           onMouseDownCapture={() => {
             autoCameraMoving = false;
           }}
           dpr={[1, 2]}
+          flat
         >
           <XR>
             <color attach="background" args={[FormantColors.steel01]} />
@@ -170,17 +172,6 @@ export function Universe(props: IUniverseProps) {
                 far={5000}
                 near={0.1}
               />
-              {/* <MapControls
-                makeDefault
-                enableDamping={false}
-                ref={mapControlsRef}
-                minDistance={2}
-                maxDistance={2000}
-                maxPolarAngle={Math.PI / 2 - 0.1}
-                attach={"controls"}
-              //up={[0, 0, 1]}
-
-              /> */}
               <CameraControls
                 makeDefault
                 ref={mapControlsRef}
@@ -201,7 +192,6 @@ export function Universe(props: IUniverseProps) {
               />
 
               <WaitForControls>
-
                 <Bounds observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>

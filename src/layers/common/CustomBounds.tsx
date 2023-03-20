@@ -103,6 +103,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       getSize,
       refresh() {
         const oldBox = box.clone();
+
         const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
         const mapGroup = targetGroup.children[1];
         const visualizationsGroup = targetGroup.children[2];
@@ -170,15 +171,12 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           newBox.copy(box);
           controls.moveTo?.(boxCenter.x, boxCenter.y, distance, true);
           controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
-          //controls.rotateAzimuthTo?.(getAbsoluteAngle(0, controls.azimuthAngle), true);
-          //controls.rotate?()
-          controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle), -getAbsoluteAngle(-Math.PI, controls.polarAngle), true);
-          console.log(get().controls);
-          console.log(controls);
-          //controls.rotateTo?.(0, -Math.PI, true);
-          // controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
-          //   console.log("fit done");
-          // });
+          controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || Math.PI), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
+
+          controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
+            console.log("fit done");
+            controls.saveState?.();
+          });
 
 
         }
