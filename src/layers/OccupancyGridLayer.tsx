@@ -140,9 +140,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     if (isReady && bounds) {
       // send event to update bounds
       window.dispatchEvent(new Event("updateBounds"));
-
-
-      //bounds.refresh().fit().clip();
     }
   }, [isReady]);
 

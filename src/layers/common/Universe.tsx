@@ -22,7 +22,6 @@ import { PointSizeSlider } from "../../components/PcdSizeSlider";
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
-const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 20);
 
 type IUniverseProps = {
   children?: React.ReactNode;
@@ -30,7 +29,6 @@ type IUniverseProps = {
 };
 
 let zooming = false;
-let autoCameraMoving = false;
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
   const { controls, } = useThree();
@@ -43,7 +41,6 @@ const WaitForControls = ({ children }: { children: ReactNode }) => {
 
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
-  const [hasCentered, setHasCentered] = React.useState(false);
   const mapControlsRef = React.useRef<CameraControls>(null!);
   const vr = shouldUseVR;
   const {
@@ -114,8 +111,6 @@ export function Universe(props: IUniverseProps) {
     clearInterval(intervalId);
   };
 
-
-
   useEffect(() => {
     layers.forEach((l) => {
       const sceneObj = scene?.getObjectByName(l.id);
@@ -123,16 +118,6 @@ export function Universe(props: IUniverseProps) {
         sceneObj.visible = l.visible;
       }
     });
-    //scene?.dispatchEvent({ type: "updateBounds" });
-    if (!hasCentered) {
-      const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
-      if (deviceMarker) {
-        setTimeout(() => {
-          //lookAtTargetId(deviceMarker.id);
-        }, 4000);
-        setHasCentered(true);
-      }
-    }
   }, [layers, scene]);
 
   return (
@@ -153,9 +138,6 @@ export function Universe(props: IUniverseProps) {
         <Canvas
           onCreated={(state) => {
             setScene(state.scene);
-          }}
-          onMouseDownCapture={() => {
-            autoCameraMoving = false;
           }}
           dpr={[1, 2]}
           flat
