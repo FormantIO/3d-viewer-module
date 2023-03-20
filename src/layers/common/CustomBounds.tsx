@@ -234,7 +234,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       <group ref={ref}>
         <context.Provider value={api}>{children}</context.Provider>
       </group>
-      <box3Helper args={[box]} />
     </>
   )
 }
