@@ -83,29 +83,27 @@ export function Universe(props: IUniverseProps) {
   const zoomCamera = (delta: number) => {
     const m = mapControlsRef.current;
     if (m) {
-      const distance = m.distance + delta;
       m.dolly(delta, true);
     }
   };
 
   let intervalId: NodeJS.Timer;
   const zoomIn = () => {
-    let zoomSpeed = 1;
+    let zoomSpeed = 0.5;
     intervalId = setInterval(() => {
       zoomCamera(zoomSpeed);
-      if (mapControlsRef.current?.distance >= mapControlsRef.current?.maxDistance) {
+      if (mapControlsRef.current?.distance <= 1) {
         clearInterval(intervalId);
       }
     }, 20);
   };
 
   const zoomOut = () => {
-    let zoomSpeed = 1;
-    let speedIncrease = 0.0;
+    let zoomSpeed = 0.5;
     intervalId = setInterval(() => {
       zoomCamera(-zoomSpeed);
 
-      if (mapControlsRef.current?.distance <= 1) {
+      if (mapControlsRef.current?.distance >= mapControlsRef.current?.maxDistance - 1) {
         clearInterval(intervalId);
       }
     }, 20);

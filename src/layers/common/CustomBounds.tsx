@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as THREE from 'three'
-import { useFrame, useThree } from '@react-three/fiber'
-import { CameraControls, CameraControlsProps } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
+import { CameraControlsProps } from '@react-three/drei'
 
 export type SizeProps = {
   box: THREE.Box3
@@ -28,14 +28,6 @@ export type BoundsProps = JSX.IntrinsicElements['group'] & {
   onFit?: (data: SizeProps) => void
 }
 
-type ControlsProto = {
-  update(): void
-  target: THREE.Vector3
-  maxDistance: number
-  addEventListener: (event: string, callback: (event: any) => void) => void
-  removeEventListener: (event: string, callback: (event: any) => void) => void
-}
-
 const isOrthographic = (def: THREE.Camera): def is THREE.OrthographicCamera =>
   def && (def as THREE.OrthographicCamera).isOrthographicCamera
 const isBox3 = (def: any): def is THREE.Box3 => def && (def as THREE.Box3).isBox3
@@ -50,8 +42,6 @@ const compareBox3 = (box1: THREE.Box3, box2: THREE.Box3): boolean => {
 };
 const TAU = Math.PI * 2;
 const getAbsoluteAngle = (targetAngle: number, sourceAngle: number): number => {
-  console.log('targetAngle', targetAngle)
-  console.log('sourceAngle', sourceAngle)
   const angle = targetAngle - sourceAngle
   return THREE.MathUtils.euclideanModulo(angle + Math.PI, TAU) - Math.PI;
 }
@@ -114,7 +104,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         [...mapGroup.children, ...visualizationsGroup.children].forEach((child: THREE.Object3D) => {
           if (child.name !== 'axis' && child.visible) {
             const childBox = new THREE.Box3();
-            console.log(child);
             childBox.setFromObject(child);
             tempBox.union(childBox);
 
@@ -133,11 +122,8 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         const { distance } = getSize();
         const controls = get().controls as CameraControlsProps;
         setDistance(distance);
-        console.log("distance", distance);
         controls.maxDistance = distance * 10;
         controls.minDistance = 0.5;
-        console.log(controls);
-        //camera.near = distance / 1000
         camera.far = distance * 100
         camera.updateProjectionMatrix()
         invalidate()
@@ -164,7 +150,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       fit(boxToFit?: THREE.Box3) {
         const controls = get().controls as CameraControlsProps;
         if (controls) {
-          console.log("fitting");
           const newBox = new THREE.Box3();
           newBox.copy(box);
           if (boxToFit && !boxToFit.isEmpty()) {
@@ -178,7 +163,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || 0), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
 
           controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
-            console.log("fit done");
             // only save the state of scene boxes
             if (!boxToFit) {
               controls.saveState?.();
@@ -196,17 +180,12 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     oldBox.copy(box);
     api.refresh();
     newBox.copy(box);
-    console.log(oldBox, newBox);
-    //console.log(controls.getPosition?.(new THREE.Vector3()));
-    console.log(box.getCenter(new THREE.Vector3()));
     if (!compareBox3(oldBox, newBox)) {
-      console.warn("bounds changed due to reset");
       api.clip().fit()
     }
   }
 
   const fitToBox = (elementId: string) => {
-    console.log("focusing on", elementId);
     const group = ref.current;
     const target = group.getObjectByName(elementId);
     const boundingBox = new THREE.Box3();
@@ -215,7 +194,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       api.fit(boundingBox);
     }
   }
-
 
   // Scale pointer on window resize
   const count = React.useRef(0)
@@ -228,7 +206,6 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
   // run refresh when listens to "updatebounds" event
   React.useEffect(() => {
     scene.addEventListener("updateBounds", () => {
-      console.log("updateBounds event!!!!!");
       api.refresh();
     });
     scene.addEventListener("recenter", () => {
@@ -254,7 +231,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
   return (
     <>
-      <group ref={ref} onUpdate={() => { console.log(" alskdjaslkdjaskldj") }}>
+      <group ref={ref}>
         <context.Provider value={api}>{children}</context.Provider>
       </group>
       <box3Helper args={[box]} />
