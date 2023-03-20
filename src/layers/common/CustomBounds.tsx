@@ -199,7 +199,11 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
   const count = React.useRef(0)
   React.useLayoutEffect(() => {
     if (observe || count.current++ === 0) {
-      reset();
+      // schedule for next render to sync everything, sorry for the hack
+      invalidate()
+      setTimeout(() => {
+        reset();
+      }, 250);
     }
   }, [size, clip, fit, observe, camera, distance])
 
@@ -215,7 +219,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       fitToBox(e.message)
     })
     return () => {
-      scene.removeEventListener("updateBounds", reset);
+      scene.removeEventListener("updateBounds", api.refresh());
       scene.removeEventListener("recenter", () => { api.fit() });
       scene.removeEventListener("lookAtTargetId", (e) => {
         fitToBox(e.message);
