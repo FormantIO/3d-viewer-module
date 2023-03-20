@@ -135,7 +135,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         setDistance(distance);
         console.log("distance", distance);
         controls.maxDistance = distance * 10;
-        controls.minDistance = distance / 100;
+        controls.minDistance = 0.5;
         console.log(controls);
         //camera.near = distance / 1000
         camera.far = distance * 100
