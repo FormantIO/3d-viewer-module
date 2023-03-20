@@ -60,14 +60,14 @@ export function Universe(props: IUniverseProps) {
     reset();
   }, [props.configHash]);
 
-  const lookAtTargetId = (targetId: string) => {
-    scene?.dispatchEvent({ type: "lookAtTargetId", message: targetId });
+  const lookAtTargetId = (targetId: string, isDevice = false) => {
+    scene?.dispatchEvent({ type: "lookAtTargetId", message: targetId, isDevice });
   }
 
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
     if (deviceMarker) {
-      lookAtTargetId(deviceMarker.id);
+      lookAtTargetId(deviceMarker.id, true);
     } else {
       recenter();
     }

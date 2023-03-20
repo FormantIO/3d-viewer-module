@@ -124,7 +124,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         setDistance(distance);
         controls.maxDistance = distance * 10;
         controls.minDistance = 0.5;
-        camera.far = distance * 100
+        camera.far = Math.max(distance * 100, 100);
         camera.updateProjectionMatrix()
         invalidate()
         return this
@@ -162,7 +162,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
           controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || 0), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
 
-          controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
+          controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.3, paddingBottom: 0.3, paddingLeft: 0.3, paddingRight: 0.3 }).then(() => {
             // only save the state of scene boxes
             if (!boxToFit) {
               controls.saveState?.();
@@ -185,12 +185,15 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     }
   }
 
-  const fitToBox = (elementId: string) => {
+  const fitToBox = (elementId: string, isDevice = false) => {
     const group = ref.current;
     const target = group.getObjectByName(elementId);
     const boundingBox = new THREE.Box3();
     if (target) {
       boundingBox.expandByObject(target);
+      if (isDevice) {
+        boundingBox.setFromCenterAndSize(boundingBox.getCenter(new THREE.Vector3()), new THREE.Vector3(1.5, 1.5, 0));
+      }
       api.fit(boundingBox);
     }
   }
@@ -216,7 +219,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       api.fit();
     })
     scene.addEventListener("lookAtTargetId", (e) => {
-      fitToBox(e.message)
+      fitToBox(e.message, e.isDevice)
     })
     return () => {
       scene.removeEventListener("updateBounds", api.refresh());
