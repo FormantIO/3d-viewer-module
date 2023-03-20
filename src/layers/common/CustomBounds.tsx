@@ -171,7 +171,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           newBox.copy(box);
           controls.moveTo?.(boxCenter.x, boxCenter.y, distance, true);
           controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
-          controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || Math.PI), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
+          controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || 0), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
 
           controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
             console.log("fit done");
