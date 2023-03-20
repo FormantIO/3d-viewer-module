@@ -14,7 +14,7 @@ export type BoundsApi = {
   getSize: () => SizeProps
   refresh(object?: THREE.Object3D | THREE.Box3): any
   clip(): any
-  fit(): any
+  fit(boxToFit?: THREE.Box3 | undefined): any;
   to: ({ position, target }: { position: [number, number, number]; target?: [number, number, number] }) => any
 }
 
@@ -161,24 +161,29 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         }
         return this
       },
-      fit() {
+      fit(boxToFit?: THREE.Box3) {
         const controls = get().controls as CameraControlsProps;
         if (controls) {
           console.log("fitting");
-          const boxCenter = box.getCenter(new THREE.Vector3());
-          const { distance } = getSize();
           const newBox = new THREE.Box3();
           newBox.copy(box);
+          if (boxToFit && !boxToFit.isEmpty()) {
+            newBox.copy(boxToFit);
+          }
+          const boxCenter = newBox.getCenter(new THREE.Vector3());
+          const { distance } = getSize();
+
           controls.moveTo?.(boxCenter.x, boxCenter.y, distance, true);
           controls.setTarget?.(boxCenter.x, boxCenter.y, 0, true);
           controls.rotate?.(getAbsoluteAngle(0, controls.azimuthAngle || 0), -getAbsoluteAngle(-Math.PI, controls.polarAngle || 0), true);
 
           controls.fitToBox?.(newBox, true, { cover: false, paddingTop: 0.5, paddingBottom: 0.5, paddingLeft: 0.5, paddingRight: 0.5 }).then(() => {
             console.log("fit done");
-            controls.saveState?.();
+            // only save the state of scene boxes
+            if (!boxToFit) {
+              controls.saveState?.();
+            }
           });
-
-
         }
         return this;
       },
@@ -200,6 +205,17 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     }
   }
 
+  const fitToBox = (elementId: string) => {
+    console.log("focusing on", elementId);
+    const group = ref.current;
+    const target = group.getObjectByName(elementId);
+    const boundingBox = new THREE.Box3();
+    if (target) {
+      boundingBox.expandByObject(target);
+      api.fit(boundingBox);
+    }
+  }
+
 
   // Scale pointer on window resize
   const count = React.useRef(0)
@@ -218,8 +234,15 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
     scene.addEventListener("recenter", () => {
       api.fit();
     })
+    scene.addEventListener("lookAtTargetId", (e) => {
+      fitToBox(e.message)
+    })
     return () => {
       scene.removeEventListener("updateBounds", reset);
+      scene.removeEventListener("recenter", () => { api.fit() });
+      scene.removeEventListener("lookAtTargetId", (e) => {
+        fitToBox(e.message);
+      })
     }
   }, []);
 

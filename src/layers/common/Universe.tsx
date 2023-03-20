@@ -64,7 +64,7 @@ export function Universe(props: IUniverseProps) {
   }, [props.configHash]);
 
   const lookAtTargetId = (targetId: string) => {
-    scene?.dispatchEvent({ type: "lookAtTargetId", targetId: targetId });
+    scene?.dispatchEvent({ type: "lookAtTargetId", message: targetId });
   }
 
   const centerOnDevice = React.useCallback(() => {
@@ -224,7 +224,7 @@ export function Universe(props: IUniverseProps) {
         <ZoomControls
           zoomIn={zoomIn}
           zoomOut={zoomOut}
-          recenter={recenter}
+          recenter={centerOnDevice}
           stopZoom={stopZoom}
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
