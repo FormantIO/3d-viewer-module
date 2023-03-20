@@ -330,7 +330,7 @@ const Sidebar = ({
                   e.stopPropagation();
                   onToggleLayerClicked(c);
                 }}
-                onDoubleClick={(e: Event) => {
+                onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                 }}
                 layerVisible={c.visible}
