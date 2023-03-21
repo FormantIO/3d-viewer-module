@@ -34,7 +34,7 @@ export function buildScene(
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transform
       ? parsePositioning(layer.transform)
-      : PositioningBuilder.fixed(0, 0, 0 - (i + 1) * 0.005);
+      : PositioningBuilder.fixed(0, 0, 0);
     if (layer.mapType === "Ground Plane") {
       return (
         <GroundLayer

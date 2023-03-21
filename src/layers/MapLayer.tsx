@@ -130,7 +130,9 @@ export function MapLayer(props: IMapLayer) {
         textures[index] = texture;
         setMapTextures([...textures]);
       }));
-      bounds.refresh().clip().fit();
+      if (bounds) {
+        bounds.refresh().clip().fit();
+      }
 
     })();
   }, [currentLocation]);

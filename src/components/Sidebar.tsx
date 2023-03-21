@@ -103,7 +103,7 @@ const LayerRow = styled.div<ILayerRow>`
   p {
     transition: all 0.05s ease;
     color: ${(props: ILayerRow) =>
-      props.layerVisible ? FormantColors.silver : "#657197"};
+    props.layerVisible ? FormantColors.silver : "#657197"};
   }
 
   &:hover {
@@ -329,6 +329,9 @@ const Sidebar = ({
                 onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation();
                   onToggleLayerClicked(c);
+                }}
+                onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                  e.stopPropagation();
                 }}
                 layerVisible={c.visible}
               >

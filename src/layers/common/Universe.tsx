@@ -1,5 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { MapControls, PerspectiveCamera } from "@react-three/drei";
+import { CameraControls, PerspectiveCamera } from "@react-three/drei";
 import React, { ReactNode, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
@@ -12,7 +12,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { MathUtils, NoToneMapping, Scene, Vector3 } from "three";
+import { Scene, Vector3 } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
@@ -22,7 +22,6 @@ import { PointSizeSlider } from "../../components/PcdSizeSlider";
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
-const DEFAULT_CAMERA_POSITION = new Vector3(0, 0, 20);
 
 type IUniverseProps = {
   children?: React.ReactNode;
@@ -30,20 +29,19 @@ type IUniverseProps = {
 };
 
 let zooming = false;
-let autoCameraMoving = false;
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
-  const { controls } = useThree();
+  const { controls, } = useThree();
   if (controls) {
     return <>{children}</>;
   }
   return null;
 };
 
+
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
-  const [hasCentered, setHasCentered] = React.useState(false);
-  const mapControlsRef = React.useRef<any>(null!);
+  const mapControlsRef = React.useRef<CameraControls>(null!);
   const vr = shouldUseVR;
   const {
     layers,
@@ -62,166 +60,55 @@ export function Universe(props: IUniverseProps) {
     reset();
   }, [props.configHash]);
 
-  const lookAtTargetId = React.useCallback(
-    (targetId: string) => {
-      const m = mapControlsRef.current;
-      if (m && scene) {
-        const target = scene.getObjectByName(targetId);
-        if (target) {
-          autoCameraMoving = true;
-          const targetPosition = target.getWorldPosition(new Vector3());
-          const currentTarget = m.target.clone();
-          const currentPosition = m.object.position.clone();
-
-          const desiredTarget = new Vector3(
-            targetPosition.x,
-            targetPosition.y,
-            targetPosition.z
-          );
-          const desiredPosition = new Vector3(
-            targetPosition.x,
-            targetPosition.y,
-            DEFAULT_CAMERA_POSITION.z
-          );
-
-          let lerpTarget = currentTarget.clone();
-          let lerpPosition = currentPosition.clone();
-
-          const animationFrame = () => {
-            lerpTarget = currentTarget.lerp(desiredTarget, 0.07);
-            lerpPosition = currentPosition.lerp(desiredPosition, 0.07);
-            m.target.copy(lerpTarget);
-            m.object.position.copy(lerpPosition);
-            m.update();
-            if (!autoCameraMoving) {
-              return;
-            }
-
-            if (
-              m.target.distanceToSquared(desiredTarget) > 0.1 ||
-              m.object.position.distanceToSquared(desiredPosition) > 0.1
-            ) {
-              requestAnimationFrame(animationFrame);
-            } else {
-              autoCameraMoving = false;
-            }
-          };
-          requestAnimationFrame(animationFrame);
-        }
-      }
-    },
-    [scene, mapControlsRef]
-  );
+  const lookAtTargetId = (targetId: string, isDevice = false) => {
+    scene?.dispatchEvent({ type: "lookAtTargetId", message: targetId, isDevice });
+  }
 
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
-    if (deviceMarker) lookAtTargetId(deviceMarker.id);
+    if (deviceMarker) {
+      lookAtTargetId(deviceMarker.id, true);
+    } else {
+      recenter();
+    }
   }, [layers, lookAtTargetId]);
 
-  const recenter = React.useCallback(() => {
-    const m = mapControlsRef.current;
-
-    if (m) {
-      autoCameraMoving = true;
-      const target = m.target;
-      const position = m.object.position;
-      const defaultTarget = new Vector3(0, 0, 0);
-      const defaultPosition = new Vector3(
-        DEFAULT_CAMERA_POSITION.x,
-        DEFAULT_CAMERA_POSITION.y,
-        300
-      );
-      let lerpTarget = target.clone();
-      let lerpPosition = position.clone();
-      let lerpRotation = m.getAzimuthalAngle();
-      m.object.useEuler = true;
-      m.object.rotation.set(0, 0, 0);
-      m.object.z = 0;
-
-      const animationFrame = () => {
-        lerpTarget = target.lerp(defaultTarget, 0.05);
-        lerpPosition = position.lerp(defaultPosition, 0.05);
-        lerpRotation = MathUtils.lerp(lerpRotation, 0, 0.05);
-
-        target.copy(lerpTarget);
-        position.copy(lerpPosition);
-        m.setAzimuthalAngle(lerpRotation);
-        m.update();
-        if (!autoCameraMoving) {
-          return;
-        }
-
-        if (
-          Math.abs(target.distanceTo(defaultTarget)) > 5 ||
-          Math.abs(position.distanceTo(defaultPosition)) > 5 ||
-          m.getAzimuthalAngle() > 0.1
-        ) {
-          requestAnimationFrame(animationFrame);
-        } else {
-          autoCameraMoving = false;
-        }
-      };
-      requestAnimationFrame(animationFrame);
-    }
-  }, [mapControlsRef]);
+  const recenter = () => {
+    scene?.dispatchEvent({ type: "recenter" });
+  }
 
   const zoomCamera = (delta: number) => {
     const m = mapControlsRef.current;
     if (m) {
-      const distance = m.target.distanceTo(m.object.position);
-      const maxDistance = m.maxDistance;
-      const minDistance = 3;
-      const zoomSpeed = 0.05;
-      let dampening = 1;
-
-      // Apply dampening when close to target or max distance
-      if (distance < minDistance || distance > maxDistance - minDistance) {
-        dampening = 1 - (zoomSpeed / distance) * 3;
-      }
-
-      // Compute new distance and clamp it to the [minDistance, maxDistance] range
-      let newDistance = distance - delta * zoomSpeed * distance;
-      newDistance = Math.max(minDistance, Math.min(maxDistance, newDistance));
-
-      // Set new camera position
-      const direction = m.target.clone().sub(m.object.position).normalize();
-      const newPosition = m.target
-        .clone()
-        .sub(direction.multiplyScalar(newDistance));
-      m.object.position.copy(newPosition);
-      m.update();
+      m.dolly(delta, true);
     }
   };
+
+  let intervalId: NodeJS.Timer;
   const zoomIn = () => {
-    zooming = true;
-    const zoom = () => {
-      if (!zooming || !scene) {
-        // eslint-disable-next-line no-use-before-define
-        clearInterval(interval);
-        return;
+    let zoomSpeed = 0.5;
+    intervalId = setInterval(() => {
+      zoomCamera(zoomSpeed);
+      if (mapControlsRef.current?.distance <= 1) {
+        clearInterval(intervalId);
       }
-      zoomCamera(1);
-    };
-    zoom();
-    const interval = setInterval(zoom, 20);
+    }, 20);
   };
 
   const zoomOut = () => {
-    zooming = true;
-    const zoom = () => {
-      if (!zooming || !scene) {
-        // eslint-disable-next-line no-use-before-define
-        clearInterval(interval);
-        return;
+    let zoomSpeed = 0.5;
+    intervalId = setInterval(() => {
+      zoomCamera(-zoomSpeed);
+
+      if (mapControlsRef.current?.distance >= mapControlsRef.current?.maxDistance - 1) {
+        clearInterval(intervalId);
       }
-      zoomCamera(-1);
-    };
-    zoom();
-    const interval = setInterval(zoom, 20);
+    }, 20);
   };
 
   const stopZoom = () => {
     zooming = false;
+    clearInterval(intervalId);
   };
 
   useEffect(() => {
@@ -231,15 +118,6 @@ export function Universe(props: IUniverseProps) {
         sceneObj.visible = l.visible;
       }
     });
-    if (!hasCentered) {
-      const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
-      if (deviceMarker) {
-        setTimeout(() => {
-          //lookAtTargetId(deviceMarker.id);
-        }, 4000);
-        setHasCentered(true);
-      }
-    }
   }, [layers, scene]);
 
   return (
@@ -258,45 +136,43 @@ export function Universe(props: IUniverseProps) {
       >
         {vr && <VRButton />}
         <Canvas
-          gl={{ logarithmicDepthBuffer: true }}
           onCreated={(state) => {
             setScene(state.scene);
-            state.gl.toneMapping = NoToneMapping;
-          }}
-          onMouseDownCapture={() => {
-            autoCameraMoving = false;
           }}
           dpr={[1, 2]}
+          flat
         >
           <XR>
             <color attach="background" args={[FormantColors.steel01]} />
             <ControlsContext.Provider value={controlsStates}>
               <PerspectiveCamera
                 makeDefault
-                position={[0, 0, 300]}
+                position={[0, 0, 10]}
                 up={[0, 0, 1]}
                 far={5000}
                 near={0.1}
               />
-              <MapControls
+              <CameraControls
                 makeDefault
-                enableDamping={false}
                 ref={mapControlsRef}
-                minDistance={2}
                 maxDistance={2000}
                 maxPolarAngle={Math.PI / 2 - 0.1}
                 attach={"controls"}
+                verticalDragToForward={true}
+                //dollyToCursor={true}
+                infinityDolly={false}
+                minDistance={2}
+                mouseButtons={
+                  {
+                    left: 2, // truck
+                    right: 1, // rotate
+                    middle: 2, // truck
+                    wheel: 8 // dolly
+                  }}
               />
+
               <WaitForControls>
-                <fog
-                  attach="fog"
-                  args={[
-                    FormantColors.steel01,
-                    0.5,
-                    mapControlsRef.current?.maxDistance * 5 || 500,
-                  ]}
-                />
-                <Bounds clip observe margin={1.5} damping={6}>
+                <Bounds observe margin={1.5} damping={6}>
                   <group>{props.children}</group>
                 </Bounds>
               </WaitForControls>

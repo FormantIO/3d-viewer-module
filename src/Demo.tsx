@@ -30,14 +30,14 @@ export function Demo() {
           positioning={PositioningBuilder.fixed(0, 0.1, 0)}
           name="Ground"
         />
-        <MapLayer
+        {/* <MapLayer
           positioning={PositioningBuilder.fixed(0, 0, -1)}
           name="Map"
           latitude={37.422}
           longitude={-122.074}
           mapType="Satellite"
           size={1000}
-        />
+        /> */}
         <LayerContext.Provider
           value={{
             deviceId: "ekobot_device",
@@ -66,13 +66,14 @@ export function Demo() {
               name="Point Cloud"
               decayTime={1}
             />
-            <PathLayer
+            {/* <PathLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",
                 "localization"
               )}
               name="Path"
-            />
+              pathWidth={5}
+            /> */}
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </DataVisualizationLayer>
         </LayerContext.Provider>
