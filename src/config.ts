@@ -1,5 +1,3 @@
-import { Authentication, App } from "@formant/data-sdk";
-import { TelemetryUniverseData } from "@formant/universe-connector";
 import { StreamType, UniverseDataSource } from "@formant/universe-core";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";

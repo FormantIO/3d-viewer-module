@@ -44,9 +44,14 @@
                 "type": "boolean",
                 "default": false,
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              },
+              "telemetryStreamType": {
+                "type": "string",
+                "enum": ["location", "json"],
+                "default": "location"
               }
             },
-            "$formant.visible.when": ["visualizationType", "=", "Terrain"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude (optional)",
