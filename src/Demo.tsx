@@ -58,7 +58,7 @@ export function Demo() {
               visible={false}
             />
           </EmptyLayer>
-          <EmptyLayer name="Visualizations" treePath={[1]}>
+          <EmptyLayer name="Device Layers" treePath={[1]}>
             {experimentalMode && (
               <RouteMakerLayer size={200} name="Route Builder" />
             )}

@@ -7,6 +7,7 @@ import useWindowSize from "../common/useWindowSize";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
 import getUuidByString from "uuid-by-string";
+import { Fleet } from "@formant/data-sdk";
 
 interface ITreeArea {
   visible: boolean;
@@ -63,15 +64,14 @@ interface ILayerRow {
   hasChildren: boolean;
   isLastChild: boolean;
   isChild: boolean;
-  innerWidth: number;
   layerVisible: boolean;
   isSelectedMap: boolean;
 }
 
 const LayerRow = styled.div<ILayerRow>`
-  cursor: pointer;
+  cursor: ${(props: ILayerRow) => (props.hasChildren ? "default" : "pointer")};
   margin-bottom: ${(props: ILayerRow) =>
-    (props.isChild && props.isLastChild) ? "8px" : "-6px"};
+    (props.isChild && props.isLastChild) ? "8px" : "-3px"};
   height: 30px;
   padding: 8px;
   display: flex;
@@ -110,7 +110,8 @@ const LayerRow = styled.div<ILayerRow>`
 
   & svg {
     ${(props: ILayerRow) =>
-    props.isSelectedMap ? "width: 18px; height: auto" : ""}
+    props.isSelectedMap ? "width: 18px; height: auto" : ""};
+    cursor: pointer;
   }
   &:hover {
     & svg {
@@ -167,6 +168,7 @@ const Sidebar = ({
     {}
   );
   const [width, height] = useWindowSize();
+  const [deviceName, setDeviceName] = React.useState<string>("Current device");
 
   const onToggleSidebarClicked = () => {
     setVisible(!visible);
@@ -200,6 +202,15 @@ const Sidebar = ({
     }
     lookAtTargetId(layer.id);
   };
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const currentDeviceId = query.get("device");
+    if (!currentDeviceId) return;
+    Fleet.getDevice(currentDeviceId).then((device) => {
+      setDeviceName(device.name);
+    });
+  }, []);
 
   useEffect(() => {
     const _sortedLayers = layers.sort((a, b) => {
@@ -320,6 +331,15 @@ const Sidebar = ({
     </VisibilityIcon>;
   };
 
+  const deviceLayersVisible = sortedLayers.some(
+    (l) => l.treePath && l.treePath[0] === 1 && l.visible
+  );
+
+  const onToggleDeviceLayers = () => {
+    const deviceLayers = getLayerByTreePath([1]);
+    if (!deviceLayers) return;
+    toggleVisibility(deviceLayers.id);
+  };
 
   return (
     <>
@@ -332,6 +352,44 @@ const Sidebar = ({
         innerWidth={width}
       >
         <SidebarContent>
+          <LayerRow
+            hasChildren={true}
+            isChild={false}
+            isLastChild={false}
+            isSelectedMap={false}
+            layerVisible={true}
+          >
+            <LayerTitle>
+              <Typography variant="body1" sx={typographyStyle}>
+                Device
+              </Typography>
+            </LayerTitle>
+
+          </LayerRow>
+          <LayerRow
+            hasChildren={false}
+            isChild={true}
+            isLastChild={true}
+            isSelectedMap={false}
+            layerVisible={true}>
+            <LayerTitle>
+              <Typography variant="body1" sx={typographyStyle}>
+                {deviceName}
+              </Typography>
+            </LayerTitle>
+            <VisibilityIcon
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+                onToggleDeviceLayers();
+              }}
+              onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+              }}
+              layerVisible={deviceLayersVisible}
+            >
+              {deviceLayersVisible ? <EyeIcon /> : <EyeCloseIcon />}
+            </VisibilityIcon>
+          </LayerRow>
           {sortedLayers.map((c) => {
             return (
               <LayerRow
@@ -341,7 +399,6 @@ const Sidebar = ({
                 isLastChild={isLastChild(c)}
                 onClick={() => onLayerClicked(c)}
                 onDoubleClick={() => onLayerDoubleClicked(c)}
-                innerWidth={width}
                 layerVisible={c.visible}
                 isSelectedMap={isLayerMap(c) && c.visible}
               >

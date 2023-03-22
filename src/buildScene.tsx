@@ -174,7 +174,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer name={"Visualizations"} treePath={[1]}>
+      <EmptyLayer name={"Device Layers"} treePath={[1]}>
         {deviceLayers}
       </EmptyLayer>
     </LayerContext.Provider>

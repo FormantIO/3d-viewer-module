@@ -1,7 +1,7 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
-import { Authentication, App as FormantApp } from "@formant/data-sdk";
+import { Authentication, Fleet, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
