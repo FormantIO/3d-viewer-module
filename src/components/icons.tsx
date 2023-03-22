@@ -6,8 +6,8 @@ interface IIcon {
 
 export function LayerIcon({ disabled }: IIcon) {
     return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9.00001 10.9267L4.35287 7.05273L9.00001 3.17878L13.6471 7.05273L9.00001 10.9267Z" stroke={disabled ? "#657197" : "#BAC3E2"} strokeWidth="2" />
-        <path fillRule="evenodd" clipRule="evenodd" d="M2.71179 11.4992L8.35968 16.2074L9 16.7411L9.64031 16.2074L15.2882 11.4992L13.7265 10.1973L9 14.1374L4.27352 10.1973L2.71179 11.4992Z" fill={disabled ? "#657197" : "#BAC3E2"} />
+        <path d="M9.00001 10.9267L4.35287 7.05273L9.00001 3.17878L13.6471 7.05273L9.00001 10.9267Z" stroke={disabled ? "#657197" : "#FFF"} strokeWidth="2" />
+        <path fillRule="evenodd" clipRule="evenodd" d="M2.71179 11.4992L8.35968 16.2074L9 16.7411L9.64031 16.2074L15.2882 11.4992L13.7265 10.1973L9 14.1374L4.27352 10.1973L2.71179 11.4992Z" fill={disabled ? "#657197" : "#FFF"} />
     </svg>
 }
 
@@ -56,6 +56,13 @@ export function CubeIcon({ disabled }: IIcon) {
 export function MapIcon({ disabled }: IIcon) {
     return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fillRule="evenodd" clipRule="evenodd" d="M14.7837 3.91547L21.29 6.52841V18.5193L14.7947 16.7683L8.96916 19.072L2.72583 16.7168V4.49317L8.95982 6.47238L14.7837 3.91547ZM14.2487 6.33463L9.76711 8.30221V16.6058L14.2487 14.8336V6.33463ZM15.391 6.31463V14.8577L19.29 15.9088V7.88046L15.391 6.31463ZM4.72583 7.22652L8.62476 8.46438V16.8045L4.72583 15.3337V7.22652Z" fill={disabled ? "#657197" : "#BAC3E2"} />
+    </svg>
+
+}
+
+export function CheckIcon() {
+    return <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M13.5392 2.02248L4.48528 11.3639L0.162109 6.90344L1.23921 5.85948L4.48528 9.2086L12.4621 0.978516L13.5392 2.02248Z" fill="white" />
     </svg>
 
 }

@@ -2,7 +2,7 @@ import { Icon, Typography } from "@formant/ui-sdk";
 import React, { useEffect } from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
-import { CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
+import { CheckIcon, CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
 import useWindowSize from "../common/useWindowSize";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
@@ -14,53 +14,34 @@ interface ITreeArea {
   layerCount?: number;
 }
 
-const SidebarContainer = styled.div<ITreeArea>`
-  border-radius: 4px;
-  position: absolute;
-  z-index: 1;
-  left: 14px;
-  top: 16px;
-  display: grid;
-  max-height: 100%;
-  transition: all 0.2s ease;
-  background-color: #2d3855;
-  width: ${(props: ITreeArea) => (props.visible ? "184px" : "32px")};
-  overflow: hidden;
-  &:hover {
-    width: 184px;
-  }
 
-  ${(props: ITreeArea) =>
-    props.innerWidth &&
-    props.innerWidth > 452 &&
-    `
-    width: 384px;
-    &:hover {
-      width: 384px;
-    }
-  `}
+const SidebarContent = styled.div`
+  margin-top: 40px;
+  width: 100%;
 
-  & * {
-    user-select: none;
-  }
-`;
+`
 
 interface IToggleButton {
   innerWidth: number;
 }
 
 const ToggleButton = styled.div<IToggleButton>`
-  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 4px 7px;
-  height: "32px";
+  justify-content: center;
+  padding: 4px 6px;
 
-  & svg {
-    color: white;
-  }
+  width: 32px;
+  height: 32px;
+
+  background: #657197;
+  border-radius: 100px;
+  z-index: 2;
+  cursor: pointer;
 `;
 
 interface ILayersWrapper {
@@ -69,14 +50,13 @@ interface ILayersWrapper {
   layerCount: number;
 }
 
-const LayersWrapper = styled.div<ILayersWrapper>`
-  overflow-y: hidden;
-  transition: height 0.3s ease-in-out;
-  //transition-delay: 0.1s;
-  height: ${(props: ILayersWrapper) => (props.visible ? "auto" : "0px")};
-  border-top: ${(props: ILayersWrapper) =>
-    props.visible ? "1px solid #3B4668" : "none"};
-  overflow: hidden;
+const SidebarContainer = styled.div<ILayersWrapper>`
+  overflow-y: scroll;
+  // make it a sliding panel from the left when visible
+  width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
+  min-width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
+  padding: ${(props: ILayersWrapper) => (props.visible ? "10px" : "0px")};
+  background-color: #2D3855;
 `;
 
 interface ILayerRow {
@@ -85,48 +65,70 @@ interface ILayerRow {
   isChild: boolean;
   innerWidth: number;
   layerVisible: boolean;
+  isSelectedMap: boolean;
 }
 
 const LayerRow = styled.div<ILayerRow>`
   cursor: pointer;
-  border-bottom: ${(props: ILayerRow) =>
-    (!props.isChild || props.isLastChild) &&
-    (props.hasChildren ? "none" : "1px solid #3B4668")};
-  height: "32px";
-  padding: 4px 8px;
+  margin-bottom: ${(props: ILayerRow) =>
+    (props.isChild && props.isLastChild) ? "8px" : "-6px"};
+  height: 30px;
+  padding: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: ${(props: ILayerRow) => (props.isChild ? "26px" : "0px")};
+  border-radius: 2px;
+  background-color: ${(props: ILayerRow) =>
+    props.isSelectedMap ? "#3B4668" : "transparent"
+  };
+  background-origin: padding-box;
 
   & svg,
-  p {
-    transition: all 0.05s ease;
-    color: ${(props: ILayerRow) =>
-    props.layerVisible ? FormantColors.silver : "#657197"};
-  }
+  p,span {
+  transition: all 0.05s ease;
+  /* color: ${(props: ILayerRow) =>
+    props.layerVisible ? FormantColors.silver : "#657197"}; */
+  color: ${(props: ILayerRow) =>
+    props.hasChildren || props.isSelectedMap ? "#FFFFFF" : "#BAC3E2"
+  };
+  font-weight: ${(props: ILayerRow) =>
+    props.hasChildren ? "700" : "400"
+  };
+  letter-spacing: ${(props: ILayerRow) =>
+    props.hasChildren ? "1.5px" : "0.6px"
+  };
+  line-height: ${(props: ILayerRow) =>
+    props.hasChildren ? "20px" : "18px"
+  };
+  font-size: ${(props: ILayerRow) =>
+    props.hasChildren ? "10px" : "13px"
+  };
+  text-transform: ${(props: ILayerRow) =>
+    props.hasChildren ? "uppercase" : "none"
+  };
+}
 
+  & svg {
+    ${(props: ILayerRow) =>
+    props.isSelectedMap ? "width: 18px; height: auto" : ""}
+  }
   &:hover {
     & svg {
-      opacity: 1;
-    }
+    opacity: 1;
   }
-
-  &:last-child {
-    border-bottom: none;
-  }
+}
 `;
 
 const LayerTitle = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  overflow: hidden;
+display: flex;
+gap: 8px;
+align-items: center;
+overflow: hidden;
 
   & svg {
-    width: 18px;
-    height: 18px;
-  }
+  width: 18px;
+  height: 18px;
+}
 `;
 
 interface IVisibilityIcon {
@@ -135,9 +137,9 @@ interface IVisibilityIcon {
 
 const VisibilityIcon = styled.div<IVisibilityIcon>`
   & svg {
-    transition: all 0.1s ease;
-    opacity: ${(props: IVisibilityIcon) => (props.layerVisible ? 0 : 1)};
-  }
+  transition: all 0.1s ease;
+  opacity: ${(props: IVisibilityIcon) => (props.layerVisible ? 0 : 1)};
+}
 `;
 
 const typographyStyle = {
@@ -170,7 +172,18 @@ const Sidebar = ({
     setVisible(!visible);
   };
 
+  const isLayerMap = (layer: LayerData) => {
+    return layer.treePath && layer.treePath[0] === 0 && layer.treePath.length > 1 && layer.type !== LayerType.AXIS || false;
+  }
+
   const onLayerClicked = (layer: LayerData) => {
+    if (isLayerMap(layer)) {
+      onToggleLayerClicked(layer);
+    }
+    return;
+  }
+
+  const onLayerDoubleClicked = (layer: LayerData) => {
     if (layer.type === LayerType.CONTAINER && hasChildren(layer)) {
       const markerChild = layers.find(
         (l) =>
@@ -288,60 +301,62 @@ const Sidebar = ({
     });
   };
 
-  return (
-    <SidebarContainer
-      visible={visible}
-      innerWidth={width}
-      key={getUuidByString(JSON.stringify(sortedLayers))}
+  const renderIcons = (layer: LayerData) => {
+    // if its a map, show checkmark
+    if (isLayerMap(layer)) {
+      return layer.visible ? <CheckIcon /> : <></>;
+    }
+    return <VisibilityIcon
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        onToggleLayerClicked(layer);
+      }}
+      onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+      }}
+      layerVisible={layer.visible}
     >
+      {layer.visible ? <EyeIcon /> : <EyeCloseIcon />}
+    </VisibilityIcon>;
+  };
+
+
+  return (
+    <>
       <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
-        <LayerTitle>
-          <LayerIcon />
-          <Typography variant="body1" sx={typographyStyle}>
-            Layers
-          </Typography>
-        </LayerTitle>
-        <Icon name={visible ? "chevron-up" : "chevron-down"} />
+        <LayerIcon />
       </ToggleButton>
-      <LayersWrapper
+      <SidebarContainer
         visible={visible}
         layerCount={sortedLayers.length}
         innerWidth={width}
       >
-        {sortedLayers.map((c) => {
-          return (
-            <LayerRow
-              key={c.id}
-              hasChildren={hasChildren(c)}
-              isChild={isChild(c)}
-              isLastChild={isLastChild(c)}
-              onDoubleClick={() => onLayerClicked(c)}
-              innerWidth={width}
-              layerVisible={c.visible}
-            >
-              <LayerTitle>
-                {getLayerIcon(c)}
-                <Typography variant="body1" sx={typographyStyle}>
-                  {c.name}
-                </Typography>
-              </LayerTitle>
-              <VisibilityIcon
-                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                  e.stopPropagation();
-                  onToggleLayerClicked(c);
-                }}
-                onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                  e.stopPropagation();
-                }}
+        <SidebarContent>
+          {sortedLayers.map((c) => {
+            return (
+              <LayerRow
+                key={c.id}
+                hasChildren={hasChildren(c)}
+                isChild={isChild(c)}
+                isLastChild={isLastChild(c)}
+                onClick={() => onLayerClicked(c)}
+                onDoubleClick={() => onLayerDoubleClicked(c)}
+                innerWidth={width}
                 layerVisible={c.visible}
+                isSelectedMap={isLayerMap(c) && c.visible}
               >
-                {c.visible ? <EyeIcon /> : <EyeCloseIcon />}
-              </VisibilityIcon>
-            </LayerRow>
-          );
-        })}
-      </LayersWrapper>
-    </SidebarContainer>
+                <LayerTitle>
+                  <Typography variant="body1" sx={typographyStyle}>
+                    {c.name}
+                  </Typography>
+                </LayerTitle>
+                {renderIcons(c)}
+              </LayerRow>
+            );
+          })}
+        </SidebarContent>
+      </SidebarContainer>
+    </>
   );
 };
 
