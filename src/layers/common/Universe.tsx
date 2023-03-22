@@ -225,7 +225,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-        {/*<PointSizeSlider controlsStates={controlsStates} />*/}
+        <PointSizeSlider controlsStates={controlsStates} />
       </UIDataContext.Provider>
     </>
   );
