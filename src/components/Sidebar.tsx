@@ -9,21 +9,14 @@ import { LayerType } from "../layers/common/LayerTypes";
 import getUuidByString from "uuid-by-string";
 import { Fleet } from "@formant/data-sdk";
 
-interface ITreeArea {
-  visible: boolean;
-  innerWidth?: number;
-  layerCount?: number;
-}
-
 
 const SidebarContent = styled.div`
   margin-top: 40px;
   width: 100%;
-
 `
 
 interface IToggleButton {
-  innerWidth: number;
+  sidebarVisible: boolean;
 }
 
 const ToggleButton = styled.div<IToggleButton>`
@@ -38,8 +31,8 @@ const ToggleButton = styled.div<IToggleButton>`
 
   width: 32px;
   height: 32px;
-
-  background: #657197;
+  background: ${(props: IToggleButton) =>
+    props.sidebarVisible ? "#657197" : "#1C1E2D"};
   border-radius: 100px;
   z-index: 2;
   cursor: pointer;
@@ -47,8 +40,6 @@ const ToggleButton = styled.div<IToggleButton>`
 
 interface ILayersWrapper {
   visible: boolean;
-  innerWidth: number;
-  layerCount: number;
 }
 
 const SidebarContainer = styled.div<ILayersWrapper>`
@@ -58,6 +49,7 @@ const SidebarContainer = styled.div<ILayersWrapper>`
   min-width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
   padding: ${(props: ILayersWrapper) => (props.visible ? "10px" : "0px")};
   background-color: #2D3855;
+  transition: all 0.2s ease;
 `;
 
 interface ILayerRow {
@@ -167,7 +159,6 @@ const Sidebar = ({
   const [layerMap, setLayerMap] = React.useState<{ [key: string]: LayerData }>(
     {}
   );
-  const [width, height] = useWindowSize();
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
 
   const onToggleSidebarClicked = () => {
@@ -259,14 +250,6 @@ const Sidebar = ({
     return false;
   };
 
-  const getLayerIcon = (layer: LayerData) => {
-    if (layer.iconUrl) {
-      return <img width="18" height="18" src={layer.iconUrl} />;
-    } else {
-      return <LayerIcon disabled={!layer.visible} />;
-    }
-  };
-
   // get layer by tree path
   const getLayerByTreePath = (treePath: number[]) => {
     return sortedLayers.find((l) => {
@@ -343,13 +326,11 @@ const Sidebar = ({
 
   return (
     <>
-      <ToggleButton onClick={onToggleSidebarClicked} innerWidth={width}>
-        <LayerIcon />
+      <ToggleButton onClick={onToggleSidebarClicked} sidebarVisible={visible}>
+        <LayerIcon active={visible} />
       </ToggleButton>
       <SidebarContainer
         visible={visible}
-        layerCount={sortedLayers.length}
-        innerWidth={width}
       >
         <SidebarContent>
           <LayerRow
