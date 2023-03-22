@@ -17,7 +17,7 @@
           "mapType": {
             "title": "Terrain type",
             "type": "string",
-            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
+            "enum": ["Ground Plane", "GPS Map"]
           },
           "gpsMapType": {
             "title": "World map type",
@@ -167,7 +167,7 @@
           },
           "visualizationType": {
             "type": "string",
-            "enum": ["Position Indicator", "Geometry", "Point Cloud", "Path"]
+            "enum": ["Position Indicator", "Geometry"]
           },
           "positionIndicatorVisualType": {
             "type": "string",
