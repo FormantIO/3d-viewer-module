@@ -35,7 +35,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   const layerData = useContext(LayerContext);
   const {
     state: { pointSize },
+    updateState
   } = useControlsContext();
+
 
   const circleMap = useLoader(TextureLoader, "./point-circle.png");
   const [obj, setObj] = useState<Points>(new Points());
@@ -52,6 +54,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
+    updateState({ isPointSizeSliderVisible: true });
 
     const color1 = defined(Color.fromString("#729fda"));
     const color2 = defined(Color.fromString("#F89973"));
