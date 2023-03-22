@@ -31,13 +31,12 @@ type IUniverseProps = {
 let zooming = false;
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
-  const { controls, } = useThree();
+  const { controls } = useThree();
   if (controls) {
     return <>{children}</>;
   }
   return null;
 };
-
 
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
@@ -61,8 +60,12 @@ export function Universe(props: IUniverseProps) {
   }, [props.configHash]);
 
   const lookAtTargetId = (targetId: string, isDevice = false) => {
-    scene?.dispatchEvent({ type: "lookAtTargetId", message: targetId, isDevice });
-  }
+    scene?.dispatchEvent({
+      type: "lookAtTargetId",
+      message: targetId,
+      isDevice,
+    });
+  };
 
   const centerOnDevice = React.useCallback(() => {
     const deviceMarker = layers.find((l) => l.type === LayerType.TRACKABLE);
@@ -75,7 +78,7 @@ export function Universe(props: IUniverseProps) {
 
   const recenter = () => {
     scene?.dispatchEvent({ type: "recenter" });
-  }
+  };
 
   const zoomCamera = (delta: number) => {
     const m = mapControlsRef.current;
@@ -100,7 +103,10 @@ export function Universe(props: IUniverseProps) {
     intervalId = setInterval(() => {
       zoomCamera(-zoomSpeed);
 
-      if (mapControlsRef.current?.distance >= mapControlsRef.current?.maxDistance - 1) {
+      if (
+        mapControlsRef.current?.distance >=
+        mapControlsRef.current?.maxDistance - 1
+      ) {
         clearInterval(intervalId);
       }
     }, 20);
@@ -162,13 +168,12 @@ export function Universe(props: IUniverseProps) {
                 //dollyToCursor={true}
                 infinityDolly={false}
                 minDistance={2}
-                mouseButtons={
-                  {
-                    left: 2, // truck
-                    right: 1, // rotate
-                    middle: 2, // truck
-                    wheel: 8 // dolly
-                  }}
+                mouseButtons={{
+                  left: 2, // truck
+                  right: 1, // rotate
+                  middle: 2, // truck
+                  wheel: 8, // dolly
+                }}
               />
 
               <WaitForControls>
@@ -209,7 +214,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-        <PointSizeSlider controlsStates={controlsStates} />
+        {/*<PointSizeSlider controlsStates={controlsStates} />*/}
       </UIDataContext.Provider>
     </>
   );
