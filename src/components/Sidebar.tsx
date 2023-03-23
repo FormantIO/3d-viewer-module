@@ -365,6 +365,7 @@ const Sidebar = ({
             </VisibilityIcon>
           </LayerRow>
           {sortedLayers.map((c) => {
+            if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
             return (
               <LayerRow
                 key={c.id}
