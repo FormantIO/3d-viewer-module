@@ -129,6 +129,7 @@ interface IVisibilityIcon {
 }
 
 const VisibilityIcon = styled.div<IVisibilityIcon>`
+  height: 24px;
   & svg {
   transition: all 0.1s ease;
   opacity: ${(props: IVisibilityIcon) => (props.layerVisible ? 0 : 1)};
