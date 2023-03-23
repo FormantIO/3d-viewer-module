@@ -178,18 +178,7 @@ const Sidebar = ({
 
   const onLayerDoubleClicked = (layer: LayerData) => {
     if (layer.type === LayerType.CONTAINER && hasChildren(layer)) {
-      const markerChild = layers.find(
-        (l) =>
-          l.treePath &&
-          layer.treePath &&
-          l.treePath[0] === layer.treePath[0] &&
-          l.treePath.length === 2 &&
-          l.type === LayerType.TRACKABLE
-      );
-      if (markerChild) {
-        lookAtTargetId(markerChild.id);
-        return;
-      }
+      return;
     }
     lookAtTargetId(layer.id);
   };
@@ -296,6 +285,9 @@ const Sidebar = ({
   };
 
   const renderIcons = (layer: LayerData) => {
+    if (layer.treePath && layer.treePath.length === 1) {
+      return null;
+    }
     // if its a map, show checkmark
     if (isLayerMap(layer)) {
       return layer.visible ? <CheckIcon /> : <></>;
