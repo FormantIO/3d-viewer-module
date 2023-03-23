@@ -18,6 +18,7 @@ import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
 import { PointSizeSlider } from "../../components/PcdSizeSlider";
+import styled from "styled-components";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -28,8 +29,6 @@ type IUniverseProps = {
   configHash: string;
 };
 
-let zooming = false;
-
 const WaitForControls = ({ children }: { children: ReactNode }) => {
   const { controls } = useThree();
   if (controls) {
@@ -37,6 +36,13 @@ const WaitForControls = ({ children }: { children: ReactNode }) => {
   }
   return null;
 };
+
+const SceneContainer = styled.div`
+  position: relative;
+  height: 100%;
+  width: fill-available;
+`;
+
 
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
@@ -113,7 +119,6 @@ export function Universe(props: IUniverseProps) {
   };
 
   const stopZoom = () => {
-    zooming = false;
     clearInterval(intervalId);
   };
 
@@ -140,72 +145,78 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode,
         }}
       >
-        {vr && <VRButton />}
-        <Canvas
-          onCreated={(state) => {
-            setScene(state.scene);
-          }}
-          dpr={[1, 2]}
-          flat
-        >
-          <XR>
-            <color attach="background" args={[FormantColors.steel01]} />
-            <ControlsContext.Provider value={controlsStates}>
-              <PerspectiveCamera
-                makeDefault
-                position={[0, 0, 10]}
-                up={[0, 0, 1]}
-                far={5000}
-                near={0.1}
-              />
-              <CameraControls
-                makeDefault
-                ref={mapControlsRef}
-                maxDistance={2000}
-                maxPolarAngle={Math.PI / 2 - 0.1}
-                attach={"controls"}
-                verticalDragToForward={true}
-                //dollyToCursor={true}
-                infinityDolly={false}
-                minDistance={2}
-                mouseButtons={{
-                  left: 2, // truck
-                  right: 1, // rotate
-                  middle: 2, // truck
-                  wheel: 8, // dolly
-                }}
-              />
-
-              <WaitForControls>
-                <Bounds observe margin={1.5} damping={6}>
-                  <group>{props.children}</group>
-                </Bounds>
-              </WaitForControls>
-              {fancy && (
-                <EffectComposer>
-                  <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
-                  <Noise opacity={0.02} />
-                  <Vignette
-                    offset={0.3}
-                    darkness={0.9}
-                    blendFunction={BlendFunction.NORMAL}
-                  />
-                </EffectComposer>
-              )}
-              {vr && (
-                <>
-                  <Controllers rayMaterial={{ color: "red" }} />
-                  <Hands />
-                  <mesh>
-                    <boxGeometry />
-                    <meshBasicMaterial color="blue" />
-                  </mesh>
-                </>
-              )}
-            </ControlsContext.Provider>
-          </XR>
-        </Canvas>
         <Sidebar lookAtTargetId={lookAtTargetId} />
+        <SceneContainer>
+          {vr && <VRButton />}
+          <Canvas
+            onCreated={(state) => {
+              setScene(state.scene);
+            }}
+            dpr={[1, 2]}
+            flat
+            onResize={(size) => {
+              console.log("onResize", size);
+            }}
+          >
+            <XR>
+              <color attach="background" args={[FormantColors.steel01]} />
+              <ControlsContext.Provider value={controlsStates}>
+                <PerspectiveCamera
+                  makeDefault
+                  position={[0, 0, 10]}
+                  up={[0, 0, 1]}
+                  far={5000}
+                  near={0.1}
+                />
+                <CameraControls
+                  makeDefault
+                  ref={mapControlsRef}
+                  maxDistance={2000}
+                  maxPolarAngle={Math.PI / 2 - 0.1}
+                  attach={"controls"}
+                  verticalDragToForward={true}
+                  //dollyToCursor={true}
+                  infinityDolly={false}
+                  minDistance={2}
+                  mouseButtons={
+                    {
+                      left: 2, // truck
+                      right: 1, // rotate
+                      middle: 2, // truck
+                      wheel: 8 // dolly
+                    }}
+                />
+
+                <WaitForControls>
+                  <Bounds observe margin={1.5} damping={6}>
+                    <group>{props.children}</group>
+                  </Bounds>
+                </WaitForControls>
+                {fancy && (
+                  <EffectComposer>
+                    <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
+                    <Noise opacity={0.02} />
+                    <Vignette
+                      offset={0.3}
+                      darkness={0.9}
+                      blendFunction={BlendFunction.NORMAL}
+                    />
+                  </EffectComposer>
+                )}
+                {vr && (
+                  <>
+                    <Controllers rayMaterial={{ color: "red" }} />
+                    <Hands />
+                    <mesh>
+                      <boxGeometry />
+                      <meshBasicMaterial color="blue" />
+                    </mesh>
+                  </>
+                )}
+              </ControlsContext.Provider>
+            </XR>
+          </Canvas>
+        </SceneContainer>
         <ZoomControls
           zoomIn={zoomIn}
           zoomOut={zoomOut}
@@ -214,7 +225,7 @@ export function Universe(props: IUniverseProps) {
           isEditing={isEditing}
           toggleEditMode={toggleEditMode}
         />
-        {/*<PointSizeSlider controlsStates={controlsStates} />*/}
+        <PointSizeSlider controlsStates={controlsStates} />
       </UIDataContext.Provider>
     </>
   );

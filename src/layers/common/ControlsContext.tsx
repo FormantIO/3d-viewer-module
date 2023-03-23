@@ -4,6 +4,7 @@ import React from "react";
 interface StateProps {
   isWaypointVisible: boolean;
   isWaypointEditing: boolean;
+  isPointSizeSliderVisible: boolean;
   selectedWaypoint: number | null;
   pointSize: number;
 }
@@ -36,6 +37,7 @@ export function useControlsContextStates() {
     isWaypointEditing: false,
     selectedWaypoint: null,
     pointSize: 1,
+    isPointSizeSliderVisible: false,
   });
   const storeRef = React.useRef<StoreProps>({
     waypoints: [],
