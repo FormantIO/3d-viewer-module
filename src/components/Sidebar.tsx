@@ -1,12 +1,10 @@
-import { Icon, Typography } from "@formant/ui-sdk";
+import { Typography } from "@formant/ui-sdk";
 import React, { useEffect } from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
-import { CheckIcon, CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
-import useWindowSize from "../common/useWindowSize";
+import { CheckIcon, EyeCloseIcon, EyeIcon, LayerIcon } from "./icons";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
-import getUuidByString from "uuid-by-string";
 import { Fleet } from "@formant/data-sdk";
 
 
@@ -151,8 +149,10 @@ const typographyStyle = {
 
 const Sidebar = ({
   lookAtTargetId,
+  toggleSidebarCallback
 }: {
   lookAtTargetId: (targetId: string) => void;
+  toggleSidebarCallback: () => void;
 }) => {
   const { layers, toggleVisibility } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
@@ -163,6 +163,7 @@ const Sidebar = ({
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
 
   const onToggleSidebarClicked = () => {
+    toggleSidebarCallback();
     setVisible(!visible);
   };
 

@@ -117,9 +117,8 @@ export function MapLayer(props: IMapLayer) {
         EARTH_RADIUS_IN_METERS
       ).longitude.toFixed(9);
       const buildMapUrl = (imgRes: number, doubleRes: boolean) => {
-        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${
-          doubleRes ? "@2x" : ""
-        }?logo=false&access_token=${accessToken}`;
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""
+          }?logo=false&access_token=${accessToken}`;
       };
       const resolutions = [160, 320, 640, 1280];
       const textures: Texture[] = [];
@@ -172,7 +171,6 @@ export function MapLayer(props: IMapLayer) {
         );
       } else {
         location = [Number(longitude), Number(latitude)];
-        console.log("b");
         setCurrentLocation(location);
       }
     })();
