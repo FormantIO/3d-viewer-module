@@ -3,17 +3,16 @@ import {
   ILocation,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
-import { computeDestinationPoint } from "geolib";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Color, ShaderMaterial, Texture } from "three";
+import { Color, MeshBasicMaterial, sRGBEncoding } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
-import { extend, useFrame } from "@react-three/fiber";
-import { shaderMaterial } from "@react-three/drei";
+import { extend } from "@react-three/fiber";
 import { useBounds } from "./common/CustomBounds";
+import { getBoundingCoordinatesFromCenter, getGridCoordinates } from "./utils/MapUtils";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -31,41 +30,20 @@ interface IMapLayer extends IUniverseLayerProps {
   mapType: "Street" | "Satellite" | "Satellite Street";
 }
 
-const ColorShiftMaterial = shaderMaterial(
-  { time: 0, color: new Color("#2D3855") },
-  // vertex shader
-  /*glsl*/ `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  // fragment shader
-  /*glsl*/ `
-    uniform float time;
-    uniform vec3 color;
-    varying vec2 vUv;
-    void main() {
-      gl_FragColor.rgba = vec4(0.05 * sin(vUv.yxx + time * 2.0) + color, 1.0);
-    }
-  `
-);
 
-extend({ ColorShiftMaterial });
 
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType } = props;
   const { children } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [mapTexture, setMapTexture] = useState<Texture>(new Texture());
-  const [mapTextures, setMapTextures] = useState<Texture[]>([]);
 
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | undefined
   >(undefined);
-  const materialRef = useRef<ShaderMaterial>(null);
+  const materialRef = useRef<any[]>([]);
+  const meshesArrayRef = useRef<any[]>([]);
+  const [gridCoordinates, setGridCoordinates] = useState<[number, number, number][]>([]);
   const bounds = useBounds();
 
   useEffect(() => {
@@ -82,57 +60,25 @@ export function MapLayer(props: IMapLayer) {
         bearing: 0,
         accessToken: URL_SCOPED_TOKEN,
       };
-      const { username, styleId, width, height, accessToken } = mapBoxConfig;
-      const distance = size / 2;
-      // calculate bounding box, given center and distance
-      const bearings = {
-        north: 0,
-        east: 90,
-        south: 180,
-        west: 270,
-      };
-      const EARTH_RADIUS_IN_METERS = 6371e3;
-      const maxLatitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.north,
-        EARTH_RADIUS_IN_METERS
-      ).latitude.toFixed(9);
-      const minLatitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.south,
-        EARTH_RADIUS_IN_METERS
-      ).latitude.toFixed(9);
-      const maxLongitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.east,
-        EARTH_RADIUS_IN_METERS
-      ).longitude.toFixed(9);
-      const minLongitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.west,
-        EARTH_RADIUS_IN_METERS
-      ).longitude.toFixed(9);
-      const buildMapUrl = (imgRes: number, doubleRes: boolean) => {
-        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${
-          doubleRes ? "@2x" : ""
-        }?logo=false&access_token=${accessToken}`;
-      };
-      const resolutions = [160, 320, 640, 1280];
-      const textures: Texture[] = [];
+      const distance = 100;
 
-      Promise.all(
-        resolutions.map(async (res, index) => {
-          const texture = await loadTexture(
-            buildMapUrl(res, index === resolutions.length - 1)
-          );
-          textures[index] = texture;
-          setMapTextures([...textures]);
-        })
-      );
+      const buildMapUrl = (imgRes: number, doubleRes: boolean, coord: [number, number, number]) => {
+        const { username, styleId, accessToken } = mapBoxConfig;
+        const [x, y, z] = coord;
+        const { minLatitude, maxLatitude, minLongitude, maxLongitude } = getBoundingCoordinatesFromCenter(location, distance, [x, y]);
+
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""}?logo=false&access_token=${accessToken}`;
+      };
+
+      const textures = await Promise.all(gridCoordinates.map(async (coord, i) => {
+        const texture = await loadTexture(buildMapUrl(1280, true, coord));
+        texture.encoding = sRGBEncoding;
+        materialRef.current[i].map = texture;
+        materialRef.current[i].color = new Color("#FFFFFF");
+        materialRef.current[i].needsUpdate = true;
+        return texture;
+      }));
+
       if (bounds) {
         bounds.refresh().clip().fit();
       }
@@ -172,30 +118,32 @@ export function MapLayer(props: IMapLayer) {
         );
       } else {
         location = [Number(longitude), Number(latitude)];
-        console.log("b");
         setCurrentLocation(location);
       }
+      const coordinates = getGridCoordinates(Math.ceil(size / 200) * 200, 200);
+      setGridCoordinates(coordinates);
+      materialRef.current = coordinates.map((coord, i) => {
+        return new MeshBasicMaterial({
+          color: "#2D3855",
+          map: null,
+          transparent: false,
+        });
+      });
+      meshesArrayRef.current = coordinates.map((coord, i) => {
+        return (
+          <mesh position={coord} key={JSON.stringify(coord)}>
+            <planeGeometry attach="geometry" args={[200, 200]} />
+            <meshBasicMaterial ref={(ref) => (materialRef.current[i] = ref)} color={"#2D3855"} />
+          </mesh>
+        );
+      });
     })();
   }, []);
 
-  useFrame(({ clock }) => {
-    if (materialRef.current) {
-      const material = materialRef.current;
-      material.uniforms.time.value = clock.elapsedTime;
-    }
-  });
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      <mesh>
-        <planeGeometry attach="geometry" args={[size, size]} />
-        {mapTextures.length > 0 ? (
-          <meshStandardMaterial map={mapTextures[mapTextures.length - 1]} />
-        ) : (
-          /* @ts-ignore -- extend() extends JSX but keeps giving TS warning */
-          <colorShiftMaterial ref={materialRef} />
-        )}
-      </mesh>
+      {meshesArrayRef.current}
       {children}
     </DataVisualizationLayer>
   );

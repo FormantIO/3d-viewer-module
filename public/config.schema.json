@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "3D viewer",
   "type": "object",
+  "required": ["maps"],
   "properties": {
     "maps": {
       "title": "Add maps",
@@ -12,12 +13,14 @@
         "properties": {
           "name": {
             "type": "string",
-            "title": "Name"
+            "title": "Name",
+            "default": "new map"
           },
           "mapType": {
             "title": "Terrain type",
             "type": "string",
-            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
+            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"],
+            "default": "GPS Map"
           },
           "gpsMapType": {
             "title": "World map type",
@@ -28,8 +31,15 @@
           },
           "gpsMapSize": {
             "title": "Map edge length (meters)",
-            "type": "number",
-            "default": 1000,
+            "type": "string",
+            "default": "200 meters",
+            "enum": [
+              "200 meters",
+              "400 meters",
+              "600 meters",
+              "800 meters",
+              "1 kilometer"
+            ],
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
           "gpsMapDataSource": {
@@ -151,8 +161,10 @@
               }
             }
           }
-        }
-      }
+        },
+        "required": ["mapType", "name"]
+      },
+      "required": ["mapType", "name"]
     },
     "visualizations": {
       "title": "Add visualizations",

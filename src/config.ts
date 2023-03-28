@@ -45,7 +45,7 @@ export type Viewer3DMap = {
   name?: string;
   mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
   gpsMapType?: "Satellite" | "Street" | "Satellite Street";
-  gpsMapSize?: number;
+  gpsMapSize: string;
   gpsMapDataSource?: Viewer3DConfigurationDataSource;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;

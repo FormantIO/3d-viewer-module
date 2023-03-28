@@ -52,12 +52,21 @@ export function buildScene(
 
       const dataSource =
         layer.gpsMapDataSource && parseDataSource(layer.gpsMapDataSource);
+
+      let distanceNum;
+
+      if (layer.gpsMapSize.includes("kilometer")) {
+        distanceNum = parseFloat(layer.gpsMapSize) * 1000;
+      } else {
+        distanceNum = parseFloat(layer.gpsMapSize);
+      }
+
       return (
         <MapLayer
           key={"map" + i + configHash}
           positioning={positioning}
           mapType={layer.gpsMapType || "Satellite"}
-          size={layer.gpsMapSize || 200}
+          size={distanceNum}
           latitude={layer.gpsMapLatitude || defaultLat}
           longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
