@@ -41,8 +41,7 @@ interface ILayersWrapper {
 }
 
 const SidebarContainer = styled.div<ILayersWrapper>`
-  overflow-y: scroll;
-  // make it a sliding panel from the left when visible
+  overflow-y: auto;
   width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
   min-width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
   padding: ${(props: ILayersWrapper) => (props.visible ? "10px" : "0px")};
