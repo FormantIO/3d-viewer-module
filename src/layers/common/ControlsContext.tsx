@@ -10,7 +10,9 @@ interface StateProps {
   pointSize: number;
 }
 
-interface StoreProps {}
+interface StoreProps {
+  waypoints: WaypointData[];
+}
 
 export interface ControlsContextProps {
   waypoints: IPose[];

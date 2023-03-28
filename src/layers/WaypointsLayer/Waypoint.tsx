@@ -1,9 +1,12 @@
 import React, { forwardRef, useEffect, useRef } from "react";
 import { IPose } from "@formant/universe-core";
 import * as THREE from "three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { extend, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { PivotControls } from "@react-three/drei";
 import { useControlsContext } from "../common/ControlsContext";
+import { FormantColors } from "../utils/FormantColors";
+import { CircleMaterial } from "../utils/CircleMaterial";
+extend({ CircleMaterial });
 
 interface Props {
   pose: IPose;
@@ -67,7 +70,10 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     return new THREE.Shape(points);
   }, []);
 
-  const onClick = () => updateState({ selectedWaypoint: pointIndex });
+  const onClick = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    updateState({ selectedWaypoint: pointIndex });
+  };
 
   useFrame(({ camera }) => {
     if (!groupRef.current) return;
@@ -131,9 +137,14 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
       >
         <group ref={targetRef}>
           <mesh name="circle" onClick={onClick} position-z={0.1}>
-            <circleGeometry args={[0.4, 20]} />
-            <meshBasicMaterial
-              color={selectedWaypoint === pointIndex ? "red" : "#fff70e"}
+            <circleGeometry args={[0.38, 20]} />
+            <circleMaterial
+              args={[
+                selectedWaypoint !== pointIndex
+                  ? FormantColors.purple
+                  : FormantColors.blue,
+                selectedWaypoint !== pointIndex ? "white" : FormantColors.blue,
+              ]}
             />
           </mesh>
         </group>
@@ -143,12 +154,10 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         name="arrow"
         rotation={[0, 0, -Math.PI / 2]}
         onClick={onClick}
-        scale={1.5}
+        scale={1.2}
       >
         <shapeGeometry args={[arrowShape]} />
-        <meshStandardMaterial
-          color={selectedWaypoint === pointIndex ? "red" : "#fff70e"}
-        />
+        <meshStandardMaterial color={"white"} />
       </mesh>
     </group>
   );

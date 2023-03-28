@@ -86,8 +86,27 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         {waypoints.length > 0 && (
           <Line
             points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={4}
-            color="red"
+            lineWidth={10}
+            color={FormantColors.blue}
+            onDoubleClick={(e) => {
+              let p = e.point;
+              setWaypoints((prev) => {
+                prev.splice(e.faceIndex! + 1, 0, {
+                  translation: {
+                    x: p.x,
+                    y: p.y,
+                    z: p.z + 0.125,
+                  },
+                  rotation: {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                    w: 1,
+                  },
+                });
+                return [...prev];
+              });
+            }}
           />
         )}
       </group>
