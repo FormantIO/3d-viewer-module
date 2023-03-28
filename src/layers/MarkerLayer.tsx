@@ -46,13 +46,15 @@ export function MarkerLayer(props: IUniverseLayerProps) {
       iconUrl="icons/3d_object.svg"
     >
       <group renderOrder={2}>
-        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]}>
+        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]} up={new THREE.Vector3(0, 0, 1)}>
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
             color="white"
             emissive="white"
             emissiveIntensity={2}
             toneMapped={false}
+            depthTest={false}
+            depthWrite={false}
           />
         </mesh>
         <mesh name="circle" ref={circleRef}>

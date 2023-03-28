@@ -1,5 +1,3 @@
-import { Authentication, App } from "@formant/data-sdk";
-import { TelemetryUniverseData } from "@formant/universe-connector";
 import { StreamType, UniverseDataSource } from "@formant/universe-core";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
@@ -39,11 +37,7 @@ export type Viewer3DVisualization = {
   markerSizeType?: "dynamic" | "static";
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
-  pointCloudSize?: number;
-  pointCloudShape?: "Circle" | "Rectangle";
   pointCloudDecayTime?: number;
-  pointCloudColor1?: string;
-  pointCloudColor2?: string;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
   transform?: Viewer3DConfiguarationTransform;
 };

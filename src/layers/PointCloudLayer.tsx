@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -10,6 +10,7 @@ import {
 } from "@formant/universe-core";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
+  Box3,
   BufferAttribute,
   BufferGeometry,
   CustomBlending,
@@ -20,33 +21,43 @@ import {
 } from "three";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { Color } from "./utils/Color";
-import { useLoader } from "@react-three/fiber";
+import { useControlsContext } from "./common/ControlsContext";
+import { useLoader, useThree } from "@react-three/fiber";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
-  pointShape: "Circle" | "Rectangle";
-  pointSize: number;
   decayTime: number;
-  color1: string;
-  color2: string;
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, pointShape, pointSize, decayTime, color1, color2 } =
-    props;
+  const { dataSource, decayTime } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
+  const {
+    state: { pointSize },
+    updateState
+  } = useControlsContext();
+
 
   const circleMap = useLoader(TextureLoader, "./point-circle.png");
-  const rectMap = useLoader(TextureLoader, "./point-rect.png");
   const [obj, setObj] = useState<Points>(new Points());
+  const pointMatRef = useRef<ShaderMaterial>();
+
+  useEffect(() => {
+    if (!pointMatRef.current) return;
+    pointMatRef.current.uniforms.pointScale.value = pointSize;
+  }, [pointSize]);
+  const [ready, setReady] = useState(false);
+
+  const { scene } = useThree();
 
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
+    updateState({ isPointSizeSliderVisible: true });
 
-    const col1 = defined(Color.fromString(color1));
-    const col2 = defined(Color.fromString(color2));
+    const color1 = defined(Color.fromString("#729fda"));
+    const color2 = defined(Color.fromString("#F89973"));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
@@ -79,8 +90,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         // map compress intensity dynamic range to 0.5 - 2.0
         float intensityNormalized = intensityMin != intensityMax ? map(intensity, intensityMin, intensityMax, minLuminocity, maxLuminocity) : 1.0;
         
-        vec3 color1 = ${glColor(col1)};
-        vec3 color2 = ${glColor(col2)};
+        vec3 color1 = ${glColor(color1)};
+        vec3 color2 = ${glColor(color2)};
     
         // set luminocity to compressed intensity
         color1.b = intensityNormalized;
@@ -108,14 +119,12 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const pointMat = new ShaderMaterial({
       blendEquation: MaxEquation,
       blending: CustomBlending,
-      depthWrite: false,
+      depthTest: false,
       vertexShader,
       fragmentShader,
       uniforms: {
-        pointCloudTexture: {
-          value: pointShape === "Circle" ? circleMap : rectMap,
-        },
-        pointScale: { value: 1 + pointSize / 10 },
+        pointCloudTexture: { value: circleMap },
+        pointScale: { value: 1.0 },
         radius: { value: 1.0 },
         intensityMin: { value: 0.0 },
         intensityMax: { value: 0.0 },
@@ -124,6 +133,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       transparent: true,
       vertexColors: true,
     });
+    pointMatRef.current = pointMat;
 
     const geometry = new BufferGeometry();
     const points = new Points(geometry, pointMat);
@@ -131,6 +141,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     setObj(points);
 
     let timer: number = 0;
+    let isReady = false;
 
     if (dataSource) {
       dataSource.streamType = "localization";
@@ -184,6 +195,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             geometry.computeBoundingSphere();
 
+            if (!isReady) {
+              isReady = true;
+              setReady(true);
+              geometry.computeBoundingBox();
+              scene.dispatchEvent({ type: "updateBounds" });
+            }
+
             const numPoints = positions?.length || 0;
             const radius = geometry.boundingSphere
               ? geometry.boundingSphere.radius
@@ -200,6 +218,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             points.matrixAutoUpdate = false;
             points.matrix.copy(transformMatrix(worldToLocal));
+
           }
         }
       );
@@ -212,7 +231,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <primitive object={obj} />
+      {ready && (
+        <primitive object={obj} />
+      )}
     </DataVisualizationLayer>
   );
 };

@@ -35,7 +35,7 @@ export function buildScene(
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transform
       ? parsePositioning(layer.transform)
-      : PositioningBuilder.fixed(0, 0, 0 - (i + 1) * 0.005);
+      : PositioningBuilder.fixed(0, 0, 0);
     if (layer.mapType === "Ground Plane") {
       return (
         <GroundLayer
@@ -111,24 +111,14 @@ export function buildScene(
       const dataSource =
         layer.pointCloudDataSource &&
         parseDataSource(layer.pointCloudDataSource);
-      const {
-        pointCloudShape,
-        pointCloudSize,
-        pointCloudDecayTime,
-        pointCloudColor1,
-        pointCloudColor2,
-      } = layer;
+      const { pointCloudDecayTime } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[1, i]}
           name={layer.name || "Point Cloud"}
-          pointShape={pointCloudShape || "Circle"}
-          pointSize={pointCloudSize || 0}
           decayTime={pointCloudDecayTime || 1}
-          color1={pointCloudColor1 || "#729fda"}
-          color2={pointCloudColor2 || "#F89973"}
         />
       );
     } else if (layer.visualizationType === "Waypoints") {
@@ -187,7 +177,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer name={"Visualizations"} treePath={[1]}>
+      <EmptyLayer name={"Device Layers"} treePath={[1]}>
         {deviceLayers}
       </EmptyLayer>
     </LayerContext.Provider>

@@ -1,4 +1,10 @@
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -16,6 +22,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   PlaneGeometry,
+  Vector3,
 } from "three";
 import { FormantColors } from "./utils/FormantColors";
 import { useBounds } from "./common/CustomBounds";
@@ -42,7 +49,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 
-  const gridMat = new MeshBasicMaterial({ transparent: true });
+  const gridMat = new MeshBasicMaterial({ transparent: true, opacity: 0.6 });
   const mesh = new Mesh(new PlaneGeometry(), gridMat);
   mesh.visible = false;
 
@@ -72,7 +79,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           worldToLocal,
           canvas,
         } = gridData as IUniverseGridMap;
-
 
         const mesh = obj.current;
         mesh.matrixAutoUpdate = false;
@@ -113,12 +119,15 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         texture.needsUpdate = true;
         gridMat.map = texture;
         gridMat.needsUpdate = true;
+        gridMat.opacity = 0.5;
+        mesh.up = new Vector3(0, 0, 1);
+
+        mesh.up = new Vector3(0, 0, 1);
 
         if (!mesh.visible && size) {
           setIsReady(true);
           obj.current.visible = true;
         }
-
       }
     );
 
@@ -128,11 +137,11 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   }, [layerData, universeData]);
 
   useLayoutEffect(() => {
-    if (isReady) {
-      bounds.refresh().fit().clip();
+    if (isReady && bounds) {
+      // send event to update bounds
+      window.dispatchEvent(new Event("updateBounds"));
     }
   }, [isReady]);
-
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
@@ -141,7 +150,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           <primitive object={obj.current} />
         </>
       )}
-
     </DataVisualizationLayer>
   );
 };

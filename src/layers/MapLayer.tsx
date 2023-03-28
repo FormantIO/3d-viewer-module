@@ -32,9 +32,9 @@ interface IMapLayer extends IUniverseLayerProps {
 }
 
 const ColorShiftMaterial = shaderMaterial(
-  { time: 0, color: new Color('#2D3855') },
+  { time: 0, color: new Color("#2D3855") },
   // vertex shader
-  /*glsl*/`
+  /*glsl*/ `
     varying vec2 vUv;
     void main() {
       vUv = uv;
@@ -42,7 +42,7 @@ const ColorShiftMaterial = shaderMaterial(
     }
   `,
   // fragment shader
-  /*glsl*/`
+  /*glsl*/ `
     uniform float time;
     uniform vec3 color;
     varying vec2 vUv;
@@ -59,9 +59,7 @@ export function MapLayer(props: IMapLayer) {
   const { children } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [mapTexture, setMapTexture] = useState<Texture>(
-    new Texture()
-  );
+  const [mapTexture, setMapTexture] = useState<Texture>(new Texture());
   const [mapTextures, setMapTextures] = useState<Texture[]>([]);
 
   const [currentLocation, setCurrentLocation] = useState<
@@ -118,20 +116,26 @@ export function MapLayer(props: IMapLayer) {
         bearings.west,
         EARTH_RADIUS_IN_METERS
       ).longitude.toFixed(9);
-
       const buildMapUrl = (imgRes: number, doubleRes: boolean) => {
-        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? '@2x' : ''}?logo=false&access_token=${accessToken}`;
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${
+          doubleRes ? "@2x" : ""
+        }?logo=false&access_token=${accessToken}`;
       };
       const resolutions = [160, 320, 640, 1280];
       const textures: Texture[] = [];
 
-      Promise.all(resolutions.map(async (res, index) => {
-        const texture = await loadTexture(buildMapUrl(res, index === resolutions.length - 1));
-        textures[index] = texture;
-        setMapTextures([...textures]);
-      }));
-      bounds.refresh().clip().fit();
-
+      Promise.all(
+        resolutions.map(async (res, index) => {
+          const texture = await loadTexture(
+            buildMapUrl(res, index === resolutions.length - 1)
+          );
+          textures[index] = texture;
+          setMapTextures([...textures]);
+        })
+      );
+      if (bounds) {
+        bounds.refresh().clip().fit();
+      }
     })();
   }, [currentLocation]);
 
@@ -139,7 +143,6 @@ export function MapLayer(props: IMapLayer) {
     (async () => {
       let location: [number, number];
       if (dataSource) {
-        dataSource.streamType = "location";
         universeData.subscribeToLocation(
           defined(layerData?.deviceId),
           dataSource,
@@ -148,15 +151,28 @@ export function MapLayer(props: IMapLayer) {
             const loc = data as ILocation;
             if (
               currentLocation === undefined ||
-              (currentLocation && currentLocation[0] !== loc.longitude) ||
-              currentLocation[1] !== loc.latitude
+              (currentLocation &&
+                currentLocation[0] !== loc.longitude &&
+                currentLocation[1] !== loc.latitude)
             ) {
-              setCurrentLocation([loc.longitude, loc.latitude]);
+              // only update state if the location has changed
+              // we have to be careful not to spam mapbox
+              setCurrentLocation((a) => {
+                if (
+                  a !== undefined &&
+                  a[0] === loc.longitude &&
+                  a[1] === loc.latitude
+                ) {
+                  return a;
+                }
+                return [loc.longitude, loc.latitude];
+              });
             }
           }
         );
       } else {
         location = [Number(longitude), Number(latitude)];
+        console.log("b");
         setCurrentLocation(location);
       }
     })();

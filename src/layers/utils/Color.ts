@@ -6,13 +6,7 @@ export class Color {
   public l: number;
 
   public static fromString(color: string): Color | undefined {
-    let c: string = "#729fda";
-    if (!color.includes("#")) {
-      c = Object.keys(FormantColors).includes(color)
-        ? (FormantColors as any)[color]
-        : c;
-    }
-    const match = /#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(c);
+    const match = /#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color);
     if (match) {
       return new Color(
         parseInt(match[1], 16),

@@ -5,12 +5,12 @@ import { WaypointData } from "../WaypointsLayer/Waypoint";
 interface StateProps {
   isWaypointVisible: boolean;
   isWaypointEditing: boolean;
+  isPointSizeSliderVisible: boolean;
   selectedWaypoint: number | null;
+  pointSize: number;
 }
 
-interface StoreProps {
-  waypoints: WaypointData[];
-}
+interface StoreProps {}
 
 export interface ControlsContextProps {
   waypoints: IPose[];
@@ -35,6 +35,8 @@ export function useControlsContextStates() {
     isWaypointVisible: false,
     isWaypointEditing: false,
     selectedWaypoint: null,
+    pointSize: 1,
+    isPointSizeSliderVisible: false,
   });
   const storeRef = React.useRef<StoreProps>({
     waypoints: [],

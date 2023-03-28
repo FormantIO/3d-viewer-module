@@ -44,9 +44,14 @@
                 "type": "boolean",
                 "default": false,
                 "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              },
+              "telemetryStreamType": {
+                "type": "string",
+                "enum": ["location", "json"],
+                "default": "location"
               }
             },
-            "$formant.visible.when": ["visualizationType", "=", "Terrain"]
+            "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude (optional)",
@@ -206,29 +211,9 @@
             },
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
-          "pointCloudSize": {
-            "type": "number",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudShape": {
-            "type": "string",
-            "default": "Circle",
-            "enum": ["Circle", "Rectangle"],
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
           "pointCloudDecayTime": {
             "title": "Decay time",
             "type": "number",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudColor1": {
-            "title": "Color 1",
-            "type": "string",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudColor2": {
-            "title": "Color 2",
-            "type": "string",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "pointCloudDataSource": {
