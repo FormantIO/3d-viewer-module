@@ -15,7 +15,7 @@
             "title": "Name"
           },
           "mapType": {
-            "title": "Terrain type",
+            "title": "Map type",
             "type": "string",
             "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
           },

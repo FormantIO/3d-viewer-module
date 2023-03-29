@@ -563,10 +563,10 @@
     react-chartjs-2 "^5.2.0"
     react-device-detect "^2.2.2"
 
-"@formant/universe-connector@0.0.24":
-  version "0.0.24"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.24.tgz#bb0d21e9488fb61cb2aab7433e3781ff4e8a1017"
-  integrity sha512-Fod8oX6G9OZxZRiyL94d1/Up8hnYlpSESK0jbKKITgd9pFu4FmRW7o2aZRUQ8zpLh7QdXK5y7mlKT0h7qwXUzA==
+"@formant/universe-connector@0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.25.tgz#35ad48339d30e87c345a8317eb9bb553ad5ccdfe"
+  integrity sha512-b4pKJ1gBns9KR+dOYM1FZGSrvXe0BIO0/96e4PcHL5Kb3IB8FPZU3NgMHnaSFx9KqPHmzq0BCgncWsmmMLPE6w==
   dependencies:
     "@formant/data-sdk" "0.0.117"
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
