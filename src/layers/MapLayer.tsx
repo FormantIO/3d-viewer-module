@@ -3,17 +3,17 @@ import {
   ILocation,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
-import { computeDestinationPoint } from "geolib";
-import { useContext, useEffect, useRef, useState } from "react";
-import { Color, ShaderMaterial, Texture } from "three";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Color, Mesh, MeshBasicMaterial, NearestFilter, ShaderMaterial, sRGBEncoding, Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { extend, useFrame } from "@react-three/fiber";
-import { shaderMaterial } from "@react-three/drei";
 import { useBounds } from "./common/CustomBounds";
+import { getBoundingCoordinatesFromCenter, getGridCoordinates } from "./utils/MapUtils";
+import { shaderMaterial } from "@react-three/drei";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -54,24 +54,32 @@ const ColorShiftMaterial = shaderMaterial(
 
 extend({ ColorShiftMaterial });
 
+
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType } = props;
   const { children } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
-  const [mapTexture, setMapTexture] = useState<Texture>(new Texture());
-  const [mapTextures, setMapTextures] = useState<Texture[]>([]);
 
   const [currentLocation, setCurrentLocation] = useState<
     [number, number] | undefined
   >(undefined);
-  const materialRef = useRef<ShaderMaterial>(null);
+  const materialRef = useRef<any[]>([]);
+  const meshesArrayRef = useRef<any[]>([]);
+  const [gridCoordinates, setGridCoordinates] = useState<[number, number, number][]>([]);
   const bounds = useBounds();
+  const lowResMapRef = useRef<any>(null);
+  const [lowMapTextures, setLowMapTextures] = useState<Texture[]>([]);
+  const shaderMaterialRef = useRef<ShaderMaterial>(null);
+  const [highResLoaded, setHighResLoaded] = useState(false);
 
   useEffect(() => {
     (async () => {
       if (currentLocation === undefined) {
         return;
+      }
+      if (bounds) {
+        bounds.refresh().clip().fit();
       }
       const location = currentLocation;
       const mapBoxConfig = {
@@ -82,59 +90,45 @@ export function MapLayer(props: IMapLayer) {
         bearing: 0,
         accessToken: URL_SCOPED_TOKEN,
       };
-      const { username, styleId, width, height, accessToken } = mapBoxConfig;
-      const distance = size / 2;
-      // calculate bounding box, given center and distance
-      const bearings = {
-        north: 0,
-        east: 90,
-        south: 180,
-        west: 270,
+      const distance = 100;
+
+      const buildMapUrl = (imgRes: number, doubleRes: boolean, coord?: [number, number, number]) => {
+        const { username, styleId, accessToken } = mapBoxConfig;
+        // coord is the coordinate of the grid, if absent load the entire map
+        const { minLatitude, maxLatitude, minLongitude, maxLongitude } = getBoundingCoordinatesFromCenter(location, coord ? distance : size / 2,
+          coord ? [coord[0], coord[1]] : undefined);
+
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""}?logo=false&access_token=${accessToken}`;
       };
-      const EARTH_RADIUS_IN_METERS = 6371e3;
-      const maxLatitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.north,
-        EARTH_RADIUS_IN_METERS
-      ).latitude.toFixed(9);
-      const minLatitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.south,
-        EARTH_RADIUS_IN_METERS
-      ).latitude.toFixed(9);
-      const maxLongitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.east,
-        EARTH_RADIUS_IN_METERS
-      ).longitude.toFixed(9);
-      const minLongitude = computeDestinationPoint(
-        location,
-        distance,
-        bearings.west,
-        EARTH_RADIUS_IN_METERS
-      ).longitude.toFixed(9);
-      const buildMapUrl = (imgRes: number, doubleRes: boolean) => {
-        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""
-          }?logo=false&access_token=${accessToken}`;
-      };
+
+      // load multiple low res textures in order
       const resolutions = [160, 320, 640, 1280];
       const textures: Texture[] = [];
 
       Promise.all(
         resolutions.map(async (res, index) => {
           const texture = await loadTexture(
-            buildMapUrl(res, index === resolutions.length - 1)
+            buildMapUrl(res, index === resolutions.length - 1,)
           );
           textures[index] = texture;
-          setMapTextures([...textures]);
+          setLowMapTextures([...textures]);
         })
       );
-      if (bounds) {
-        bounds.refresh().clip().fit();
-      }
+
+      // load all the high res textures
+      await Promise.all(gridCoordinates.map(async (coord, i) => {
+        const texture = await loadTexture(buildMapUrl(1280, true, coord));
+        texture.encoding = sRGBEncoding;
+        texture.magFilter = NearestFilter;
+        texture.minFilter = NearestFilter;
+        materialRef.current[i].map = texture;
+        materialRef.current[i].color = new Color("#FFFFFF");
+        materialRef.current[i].needsUpdate = true;
+        return texture;
+      })).then(() => {
+        setHighResLoaded(true);
+
+      });
     })();
   }, [currentLocation]);
 
@@ -173,27 +167,47 @@ export function MapLayer(props: IMapLayer) {
         location = [Number(longitude), Number(latitude)];
         setCurrentLocation(location);
       }
+      const coordinates = getGridCoordinates(Math.ceil(size / 200) * 200, 200);
+      setGridCoordinates(coordinates);
+      materialRef.current = coordinates.map((coord, i) => {
+        return new MeshBasicMaterial({
+          map: null,
+        });
+      });
+      meshesArrayRef.current = coordinates.map((coord, i) => {
+        return (
+          <mesh position={coord} key={JSON.stringify(coord)}>
+            <planeGeometry attach="geometry" args={[200, 200]} />
+            <meshBasicMaterial ref={(ref) => (materialRef.current[i] = ref)} />
+          </mesh>
+        );
+      });
     })();
   }, []);
 
   useFrame(({ clock }) => {
-    if (materialRef.current) {
-      const material = materialRef.current;
+    if (shaderMaterialRef.current) {
+      const material = shaderMaterialRef.current;
       material.uniforms.time.value = clock.elapsedTime;
     }
   });
 
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      <mesh>
+      <group visible={highResLoaded}>
+        {meshesArrayRef.current}
+      </group>
+      <mesh ref={lowResMapRef} visible={!highResLoaded}>
         <planeGeometry attach="geometry" args={[size, size]} />
-        {mapTextures.length > 0 ? (
-          <meshStandardMaterial map={mapTextures[mapTextures.length - 1]} />
+        {lowMapTextures.length > 0 ? (
+          <meshStandardMaterial map={lowMapTextures[lowMapTextures.length - 1]} />
         ) : (
           /* @ts-ignore -- extend() extends JSX but keeps giving TS warning */
-          <colorShiftMaterial ref={materialRef} />
+          <colorShiftMaterial ref={shaderMaterialRef} />
         )}
       </mesh>
+
       {children}
     </DataVisualizationLayer>
   );

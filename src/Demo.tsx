@@ -39,7 +39,15 @@ export function Demo() {
               treePath={[0, 0]}
               type={LayerType.AXIS}
             />
-            <OccupancyGridLayer
+            <MapLayer
+              name="Map"
+              latitude={37.6713541}
+              longitude={-97.20016869}
+              mapType="Satellite"
+              size={400}
+              treePath={[0, 2]}
+            />
+            {/* <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",
                 "localization"
@@ -47,16 +55,8 @@ export function Demo() {
               name="Occupancy Grid"
               treePath={[0, 1]}
 
-            />
-            <MapLayer
-              name="Map"
-              latitude={37.422}
-              longitude={-122.074}
-              mapType="Satellite"
-              size={500}
-              treePath={[0, 2]}
-              visible={false}
-            />
+            /> */}
+
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
             {experimentalMode && (
