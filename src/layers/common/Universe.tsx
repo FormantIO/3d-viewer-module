@@ -37,15 +37,28 @@ const WaitForControls = ({ children }: { children: ReactNode }) => {
   return null;
 };
 
-const SceneContainer = styled.div`
-  position: relative;
+interface ISceneContainer {
+  sidebarOpen: boolean;
+}
+
+const SceneContainer = styled.div<ISceneContainer>`
+  position: absolute;
+  top: 0;
+  left: ${({ sidebarOpen }) => (sidebarOpen ? "252px" : "0px")};
   height: 100%;
-  width: fill-available;
+  width: ${({ sidebarOpen }) => (sidebarOpen ? "calc(100% - 252px)" : "100%")};
+  overflow: hidden;
+  transition: left 0.2s ease;
+  & canvas {
+    transition: width 0.05s linear;
+    width: 100%;
+  }
 `;
 
 
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
+  const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
   const mapControlsRef = React.useRef<CameraControls>(null!);
   const vr = shouldUseVR;
   const {
@@ -131,6 +144,10 @@ export function Universe(props: IUniverseProps) {
     });
   }, [layers, scene]);
 
+  const sidebarOpenCallback = () => {
+    setSidebarOpen(!sidebarOpen);
+  }
+
   return (
     <>
       <UIDataContext.Provider
@@ -145,8 +162,8 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode,
         }}
       >
-        <Sidebar lookAtTargetId={lookAtTargetId} />
-        <SceneContainer>
+        <Sidebar lookAtTargetId={lookAtTargetId} toggleSidebarCallback={sidebarOpenCallback} />
+        <SceneContainer sidebarOpen={sidebarOpen}>
           {vr && <VRButton />}
           <Canvas
             onCreated={(state) => {
@@ -154,9 +171,6 @@ export function Universe(props: IUniverseProps) {
             }}
             dpr={[1, 2]}
             flat
-            onResize={(size) => {
-              console.log("onResize", size);
-            }}
           >
             <XR>
               <color attach="background" args={[FormantColors.steel01]} />

@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   align-items: left;
   justify-content: center;
   height: 100%;
+  width: 100%;
   padding: 0 10%;
   margin: auto;
   overflow-y: hidden;
