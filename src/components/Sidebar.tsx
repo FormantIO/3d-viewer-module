@@ -308,13 +308,25 @@ const Sidebar = ({
   };
 
   const deviceLayersVisible = sortedLayers.some(
-    (l) => l.treePath && l.treePath[0] === 1 && l.visible
+    (l) => l.treePath && l.treePath[0] === 1 && l.visible && l.treePath.length > 1
   );
 
   const onToggleDeviceLayers = () => {
-    const deviceLayers = getLayerByTreePath([1]);
-    if (!deviceLayers) return;
-    toggleVisibility(deviceLayers.id);
+    const deviceLayers = sortedLayers.filter(
+      (l) => l.treePath &&
+        l.treePath[0] === 1 &&
+        l.treePath.length > 1
+    );
+    if (deviceLayersVisible) {
+      deviceLayers.filter((l) => l.visible).forEach((l) => {
+        toggleVisibility(l.id);
+      });
+    } else {
+      deviceLayers.forEach((l) => {
+        toggleVisibility(l.id);
+      });
+    }
+
   };
 
   return (
