@@ -17,7 +17,7 @@
             "default": "new map"
           },
           "mapType": {
-            "title": "Terrain type",
+            "title": "Map type",
             "type": "string",
             "enum": ["Ground Plane", "GPS Map", "Occupancy Map"],
             "default": "GPS Map"
