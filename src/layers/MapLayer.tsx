@@ -3,16 +3,17 @@ import {
   ILocation,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
-import { useContext, useEffect, useRef, useState } from "react";
-import { Color, MeshBasicMaterial, sRGBEncoding } from "three";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Color, Mesh, MeshBasicMaterial, NearestFilter, ShaderMaterial, sRGBEncoding, Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { loadTexture } from "./utils/loadTexture";
 import { UniverseDataContext } from "./common/UniverseDataContext";
-import { extend } from "@react-three/fiber";
+import { extend, useFrame } from "@react-three/fiber";
 import { useBounds } from "./common/CustomBounds";
 import { getBoundingCoordinatesFromCenter, getGridCoordinates } from "./utils/MapUtils";
+import { shaderMaterial } from "@react-three/drei";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -30,6 +31,28 @@ interface IMapLayer extends IUniverseLayerProps {
   mapType: "Street" | "Satellite" | "Satellite Street";
 }
 
+const ColorShiftMaterial = shaderMaterial(
+  { time: 0, color: new Color("#2D3855") },
+  // vertex shader
+  /*glsl*/ `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  // fragment shader
+  /*glsl*/ `
+    uniform float time;
+    uniform vec3 color;
+    varying vec2 vUv;
+    void main() {
+      gl_FragColor.rgba = vec4(0.05 * sin(vUv.yxx + time * 2.0) + color, 1.0);
+    }
+  `
+);
+
+extend({ ColorShiftMaterial });
 
 
 export function MapLayer(props: IMapLayer) {
@@ -45,11 +68,18 @@ export function MapLayer(props: IMapLayer) {
   const meshesArrayRef = useRef<any[]>([]);
   const [gridCoordinates, setGridCoordinates] = useState<[number, number, number][]>([]);
   const bounds = useBounds();
+  const lowResMapRef = useRef<any>(null);
+  const [lowMapTextures, setLowMapTextures] = useState<Texture[]>([]);
+  const shaderMaterialRef = useRef<ShaderMaterial>(null);
+  const [highResLoaded, setHighResLoaded] = useState(false);
 
   useEffect(() => {
     (async () => {
       if (currentLocation === undefined) {
         return;
+      }
+      if (bounds) {
+        bounds.refresh().clip().fit();
       }
       const location = currentLocation;
       const mapBoxConfig = {
@@ -62,26 +92,43 @@ export function MapLayer(props: IMapLayer) {
       };
       const distance = 100;
 
-      const buildMapUrl = (imgRes: number, doubleRes: boolean, coord: [number, number, number]) => {
+      const buildMapUrl = (imgRes: number, doubleRes: boolean, coord?: [number, number, number]) => {
         const { username, styleId, accessToken } = mapBoxConfig;
-        const [x, y, z] = coord;
-        const { minLatitude, maxLatitude, minLongitude, maxLongitude } = getBoundingCoordinatesFromCenter(location, distance, [x, y]);
+        // coord is the coordinate of the grid, if absent load the entire map
+        const { minLatitude, maxLatitude, minLongitude, maxLongitude } = getBoundingCoordinatesFromCenter(location, coord ? distance : size / 2,
+          coord ? [coord[0], coord[1]] : undefined);
 
         return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""}?logo=false&access_token=${accessToken}`;
       };
 
-      const textures = await Promise.all(gridCoordinates.map(async (coord, i) => {
+      // load multiple low res textures in order
+      const resolutions = [160, 320, 640, 1280];
+      const textures: Texture[] = [];
+
+      Promise.all(
+        resolutions.map(async (res, index) => {
+          const texture = await loadTexture(
+            buildMapUrl(res, index === resolutions.length - 1,)
+          );
+          textures[index] = texture;
+          setLowMapTextures([...textures]);
+        })
+      );
+
+      // load all the high res textures
+      await Promise.all(gridCoordinates.map(async (coord, i) => {
         const texture = await loadTexture(buildMapUrl(1280, true, coord));
         texture.encoding = sRGBEncoding;
+        texture.magFilter = NearestFilter;
+        texture.minFilter = NearestFilter;
         materialRef.current[i].map = texture;
         materialRef.current[i].color = new Color("#FFFFFF");
         materialRef.current[i].needsUpdate = true;
         return texture;
-      }));
+      })).then(() => {
+        setHighResLoaded(true);
 
-      if (bounds) {
-        bounds.refresh().clip().fit();
-      }
+      });
     })();
   }, [currentLocation]);
 
@@ -124,26 +171,43 @@ export function MapLayer(props: IMapLayer) {
       setGridCoordinates(coordinates);
       materialRef.current = coordinates.map((coord, i) => {
         return new MeshBasicMaterial({
-          color: "#2D3855",
           map: null,
-          transparent: false,
         });
       });
       meshesArrayRef.current = coordinates.map((coord, i) => {
         return (
           <mesh position={coord} key={JSON.stringify(coord)}>
             <planeGeometry attach="geometry" args={[200, 200]} />
-            <meshBasicMaterial ref={(ref) => (materialRef.current[i] = ref)} color={"#2D3855"} />
+            <meshBasicMaterial ref={(ref) => (materialRef.current[i] = ref)} />
           </mesh>
         );
       });
     })();
   }, []);
 
+  useFrame(({ clock }) => {
+    if (shaderMaterialRef.current) {
+      const material = shaderMaterialRef.current;
+      material.uniforms.time.value = clock.elapsedTime;
+    }
+  });
+
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      {meshesArrayRef.current}
+      <group visible={highResLoaded}>
+        {meshesArrayRef.current}
+      </group>
+      <mesh ref={lowResMapRef} visible={!highResLoaded}>
+        <planeGeometry attach="geometry" args={[size, size]} />
+        {lowMapTextures.length > 0 ? (
+          <meshStandardMaterial map={lowMapTextures[lowMapTextures.length - 1]} />
+        ) : (
+          /* @ts-ignore -- extend() extends JSX but keeps giving TS warning */
+          <colorShiftMaterial ref={shaderMaterialRef} />
+        )}
+      </mesh>
+
       {children}
     </DataVisualizationLayer>
   );
