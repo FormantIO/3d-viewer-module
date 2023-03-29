@@ -238,6 +238,54 @@
             },
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
+
+          "waypointsProperties": {
+            "title": "Add Properties",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "$formant.itemName": "waypointsProperties",
+              "properties": {
+                "propertyType": {
+                  "title": "Type",
+                  "type": "string",
+                  "enum": ["Boolean", "Enum", "Integer", "String"],
+                  "default": "String"
+                },
+                "propertyName": {
+                  "title": "Name",
+                  "type": "string"
+                },
+                "enumLists": {
+                  "title": "Enum Lists",
+                  "type": "array",
+                  "items": {},
+                  "$formant.visible.when": ["propertyType", "=", "Enum"]
+                },
+                "numberDefault": {
+                  "title": "Default",
+                  "type": "number",
+                  "$formant.visible.when": ["propertyType", "=", "Integer"]
+                },
+                "stringDefault": {
+                  "title": "Default",
+                  "type": "string",
+                  "$formant.visible.when": ["propertyType", "=", "String"]
+                },
+                "booleanDefault": {
+                  "title": "Default",
+                  "type": "boolean",
+                  "$formant.visible.when": ["propertyType", "=", "Boolean"]
+                },
+                "enumDefault": {
+                  "title": "Default",
+                  "type": "string",
+                  "$formant.visible.when": ["propertyType", "=", "Enum"]
+                }
+              }
+            },
+            "$formant.visible.when": ["visualizationType", "=", "Waypoints"]
+          },
           "transform": {
             "title": "Transform",
             "$formant.itemName": "Transform",

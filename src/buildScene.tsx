@@ -122,6 +122,7 @@ export function buildScene(
         />
       );
     } else if (layer.visualizationType === "Waypoints") {
+      console.log("config", config, JSON.stringify(config));
       deviceLayers.push(<WaypointsLayer />);
     } else if (layer.visualizationType === "Geometry") {
       const positioning = layer.transform

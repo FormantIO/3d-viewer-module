@@ -17,13 +17,8 @@ interface Props {
 
 export type WaypointData = {
   pointIndex: number;
-  velocity?: number;
-  brushModes?: number;
-  leftBrush: boolean;
-  rightBrush: boolean;
-  dustSuppression?: number;
   pose: IPose;
-};
+} & any;
 
 export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const { pose, pointIndex } = props;
@@ -38,8 +33,6 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     store.waypoints[pointIndex] = {
       pointIndex,
       pose,
-      leftBrush: false,
-      rightBrush: false,
     };
   }, [store]);
 

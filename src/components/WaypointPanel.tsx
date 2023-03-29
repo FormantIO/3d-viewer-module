@@ -5,10 +5,14 @@ import {
   Checkbox,
   FormControlLabel,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
+import * as THREE from "three";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
 import { DeviceContext } from "../layers/common/DeviceContext";
+import { getTaregt, TextInput } from "./TextInput";
+import { testConfig } from "./testConfig";
 
 const Container = styled.div`
   position: absolute;
@@ -21,10 +25,11 @@ const Container = styled.div`
 
 const PanelContainer = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: 80px;
   left: 10px;
   width: 300px;
-  height: 320px;
+  height: calc(100% - 150px);
+  overflow-y: auto;
   background-color: #2d3855;
   border-radius: 10px;
   padding: 20px;
@@ -34,12 +39,12 @@ const PanelContainer = styled.div`
 
 const ButtonsContainer = styled.div`
   position: absolute;
-  bottom: 5px;
-  width: 100%;
+  bottom: 20px;
+  left: 10px;
+  width: 300px;
   height: 40px;
   display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
+  padding: 20px;
   pointer-events: all;
 `;
 
@@ -70,17 +75,18 @@ interface Props {
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   const {
+    waypoints,
     state: { selectedWaypoint },
     store,
     setWaypoints,
   } = controlsStates;
   const device = useContext(DeviceContext);
 
+  const properties = testConfig.visualizations[3].waypointsProperties;
+
+  //
   const [velocity, setVelocity] = useState<string>("");
   const [brushModes, setBrushModes] = useState<string>("");
-  const [leftBrush, setLeftBrush] = React.useState<boolean>(false);
-  const [rightBrush, setRightBrush] = React.useState<boolean>(false);
-  const [dustSuppression, setDustSuppression] = React.useState<string>("");
 
   const removeBtnHandler = () => {
     if (selectedWaypoint === null) return;
@@ -91,11 +97,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     // Update panel when gizmo moving to the next point
     if (selectedWaypoint < waypoints.length - 1) {
       const w = store.waypoints[selectedWaypoint];
-      setRightBrush(w.rightBrush);
-      setLeftBrush(w.leftBrush);
+
       setVelocity(w.velocity ? w.velocity.toString() : "");
       setBrushModes(w.brushModes ? w.brushModes.toString() : "");
-      setDustSuppression(w.dustSuppression ? w.dustSuppression.toString() : "");
     }
   };
 
@@ -121,36 +125,115 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     const tempPoint = waypoints[selectedWaypoint];
     store.waypoints[selectedWaypoint] = {
       ...tempPoint,
-      leftBrush,
-      rightBrush,
       velocity: parseInt(velocity),
       brushModes: parseInt(brushModes),
-      dustSuppression: parseInt(dustSuppression),
     };
-  }, [velocity, brushModes, dustSuppression, leftBrush, rightBrush, store]);
+  }, [velocity, brushModes, store]);
 
   // Update editing panel
   useEffect(() => {
     if (selectedWaypoint !== null) {
       const w = store.waypoints[selectedWaypoint];
-      setRightBrush(w.rightBrush);
-      setLeftBrush(w.leftBrush);
       setVelocity(w.velocity ? w.velocity.toString() : "");
       setBrushModes(w.brushModes ? w.brushModes.toString() : "");
-      setDustSuppression(w.dustSuppression ? w.dustSuppression.toString() : "");
     } else {
-      setRightBrush(false);
-      setLeftBrush(false);
       setVelocity("");
       setBrushModes("");
-      setDustSuppression("");
     }
-  }, [setLeftBrush, selectedWaypoint]);
+  }, [selectedWaypoint]);
+
+  const refs = React.useRef<any[]>([]);
+  for (let i = 0; i < 2; ++i) {
+    refs.current[i] = React.useRef(null);
+  }
+
+  const angleRef = React.useRef<HTMLElement>();
+  const xPosRef = React.useRef<HTMLElement>();
+  const yPosRef = React.useRef<HTMLElement>();
+
+  // Update orientation & position fields with waypoints updated
+  useEffect(() => {
+    if (
+      selectedWaypoint === null ||
+      !angleRef.current ||
+      !xPosRef.current ||
+      !yPosRef.current
+    ) {
+      getTaregt(angleRef).value = "";
+      getTaregt(xPosRef).value = "";
+      getTaregt(yPosRef).value = "";
+      return;
+    }
+    const { pose } = store.waypoints[selectedWaypoint];
+    const { x, y, z, w } = pose.rotation;
+    const e = new THREE.Euler().setFromQuaternion(
+      new THREE.Quaternion(x, y, z, w)
+    );
+    getTaregt(angleRef).value = THREE.MathUtils.radToDeg(e.z).toFixed(2);
+    getTaregt(xPosRef).value = pose.translation.x.toFixed(2);
+    getTaregt(yPosRef).value = pose.translation.y.toFixed(2);
+  }, [selectedWaypoint, waypoints]);
+
+  const posHandler = (axis: string) => {
+    if (selectedWaypoint !== null) {
+      let v = parseFloat(getTaregt(axis === "x" ? xPosRef : yPosRef).value);
+      v = isNaN(v) ? 0 : v;
+      const newPoints = [...waypoints];
+      if (axis === "x") newPoints[selectedWaypoint].translation.x = v;
+      else newPoints[selectedWaypoint].translation.y = v;
+      setWaypoints(newPoints);
+      store.waypoints[selectedWaypoint];
+    }
+  };
 
   return (
     <Container>
       <PanelContainer>
-        <STextField
+        <Typography>HEADING</Typography>
+
+        <TextInput
+          ref={angleRef}
+          label={"Orientation"}
+          onEnter={() => {
+            if (selectedWaypoint === null) return;
+            let v = parseFloat(getTaregt(angleRef).value);
+            v = isNaN(v) ? 0 : v;
+            const euler = new THREE.Euler(0, 0, THREE.MathUtils.degToRad(v));
+            const { x, y, z, w } = new THREE.Quaternion().setFromEuler(euler);
+
+            const newPoints = [...waypoints];
+            newPoints[selectedWaypoint].rotation = { x, y, z, w };
+            setWaypoints(newPoints);
+            store.waypoints[selectedWaypoint].pose.rotation = { x, y, z, w };
+          }}
+        />
+
+        <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
+        <TextInput
+          ref={xPosRef}
+          label="X-axis"
+          onEnter={() => posHandler("x")}
+        />
+        <TextInput
+          ref={yPosRef}
+          label="Y-axis"
+          onEnter={() => posHandler("y")}
+        />
+
+        <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
+
+        {["Velocity", "Brush Modes"].map((l, idx) => (
+          <TextInput
+            key={idx}
+            ref={refs.current[idx]}
+            label={l}
+            onChange={(e) => {
+              // console.log(e, refs.current[idx].current);
+            }}
+          />
+        ))}
+
+        {/* <STextField
           label="Velocity"
           maxRows={1}
           multiline
@@ -166,20 +249,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
           sx={{ color: "white", width: "100%", marginTop: "10px" }}
           value={brushModes}
           onChange={(e) => setBrushModes(e.target.value)}
-        />
+        /> */}
 
-        <STextField
-          label="Dust Suppression"
-          maxRows={1}
-          multiline
-          sx={{ color: "white", width: "100%", marginTop: "10px" }}
-          value={dustSuppression}
-          onChange={(e) => {
-            setDustSuppression(e.target.value);
-          }}
-        />
-
-        <FormControlLabel
+        {/* <FormControlLabel
           sx={{ marginTop: "5px" }}
           control={
             <SCheckbox
@@ -190,26 +262,16 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
             />
           }
           label="Left Brush"
-        />
-        <FormControlLabel
-          sx={{ marginTop: "5px" }}
-          control={
-            <SCheckbox
-              checked={rightBrush}
-              onChange={(e: any) => {
-                setRightBrush(e.target.checked);
-              }}
-            />
-          }
-          label="Right Brush"
-        />
+        /> */}
+      </PanelContainer>
 
+      <ButtonsContainer>
         <Box
           component={"div"}
           display="flex"
           justifyContent={"space-between"}
           alignItems="center"
-          mt={1}
+          sx={{ width: "100%" }}
         >
           <SButton
             variant="contained"
@@ -222,7 +284,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
             Send
           </SButton>
         </Box>
-      </PanelContainer>
+      </ButtonsContainer>
     </Container>
   );
 };
