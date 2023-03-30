@@ -34,6 +34,7 @@ export type Viewer3DVisualization = {
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
+  urdfJointStatesDataSource?: Viewer3DConfigurationDataSource;
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;

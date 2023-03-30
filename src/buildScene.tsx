@@ -20,6 +20,7 @@ import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { cloneElement, isValidElement } from "react";
+import { URDFLayer } from "./layers/URDFLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -101,6 +102,19 @@ export function buildScene(
             positioning={positioning}
             treePath={[1, i]}
             name={layer.name || "Marker"}
+          />
+        );
+      } else if (layer.positionIndicatorVisualType === "URDF") {
+        deviceLayers.push(
+          <URDFLayer
+            key={"vis" + i + configHash}
+            positioning={positioning}
+            treePath={[1, i]}
+            name={layer.name || "URDF"}
+            jointStatesDataSource={
+              layer.urdfJointStatesDataSource &&
+              parseDataSource(layer.urdfJointStatesDataSource)
+            }
           />
         );
       }
