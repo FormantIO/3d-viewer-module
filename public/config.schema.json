@@ -13,14 +13,12 @@
         "properties": {
           "name": {
             "type": "string",
-            "title": "Name",
-            "default": "new map"
+            "title": "Name"
           },
           "mapType": {
             "title": "Map type",
             "type": "string",
-            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"],
-            "default": "GPS Map"
+            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
           },
           "gpsMapType": {
             "title": "World map type",
@@ -161,8 +159,7 @@
               }
             }
           }
-        },
-        "required": ["mapType", "name"]
+        }
       },
       "required": ["mapType", "name"]
     },
@@ -328,7 +325,8 @@
             }
           }
         }
-      }
+      },
+      "required": ["visualizationType", "name"]
     }
   }
 }
