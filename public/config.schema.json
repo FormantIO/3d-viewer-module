@@ -228,13 +228,23 @@
             "type": "number",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
+          "pointCloudUseColors": {
+            "title": "Full Color",
+            "type": "boolean",
+            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
+          },
           "pointCloudDataSource": {
             "title": "Data source",
             "type": "object",
             "properties": {
               "telemetryStreamName": {
                 "type": "string",
-                "$formant.streams.byType": "localization"
+                "$formant.streams.byType": "localization,json"
+              },
+              "telemetryStreamType": {
+                "type": "string",
+                "enum": ["localization", "json"],
+                "default": "localization"
               },
               "latestDataPoint": {
                 "type": "boolean",

@@ -119,7 +119,7 @@ export function buildScene(
       const dataSource =
         layer.pointCloudDataSource &&
         parseDataSource(layer.pointCloudDataSource);
-      const { pointCloudDecayTime } = layer;
+      const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
@@ -127,6 +127,7 @@ export function buildScene(
           treePath={[1, i]}
           name={layer.name || "Point Cloud"}
           decayTime={pointCloudDecayTime || 1}
+          useColors={pointCloudUseColors || false}
         />
       );
     } else if (layer.visualizationType === "Geometry") {
