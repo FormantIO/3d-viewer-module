@@ -184,12 +184,32 @@
           "positionIndicatorVisualType": {
             "type": "string",
             "title": "Visual type",
-            "enum": ["Circle"],
+            "enum": ["Circle", "URDF"],
             "default": "Circle",
             "$formant.visible.when": [
               "visualizationType",
               "=",
               "Position Indicator"
+            ]
+          },
+          "urdfJointStatesDataSource": {
+            "type": "object",
+            "title": "Data source",
+            "properties": {
+              "telemetryStreamName": {
+                "type": "string",
+                "$formant.streams.byType": "json"
+              },
+              "latestDataPoint": {
+                "type": "boolean",
+                "default": false,
+                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+              }
+            },
+            "$formant.visible.when": [
+              "positionIndicatorVisualType",
+              "=",
+              "URDF"
             ]
           },
           "geometryDataSource": {
