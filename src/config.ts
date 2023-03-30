@@ -41,6 +41,9 @@ export type Viewer3DVisualization = {
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
   pointCloudUseColors?: boolean;
   transform?: Viewer3DConfiguarationTransform;
+  imageFileId?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 };
 
 export type Viewer3DMap = {

@@ -21,6 +21,7 @@ import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { cloneElement, isValidElement } from "react";
 import { URDFLayer } from "./layers/URDFLayer";
+import { ImageLayer } from "./layers/ImageLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -161,6 +162,21 @@ export function buildScene(
           />
         );
       }
+    } else if (layer.visualizationType === "Image") {
+      const positioning = layer.transform
+        ? parsePositioning(layer.transform)
+        : PositioningBuilder.fixed(0, 0, 0);
+      const dataSource = deviceLayers.push(
+        <ImageLayer
+          key={"vis" + i + configHash}
+          positioning={positioning}
+          treePath={[1, i]}
+          name={layer.name || "Image"}
+          width={layer.imageWidth || 1}
+          height={layer.imageHeight || 1}
+          fileId={layer.imageFileId || ""}
+        />
+      );
     } else {
       throw new Error("Unknown visualization type");
     }

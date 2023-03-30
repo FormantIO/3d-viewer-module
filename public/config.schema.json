@@ -176,7 +176,13 @@
           },
           "visualizationType": {
             "type": "string",
-            "enum": ["Position Indicator", "Geometry", "Point Cloud", "Path"]
+            "enum": [
+              "Position Indicator",
+              "Geometry",
+              "Point Cloud",
+              "Path",
+              "Image"
+            ]
           },
           "positionIndicatorVisualType": {
             "type": "string",
@@ -188,6 +194,23 @@
               "=",
               "Position Indicator"
             ]
+          },
+          "imageFileId": {
+            "type": "string",
+            "title": "Image File ID",
+            "$formant.visible.when": ["visualizationType", "=", "Image"]
+          },
+          "imageWidth": {
+            "type": "number",
+            "title": "Image width (meters)",
+            "$formant.visible.when": ["visualizationType", "=", "Image"],
+            "default": 1
+          },
+          "imageHeight": {
+            "type": "number",
+            "title": "Image height (meters)",
+            "$formant.visible.when": ["visualizationType", "=", "Image"],
+            "default": 1
           },
           "urdfJointStatesDataSource": {
             "type": "object",
