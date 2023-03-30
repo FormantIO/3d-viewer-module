@@ -159,9 +159,9 @@
               }
             }
           }
-        }
-      },
-      "required": ["mapType", "name"]
+        },
+        "required": ["mapType", "name"]
+      }
     },
     "visualizations": {
       "title": "Add visualizations",
@@ -367,9 +367,9 @@
               }
             }
           }
-        }
-      },
-      "required": ["visualizationType", "name"]
+        },
+        "required": ["visualizationType", "name"]
+      }
     }
   }
 }
