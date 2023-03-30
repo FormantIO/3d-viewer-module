@@ -181,7 +181,8 @@
               "Geometry",
               "Point Cloud",
               "Path",
-              "Image"
+              "Image",
+              "GLTF"
             ]
           },
           "positionIndicatorVisualType": {
@@ -204,6 +205,17 @@
             "type": "number",
             "title": "Image width (meters)",
             "$formant.visible.when": ["visualizationType", "=", "Image"],
+            "default": 1
+          },
+          "gltfFileId": {
+            "type": "string",
+            "title": "GLTF File ID",
+            "$formant.visible.when": ["visualizationType", "=", "GLTF"]
+          },
+          "gltfScale": {
+            "type": "number",
+            "title": "GLTF Scale",
+            "$formant.visible.when": ["visualizationType", "=", "GLTF"],
             "default": 1
           },
           "imageHeight": {

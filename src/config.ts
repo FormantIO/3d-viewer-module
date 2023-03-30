@@ -44,6 +44,8 @@ export type Viewer3DVisualization = {
   imageFileId?: string;
   imageWidth?: number;
   imageHeight?: number;
+  gltfFileId?: string;
+  gltfScale?: number;
 };
 
 export type Viewer3DMap = {
