@@ -38,6 +38,7 @@ export type Viewer3DVisualization = {
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
+  pointCloudUseColors?: boolean;
   transform?: Viewer3DConfiguarationTransform;
 };
 
