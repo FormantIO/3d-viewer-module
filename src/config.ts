@@ -35,18 +35,25 @@ export type Viewer3DVisualization = {
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
+  urdfJointStatesDataSource?: Viewer3DConfigurationDataSource;
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
+  pointCloudUseColors?: boolean;
   transform?: Viewer3DConfiguarationTransform;
+  imageFileId?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  gltfFileId?: string;
+  gltfScale?: number;
 };
 
 export type Viewer3DMap = {
   name?: string;
   mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
   gpsMapType?: "Satellite" | "Street" | "Satellite Street";
-  gpsMapSize?: number;
+  gpsMapSize: string;
   gpsMapDataSource?: Viewer3DConfigurationDataSource;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;

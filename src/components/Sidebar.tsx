@@ -1,12 +1,10 @@
-import { Icon, Typography } from "@formant/ui-sdk";
+import { Typography } from "@formant/ui-sdk";
 import React, { useEffect } from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
-import { CheckIcon, CubeIcon, EyeCloseIcon, EyeIcon, LayerIcon, MapIcon } from "./icons";
-import useWindowSize from "../common/useWindowSize";
+import { CheckIcon, EyeCloseIcon, EyeIcon, LayerIcon } from "./icons";
 import { FormantColors } from "../layers/utils/FormantColors";
 import { LayerType } from "../layers/common/LayerTypes";
-import getUuidByString from "uuid-by-string";
 import { Fleet } from "@formant/data-sdk";
 
 
@@ -43,8 +41,7 @@ interface ILayersWrapper {
 }
 
 const SidebarContainer = styled.div<ILayersWrapper>`
-  overflow-y: scroll;
-  // make it a sliding panel from the left when visible
+  overflow-y: auto;
   width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
   min-width: ${(props: ILayersWrapper) => (props.visible ? "252px" : "0px")};
   padding: ${(props: ILayersWrapper) => (props.visible ? "10px" : "0px")};
@@ -151,8 +148,10 @@ const typographyStyle = {
 
 const Sidebar = ({
   lookAtTargetId,
+  toggleSidebarCallback
 }: {
   lookAtTargetId: (targetId: string) => void;
+  toggleSidebarCallback: () => void;
 }) => {
   const { layers, toggleVisibility } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
@@ -163,6 +162,7 @@ const Sidebar = ({
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
 
   const onToggleSidebarClicked = () => {
+    toggleSidebarCallback();
     setVisible(!visible);
   };
 
@@ -308,13 +308,25 @@ const Sidebar = ({
   };
 
   const deviceLayersVisible = sortedLayers.some(
-    (l) => l.treePath && l.treePath[0] === 1 && l.visible
+    (l) => l.treePath && l.treePath[0] === 1 && l.visible && l.treePath.length > 1
   );
 
   const onToggleDeviceLayers = () => {
-    const deviceLayers = getLayerByTreePath([1]);
-    if (!deviceLayers) return;
-    toggleVisibility(deviceLayers.id);
+    const deviceLayers = sortedLayers.filter(
+      (l) => l.treePath &&
+        l.treePath[0] === 1 &&
+        l.treePath.length > 1
+    );
+    if (deviceLayersVisible) {
+      deviceLayers.filter((l) => l.visible).forEach((l) => {
+        toggleVisibility(l.id);
+      });
+    } else {
+      deviceLayers.forEach((l) => {
+        toggleVisibility(l.id);
+      });
+    }
+
   };
 
   return (

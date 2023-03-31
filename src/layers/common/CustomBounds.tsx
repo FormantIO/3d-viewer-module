@@ -93,23 +93,24 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       getSize,
       refresh() {
         const oldBox = box.clone();
+        if (ref.current && ref.current.children.length > 0) {
+          const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
+          const mapGroup = targetGroup.children[1] || new THREE.Group();
+          const visualizationsGroup = targetGroup.children[2] || new THREE.Group();
+          mapGroup.updateWorldMatrix(true, true);
+          visualizationsGroup.updateWorldMatrix(true, true);
+          const tempBox = new THREE.Box3();
+          // traverse all children except axis and targetGroup
+          [...mapGroup.children, ...visualizationsGroup.children].forEach((child: THREE.Object3D) => {
+            if (child.name !== 'axis' && child.visible) {
+              const childBox = new THREE.Box3();
+              childBox.setFromObject(child);
+              tempBox.union(childBox);
 
-        const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
-        const mapGroup = targetGroup.children[1];
-        const visualizationsGroup = targetGroup.children[2];
-        mapGroup.updateWorldMatrix(true, true);
-        visualizationsGroup.updateWorldMatrix(true, true);
-        const tempBox = new THREE.Box3();
-        // traverse all children except axis and targetGroup
-        [...mapGroup.children, ...visualizationsGroup.children].forEach((child: THREE.Object3D) => {
-          if (child.name !== 'axis' && child.visible) {
-            const childBox = new THREE.Box3();
-            childBox.setFromObject(child);
-            tempBox.union(childBox);
-
-          }
-        });
-        box.copy(tempBox);
+            }
+          });
+          box.copy(tempBox);
+        }
         if (box.isEmpty()) {
           box.setFromCenterAndSize(new THREE.Vector3(), new THREE.Vector3(1, 1, 0))
         }
@@ -122,8 +123,10 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         const { distance } = getSize();
         const controls = get().controls as CameraControlsProps;
         setDistance(distance);
-        controls.maxDistance = distance * 10;
-        controls.minDistance = 0.5;
+        if (controls) {
+          controls.maxDistance = distance * 10;
+          controls.minDistance = 0.5;
+        }
         camera.far = Math.max(distance * 100, 100);
         camera.updateProjectionMatrix()
         invalidate()
