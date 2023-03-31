@@ -61,13 +61,13 @@
             },
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "gpsMapLongitude": {
-            "title": "Default longitude (optional)",
+          "gpsMapLatitude": {
+            "title": "Default latitude (optional)",
             "type": "number",
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "gpsMapLatitude": {
-            "title": "Default latitude (optional)",
+          "gpsMapLongitude": {
+            "title": "Default longitude (optional)",
             "type": "number",
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
