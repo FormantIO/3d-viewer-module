@@ -23,18 +23,9 @@ export type WaypointData = {
 export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const { pose, pointIndex } = props;
   const {
-    store,
     updateState,
     state: { selectedWaypoint },
   } = useControlsContext();
-
-  // Init each waypoint metadata
-  useEffect(() => {
-    store.waypoints[pointIndex] = {
-      pointIndex,
-      pose,
-    };
-  }, [store]);
 
   const { controls } = useThree();
 
@@ -55,7 +46,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const arrowShape = React.useMemo(() => {
     const c = new THREE.QuadraticBezierCurve(
       new THREE.Vector2(-0.4, 0.2),
-      new THREE.Vector2(0, 0.6),
+      new THREE.Vector2(0, 0.65),
       new THREE.Vector2(0.4, 0.2)
     );
     const points = c.getPoints(7);
@@ -129,7 +120,12 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         }}
       >
         <group ref={targetRef}>
-          <mesh name="circle" onClick={onClick} position-z={0.1}>
+          <mesh
+            name="circle"
+            onClick={onClick}
+            position-z={0.1}
+            renderOrder={2}
+          >
             <circleGeometry args={[0.38, 20]} />
             <circleMaterial
               args={[
@@ -148,9 +144,11 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         rotation={[0, 0, -Math.PI / 2]}
         onClick={onClick}
         scale={1.2}
+        position-z={0.1}
+        renderOrder={2}
       >
         <shapeGeometry args={[arrowShape]} />
-        <meshStandardMaterial color={"white"} />
+        <meshStandardMaterial color={"white"} depthTest={false} />
       </mesh>
     </group>
   );

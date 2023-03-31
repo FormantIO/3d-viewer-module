@@ -262,7 +262,7 @@
                   "items": {},
                   "$formant.visible.when": ["propertyType", "=", "Enum"]
                 },
-                "numberDefault": {
+                "integerDefault": {
                   "title": "Default",
                   "type": "number",
                   "$formant.visible.when": ["propertyType", "=", "Integer"]

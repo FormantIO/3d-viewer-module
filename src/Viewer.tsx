@@ -63,6 +63,7 @@ export function Viewer() {
         <Universe
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}
+          config={config}
         >
           <ambientLight />
           {buildScene(config, definedAndNotNull(currentDeviceId))};

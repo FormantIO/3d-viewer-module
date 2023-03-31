@@ -13,6 +13,8 @@ import { ControlsContextProps } from "../layers/common/ControlsContext";
 import { DeviceContext } from "../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { testConfig } from "./testConfig";
+import { DropdownInput } from "./DropdownInput";
+import { Viewer3DConfiguration } from "../config";
 
 const Container = styled.div`
   position: absolute;
@@ -56,11 +58,6 @@ const STextField = styled(TextField)(() => ({
     color: "white",
   },
 }));
-const SCheckbox = styled(Checkbox)(() => ({
-  "&.MuiButtonBase-root.MuiCheckbox-root": {
-    color: "white",
-  },
-}));
 
 const SButton = styled(Button)(() => ({
   "&.MuiButtonBase-root": {
@@ -71,9 +68,10 @@ const SButton = styled(Button)(() => ({
 
 interface Props {
   controlsStates: ControlsContextProps;
+  config: Viewer3DConfiguration;
 }
 
-export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
+export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
     state: { selectedWaypoint },
@@ -82,11 +80,22 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
   } = controlsStates;
   const device = useContext(DeviceContext);
 
-  const properties = testConfig.visualizations[3].waypointsProperties;
+  let waypointsProperties: any[] = [];
+  if (config) {
+    const v = config.visualizations.filter(
+      (_) => _.visualizationType === "Waypoints"
+    ) as any;
+    waypointsProperties =
+      v.length > 0 && v[0].waypointsProperties ? v[0].waypointsProperties : [];
+  }
 
-  //
-  const [velocity, setVelocity] = useState<string>("");
-  const [brushModes, setBrushModes] = useState<string>("");
+  const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
+  for (let i = 0; i < waypointsProperties!.length; ++i) {
+    elements[i] = React.useRef<HTMLInputElement | HTMLSelectElement>(null!);
+  }
+  const angleRef = React.useRef<HTMLInputElement>(null!);
+  const xPosRef = React.useRef<HTMLInputElement>(null!);
+  const yPosRef = React.useRef<HTMLInputElement>(null!);
 
   const removeBtnHandler = () => {
     if (selectedWaypoint === null) return;
@@ -98,8 +107,8 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     if (selectedWaypoint < waypoints.length - 1) {
       const w = store.waypoints[selectedWaypoint];
 
-      setVelocity(w.velocity ? w.velocity.toString() : "");
-      setBrushModes(w.brushModes ? w.brushModes.toString() : "");
+      // setVelocity(w.velocity ? w.velocity.toString() : "");
+      // setBrushModes(w.brushModes ? w.brushModes.toString() : "");
     }
   };
 
@@ -116,52 +125,22 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     }
   };
 
-  // Feed data to waypoint
+  // Update fields with waypoints changed
   useEffect(() => {
     if (selectedWaypoint === null) {
-      return;
-    }
-    const { waypoints } = store;
-    const tempPoint = waypoints[selectedWaypoint];
-    store.waypoints[selectedWaypoint] = {
-      ...tempPoint,
-      velocity: parseInt(velocity),
-      brushModes: parseInt(brushModes),
-    };
-  }, [velocity, brushModes, store]);
-
-  // Update editing panel
-  useEffect(() => {
-    if (selectedWaypoint !== null) {
-      const w = store.waypoints[selectedWaypoint];
-      setVelocity(w.velocity ? w.velocity.toString() : "");
-      setBrushModes(w.brushModes ? w.brushModes.toString() : "");
-    } else {
-      setVelocity("");
-      setBrushModes("");
-    }
-  }, [selectedWaypoint]);
-
-  const refs = React.useRef<any[]>([]);
-  for (let i = 0; i < 2; ++i) {
-    refs.current[i] = React.useRef(null);
-  }
-
-  const angleRef = React.useRef<HTMLElement>();
-  const xPosRef = React.useRef<HTMLElement>();
-  const yPosRef = React.useRef<HTMLElement>();
-
-  // Update orientation & position fields with waypoints updated
-  useEffect(() => {
-    if (
-      selectedWaypoint === null ||
-      !angleRef.current ||
-      !xPosRef.current ||
-      !yPosRef.current
-    ) {
-      getTaregt(angleRef).value = "";
-      getTaregt(xPosRef).value = "";
-      getTaregt(yPosRef).value = "";
+      angleRef.current.value = "";
+      xPosRef.current.value = "";
+      yPosRef.current.value = "";
+      if (waypointsProperties.length > 0) {
+        console.log(waypointsProperties, elements);
+        waypointsProperties!.forEach(({ propertyType }, idx) => {
+          if (propertyType === "String" || propertyType === "Integer") {
+            elements[idx].current!.value = "";
+          } else {
+            elements[idx].current!.value = "0";
+          }
+        });
+      }
       return;
     }
     const { pose } = store.waypoints[selectedWaypoint];
@@ -169,9 +148,53 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
     const e = new THREE.Euler().setFromQuaternion(
       new THREE.Quaternion(x, y, z, w)
     );
-    getTaregt(angleRef).value = THREE.MathUtils.radToDeg(e.z).toFixed(2);
-    getTaregt(xPosRef).value = pose.translation.x.toFixed(2);
-    getTaregt(yPosRef).value = pose.translation.y.toFixed(2);
+    angleRef.current.value = THREE.MathUtils.radToDeg(e.z).toFixed(2);
+    xPosRef.current.value = pose.translation.x.toFixed(2);
+    yPosRef.current.value = pose.translation.y.toFixed(2);
+
+    if (waypointsProperties!.length > 0) {
+      waypointsProperties!.forEach((item, idx) => {
+        if (item.propertyType === "String") {
+          const v = store.waypoints[selectedWaypoint][item.propertyName];
+          elements[idx].current!.value = v
+            ? v
+            : item.stringDefault !== undefined
+            ? item.stringDefault
+            : "";
+          store.waypoints[selectedWaypoint][item.propertyName] =
+            elements[idx].current!.value;
+        } else if (item.propertyType === "Integer") {
+          const v = store.waypoints[selectedWaypoint][item.propertyName];
+          elements[idx].current!.value = v ? v : item.integerDefault;
+          store.waypoints[selectedWaypoint][item.propertyName] = v
+            ? v
+            : item.integerDefault;
+        } else if (item.propertyType === "Boolean") {
+          const v = store.waypoints[selectedWaypoint][item.propertyName];
+          const c =
+            v !== undefined
+              ? v
+              : item.booleanDefault !== undefined
+              ? item.booleanDefault
+              : false;
+          elements[idx].current!.value = (
+            [true, false].indexOf(c) + 1
+          ).toString();
+        } else if (item.propertyType === "Enum") {
+          const v = store.waypoints[selectedWaypoint][item.propertyName];
+          const c = v !== undefined ? v : item.enumDefault;
+          elements[idx].current!.value = [
+            undefined,
+            ...Array(item.enumLists!.length)
+              .fill(0)
+              // @ts-ignore
+              .map((_, idx) => item[idx]),
+          ]
+            .indexOf(c)
+            .toString();
+        }
+      });
+    }
   }, [selectedWaypoint, waypoints]);
 
   const posHandler = (axis: string) => {
@@ -184,6 +207,84 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
       setWaypoints(newPoints);
       store.waypoints[selectedWaypoint];
     }
+  };
+
+  const createPropertyFields = () => {
+    const comps: any[] = [];
+    waypointsProperties!.forEach((item, idx) => {
+      const { propertyType } = item;
+      if (propertyType === "String") {
+        comps.push(
+          <TextInput
+            key={idx}
+            ref={elements[idx]}
+            label={item.propertyName}
+            onChange={(e) => {
+              if (selectedWaypoint !== null) {
+                store.waypoints[selectedWaypoint][item.propertyName] =
+                  e.target.value;
+              }
+            }}
+          />
+        );
+      } else if (propertyType === "Integer") {
+        comps.push(
+          <TextInput
+            key={idx}
+            ref={elements[idx]}
+            label={item.propertyName}
+            onChange={(e) => {
+              if (selectedWaypoint !== null) {
+                store.waypoints[selectedWaypoint][item.propertyName] =
+                  e.target.value;
+              }
+            }}
+          />
+        );
+      } else if (propertyType === "Boolean") {
+        comps.push(
+          <DropdownInput
+            key={idx}
+            ref={elements[idx]}
+            label={item.propertyName}
+            content={["True", "False"]}
+            onChange={(e) => {
+              if (selectedWaypoint !== null) {
+                store.waypoints[selectedWaypoint][item.propertyName] = [
+                  null,
+                  true,
+                  false,
+                ][parseInt(e.target.value)];
+              }
+            }}
+          />
+        );
+      } else if (propertyType === "Enum") {
+        comps.push(
+          <DropdownInput
+            key={idx}
+            ref={elements[idx]}
+            label={item.propertyName}
+            content={Array(item.enumLists!.length)
+              .fill(0)
+              // @ts-ignore
+              .map((_, idx) => item[idx])}
+            onChange={(e) => {
+              if (selectedWaypoint !== null) {
+                store.waypoints[selectedWaypoint][item.propertyName] = [
+                  null,
+                  ...Array(item.enumLists!.length)
+                    .fill(0)
+                    // @ts-ignore
+                    .map((_, idx) => item[idx]),
+                ][parseInt(e.target.value)];
+              }
+            }}
+          />
+        );
+      }
+    });
+    return comps;
   };
 
   return (
@@ -222,47 +323,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates }) => {
 
         <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
 
-        {["Velocity", "Brush Modes"].map((l, idx) => (
-          <TextInput
-            key={idx}
-            ref={refs.current[idx]}
-            label={l}
-            onChange={(e) => {
-              // console.log(e, refs.current[idx].current);
-            }}
-          />
-        ))}
-
-        {/* <STextField
-          label="Velocity"
-          maxRows={1}
-          multiline
-          sx={{ color: "white", width: "100%" }}
-          value={velocity}
-          onChange={(e) => setVelocity(e.target.value)}
-        />
-
-        <STextField
-          label="Brush Modes"
-          maxRows={1}
-          multiline
-          sx={{ color: "white", width: "100%", marginTop: "10px" }}
-          value={brushModes}
-          onChange={(e) => setBrushModes(e.target.value)}
-        /> */}
-
-        {/* <FormControlLabel
-          sx={{ marginTop: "5px" }}
-          control={
-            <SCheckbox
-              checked={leftBrush}
-              onChange={(e: any) => {
-                setLeftBrush(e.target.checked);
-              }}
-            />
-          }
-          label="Left Brush"
-        /> */}
+        {createPropertyFields()}
       </PanelContainer>
 
       <ButtonsContainer>

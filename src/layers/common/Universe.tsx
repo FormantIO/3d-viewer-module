@@ -20,6 +20,7 @@ import { Bounds } from "./CustomBounds";
 import { WaypointPanel } from "../../components/WaypointPanel";
 import { PointSizeSlider } from "../../components/PcdSizeSlider";
 import styled from "styled-components";
+import { Viewer3DConfiguration } from "../../config";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -28,6 +29,7 @@ const fancy = query.get("fancy") === "true";
 type IUniverseProps = {
   children?: React.ReactNode;
   configHash: string;
+  config: Viewer3DConfiguration;
 };
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
@@ -232,7 +234,12 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode={toggleEditMode}
         />
         <PointSizeSlider controlsStates={controlsStates} />
-        {isWaypointVisible && <WaypointPanel controlsStates={controlsStates} />}
+        {isWaypointVisible && (
+          <WaypointPanel
+            controlsStates={controlsStates}
+            config={props.config}
+          />
+        )}
       </UIDataContext.Provider>
     </>
   );

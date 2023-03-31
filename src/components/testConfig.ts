@@ -68,13 +68,13 @@ export const testConfig = {
         { propertyType: "Boolean", propertyName: "Left Brush" },
         {
           propertyType: "String",
-          stringDefault: '"BrushModesDefaultString"',
+          stringDefault: "BrushModesDefaultString",
           propertyName: "Brush Modes",
         },
         {
           propertyType: "Integer",
           propertyName: "Velocity",
-          numberDefault: "10",
+          integerDefault: "10",
         },
         {
           "0": "Dust1",

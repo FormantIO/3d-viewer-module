@@ -30,22 +30,24 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
       return;
     }
     let p = e.point;
-    setWaypoints([
-      ...waypoints,
-      {
-        translation: {
-          x: p.x,
-          y: p.y,
-          z: p.z + 0.125,
-        },
-        rotation: {
-          x: 0,
-          y: 0,
-          z: 0,
-          w: 1,
-        },
+    const pose = {
+      translation: {
+        x: p.x,
+        y: p.y,
+        z: p.z + 0.125,
       },
-    ]);
+      rotation: {
+        x: 0,
+        y: 0,
+        z: 0,
+        w: 1,
+      },
+    };
+    setWaypoints([...waypoints, pose]);
+    store.waypoints.push({
+      pointIndex: waypoints.length,
+      pose,
+    });
   };
 
   const poseChangeHandler = (updatedPose: IPose, index: number) => {
@@ -87,24 +89,38 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
           <Line
             points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
             lineWidth={10}
+            depthTest={false}
+            renderOrder={1}
             color={FormantColors.blue}
-            onDoubleClick={(e) => {
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              if (!e.shiftKey) {
+                return;
+              }
               let p = e.point;
+              const pose = {
+                translation: {
+                  x: p.x,
+                  y: p.y,
+                  z: p.z + 0.125,
+                },
+                rotation: {
+                  x: 0,
+                  y: 0,
+                  z: 0,
+                  w: 1,
+                },
+              };
               setWaypoints((prev) => {
-                prev.splice(e.faceIndex! + 1, 0, {
-                  translation: {
-                    x: p.x,
-                    y: p.y,
-                    z: p.z + 0.125,
-                  },
-                  rotation: {
-                    x: 0,
-                    y: 0,
-                    z: 0,
-                    w: 1,
-                  },
-                });
+                prev.splice(e.faceIndex! + 1, 0, pose);
                 return [...prev];
+              });
+
+              console.log("before", store.waypoints);
+              store.waypoints.splice(e.faceIndex! + 1, 0, {
+                pointIndex: e.faceIndex! + 1,
+                pose,
+                new: "new",
               });
             }}
           />
