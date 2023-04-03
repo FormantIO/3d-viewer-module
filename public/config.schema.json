@@ -73,78 +73,68 @@
               }
             }
           },
-          "transform": {
-            "title": "Transform",
-            "$formant.itemName": "Transform",
-            "type": "object",
-            "properties": {
-              "positioningType": {
-                "type": "string",
-                "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
-                "default": "Cartesian"
-              },
-              "x": {
-                "title": "X-axis",
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "y": {
-                "title": "Y-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "z": {
-                "title": "Z-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "relativeLatitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "relativeLongitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "gpsStream": {
-                "type": "string",
-                "$formant.streams.byType": "location",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "localizationStream": {
-                "type": "string",
-                "$formant.streams.byType": "localization",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "localizationWorldToLocal": {
-                "type": "boolean",
-                "default": true,
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "localizationRealtimeStream": {
-                "type": "string",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "transformTreeStream": {
-                "type": "string",
-                "$formant.streams.byType": "transform tree",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
-              },
-              "transformTreeEndPoint": {
-                "type": "string",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
-              }
-            }
+          "transformType": {
+            "title": "Transform type",
+            "type": "string",
+            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+            "default": "Cartesian"
+          },
+          "transformX": {
+            "title": "X-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformY": {
+            "title": "Y-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformZ": {
+            "title": "Z-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformRelativeLatitude": {
+            "title": "Relative latitude",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformRelativeLongitude": {
+            "title": "Relative longitude",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformGpsStream": {
+            "title": "GPS stream",
+            "type": "string",
+            "$formant.streams.byType": "location",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformLocalizationStream": {
+            "title": "Localization stream",
+            "type": "string",
+            "$formant.streams.byType": "localization",
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformLocalizationWorldToLocal": {
+            "title": "Localization world to local",
+            "type": "boolean",
+            "default": true,
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformLocalizationRealtimeStream": {
+            "title": "Localization realtime stream",
+            "type": "string",
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformTreeStream": {
+            "type": "string",
+            "$formant.streams.byType": "transform tree",
+            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
+          },
+          "transformTreeEndPoint": {
+            "type": "string",
+            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
           }
         }
       }
@@ -227,78 +217,68 @@
             },
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
-          "transform": {
-            "title": "Transform",
-            "$formant.itemName": "Transform",
-            "type": "object",
-            "properties": {
-              "positioningType": {
-                "type": "string",
-                "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
-                "default": "Cartesian"
-              },
-              "x": {
-                "title": "X-axis",
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "y": {
-                "title": "Y-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "z": {
-                "title": "Z-axis",
-
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Cartesian"]
-              },
-              "relativeLatitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "relativeLongitude": {
-                "type": "number",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "gpsStream": {
-                "type": "string",
-                "$formant.streams.byType": "location",
-                "$formant.visible.when": ["positioningType", "=", "Gps"]
-              },
-              "localizationStream": {
-                "type": "string",
-                "$formant.streams.byType": "localization",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "localizationWorldToLocal": {
-                "type": "boolean",
-                "default": true,
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "localizationRealtimeStream": {
-                "type": "string",
-                "$formant.visible.when": ["positioningType", "=", "Odometry"]
-              },
-              "transformTreeStream": {
-                "type": "string",
-                "$formant.streams.byType": "transform tree",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
-              },
-              "transformTreeEndPoint": {
-                "type": "string",
-                "$formant.visible.when": [
-                  "positioningType",
-                  "=",
-                  "Transform Tree"
-                ]
-              }
-            }
+          "transformType": {
+            "title": "Transform type",
+            "type": "string",
+            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+            "default": "Cartesian"
+          },
+          "transformX": {
+            "title": "X-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformY": {
+            "title": "Y-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformZ": {
+            "title": "Z-axis",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+          },
+          "transformRelativeLatitude": {
+            "title": "Relative latitude",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformRelativeLongitude": {
+            "title": "Relative longitude",
+            "type": "number",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformGpsStream": {
+            "title": "GPS stream",
+            "type": "string",
+            "$formant.streams.byType": "location",
+            "$formant.visible.when": ["transformType", "=", "Gps"]
+          },
+          "transformLocalizationStream": {
+            "title": "Localization stream",
+            "type": "string",
+            "$formant.streams.byType": "localization",
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformLocalizationWorldToLocal": {
+            "title": "Localization world to local",
+            "type": "boolean",
+            "default": true,
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformLocalizationRealtimeStream": {
+            "title": "Localization realtime stream",
+            "type": "string",
+            "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformTreeStream": {
+            "type": "string",
+            "$formant.streams.byType": "transform tree",
+            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
+          },
+          "transformTreeEndPoint": {
+            "type": "string",
+            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
           }
         }
       }

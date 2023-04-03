@@ -20,7 +20,7 @@ const newConfig: Viewer3DConfiguration = {
         telemetryStreamType: "localization",
         latestDataPoint: false,
       },
-      transform: { localizationWorldToLocal: true },
+      transformLocalizationWorldToLocal: true,
     },
   ],
   visualizations: [
@@ -29,11 +29,9 @@ const newConfig: Viewer3DConfiguration = {
       visualizationType: "Position Indicator",
       positionIndicatorVisualType: "Circle",
 
-      transform: {
-        localizationWorldToLocal: true,
-        localizationStream: "Map", //replace with stream name
-        positioningType: "Odometry",
-      },
+      transformLocalizationWorldToLocal: true,
+      transformLocalizationStream: "Map", //replace with stream name
+      transformType: "Odometry",
     },
   ],
 };

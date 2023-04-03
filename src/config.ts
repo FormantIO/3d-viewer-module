@@ -6,16 +6,16 @@ import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 
 export type Viewer3DConfiguarationTransform = {
-  positioningType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
-  x?: number;
-  y?: number;
-  z?: number;
-  relativeLatitude?: number;
-  relativeLongitude?: number;
-  gpsStream?: string;
-  localizationStream?: string;
-  localizationWorldToLocal?: boolean;
-  localizationRealtimeStream?: string;
+  transformType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
+  transformX?: number;
+  transformY?: number;
+  transformZ?: number;
+  transformRelativeLatitude?: number;
+  transformRelativeLongitude?: number;
+  transformGpsStream?: string;
+  transformLocalizationStream?: string;
+  transformLocalizationWorldToLocal?: boolean;
+  transformLocalizationRealtimeStream?: string;
   transformTreeStream?: string;
   transformTreeEndPoint?: string;
 };
@@ -40,8 +40,7 @@ export type Viewer3DVisualization = {
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
-  transform?: Viewer3DConfiguarationTransform;
-};
+} & Viewer3DConfiguarationTransform;
 
 export type Viewer3DMap = {
   name?: string;
@@ -52,8 +51,7 @@ export type Viewer3DMap = {
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;
   occupancyMapDataSource?: Viewer3DConfigurationDataSource;
-  transform?: Viewer3DConfiguarationTransform;
-};
+} & Viewer3DConfiguarationTransform;
 
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
@@ -76,20 +74,22 @@ export function parseDataSource(
 export function parsePositioning(
   positioning: Viewer3DConfiguarationTransform
 ): Positioning {
-  switch (positioning.positioningType) {
+  switch (positioning.transformType) {
     case "Cartesian":
       return PositioningBuilder.fixed(
-        positioning.x || 0,
-        positioning.y || 0,
-        positioning.z || 0
+        positioning.transformX || 0,
+        positioning.transformY || 0,
+        positioning.transformZ || 0
       );
     case "Gps":
-      return PositioningBuilder.gps(positioning.gpsStream || "", {
-        long: positioning.relativeLongitude || 0,
-        lat: positioning.relativeLatitude || 0,
+      return PositioningBuilder.gps(positioning.transformGpsStream || "", {
+        long: positioning.transformRelativeLongitude || 0,
+        lat: positioning.transformRelativeLatitude || 0,
       });
     case "Odometry":
-      return PositioningBuilder.odometry(positioning.localizationStream || "");
+      return PositioningBuilder.odometry(
+        positioning.transformLocalizationStream || ""
+      );
     case "Transform Tree":
       return PositioningBuilder.tranformTree(
         positioning.transformTreeStream || "",
