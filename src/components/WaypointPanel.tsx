@@ -1,12 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import styled from "styled-components";
 import * as THREE from "three";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
@@ -15,6 +8,7 @@ import { getTaregt, TextInput } from "./TextInput";
 import { testConfig } from "./testConfig";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration } from "../config";
+import { FormantColors } from "../layers/utils/FormantColors";
 
 const Container = styled.div`
   position: absolute;
@@ -50,14 +44,21 @@ const ButtonsContainer = styled.div`
   pointer-events: all;
 `;
 
-const STextField = styled(TextField)(() => ({
-  "& label": {
-    color: "white",
-  },
-  "& div": {
-    color: "white",
-  },
-}));
+const DeleteConfirmPanel = styled.div`
+  width: 400px;
+  height: 150px;
+  border-radius: 10px;
+  padding: 30px;
+  background-color: ${FormantColors.module};
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.5rem;
+  font-family: Inter;
+  pointer-events: all;
+`;
 
 const SButton = styled(Button)(() => ({
   "&.MuiButtonBase-root": {
@@ -75,10 +76,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
     state: { selectedWaypoint },
+    updateState,
     store,
     setWaypoints,
   } = controlsStates;
   const device = useContext(DeviceContext);
+
+  const [showDelete, setShowDelete] = useState(false);
 
   let waypointsProperties: any[] = [];
   if (config) {
@@ -104,13 +108,25 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     store.waypoints = waypoints.filter((_, idx) => idx !== selectedWaypoint);
 
     // Update panel when gizmo moving to the next point
-    if (selectedWaypoint < waypoints.length - 1) {
+    if (selectedWaypoint > 0) {
       const w = store.waypoints[selectedWaypoint];
-
-      // setVelocity(w.velocity ? w.velocity.toString() : "");
-      // setBrushModes(w.brushModes ? w.brushModes.toString() : "");
+      updateState({ selectedWaypoint: selectedWaypoint - 1 });
+    } else if (waypoints.length > 1) {
+      updateState({ selectedWaypoint: waypoints.length - 2 });
+    } else {
+      updateState({ selectedWaypoint: null });
     }
   };
+
+  useEffect(() => {
+    const keydownHandler = (e: KeyboardEvent) => {
+      if (e.key === "Delete") {
+        setShowDelete(true);
+      }
+    };
+    window.addEventListener("keydown", keydownHandler);
+    return () => window.removeEventListener("keydown", keydownHandler);
+  }, []);
 
   const sendBtnHandler = () => {
     const { waypoints } = store;
@@ -132,7 +148,6 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       xPosRef.current.value = "";
       yPosRef.current.value = "";
       if (waypointsProperties.length > 0) {
-        console.log(waypointsProperties, elements);
         waypointsProperties!.forEach(({ propertyType }, idx) => {
           if (propertyType === "String" || propertyType === "Integer") {
             elements[idx].current!.value = "";
@@ -295,6 +310,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
         <TextInput
           ref={angleRef}
           label={"Orientation"}
+          type="number"
           onEnter={() => {
             if (selectedWaypoint === null) return;
             let v = parseFloat(getTaregt(angleRef).value);
@@ -313,11 +329,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
         <TextInput
           ref={xPosRef}
           label="X-axis"
+          type="number"
           onEnter={() => posHandler("x")}
         />
         <TextInput
           ref={yPosRef}
           label="Y-axis"
+          type="number"
           onEnter={() => posHandler("y")}
         />
 
@@ -325,6 +343,44 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
         {createPropertyFields()}
       </PanelContainer>
+
+      {showDelete && (
+        <DeleteConfirmPanel>
+          <div>
+            Delete <b>waypoints</b>?
+          </div>
+          <Box
+            component={"div"}
+            display="flex"
+            justifyContent="space-between"
+            mt={"40px"}
+          >
+            <SButton
+              variant="contained"
+              sx={{ borderRadius: "20px", width: "150px", color: "white" }}
+              onClick={() => setShowDelete(false)}
+            >
+              Cancel
+            </SButton>
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{
+                borderRadius: "20px",
+                width: "150px",
+                backgroundColor: FormantColors.red,
+                color: "black",
+              }}
+              onClick={() => {
+                setShowDelete(false);
+                removeBtnHandler();
+              }}
+            >
+              Delete
+            </Button>
+          </Box>
+        </DeleteConfirmPanel>
+      )}
 
       <ButtonsContainer>
         <Box
@@ -337,12 +393,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           <SButton
             variant="contained"
             color="warning"
-            onClick={removeBtnHandler}
+            onClick={() => setShowDelete(true)}
           >
             Remove
           </SButton>
           <SButton variant="contained" onClick={sendBtnHandler}>
-            Send
+            Send Path
           </SButton>
         </Box>
       </ButtonsContainer>

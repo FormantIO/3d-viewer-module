@@ -24,6 +24,7 @@ const inputStyle = {
 interface Props {
   label: string;
   value?: string;
+  type?: "number" | "string";
   onEnter?: () => void;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -31,19 +32,32 @@ interface Props {
 }
 
 export const TextInput = forwardRef<any, Props>(
-  ({ label, onChange, onEnter, value }, ref) => {
+  ({ label, onChange, onEnter, value, type = "string" }, ref) => {
+    const divRef = React.useRef<HTMLDivElement>(null!);
     return (
-      <Box component={"div"} sx={{ height: "70px", marginTop: "10px" }}>
+      <Box
+        component={"div"}
+        sx={{ height: "70px", marginTop: "10px" }}
+        ref={divRef}
+      >
         <SLabel>{label}</SLabel>
         <input
           style={inputStyle}
           ref={ref}
           value={value}
           placeholder="Edit"
-          onChange={(e) => onChange && onChange(e)}
+          onChange={(e) => {
+            const t = divRef.current.childNodes[1] as HTMLInputElement;
+            if (type === "number") {
+              const newValue = t.value.replace(/[^0-9.-]/g, "");
+              t.value = newValue;
+            }
+            onChange && onChange(e);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") onEnter && onEnter();
           }}
+          onBlur={() => onEnter && onEnter()}
         />
       </Box>
     );

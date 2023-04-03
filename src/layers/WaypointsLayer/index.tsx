@@ -116,7 +116,6 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
                 return [...prev];
               });
 
-              console.log("before", store.waypoints);
               store.waypoints.splice(e.faceIndex! + 1, 0, {
                 pointIndex: e.faceIndex! + 1,
                 pose,
