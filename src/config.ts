@@ -62,12 +62,9 @@ export function parseDataSource(
   dataSource: Viewer3DConfigurationDataSource
 ): UniverseDataSource | undefined {
   if (dataSource.telemetryStreamName) {
-    if (dataSource.telemetryStreamName === undefined) {
-      return undefined;
-    }
     return DataSourceBuilder.telemetry(
       dataSource.telemetryStreamName,
-      "json",
+      undefined,
       dataSource.telemetryLatestDataPoint
     );
   }

@@ -12,13 +12,22 @@ import {
   IUniverseOdometry,
 } from "@formant/universe-core";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
-import { Box3, BoxGeometry, Euler, Matrix4, Mesh, MeshBasicMaterial, Quaternion, Vector3 } from "three";
+import {
+  Box3,
+  BoxGeometry,
+  Euler,
+  Matrix4,
+  Mesh,
+  MeshBasicMaterial,
+  Quaternion,
+  Vector3,
+} from "three";
 import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -117,7 +126,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         const unsubscribe = universeData.subscribeToLocation(
           defined(deviceId, "gps positioning requires a device id"),
           DataSourceBuilder.telemetry(p.stream, "location"),
-          (d) => {
+          (d: ILocation | Symbol) => {
             if (typeof d === "symbol") {
               console.warn("unhandled empty gps location");
               return;
@@ -166,8 +175,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
-        if (p.stream && p.streamType === "localization") {
-          d = DataSourceBuilder.telemetry(p.stream, p.streamType);
+        if (p.stream) {
+          d = DataSourceBuilder.telemetry(p.stream, undefined);
         } else if (p.rtcStream) {
           d = DataSourceBuilder.realtime(p.rtcStream, "json");
         } else {
@@ -199,7 +208,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         const unsubscribe = universeData.subscribeToTransformTree(
           defined(deviceId, "transform tree positioning requires a device id"),
           DataSourceBuilder.telemetry(p.stream, "transform tree"),
-          (d) => {
+          (d: ITransformNode | Symbol) => {
             if (typeof d === "symbol") {
               console.warn("unhandled empty transform tree");
               return;
