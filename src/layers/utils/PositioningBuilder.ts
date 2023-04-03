@@ -13,7 +13,6 @@ export class PositioningBuilder {
     return {
       type: "odometry",
       stream,
-      streamType: "localization",
       useWorldToLocalTransform: localizationWorldToLocal,
     };
   }
