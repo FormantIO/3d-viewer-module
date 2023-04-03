@@ -40,14 +40,6 @@
             ],
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "telemetryStreamName": {
-            "type": "string"
-          },
-          "telemetryLatestDataPoint": {
-            "type": "boolean",
-            "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-          },
           "gpsMapLatitude": {
             "title": "Default latitude (optional)",
             "type": "number",
@@ -57,6 +49,14 @@
             "title": "Default longitude (optional)",
             "type": "number",
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
+          },
+          "telemetryStreamName": {
+            "type": "string"
+          },
+          "telemetryLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
           },
           "transformType": {
             "title": "Transform type (optional)",
@@ -185,14 +185,6 @@
             "$formant.visible.when": ["visualizationType", "=", "Image"],
             "default": 1
           },
-          "telemetryStreamName": {
-            "type": "string"
-          },
-          "telemetryLatestDataPoint": {
-            "type": "boolean",
-            "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-          },
           "pointCloudDecayTime": {
             "title": "Decay time",
             "type": "number",
@@ -202,6 +194,14 @@
             "title": "Full Color",
             "type": "boolean",
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
+          },
+          "telemetryStreamName": {
+            "type": "string"
+          },
+          "telemetryLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
           },
           "transformType": {
             "title": "Transform type (optional)",
