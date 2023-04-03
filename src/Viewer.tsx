@@ -1,7 +1,7 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
-import { Authentication, App as FormantApp } from "@formant/data-sdk";
+import { Authentication, Fleet, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
@@ -60,8 +60,31 @@ export function Viewer() {
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
       <UniverseDataContext.Provider value={universeData}>
-        <Universe configHash={getUuidByString(JSON.stringify(config))} key={getUuidByString(JSON.stringify(config))}>
-          <ambientLight />
+        <Universe
+          configHash={getUuidByString(JSON.stringify(config))}
+          key={getUuidByString(JSON.stringify(config))}
+        >
+          <group>
+            <pointLight
+              position={[1000, 1000, 1000]}
+              color={"#18d2ff"}
+              intensity={0.3 * 2.8}
+              decay={0}
+              distance={0}
+            />
+            <pointLight
+              position={[-1000, -1000, 1000]}
+              color={"#ea719d"}
+              intensity={0.7 * 2.8}
+              decay={0}
+              distance={0}
+            />
+            <hemisphereLight
+              intensity={0.2 * 2.8}
+              color={"#f8f9fc"}
+              groundColor={"#282f45"}
+            />
+          </group>
           {buildScene(config, definedAndNotNull(currentDeviceId))};
         </Universe>
       </UniverseDataContext.Provider>

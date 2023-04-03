@@ -10,6 +10,7 @@ import {
 } from "@formant/universe-core";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
+  Box3,
   BufferAttribute,
   BufferGeometry,
   CustomBlending,
@@ -20,20 +21,22 @@ import {
 } from "three";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { Color } from "./utils/Color";
-import { useLoader } from "@react-three/fiber";
 import { useControlsContext } from "./common/ControlsContext";
+import { useLoader, useThree } from "@react-three/fiber";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   decayTime: number;
+  useColors?: boolean;
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, decayTime } = props;
+  const { dataSource, decayTime, useColors: fullColor } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const {
     state: { pointSize },
+    updateState,
   } = useControlsContext();
 
   const circleMap = useLoader(TextureLoader, "./point-circle.png");
@@ -44,10 +47,14 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     if (!pointMatRef.current) return;
     pointMatRef.current.uniforms.pointScale.value = pointSize;
   }, [pointSize]);
+  const [ready, setReady] = useState(false);
+
+  const { scene } = useThree();
 
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
+    updateState({ isPointSizeSliderVisible: true });
 
     const color1 = defined(Color.fromString("#729fda"));
     const color2 = defined(Color.fromString("#F89973"));
@@ -59,6 +66,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     uniform float radius;
     uniform float intensityMin;
     uniform float intensityMax;
+    uniform float formantColors;
     uniform float density;
     
     float map(float value, float min1, float max1, float min2, float max2) {
@@ -73,6 +81,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     }
     
     void main() {
+        
         float cameraDistance = distance(position, cameraPosition);
         float redShift = (radius - cameraDistance) / radius / 2.0;
         float q = pow(pointScale, 3.0) / (distance(position, cameraPosition) * density);
@@ -94,8 +103,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         color2 = hslToRgb(color2);
     
         // apply red shift
-        vColor = mix(color1, color2, clamp(-redShift, 0.0, 1.0));
-    
+
+        if (formantColors == 1.0) {
+          vColor = mix(color1, color2, clamp(-redShift, 0.0, 1.0));
+        } else {
+          vColor = vec3(color.r, color.g, color.b);
+        }
+
         gl_PointSize = clamp(50.0 * q, 2.0 / density, 100.0);
     
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
@@ -121,6 +135,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         radius: { value: 1.0 },
         intensityMin: { value: 0.0 },
         intensityMax: { value: 0.0 },
+        formantColors: { value: fullColor ? 0.0 : 1.0 },
         density: { value: 1.0 },
       },
       transparent: true,
@@ -134,9 +149,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     setObj(points);
 
     let timer: number = 0;
-
+    let isReady = false;
     if (dataSource) {
-      dataSource.streamType = "localization";
       const unsubscribe = universeData.subscribeToPointCloud(
         deviceId,
         dataSource,
@@ -161,7 +175,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             ? pc.worldToLocal
             : identityTransform;
 
-          if (positions && header.points > 0) {
+          if (positions && positions.length > 0) {
             geometry.setAttribute(
               "position",
               new BufferAttribute(new Float32Array(positions), 3)
@@ -186,6 +200,13 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             }
 
             geometry.computeBoundingSphere();
+
+            if (!isReady) {
+              isReady = true;
+              setReady(true);
+              geometry.computeBoundingBox();
+              scene.dispatchEvent({ type: "updateBounds" });
+            }
 
             const numPoints = positions?.length || 0;
             const radius = geometry.boundingSphere
@@ -215,7 +236,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <primitive object={obj} />
+      {ready && <primitive object={obj} />}
     </DataVisualizationLayer>
   );
 };

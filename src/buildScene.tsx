@@ -20,6 +20,9 @@ import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { cloneElement, isValidElement } from "react";
+import { URDFLayer } from "./layers/URDFLayer";
+import { ImageLayer } from "./layers/ImageLayer";
+import { GLTFLayer } from "./layers/GLTFLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -34,7 +37,7 @@ export function buildScene(
   mapLayers = (config.maps || []).map((layer, i) => {
     const positioning = layer.transformType
       ? parsePositioning(layer)
-      : PositioningBuilder.fixed(0, 0, 0 - (i + 1) * 0.005);
+      : PositioningBuilder.fixed(0, 0, 0);
     if (layer.mapType === "Ground Plane") {
       return (
         <GroundLayer
@@ -52,12 +55,21 @@ export function buildScene(
 
       const dataSource =
         layer.gpsMapDataSource && parseDataSource(layer.gpsMapDataSource);
+
+      let distanceNum;
+
+      if (layer.gpsMapSize.includes("kilometer")) {
+        distanceNum = parseFloat(layer.gpsMapSize) * 1000;
+      } else {
+        distanceNum = parseFloat(layer.gpsMapSize);
+      }
+
       return (
         <MapLayer
           key={"map" + i + configHash}
           positioning={positioning}
           mapType={layer.gpsMapType || "Satellite"}
-          size={layer.gpsMapSize || 200}
+          size={distanceNum}
           latitude={layer.gpsMapLatitude || defaultLat}
           longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
@@ -94,6 +106,19 @@ export function buildScene(
             name={layer.name || "Marker"}
           />
         );
+      } else if (layer.positionIndicatorVisualType === "URDF") {
+        deviceLayers.push(
+          <URDFLayer
+            key={"vis" + i + configHash}
+            positioning={positioning}
+            treePath={[1, i]}
+            name={layer.name || "URDF"}
+            jointStatesDataSource={
+              layer.urdfJointStatesDataSource &&
+              parseDataSource(layer.urdfJointStatesDataSource)
+            }
+          />
+        );
       }
     } else if (layer.visualizationType === "Path") {
       const dataSource =
@@ -110,7 +135,7 @@ export function buildScene(
       const dataSource =
         layer.pointCloudDataSource &&
         parseDataSource(layer.pointCloudDataSource);
-      const { pointCloudDecayTime } = layer;
+      const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
@@ -118,6 +143,7 @@ export function buildScene(
           treePath={[1, i]}
           name={layer.name || "Point Cloud"}
           decayTime={pointCloudDecayTime || 1}
+          useColors={pointCloudUseColors || false}
         />
       );
     } else if (layer.visualizationType === "Geometry") {
@@ -137,6 +163,35 @@ export function buildScene(
           />
         );
       }
+    } else if (layer.visualizationType === "Image") {
+      const positioning = layer.transform
+        ? parsePositioning(layer.transform)
+        : PositioningBuilder.fixed(0, 0, 0);
+      const dataSource = deviceLayers.push(
+        <ImageLayer
+          key={"vis" + i + configHash}
+          positioning={positioning}
+          treePath={[1, i]}
+          name={layer.name || "Image"}
+          width={layer.imageWidth || 1}
+          height={layer.imageHeight || 1}
+          fileId={layer.imageFileId || ""}
+        />
+      );
+    } else if (layer.visualizationType === "GLTF") {
+      const positioning = layer.transform
+        ? parsePositioning(layer.transform)
+        : PositioningBuilder.fixed(0, 0, 0);
+      const dataSource = deviceLayers.push(
+        <GLTFLayer
+          key={"vis" + i + configHash}
+          positioning={positioning}
+          treePath={[1, i]}
+          name={layer.name || "GLTF"}
+          scale={layer.gltfScale || 1}
+          fileId={layer.gltfFileId || ""}
+        />
+      );
     } else {
       throw new Error("Unknown visualization type");
     }
@@ -174,7 +229,7 @@ export function buildScene(
         deviceId: definedAndNotNull(currentDeviceId),
       }}
     >
-      <EmptyLayer name={"Visualizations"} treePath={[1]}>
+      <EmptyLayer name={"Device Layers"} treePath={[1]}>
         {deviceLayers}
       </EmptyLayer>
     </LayerContext.Provider>

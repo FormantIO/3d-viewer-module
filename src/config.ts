@@ -1,5 +1,3 @@
-import { Authentication, App } from "@formant/data-sdk";
-import { TelemetryUniverseData } from "@formant/universe-connector";
 import { StreamType, UniverseDataSource } from "@formant/universe-core";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
@@ -36,17 +34,25 @@ export type Viewer3DVisualization = {
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
+  urdfJointStatesDataSource?: Viewer3DConfigurationDataSource;
   geometryDataSource?: Viewer3DConfigurationDataSource;
   pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
   pointCloudDataSource?: Viewer3DConfigurationDataSource;
+  pointCloudUseColors?: boolean;
+  transform?: Viewer3DConfiguarationTransform;
+  imageFileId?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  gltfFileId?: string;
+  gltfScale?: number;
 } & Viewer3DConfiguarationTransform;
 
 export type Viewer3DMap = {
   name?: string;
   mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
   gpsMapType?: "Satellite" | "Street" | "Satellite Street";
-  gpsMapSize?: number;
+  gpsMapSize: string;
   gpsMapDataSource?: Viewer3DConfigurationDataSource;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;
