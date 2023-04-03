@@ -16,11 +16,8 @@ const newConfig: Viewer3DConfiguration = {
       name: "ocupancy grid name",
       mapType: "Occupancy Map",
       gpsMapSize: "200",
-      occupancyMapDataSource: {
-        telemetryStreamName: "Map", //replace with stream name
-        telemetryStreamType: "localization",
-        latestDataPoint: false,
-      },
+      telemetryStreamName: "Map",
+      telemetryLatestDataPoint: false,
       transformLocalizationWorldToLocal: true,
     },
   ],

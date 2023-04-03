@@ -20,8 +20,7 @@ export type Viewer3DConfiguarationTransform = {
 
 export type Viewer3DConfigurationDataSource = {
   telemetryStreamName?: string;
-  telemetryStreamType?: string;
-  latestDataPoint?: boolean;
+  telemetryLatestDataPoint?: boolean;
 };
 
 export type Viewer3DVisualization = {
@@ -34,30 +33,25 @@ export type Viewer3DVisualization = {
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
-  urdfJointStatesDataSource?: Viewer3DConfigurationDataSource;
-  geometryDataSource?: Viewer3DConfigurationDataSource;
-  pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
-  pointCloudDataSource?: Viewer3DConfigurationDataSource;
   pointCloudUseColors?: boolean;
-  transform?: Viewer3DConfiguarationTransform;
   imageFileId?: string;
   imageWidth?: number;
   imageHeight?: number;
   gltfFileId?: string;
   gltfScale?: number;
-} & Viewer3DConfiguarationTransform;
+} & Viewer3DConfiguarationTransform &
+  Viewer3DConfigurationDataSource;
 
 export type Viewer3DMap = {
   name?: string;
   mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
   gpsMapType?: "Satellite" | "Street" | "Satellite Street";
   gpsMapSize: string;
-  gpsMapDataSource?: Viewer3DConfigurationDataSource;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;
-  occupancyMapDataSource?: Viewer3DConfigurationDataSource;
-} & Viewer3DConfiguarationTransform;
+} & Viewer3DConfiguarationTransform &
+  Viewer3DConfigurationDataSource;
 
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
@@ -68,10 +62,13 @@ export function parseDataSource(
   dataSource: Viewer3DConfigurationDataSource
 ): UniverseDataSource | undefined {
   if (dataSource.telemetryStreamName) {
+    if (dataSource.telemetryStreamName === undefined) {
+      return undefined;
+    }
     return DataSourceBuilder.telemetry(
       dataSource.telemetryStreamName,
-      (dataSource.telemetryStreamType as StreamType) || "json",
-      dataSource.latestDataPoint
+      "json",
+      dataSource.telemetryLatestDataPoint
     );
   }
   return undefined;

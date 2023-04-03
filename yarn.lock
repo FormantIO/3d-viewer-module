@@ -563,23 +563,23 @@
     react-chartjs-2 "^5.2.0"
     react-device-detect "^2.2.2"
 
-"@formant/universe-connector@0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.29.tgz#06a0a4fe93103f1b947acda86d36e6b9132b5b98"
-  integrity sha512-JeG9BB8fkYm4uK1/0jZ93aR8A86ibALxj32uN3bJXXTQBnwtIEu27V5IPVARejFSlpeN4jWu/kl6TeQbtuOLiw==
+"@formant/universe-connector@0.0.32":
+  version "0.0.32"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.32.tgz#08c1ee3b2d33f8175cb7c3700ce004e03efe458c"
+  integrity sha512-7D2r2S8+E1nL1tK+gClu2UEt4SIP1Dyyc/2bq4Ps+rIlLloW9gUn4cWVA0HwCrAeuIb0YkyiSbYOh9uh0fPsww==
   dependencies:
     "@formant/data-sdk" "0.0.117"
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
-    "@formant/universe-core" "0.0.16"
+    "@formant/universe-core" "0.0.17"
     date-fns "^2.29.3"
     lzfjs "^1.0.1"
     validator "^13.7.0"
 
-"@formant/universe-core@0.0.16", "@formant/universe-core@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.16.tgz#d3e6eb2ad520d91d13af023545a7cd8f900f6732"
-  integrity sha512-Vgj1XgF4XJ8uLE/bm0UNR3j1Mz5GIqhT19zHS463mRmkyhapYoyf89oug4Tb6adYJDNRxQES1CE2UmAcGcoHkw==
+"@formant/universe-core@0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.17.tgz#9ec5aae8b34faca7aff9b13522e5f4bfc60072f6"
+  integrity sha512-7f+WeyvCnTRYbCPFKnpniA42bFIfyWV9XY8D5mPz3B1qNrmvx6ChrDbLA8R4Bn0Xyzq3rpfgpnyEvqySfQAD6A==
 
 "@gar/promisify@^1.1.3":
   version "1.1.3"

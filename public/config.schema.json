@@ -40,26 +40,13 @@
             ],
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
-          "gpsMapDataSource": {
-            "type": "object",
-            "title": "Data source",
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "location"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              },
-              "telemetryStreamType": {
-                "type": "string",
-                "enum": ["location", "json"],
-                "default": "location"
-              }
-            },
-            "$formant.visible.when": ["mapType", "=", "GPS Map"]
+          "telemetryStreamName": {
+            "type": "string"
+          },
+          "telemetryLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
           },
           "gpsMapLatitude": {
             "title": "Default latitude (optional)",
@@ -70,21 +57,6 @@
             "title": "Default longitude (optional)",
             "type": "number",
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
-          },
-          "occupancyMapDataSource": {
-            "type": "object",
-            "$formant.visible.when": ["mapType", "=", "Occupancy Map"],
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "localization"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              }
-            }
           },
           "transformType": {
             "title": "Transform type (optional)",
@@ -213,56 +185,13 @@
             "$formant.visible.when": ["visualizationType", "=", "Image"],
             "default": 1
           },
-          "urdfJointStatesDataSource": {
-            "type": "object",
-            "title": "Data source",
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "json"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              }
-            },
-            "$formant.visible.when": [
-              "positionIndicatorVisualType",
-              "=",
-              "URDF"
-            ]
+          "telemetryStreamName": {
+            "type": "string"
           },
-          "geometryDataSource": {
-            "type": "object",
-            "title": "Data source",
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "json"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              }
-            },
-            "$formant.visible.when": ["visualizationType", "=", "Geometry"]
-          },
-          "pathDataSource": {
-            "type": "object",
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "localization"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              }
-            },
-            "$formant.visible.when": ["visualizationType", "=", "Path"]
+          "telemetryLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
           },
           "pointCloudDecayTime": {
             "title": "Decay time",
@@ -272,27 +201,6 @@
           "pointCloudUseColors": {
             "title": "Full Color",
             "type": "boolean",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
-          },
-          "pointCloudDataSource": {
-            "title": "Data source",
-            "type": "object",
-            "properties": {
-              "telemetryStreamName": {
-                "type": "string",
-                "$formant.streams.byType": "localization,json"
-              },
-              "telemetryStreamType": {
-                "type": "string",
-                "enum": ["localization", "json"],
-                "default": "localization"
-              },
-              "latestDataPoint": {
-                "type": "boolean",
-                "default": false,
-                "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
-              }
-            },
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "transformType": {
