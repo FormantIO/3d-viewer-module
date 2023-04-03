@@ -14,7 +14,13 @@ interface IWaypointsProps extends IUniverseLayerProps {
 }
 
 export const WaypointsLayer = (props: IWaypointsProps) => {
-  const { store, updateState, waypoints, setWaypoints } = useControlsContext();
+  const {
+    store,
+    updateState,
+    waypoints,
+    setWaypoints,
+    state: { isWaypointEditing },
+  } = useControlsContext();
 
   useEffect(() => {
     updateState({ isWaypointVisible: true }); // Show UI
@@ -23,7 +29,10 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     };
   }, [store, updateState]);
 
+  // Add new waypoint
   const mouseDownHandler = (e: ThreeEvent<PointerEvent>) => {
+    if (!isWaypointEditing) return;
+
     e.stopPropagation();
     if (!e.shiftKey) {
       updateState({ selectedWaypoint: null }); // Remove gizmo
@@ -36,15 +45,20 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         y: p.y,
         z: p.z + 0.125,
       },
-      rotation: {
-        x: 0,
-        y: 0,
-        z: 0,
-        w: 1,
-      },
+      rotation:
+        waypoints.length > 0
+          ? waypoints[waypoints.length - 1].rotation
+          : {
+              x: 0,
+              y: 0,
+              z: 0,
+              w: 1,
+            },
     };
     setWaypoints([...waypoints, pose]);
+
     store.waypoints.push({
+      ...(waypoints.length > 0 ? store.waypoints[waypoints.length - 1] : {}),
       pointIndex: waypoints.length,
       pose,
     });
@@ -93,6 +107,8 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
             renderOrder={1}
             color={FormantColors.blue}
             onPointerDown={(e) => {
+              if (!isWaypointEditing) return;
+
               e.stopPropagation();
               if (!e.shiftKey) {
                 return;

@@ -63,6 +63,9 @@ const DeleteConfirmPanel = styled.div`
 const SButton = styled(Button)(() => ({
   "&.MuiButtonBase-root": {
     background: "#3e4b6c",
+    borderRadius: "10px",
+    paddingRight: "20px",
+    paddingLeft: "20px",
   },
   height: "35px",
 }));
@@ -75,7 +78,7 @@ interface Props {
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
-    state: { selectedWaypoint },
+    state: { selectedWaypoint, isWaypointEditing },
     updateState,
     store,
     setWaypoints,
@@ -143,6 +146,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   // Update fields with waypoints changed
   useEffect(() => {
+    if (!isWaypointEditing) return;
     if (selectedWaypoint === null) {
       angleRef.current.value = "";
       xPosRef.current.value = "";
@@ -304,104 +308,191 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   return (
     <Container>
-      <PanelContainer>
-        <Typography>HEADING</Typography>
+      {isWaypointEditing && (
+        <>
+          <PanelContainer>
+            <Typography>HEADING</Typography>
 
-        <TextInput
-          ref={angleRef}
-          label={"Orientation"}
-          type="number"
-          onEnter={() => {
-            if (selectedWaypoint === null) return;
-            let v = parseFloat(getTaregt(angleRef).value);
-            v = isNaN(v) ? 0 : v;
-            const euler = new THREE.Euler(0, 0, THREE.MathUtils.degToRad(v));
-            const { x, y, z, w } = new THREE.Quaternion().setFromEuler(euler);
+            <TextInput
+              ref={angleRef}
+              label={"Orientation"}
+              type="number"
+              onEnter={() => {
+                if (selectedWaypoint === null) return;
+                let v = parseFloat(getTaregt(angleRef).value);
+                v = isNaN(v) ? 0 : v;
+                const euler = new THREE.Euler(
+                  0,
+                  0,
+                  THREE.MathUtils.degToRad(v)
+                );
+                const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
+                  euler
+                );
 
-            const newPoints = [...waypoints];
-            newPoints[selectedWaypoint].rotation = { x, y, z, w };
-            setWaypoints(newPoints);
-            store.waypoints[selectedWaypoint].pose.rotation = { x, y, z, w };
-          }}
-        />
+                const newPoints = [...waypoints];
+                newPoints[selectedWaypoint].rotation = { x, y, z, w };
+                setWaypoints(newPoints);
+                store.waypoints[selectedWaypoint].pose.rotation = {
+                  x,
+                  y,
+                  z,
+                  w,
+                };
+              }}
+            />
 
-        <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
-        <TextInput
-          ref={xPosRef}
-          label="X-axis"
-          type="number"
-          onEnter={() => posHandler("x")}
-        />
-        <TextInput
-          ref={yPosRef}
-          label="Y-axis"
-          type="number"
-          onEnter={() => posHandler("y")}
-        />
+            <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
+            <TextInput
+              ref={xPosRef}
+              label="X-axis"
+              type="number"
+              onEnter={() => posHandler("x")}
+            />
+            <TextInput
+              ref={yPosRef}
+              label="Y-axis"
+              type="number"
+              onEnter={() => posHandler("y")}
+            />
 
-        <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
+            <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
 
-        {createPropertyFields()}
-      </PanelContainer>
+            {createPropertyFields()}
 
-      {showDelete && (
-        <DeleteConfirmPanel>
-          <div>
-            Delete <b>waypoints</b>?
-          </div>
-          <Box
-            component={"div"}
-            display="flex"
-            justifyContent="space-between"
-            mt={"40px"}
-          >
             <SButton
               variant="contained"
-              sx={{ borderRadius: "20px", width: "150px", color: "white" }}
-              onClick={() => setShowDelete(false)}
-            >
-              Cancel
-            </SButton>
-            <Button
-              variant="contained"
               color="warning"
-              sx={{
-                borderRadius: "20px",
-                width: "150px",
-                backgroundColor: FormantColors.red,
-                color: "black",
-              }}
+              sx={{ width: "100%", marginTop: "20px" }}
               onClick={() => {
-                setShowDelete(false);
-                removeBtnHandler();
+                if (waypoints.length === 0) return;
+                setShowDelete(true);
               }}
             >
               Delete
-            </Button>
-          </Box>
-        </DeleteConfirmPanel>
+            </SButton>
+          </PanelContainer>
+
+          {showDelete && (
+            <DeleteConfirmPanel>
+              <div>
+                Delete <b>waypoints</b>?
+              </div>
+              <Box
+                component={"div"}
+                display="flex"
+                justifyContent="space-between"
+                mt={"40px"}
+              >
+                <SButton
+                  variant="contained"
+                  sx={{ borderRadius: "20px", width: "150px", color: "white" }}
+                  onClick={() => setShowDelete(false)}
+                >
+                  Cancel
+                </SButton>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  sx={{
+                    borderRadius: "20px",
+                    width: "150px",
+                    backgroundColor: FormantColors.red,
+                    color: "black",
+                  }}
+                  onClick={() => {
+                    setShowDelete(false);
+                    removeBtnHandler();
+                  }}
+                >
+                  Delete
+                </Button>
+              </Box>
+            </DeleteConfirmPanel>
+          )}
+
+          <ButtonsContainer>
+            <Box
+              component={"div"}
+              display="flex"
+              justifyContent={"space-between"}
+              alignItems="center"
+              sx={{ width: "100%" }}
+            >
+              <SButton
+                variant="contained"
+                color="warning"
+                onClick={() => {
+                  updateState({ isWaypointEditing: false });
+                  setWaypoints([]);
+                  store.waypoints = [];
+                }}
+              >
+                Cancel
+              </SButton>
+              <SButton variant="contained" onClick={sendBtnHandler}>
+                Send Path
+              </SButton>
+            </Box>
+          </ButtonsContainer>
+        </>
       )}
 
-      <ButtonsContainer>
-        <Box
-          component={"div"}
-          display="flex"
-          justifyContent={"space-between"}
-          alignItems="center"
-          sx={{ width: "100%" }}
-        >
-          <SButton
-            variant="contained"
-            color="warning"
-            onClick={() => setShowDelete(true)}
-          >
-            Remove
-          </SButton>
-          <SButton variant="contained" onClick={sendBtnHandler}>
-            Send Path
-          </SButton>
-        </Box>
-      </ButtonsContainer>
+      <WaypointLayerToggle controlsStates={controlsStates} config={config} />
     </Container>
   );
 };
+
+export function WaypointLayerToggle({ controlsStates, config }: Props) {
+  const {
+    state: { isPointSizeSliderVisible, isWaypointEditing },
+    updateState,
+  } = controlsStates;
+  const [visible, setVisible] = React.useState(true); // false
+  React.useEffect(() => {
+    if (config) {
+      const v = config.visualizations.filter(
+        (_) => _.visualizationType === "Waypoints"
+      ) as any;
+      if (v.length > 0) setVisible(true);
+    }
+  }, [config]);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        position: "absolute",
+        top: isPointSizeSliderVisible ? "210px" : "120px",
+        right: "10px",
+        pointerEvents: "none",
+      }}
+    >
+      {visible && (
+        <div
+          style={{
+            boxShadow: "0 0 1.25rem #0a0b10",
+            boxSizing: "border-box",
+            background: "#1c1e2d",
+            width: "28px",
+            height: "28px",
+            borderRadius: "14px",
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+            cursor: "pointer",
+            pointerEvents: "all",
+          }}
+          onClick={() => {
+            updateState({ isWaypointEditing: !isWaypointEditing });
+          }}
+        >
+          <img src={"./waypoints.png"} alt="" />
+        </div>
+      )}
+    </div>
+  );
+}
