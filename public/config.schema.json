@@ -74,7 +74,7 @@
             }
           },
           "transformType": {
-            "title": "Transform type",
+            "title": "Transform type (optional)",
             "type": "string",
             "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
           },
@@ -217,7 +217,7 @@
             "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
           },
           "transformType": {
-            "title": "Transform type",
+            "title": "Transform type (optional)",
             "type": "string",
             "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
           },
