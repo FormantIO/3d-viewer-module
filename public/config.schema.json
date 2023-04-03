@@ -76,8 +76,7 @@
           "transformType": {
             "title": "Transform type",
             "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
-            "default": "Cartesian"
+            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
           },
           "transformX": {
             "title": "X-axis",
@@ -220,8 +219,7 @@
           "transformType": {
             "title": "Transform type",
             "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
-            "default": "Cartesian"
+            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
           },
           "transformX": {
             "title": "X-axis",
