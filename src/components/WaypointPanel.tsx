@@ -376,7 +376,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           {showDelete && (
             <DeleteConfirmPanel>
               <div>
-                Delete <b>waypoints</b>?
+                Delete <b>waypoint</b>?
               </div>
               <Box
                 component={"div"}
@@ -471,7 +471,7 @@ export function WaypointLayerToggle({ controlsStates, config }: Props) {
         pointerEvents: "none",
       }}
     >
-      {visible && (
+      {!isWaypointEditing && (
         <div
           style={{
             boxShadow: "0 0 1.25rem #0a0b10",
