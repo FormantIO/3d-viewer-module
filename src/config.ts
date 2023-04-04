@@ -12,6 +12,7 @@ export type Viewer3DConfiguarationTransform = {
   transformRelativeLongitude?: number;
   transformGpsStream?: string;
   transformLocalizationStream?: string;
+  transformLocalizationLatestDataPoint?: boolean;
   transformLocalizationWorldToLocal?: boolean;
   transformLocalizationRealtimeStream?: string;
   transformTreeStream?: string;
@@ -88,7 +89,8 @@ export function parsePositioning(
       });
     case "Odometry":
       return PositioningBuilder.odometry(
-        positioning.transformLocalizationStream || ""
+        positioning.transformLocalizationStream || "",
+        positioning.transformLocalizationLatestDataPoint || false
       );
     case "Transform Tree":
       return PositioningBuilder.tranformTree(

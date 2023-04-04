@@ -13,6 +13,7 @@ export type Positioning =
   | {
       type: "odometry";
       stream?: string;
+      useLatestDataPoint?: boolean;
       rtcStream?: string;
       useWorldToLocalTransform?: boolean;
     }

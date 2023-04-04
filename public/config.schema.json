@@ -115,6 +115,16 @@
             "$formant.streams.byType": "localization",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
+          "transformLocalizationLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "$formant.visible.when": [
+              "and",
+              ["transformType", "=", "Odometry"],
+              ["transformLocalizationStream", "!=", ""]
+            ]
+          },
           "transformLocalizationWorldToLocal": {
             "title": "Localization world to local",
             "type": "boolean",
@@ -223,7 +233,17 @@
           "telemetryLatestDataPoint": {
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "$formant.visible.when": [
+              "and",
+              [
+                "or",
+                ["visualizationType", "=", "Point Cloud"],
+                ["visualizationType", "=", "Path"],
+                ["visualizationType", "=", "Geometry"]
+              ],
+              ["telemetryStreamName", "!=", ""]
+            ]
           },
           "transformType": {
             "title": "Transform type (optional)",
@@ -266,6 +286,16 @@
             "type": "string",
             "$formant.streams.byType": "localization",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
+          },
+          "transformLocalizationLatestDataPoint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "$formant.visible.when": [
+              "and",
+              ["transformType", "=", "Odometry"],
+              ["transformLocalizationStream", "!=", ""]
+            ]
           },
           "transformLocalizationWorldToLocal": {
             "title": "Localization world to local",
