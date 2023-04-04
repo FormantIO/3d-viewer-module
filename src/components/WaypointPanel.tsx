@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import styled from "styled-components";
 import * as THREE from "three";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
 import { DeviceContext } from "../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
-import { testConfig } from "./testConfig";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration } from "../config";
 import { FormantColors } from "../layers/utils/FormantColors";
@@ -31,6 +30,17 @@ const PanelContainer = styled.div`
   padding: 20px;
   color: white;
   pointer-events: all;
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    background-color: #222735;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #515870;
+    border-radius: 10px;
+  }
 `;
 
 const ButtonsContainer = styled.div`
@@ -63,7 +73,7 @@ const DeleteConfirmPanel = styled.div`
 const SButton = styled(Button)(() => ({
   "&.MuiButtonBase-root": {
     background: "#3e4b6c",
-    borderRadius: "10px",
+    borderRadius: "15px",
     paddingRight: "20px",
     paddingLeft: "20px",
   },
@@ -146,7 +156,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   // Update fields with waypoints changed
   useEffect(() => {
-    if (!isWaypointEditing) return;
+    if (!isWaypointEditing || waypoints.length === 0) return;
     if (selectedWaypoint === null) {
       angleRef.current.value = "";
       xPosRef.current.value = "";
@@ -184,10 +194,22 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             elements[idx].current!.value;
         } else if (item.propertyType === "Integer") {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v ? v : item.integerDefault;
-          store.waypoints[selectedWaypoint][item.propertyName] = v
+          elements[idx].current!.value = v
             ? v
-            : item.integerDefault;
+            : item.integerDefault !== undefined
+            ? item.integerDefault
+            : 0;
+          store.waypoints[selectedWaypoint][item.propertyName] =
+            elements[idx].current!.value;
+        } else if (item.propertyType === "Float") {
+          const v = store.waypoints[selectedWaypoint][item.propertyName];
+          elements[idx].current!.value = v
+            ? v
+            : item.floatDefault !== undefined
+            ? item.floatDefault
+            : 0;
+          store.waypoints[selectedWaypoint][item.propertyName] =
+            elements[idx].current!.value;
         } else if (item.propertyType === "Boolean") {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c =
@@ -246,12 +268,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === "Integer") {
+      } else if (propertyType === "Integer" || propertyType === "Float") {
         comps.push(
           <TextInput
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
+            type={propertyType === "Integer" ? "integer" : "float"}
             onChange={(e) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] =
@@ -310,68 +333,72 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     <Container>
       {isWaypointEditing && (
         <>
-          <PanelContainer>
-            <Typography>HEADING</Typography>
+          {waypoints.length > 0 && (
+            <PanelContainer>
+              <Typography>HEADING</Typography>
 
-            <TextInput
-              ref={angleRef}
-              label={"Orientation"}
-              type="number"
-              onEnter={() => {
-                if (selectedWaypoint === null) return;
-                let v = parseFloat(getTaregt(angleRef).value);
-                v = isNaN(v) ? 0 : v;
-                const euler = new THREE.Euler(
-                  0,
-                  0,
-                  THREE.MathUtils.degToRad(v)
-                );
-                const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
-                  euler
-                );
+              <TextInput
+                ref={angleRef}
+                label={"Orientation"}
+                type="float"
+                onEnter={() => {
+                  if (selectedWaypoint === null) return;
+                  let v = parseFloat(getTaregt(angleRef).value);
+                  v = isNaN(v) ? 0 : v;
+                  const euler = new THREE.Euler(
+                    0,
+                    0,
+                    THREE.MathUtils.degToRad(v)
+                  );
+                  const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
+                    euler
+                  );
 
-                const newPoints = [...waypoints];
-                newPoints[selectedWaypoint].rotation = { x, y, z, w };
-                setWaypoints(newPoints);
-                store.waypoints[selectedWaypoint].pose.rotation = {
-                  x,
-                  y,
-                  z,
-                  w,
-                };
-              }}
-            />
+                  const newPoints = [...waypoints];
+                  newPoints[selectedWaypoint].rotation = { x, y, z, w };
+                  setWaypoints(newPoints);
+                  store.waypoints[selectedWaypoint].pose.rotation = {
+                    x,
+                    y,
+                    z,
+                    w,
+                  };
+                }}
+              />
 
-            <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
-            <TextInput
-              ref={xPosRef}
-              label="X-axis"
-              type="number"
-              onEnter={() => posHandler("x")}
-            />
-            <TextInput
-              ref={yPosRef}
-              label="Y-axis"
-              type="number"
-              onEnter={() => posHandler("y")}
-            />
+              <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
+              <TextInput
+                ref={xPosRef}
+                label="X-axis"
+                type="float"
+                onEnter={() => posHandler("x")}
+              />
+              <TextInput
+                ref={yPosRef}
+                label="Y-axis"
+                type="float"
+                onEnter={() => posHandler("y")}
+              />
 
-            <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
+              {waypointsProperties.length > 0 && (
+                <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
+              )}
 
-            {createPropertyFields()}
+              {createPropertyFields()}
 
-            <SButton
-              variant="contained"
-              color="warning"
-              sx={{ width: "100%", marginTop: "20px" }}
-              onClick={() => {
-                if (waypoints.length === 0) return;
-                setShowDelete(true);
-              }}
-            >
-              Delete
-            </SButton>
-          </PanelContainer>
+              <SButton
+                variant="contained"
+                color="warning"
+                sx={{ width: "100%", marginTop: "20px" }}
+                onClick={() => {
+                  if (waypoints.length === 0) return;
+                  setShowDelete(true);
+                }}
+              >
+                Delete
+              </SButton>
+            </PanelContainer>
+          )}
 
           {showDelete && (
             <DeleteConfirmPanel>
@@ -430,7 +457,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               >
                 Cancel
               </SButton>
-              <SButton variant="contained" onClick={sendBtnHandler}>
+              <SButton
+                variant="contained"
+                onClick={() => {
+                  if (waypoints.length !== 0) sendBtnHandler();
+                }}
+                disabled={waypoints.length === 0}
+              >
                 Send Path
               </SButton>
             </Box>
@@ -448,15 +481,6 @@ export function WaypointLayerToggle({ controlsStates, config }: Props) {
     state: { isPointSizeSliderVisible, isWaypointEditing },
     updateState,
   } = controlsStates;
-  const [visible, setVisible] = React.useState(true); // false
-  React.useEffect(() => {
-    if (config) {
-      const v = config.visualizations.filter(
-        (_) => _.visualizationType === "Waypoints"
-      ) as any;
-      if (v.length > 0) setVisible(true);
-    }
-  }, [config]);
 
   return (
     <div
@@ -490,7 +514,11 @@ export function WaypointLayerToggle({ controlsStates, config }: Props) {
             updateState({ isWaypointEditing: !isWaypointEditing });
           }}
         >
-          <img src={"./waypoints.png"} alt="" />
+          <img
+            src={"./waypoints.png"}
+            alt=""
+            style={{ width: "18px", height: "18px", marginTop: "5px" }}
+          />
         </div>
       )}
     </div>

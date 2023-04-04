@@ -318,7 +318,7 @@
                 "propertyType": {
                   "title": "Type",
                   "type": "string",
-                  "enum": ["Boolean", "Enum", "Integer", "String"],
+                  "enum": ["Boolean", "Enum", "Integer", "Float", "String"],
                   "default": "String"
                 },
                 "propertyName": {
@@ -335,6 +335,11 @@
                   "title": "Default",
                   "type": "number",
                   "$formant.visible.when": ["propertyType", "=", "Integer"]
+                },
+                "floatDefault": {
+                  "title": "Default",
+                  "type": "number",
+                  "$formant.visible.when": ["propertyType", "=", "Float"]
                 },
                 "stringDefault": {
                   "title": "Default",

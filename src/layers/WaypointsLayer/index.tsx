@@ -31,19 +31,15 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
 
   // Add new waypoint
   const mouseDownHandler = (e: ThreeEvent<PointerEvent>) => {
-    if (!isWaypointEditing) return;
-
     e.stopPropagation();
-    if (!e.shiftKey) {
-      updateState({ selectedWaypoint: null }); // Remove gizmo
-      return;
-    }
+    if (!isWaypointEditing || !e.shiftKey) return;
+
     let p = e.point;
     const pose = {
       translation: {
         x: p.x,
         y: p.y,
-        z: p.z + 0.125,
+        z: 0.15,
       },
       rotation:
         waypoints.length > 0
@@ -56,7 +52,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
             },
     };
     setWaypoints([...waypoints, pose]);
-
+    updateState({ selectedWaypoint: waypoints.length });
     store.waypoints.push({
       ...(waypoints.length > 0 ? store.waypoints[waypoints.length - 1] : {}),
       pointIndex: waypoints.length,
@@ -80,6 +76,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         onPointerDown={mouseDownHandler}
         ref={plane}
         visible={false}
+        position-z={0}
       >
         <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
@@ -102,10 +99,11 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         {waypoints.length > 0 && (
           <Line
             points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={10}
+            lineWidth={12}
             depthTest={false}
             renderOrder={1}
             color={FormantColors.blue}
+            // Add a middle waypoint
             onPointerDown={(e) => {
               if (!isWaypointEditing) return;
 
@@ -118,24 +116,19 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
                 translation: {
                   x: p.x,
                   y: p.y,
-                  z: p.z + 0.125,
+                  z: 0.15,
                 },
-                rotation: {
-                  x: 0,
-                  y: 0,
-                  z: 0,
-                  w: 1,
-                },
+                rotation: waypoints[e.faceIndex!].rotation,
               };
               setWaypoints((prev) => {
                 prev.splice(e.faceIndex! + 1, 0, pose);
                 return [...prev];
               });
-
+              updateState({ selectedWaypoint: e.faceIndex! + 1 });
               store.waypoints.splice(e.faceIndex! + 1, 0, {
+                ...store.waypoints[e.faceIndex!],
                 pointIndex: e.faceIndex! + 1,
                 pose,
-                new: "new",
               });
             }}
           />

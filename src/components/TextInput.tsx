@@ -24,7 +24,7 @@ const inputStyle = {
 interface Props {
   label: string;
   value?: string;
-  type?: "number" | "string";
+  type?: "integer" | "float" | "string";
   onEnter?: () => void;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -48,8 +48,12 @@ export const TextInput = forwardRef<any, Props>(
           placeholder="Edit"
           onChange={(e) => {
             const t = divRef.current.childNodes[1] as HTMLInputElement;
-            if (type === "number") {
+            if (type === "float") {
               const newValue = t.value.replace(/[^0-9.-]/g, "");
+              t.value = newValue;
+            }
+            if (type === "integer") {
+              const newValue = t.value.replace(/[^0-9-]/g, "");
               t.value = newValue;
             }
             onChange && onChange(e);
