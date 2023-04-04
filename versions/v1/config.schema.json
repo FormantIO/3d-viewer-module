@@ -162,14 +162,7 @@
           },
           "visualizationType": {
             "type": "string",
-            "enum": [
-              "Position Indicator",
-              "Geometry",
-              "Point Cloud",
-              "Path",
-              "Image",
-              "GLTF"
-            ]
+            "enum": ["Position Indicator", "Geometry"]
           },
           "positionIndicatorVisualType": {
             "type": "string",
