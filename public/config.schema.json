@@ -52,7 +52,7 @@
           },
           "telemetryStreamName": {
             "type": "string",
-            "$formant.streams.byType": ["json", "location", "localization"],
+            "$formant.streams.byType": "json,location,localization",
             "$formant.visible.when": [
               "or",
               ["mapType", "=", "GPS Map"],
@@ -212,7 +212,7 @@
           },
           "telemetryStreamName": {
             "type": "string",
-            "$formant.streams.byType": ["json", "localization"],
+            "$formant.streams.byType": "json,localization",
             "$formant.visible.when": [
               "or",
               ["visualizationType", "=", "Point Cloud"],
