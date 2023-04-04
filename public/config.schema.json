@@ -51,12 +51,26 @@
             "$formant.visible.when": ["mapType", "=", "GPS Map"]
           },
           "telemetryStreamName": {
-            "type": "string"
+            "type": "string",
+            "$formant.visible.when": [
+              "or",
+              ["mapType", "=", "GPS Map"],
+              ["mapType", "=", "Occupancy Map"]
+            ]
           },
           "telemetryLatestDataPoint": {
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds"
+            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "$formant.visible.when": [
+              "and",
+              [
+                "or",
+                ["mapType", "=", "GPS Map"],
+                ["mapType", "=", "Occupancy Map"]
+              ],
+              ["telemetryStreamName", "!=", ""]
+            ]
           },
           "transformType": {
             "title": "Transform type (optional)",
