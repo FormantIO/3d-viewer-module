@@ -43,22 +43,28 @@ export const ButtonsContainer = styled.div`
   width: 300px;
   height: 40px;
   display: flex;
-  padding: 20px;
+  justify-content: space-between;
   pointer-events: all;
+
+  & > button {
+    width: 48%;
+    border-radius: 20px;
+    color: black;
+  }
 `;
 
-export const DeleteConfirmPanel = styled.div`
-  width: 400px;
-  height: 150px;
+export const ConfirmPanelContainer = styled.div`
+  width: 450px;
+  height: 200px;
   border-radius: 10px;
-  padding: 30px;
+  padding: 20px;
   background-color: ${FormantColors.module};
   position: absolute;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-family: Inter;
   pointer-events: all;
 `;
@@ -72,3 +78,11 @@ export const SButton = styled(Button)(() => ({
   },
   height: "35px",
 }));
+
+export const btnCss = (color: string, hoverColor: string, extraCSS?: any) => ({
+  backgroundColor: color,
+  "&:hover": {
+    backgroundColor: hoverColor,
+  },
+  ...extraCSS,
+});

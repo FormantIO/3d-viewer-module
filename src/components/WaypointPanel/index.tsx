@@ -6,15 +6,15 @@ import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration } from "../../config";
-import { FormantColors } from "../../layers/utils/FormantColors";
 import {
   ButtonsContainer,
   Container,
-  DeleteConfirmPanel,
   PanelContainer,
   SButton,
+  btnCss,
 } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
+import { Modal } from "./Modal";
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -32,6 +32,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const device = useContext(DeviceContext);
 
   const [showDelete, setShowDelete] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
 
   let waypointsProperties: any[] = [];
   if (config) {
@@ -322,87 +323,69 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
               {createPropertyFields()}
 
-              <SButton
+              <Button
                 variant="contained"
                 color="warning"
-                sx={{ width: "100%", marginTop: "20px" }}
+                fullWidth
+                sx={btnCss("#3e4b6c", "#5a6582", {
+                  marginTop: "20px",
+                  borderRadius: "15px",
+                })}
                 onClick={() => {
                   if (waypoints.length === 0) return;
                   setShowDelete(true);
                 }}
               >
                 Delete
-              </SButton>
+              </Button>
             </PanelContainer>
           )}
 
           {showDelete && (
-            <DeleteConfirmPanel>
-              <div>
-                Delete <b>waypoint</b>?
-              </div>
-              <Box
-                component={"div"}
-                display="flex"
-                justifyContent="space-between"
-                mt={"40px"}
-              >
-                <SButton
-                  variant="contained"
-                  sx={{ borderRadius: "20px", width: "150px", color: "white" }}
-                  onClick={() => setShowDelete(false)}
-                >
-                  Cancel
-                </SButton>
-                <Button
-                  variant="contained"
-                  color="warning"
-                  sx={{
-                    borderRadius: "20px",
-                    width: "150px",
-                    backgroundColor: FormantColors.red,
-                    color: "black",
-                  }}
-                  onClick={() => {
-                    setShowDelete(false);
-                    removeBtnHandler();
-                  }}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </DeleteConfirmPanel>
+            <Modal
+              content={["Delete", "waypoint"]}
+              buttons={["CANCEL", "DELETE"]}
+              handler1={() => setShowDelete(false)}
+              handler2={() => {
+                setShowDelete(false);
+                removeBtnHandler();
+              }}
+            />
+          )}
+
+          {showCancel && (
+            <Modal
+              content={["Are you sure you want to cancel", "planning"]}
+              buttons={["BACK", "CANCEL"]}
+              handler1={() => setShowCancel(false)}
+              handler2={() => {
+                setShowCancel(false);
+                updateState({ isWaypointEditing: false });
+                setWaypoints([]);
+                store.waypoints = [];
+              }}
+            />
           )}
 
           <ButtonsContainer>
-            <Box
-              component={"div"}
-              display="flex"
-              justifyContent={"space-between"}
-              alignItems="center"
-              sx={{ width: "100%" }}
+            <Button
+              variant="contained"
+              sx={btnCss("#bac4e2", "#d9e0f0")}
+              onClick={() => {
+                setShowCancel(true);
+              }}
             >
-              <SButton
-                variant="contained"
-                color="warning"
-                onClick={() => {
-                  updateState({ isWaypointEditing: false });
-                  setWaypoints([]);
-                  store.waypoints = [];
-                }}
-              >
-                Cancel
-              </SButton>
-              <SButton
-                variant="contained"
-                onClick={() => {
-                  if (waypoints.length !== 0) sendBtnHandler();
-                }}
-                disabled={waypoints.length === 0}
-              >
-                Send Path
-              </SButton>
-            </Box>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              sx={btnCss("#18D2FF", "#6ee0fd")}
+              onClick={() => {
+                if (waypoints.length !== 0) sendBtnHandler();
+              }}
+            >
+              Send Path
+            </Button>
           </ButtonsContainer>
         </>
       )}
