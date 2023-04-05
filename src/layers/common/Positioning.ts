@@ -1,5 +1,3 @@
-import { StreamType } from "@formant/universe-core";
-
 export type Positioning =
   | {
       type: "cartesian";
@@ -15,7 +13,7 @@ export type Positioning =
   | {
       type: "odometry";
       stream?: string;
-      streamType: StreamType;
+      useLatestDataPoint?: boolean;
       rtcStream?: string;
       useWorldToLocalTransform?: boolean;
     }

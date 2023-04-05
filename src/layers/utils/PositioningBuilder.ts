@@ -8,12 +8,13 @@ export class PositioningBuilder {
 
   static odometry(
     stream: string,
+    useLatestDataPoint?: boolean,
     localizationWorldToLocal?: boolean
   ): Positioning {
     return {
       type: "odometry",
       stream,
-      streamType: "localization",
+      useLatestDataPoint,
       useWorldToLocalTransform: localizationWorldToLocal,
     };
   }

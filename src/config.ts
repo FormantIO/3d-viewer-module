@@ -4,24 +4,24 @@ import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 
 export type Viewer3DConfiguarationTransform = {
-  positioningType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
-  x?: number;
-  y?: number;
-  z?: number;
-  relativeLatitude?: number;
-  relativeLongitude?: number;
-  gpsStream?: string;
-  localizationStream?: string;
-  localizationWorldToLocal?: boolean;
-  localizationRealtimeStream?: string;
+  transformType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
+  transformX?: number;
+  transformY?: number;
+  transformZ?: number;
+  transformRelativeLatitude?: number;
+  transformRelativeLongitude?: number;
+  transformGpsStream?: string;
+  transformLocalizationStream?: string;
+  transformLocalizationLatestDataPoint?: boolean;
+  transformLocalizationWorldToLocal?: boolean;
+  transformLocalizationRealtimeStream?: string;
   transformTreeStream?: string;
   transformTreeEndPoint?: string;
 };
 
 export type Viewer3DConfigurationDataSource = {
   telemetryStreamName?: string;
-  telemetryStreamType?: string;
-  latestDataPoint?: boolean;
+  telemetryLatestDataPoint?: boolean;
 };
 
 export type Viewer3DVisualization = {
@@ -35,31 +35,25 @@ export type Viewer3DVisualization = {
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
-  urdfJointStatesDataSource?: Viewer3DConfigurationDataSource;
-  geometryDataSource?: Viewer3DConfigurationDataSource;
-  pathDataSource?: Viewer3DConfigurationDataSource;
   pointCloudDecayTime?: number;
-  pointCloudDataSource?: Viewer3DConfigurationDataSource;
   pointCloudUseColors?: boolean;
-  transform?: Viewer3DConfiguarationTransform;
   imageFileId?: string;
   imageWidth?: number;
   imageHeight?: number;
   gltfFileId?: string;
   gltfScale?: number;
-};
+} & Viewer3DConfiguarationTransform &
+  Viewer3DConfigurationDataSource;
 
 export type Viewer3DMap = {
   name?: string;
   mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
   gpsMapType?: "Satellite" | "Street" | "Satellite Street";
   gpsMapSize: string;
-  gpsMapDataSource?: Viewer3DConfigurationDataSource;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;
-  occupancyMapDataSource?: Viewer3DConfigurationDataSource;
-  transform?: Viewer3DConfiguarationTransform;
-};
+} & Viewer3DConfiguarationTransform &
+  Viewer3DConfigurationDataSource;
 
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
@@ -72,8 +66,8 @@ export function parseDataSource(
   if (dataSource.telemetryStreamName) {
     return DataSourceBuilder.telemetry(
       dataSource.telemetryStreamName,
-      (dataSource.telemetryStreamType as StreamType) || "json",
-      dataSource.latestDataPoint
+      undefined,
+      dataSource.telemetryLatestDataPoint
     );
   }
   return undefined;
@@ -82,20 +76,23 @@ export function parseDataSource(
 export function parsePositioning(
   positioning: Viewer3DConfiguarationTransform
 ): Positioning {
-  switch (positioning.positioningType) {
+  switch (positioning.transformType) {
     case "Cartesian":
       return PositioningBuilder.fixed(
-        positioning.x || 0,
-        positioning.y || 0,
-        positioning.z || 0
+        positioning.transformX || 0,
+        positioning.transformY || 0,
+        positioning.transformZ || 0
       );
     case "Gps":
-      return PositioningBuilder.gps(positioning.gpsStream || "", {
-        long: positioning.relativeLongitude || 0,
-        lat: positioning.relativeLatitude || 0,
+      return PositioningBuilder.gps(positioning.transformGpsStream || "", {
+        long: positioning.transformRelativeLongitude || 0,
+        lat: positioning.transformRelativeLatitude || 0,
       });
     case "Odometry":
-      return PositioningBuilder.odometry(positioning.localizationStream || "");
+      return PositioningBuilder.odometry(
+        positioning.transformLocalizationStream || "",
+        positioning.transformLocalizationLatestDataPoint || false
+      );
     case "Transform Tree":
       return PositioningBuilder.tranformTree(
         positioning.transformTreeStream || "",

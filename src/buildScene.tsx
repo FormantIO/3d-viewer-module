@@ -36,8 +36,8 @@ export function buildScene(
 
   const configHash = getUuidByString(JSON.stringify(config));
   mapLayers = (config.maps || []).map((layer, i) => {
-    const positioning = layer.transform
-      ? parsePositioning(layer.transform)
+    const positioning = layer.transformType
+      ? parsePositioning(layer)
       : PositioningBuilder.fixed(0, 0, 0);
     if (layer.mapType === "Ground Plane") {
       return (
@@ -54,8 +54,7 @@ export function buildScene(
       const defaultLong = -122.6765;
       const defaultLat = 45.5231;
 
-      const dataSource =
-        layer.gpsMapDataSource && parseDataSource(layer.gpsMapDataSource);
+      const dataSource = parseDataSource(layer);
 
       let distanceNum;
 
@@ -79,9 +78,7 @@ export function buildScene(
         />
       );
     } else if (layer.mapType === "Occupancy Map") {
-      const dataSource =
-        layer.occupancyMapDataSource &&
-        parseDataSource(layer.occupancyMapDataSource);
+      const dataSource = parseDataSource(layer);
       return (
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
@@ -95,8 +92,8 @@ export function buildScene(
   });
   (config.visualizations || []).forEach((layer, i) => {
     if (layer.visualizationType === "Position Indicator") {
-      const positioning = layer.transform
-        ? parsePositioning(layer.transform)
+      const positioning = layer.transformType
+        ? parsePositioning(layer)
         : PositioningBuilder.fixed(0, 0, 0);
       if (layer.positionIndicatorVisualType === "Circle") {
         deviceLayers.push(
@@ -114,16 +111,12 @@ export function buildScene(
             positioning={positioning}
             treePath={[1, i]}
             name={layer.name || "URDF"}
-            jointStatesDataSource={
-              layer.urdfJointStatesDataSource &&
-              parseDataSource(layer.urdfJointStatesDataSource)
-            }
+            jointStatesDataSource={parseDataSource(layer)}
           />
         );
       }
     } else if (layer.visualizationType === "Path") {
-      const dataSource =
-        layer.pathDataSource && parseDataSource(layer.pathDataSource);
+      const dataSource = parseDataSource(layer);
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
@@ -133,9 +126,7 @@ export function buildScene(
         />
       );
     } else if (layer.visualizationType === "Point Cloud") {
-      const dataSource =
-        layer.pointCloudDataSource &&
-        parseDataSource(layer.pointCloudDataSource);
+      const dataSource = parseDataSource(layer);
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer
@@ -150,11 +141,10 @@ export function buildScene(
     } else if (layer.visualizationType === "Waypoints") {
       deviceLayers.push(<WaypointsLayer />);
     } else if (layer.visualizationType === "Geometry") {
-      const positioning = layer.transform
-        ? parsePositioning(layer.transform)
+      const positioning = layer.transformType
+        ? parsePositioning(layer)
         : PositioningBuilder.fixed(0, 0, 0);
-      const dataSource =
-        layer.geometryDataSource && parseDataSource(layer.geometryDataSource);
+      const dataSource = parseDataSource(layer);
       if (dataSource) {
         deviceLayers.push(
           <GeometryLayer
@@ -167,8 +157,8 @@ export function buildScene(
         );
       }
     } else if (layer.visualizationType === "Image") {
-      const positioning = layer.transform
-        ? parsePositioning(layer.transform)
+      const positioning = layer.transformType
+        ? parsePositioning(layer)
         : PositioningBuilder.fixed(0, 0, 0);
       const dataSource = deviceLayers.push(
         <ImageLayer
@@ -182,8 +172,8 @@ export function buildScene(
         />
       );
     } else if (layer.visualizationType === "GLTF") {
-      const positioning = layer.transform
-        ? parsePositioning(layer.transform)
+      const positioning = layer.transformType
+        ? parsePositioning(layer)
         : PositioningBuilder.fixed(0, 0, 0);
       const dataSource = deviceLayers.push(
         <GLTFLayer

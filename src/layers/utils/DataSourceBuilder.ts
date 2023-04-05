@@ -9,14 +9,14 @@ import * as uuid from "uuid";
 export class DataSourceBuilder {
   static telemetry(
     streamName: string,
-    streamType: StreamType,
+    streamType?: StreamType,
     latestDataPoint?: boolean
   ): UniverseTelemetrySource {
     return {
       id: uuid.v4(),
       sourceType: "telemetry",
       streamName,
-      streamType: streamType as any,
+      streamType,
       latestDataPoint,
     };
   }
