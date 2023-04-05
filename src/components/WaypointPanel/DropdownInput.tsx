@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React, { forwardRef } from "react";
 import styled from "styled-components";
-import { FormantColors } from "../layers/utils/FormantColors";
+import { FormantColors } from "../../layers/utils/FormantColors";
 
 const StyledSelect = styled.select`
   width: 100%;

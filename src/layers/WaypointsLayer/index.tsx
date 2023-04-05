@@ -39,7 +39,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
       translation: {
         x: p.x,
         y: p.y,
-        z: 0.15,
+        z: 0,
       },
       rotation:
         waypoints.length > 0
@@ -76,7 +76,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         onPointerDown={mouseDownHandler}
         ref={plane}
         visible={false}
-        position-z={0}
+        position-z={-0.1}
       >
         <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
@@ -116,7 +116,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
                 translation: {
                   x: p.x,
                   y: p.y,
-                  z: 0.15,
+                  z: 0,
                 },
                 rotation: waypoints[e.faceIndex!].rotation,
               };

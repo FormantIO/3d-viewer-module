@@ -1,7 +1,7 @@
 import { Box, TextField } from "@formant/ui-sdk";
 import React, { forwardRef } from "react";
 import styled from "styled-components";
-import { FormantColors } from "../layers/utils/FormantColors";
+import { FormantColors } from "../../layers/utils/FormantColors";
 
 const SLabel = styled.div`
   font-family: Inter;

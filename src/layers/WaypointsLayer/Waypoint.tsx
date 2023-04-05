@@ -106,7 +106,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
               translation: {
                 x: position.x + targetOffset.x,
                 y: position.y + targetOffset.y,
-                z: 0.15,
+                z: 0,
               },
               rotation: {
                 x: n.x,
