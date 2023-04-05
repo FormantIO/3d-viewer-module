@@ -17,8 +17,10 @@ import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
+import { WaypointPanel } from "../../components/WaypointPanel";
 import { PointSizeSlider } from "../../components/PcdSizeSlider";
 import styled from "styled-components";
+import { Viewer3DConfiguration } from "../../config";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -27,6 +29,7 @@ const fancy = query.get("fancy") === "true";
 type IUniverseProps = {
   children?: React.ReactNode;
   configHash: string;
+  config: Viewer3DConfiguration;
 };
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
@@ -55,7 +58,6 @@ const SceneContainer = styled.div<ISceneContainer>`
   }
 `;
 
-
 export function Universe(props: IUniverseProps) {
   const [scene, setScene] = React.useState<Scene | null>(null!);
   const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
@@ -73,6 +75,9 @@ export function Universe(props: IUniverseProps) {
   } = useUI();
 
   const controlsStates = useControlsContextStates();
+  const {
+    state: { isWaypointVisible },
+  } = controlsStates;
 
   useEffect(() => {
     reset();
@@ -192,13 +197,12 @@ export function Universe(props: IUniverseProps) {
                   //dollyToCursor={true}
                   infinityDolly={false}
                   minDistance={2}
-                  mouseButtons={
-                    {
-                      left: 2, // truck
-                      right: 1, // rotate
-                      middle: 2, // truck
-                      wheel: 8 // dolly
-                    }}
+                  mouseButtons={{
+                    left: 2, // truck
+                    right: 1, // rotate
+                    middle: 2, // truck
+                    wheel: 8, // dolly
+                  }}
                 />
 
                 <WaitForControls>
@@ -208,7 +212,11 @@ export function Universe(props: IUniverseProps) {
                 </WaitForControls>
                 {fancy && (
                   <EffectComposer>
-                    <Bloom mipmapBlur intensity={1.0} luminanceThreshold={0.5} />
+                    <Bloom
+                      mipmapBlur
+                      intensity={1.0}
+                      luminanceThreshold={0.5}
+                    />
                     <Noise opacity={0.02} />
                     <Vignette
                       offset={0.3}
@@ -240,6 +248,12 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode={toggleEditMode}
         />
         <PointSizeSlider controlsStates={controlsStates} />
+        {isWaypointVisible && (
+          <WaypointPanel
+            controlsStates={controlsStates}
+            config={props.config}
+          />
+        )}
       </UIDataContext.Provider>
     </>
   );

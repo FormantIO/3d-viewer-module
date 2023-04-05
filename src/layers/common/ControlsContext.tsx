@@ -1,5 +1,6 @@
 import { IPose } from "@formant/universe-core";
 import React from "react";
+import { WaypointData } from "../WaypointsLayer/Waypoint";
 
 interface StateProps {
   isWaypointVisible: boolean;
@@ -10,7 +11,7 @@ interface StateProps {
 }
 
 interface StoreProps {
-  waypoints: any[];
+  waypoints: WaypointData[];
 }
 
 export interface ControlsContextProps {

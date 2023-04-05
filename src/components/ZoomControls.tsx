@@ -11,6 +11,7 @@ const Controls = styled.div`
   top: 0;
   right: 0;
   pointer-events: none;
+  z-index: 101;
 `;
 
 const ControlGroup = styled.div`
