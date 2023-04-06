@@ -69,7 +69,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           console.warn("empty data for grid");
           return;
         }
-
         const {
           origin,
           width,
@@ -120,8 +119,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         gridMat.map = texture;
         gridMat.needsUpdate = true;
         gridMat.opacity = 0.5;
-        mesh.up = new Vector3(0, 0, 1);
-
         mesh.up = new Vector3(0, 0, 1);
 
         if (!mesh.visible && size) {

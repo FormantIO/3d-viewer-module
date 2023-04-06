@@ -1,17 +1,11 @@
-import {
-  Cylinder,
-  GradientTexture,
-  Line,
-  PivotControls,
-} from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { Line, PivotControls } from "@react-three/drei";
 import { Interactive } from "@react-three/xr";
 import { useContext, useRef, useState } from "react";
 import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import { UIDataContext, useUI } from "./common/UIDataContext";
-import { Euler, Group, Matrix4, Quaternion, Vector3 } from "three";
+import { UIDataContext } from "./common/UIDataContext";
+import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import { IPose } from "@formant/universe-core";
 
 interface IMapLayer extends IUniverseLayerProps {

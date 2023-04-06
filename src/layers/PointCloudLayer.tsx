@@ -54,7 +54,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   useEffect(() => {
     if (!layerData) return;
     const { deviceId } = layerData;
-    updateState({ isPointSizeSliderVisible: true });
+    updateState({ hasPointCloud: true });
 
     const color1 = defined(Color.fromString("#729fda"));
     const color2 = defined(Color.fromString("#F89973"));

@@ -66,3 +66,15 @@ export function CheckIcon() {
     </svg>
 
 }
+
+export function WaypointToggleIcon(){
+    return <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="1.125" cy="1.125" r="1.5" transform="matrix(-1 0 0 1 17.8438 7.69922)" stroke="#BAC4E2" strokeWidth="0.75"/>
+    <circle cx="1.125" cy="1.125" r="1.5" transform="matrix(-1 0 0 1 13.4609 14.1641)" stroke="#BAC4E2" strokeWidth="0.75"/>
+    <path d="M15.7656 10.2734L13.2578 13.8471" stroke="#BAC4E2" strokeWidth="0.75" strokeLinecap="round"/>
+    <path d="M7.04688 10.2734L4.53906 13.8471" stroke="#BAC4E2" strokeWidth="0.75" strokeLinecap="round"/>
+    <path d="M8.71094 10.2734L11.2187 13.8471" stroke="#BAC4E2" strokeWidth="0.75" strokeLinecap="round"/>
+    <circle cx="1.125" cy="1.125" r="1.5" transform="matrix(-1 0 0 1 9.07812 7.69922)" stroke="#BAC4E2" strokeWidth="0.75"/>
+    <circle cx="1.125" cy="1.125" r="1.5" transform="matrix(-1 0 0 1 4.69336 14.1641)" stroke="#BAC4E2" strokeWidth="0.75"/>
+    </svg>    
+}

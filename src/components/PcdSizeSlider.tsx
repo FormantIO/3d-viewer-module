@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useState } from "react";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
 
 const Controls = styled.div`
@@ -108,10 +107,10 @@ interface Props {
 }
 export const PointSizeSlider: React.FC<Props> = ({ controlsStates }) => {
   const {
-    state: { pointSize, isPointSizeSliderVisible },
+    state: { pointSize, hasPointCloud },
     updateState,
   } = controlsStates;
-  if (!isPointSizeSliderVisible) return null;
+  if (!hasPointCloud) return null;
   return (
     <Controls>
       <ControlGroup>
