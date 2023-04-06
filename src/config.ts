@@ -30,8 +30,7 @@ export type Viewer3DVisualization = {
     | "Position Indicator"
     | "Geometry"
     | "Point Cloud"
-    | "Path"
-    | "Waypoints";
+    | "Path";
   positionIndicatorVisualType?: "Circle";
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
@@ -55,9 +54,14 @@ export type Viewer3DMap = {
 } & Viewer3DConfiguarationTransform &
   Viewer3DConfigurationDataSource;
 
+export type Viewer3DMission = {
+  // addProperties
+};
+
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
+  mission: any; //Viewer3DMission;
 };
 
 export function parseDataSource(

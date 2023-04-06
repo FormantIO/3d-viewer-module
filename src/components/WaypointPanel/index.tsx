@@ -31,11 +31,10 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   let waypointsProperties: any[] = [];
   if (config) {
-    const v = config.visualizations.filter(
-      (_) => _.visualizationType === "Waypoints"
-    ) as any;
-    waypointsProperties =
-      v.length > 0 && v[0].waypointsProperties ? v[0].waypointsProperties : [];
+    const { mission } = config;
+    waypointsProperties = mission.waypointsProperties
+      ? mission.waypointsProperties
+      : [];
   }
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];

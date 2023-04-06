@@ -138,8 +138,6 @@ export function buildScene(
           useColors={pointCloudUseColors || false}
         />
       );
-    } else if (layer.visualizationType === "Waypoints") {
-      deviceLayers.push(<WaypointsLayer />);
     } else if (layer.visualizationType === "Geometry") {
       const positioning = layer.transformType
         ? parsePositioning(layer)
@@ -189,6 +187,10 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
+
+  if (config.mission) {
+    deviceLayers.push(<WaypointsLayer />);
+  }
 
   // first map layer that isnt a ground plane is visible, others are hidden, except for the ground plane
   let firstMapLayer = true;
