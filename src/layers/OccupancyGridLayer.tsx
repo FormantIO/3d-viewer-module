@@ -69,7 +69,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           console.warn("empty data for grid");
           return;
         }
-        console.log(gridData);
         const {
           origin,
           width,

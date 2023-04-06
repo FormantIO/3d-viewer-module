@@ -12,7 +12,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { OccupancyGridLayer, PathLayer } from "./lib";
+import { OccupancyGridLayer } from "./lib";
 import { WaypointsLayer } from "./layers/WaypointsLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
@@ -26,7 +26,13 @@ export function Demo() {
   );
   return (
     <UniverseDataContext.Provider value={universeData}>
-      <Universe configHash="fasd">
+      <Universe
+        configHash="fasd"
+        config={{
+          maps: [],
+          visualizations: [],
+        }}
+      >
         <ambientLight />
         <LayerContext.Provider
           value={{

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useState } from "react";
 import { ControlsContextProps } from "../layers/common/ControlsContext";
 
 const Controls = styled.div`

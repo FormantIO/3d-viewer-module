@@ -19,7 +19,7 @@ import getUuidByString from "uuid-by-string";
 import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
-import { cloneElement, isValidElement } from "react";
+import { cloneElement } from "react";
 import { WaypointsLayer } from "./layers/WaypointsLayer";
 import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
