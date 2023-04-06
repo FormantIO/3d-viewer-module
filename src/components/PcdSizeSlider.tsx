@@ -108,10 +108,10 @@ interface Props {
 }
 export const PointSizeSlider: React.FC<Props> = ({ controlsStates }) => {
   const {
-    state: { pointSize, isPointSizeSliderVisible },
+    state: { pointSize, hasPointCloud },
     updateState,
   } = controlsStates;
-  if (!isPointSizeSliderVisible) return null;
+  if (!hasPointCloud) return null;
   return (
     <Controls>
       <ControlGroup>

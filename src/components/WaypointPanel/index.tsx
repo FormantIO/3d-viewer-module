@@ -1,20 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import * as THREE from "three";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration } from "../../config";
-import {
-  ButtonsContainer,
-  Container,
-  PanelContainer,
-  SButton,
-  btnCss,
-} from "./style";
+import { ControlButtonGroup, Container, PanelContainer } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
+import { TYPES } from "./types";
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -120,7 +115,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
     if (waypointsProperties!.length > 0) {
       waypointsProperties!.forEach((item, idx) => {
-        if (item.propertyType === "String") {
+        if (item.propertyType === TYPES.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v
             ? v
@@ -129,7 +124,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             : "";
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === "Integer") {
+        } else if (item.propertyType === TYPES.INTEGER) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v
             ? v
@@ -138,7 +133,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === "Float") {
+        } else if (item.propertyType === TYPES.FLOAT) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v
             ? v
@@ -147,7 +142,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === "Boolean") {
+        } else if (item.propertyType === TYPES.BOOLEAN) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c =
             v !== undefined
@@ -158,7 +153,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           elements[idx].current!.value = (
             [true, false].indexOf(c) + 1
           ).toString();
-        } else if (item.propertyType === "Enum") {
+        } else if (item.propertyType === TYPES.ENUM) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c = v !== undefined ? v : item.enumDefault;
           elements[idx].current!.value = [
@@ -191,7 +186,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     const comps: any[] = [];
     waypointsProperties!.forEach((item, idx) => {
       const { propertyType } = item;
-      if (propertyType === "String") {
+      if (propertyType === TYPES.STRING) {
         comps.push(
           <TextInput
             key={idx}
@@ -205,13 +200,16 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === "Integer" || propertyType === "Float") {
+      } else if (
+        propertyType === TYPES.INTEGER ||
+        propertyType === TYPES.FLOAT
+      ) {
         comps.push(
           <TextInput
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
-            type={propertyType === "Integer" ? "integer" : "float"}
+            type={propertyType === TYPES.INTEGER ? propertyType : TYPES.FLOAT}
             onChange={(e) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] =
@@ -220,7 +218,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === "Boolean") {
+      } else if (propertyType === TYPES.BOOLEAN) {
         comps.push(
           <DropdownInput
             key={idx}
@@ -238,7 +236,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === "Enum") {
+      } else if (propertyType === TYPES.ENUM) {
         comps.push(
           <DropdownInput
             key={idx}
@@ -277,7 +275,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               <TextInput
                 ref={angleRef}
                 label={"Orientation"}
-                type="float"
+                type={TYPES.FLOAT}
                 onEnter={() => {
                   if (selectedWaypoint === null) return;
                   let v = parseFloat(getTaregt(angleRef).value);
@@ -303,34 +301,28 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                 }}
               />
 
-              <Typography sx={{ marginTop: "20px" }}>POSITION</Typography>
+              <Typography marginTop={"20px"}>POSITION</Typography>
               <TextInput
                 ref={xPosRef}
                 label="X-axis"
-                type="float"
+                type={TYPES.FLOAT}
                 onEnter={() => posHandler("x")}
               />
               <TextInput
                 ref={yPosRef}
                 label="Y-axis"
-                type="float"
+                type={TYPES.FLOAT}
                 onEnter={() => posHandler("y")}
               />
 
               {waypointsProperties.length > 0 && (
-                <Typography sx={{ marginTop: "20px" }}>PROPERTIES</Typography>
+                <Typography marginTop={"20px"}>PROPERTIES</Typography>
               )}
 
               {createPropertyFields()}
 
               <Button
                 variant="contained"
-                color="warning"
-                fullWidth
-                sx={btnCss("#3e4b6c", "#5a6582", {
-                  marginTop: "20px",
-                  borderRadius: "15px",
-                })}
                 onClick={() => {
                   if (waypoints.length === 0) return;
                   setShowDelete(true);
@@ -367,10 +359,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             />
           )}
 
-          <ButtonsContainer>
+          <ControlButtonGroup>
             <Button
               variant="contained"
-              sx={btnCss("#bac4e2", "#d9e0f0")}
               onClick={() => {
                 setShowCancel(true);
               }}
@@ -379,14 +370,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             </Button>
             <Button
               variant="contained"
-              sx={btnCss("#18D2FF", "#6ee0fd")}
               onClick={() => {
                 if (waypoints.length !== 0) sendBtnHandler();
               }}
             >
               Send Path
             </Button>
-          </ButtonsContainer>
+          </ControlButtonGroup>
         </>
       )}
 
