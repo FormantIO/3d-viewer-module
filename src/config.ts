@@ -2,6 +2,7 @@ import { StreamType, UniverseDataSource } from "@formant/universe-core";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
+import { PropertyType } from "./components/WaypointPanel/types";
 
 export type Viewer3DConfiguarationTransform = {
   transformType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
@@ -54,8 +55,18 @@ export type Viewer3DMap = {
 } & Viewer3DConfiguarationTransform &
   Viewer3DConfigurationDataSource;
 
+export type WaypointPropertyType = {
+  propertyName: string;
+  propertyType: PropertyType;
+  floatDefault?: string;
+  stringDefault?: string;
+  integerDefault?: string;
+  booleanDefault?: boolean;
+  enumDefault?: string;
+  enumLists?: string[];
+};
 export type Viewer3DMission = {
-  // addProperties
+  waypointsProperties: WaypointPropertyType[];
 };
 
 export type Viewer3DConfiguration = {

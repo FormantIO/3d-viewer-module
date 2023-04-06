@@ -5,7 +5,7 @@ import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
-import { Viewer3DConfiguration } from "../../config";
+import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
 import { ControlButtonGroup, Container, PanelContainer } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
@@ -25,17 +25,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     setWaypoints,
   } = controlsStates;
   const device = useContext(DeviceContext);
-
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
 
-  let waypointsProperties: any[] = [];
-  if (config) {
-    const { mission } = config;
-    waypointsProperties = mission.waypointsProperties
-      ? mission.waypointsProperties
-      : [];
-  }
+  const waypointsProperties: WaypointPropertyType[] = config
+    ? config.mission.waypointsProperties || []
+    : [];
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
   for (let i = 0; i < waypointsProperties!.length; ++i) {
@@ -116,11 +111,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       waypointsProperties!.forEach((item, idx) => {
         if (item.propertyType === TYPES.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v
-            ? v
-            : item.stringDefault !== undefined
-            ? item.stringDefault
-            : "";
+          elements[idx].current!.value = v ? v : item.stringDefault || "";
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
         } else if (item.propertyType === TYPES.INTEGER) {
