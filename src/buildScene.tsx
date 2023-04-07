@@ -39,7 +39,7 @@ export function buildScene(
     const positioning = layer.transformType
       ? parsePositioning(layer)
       : PositioningBuilder.fixed(0, 0, 0);
-    if (layer.mapType === "Ground Plane") {
+    if (layer.mapType === "Ground plane") {
       return (
         <GroundLayer
           key={"ground" + i + configHash}
@@ -49,20 +49,14 @@ export function buildScene(
           type={LayerType.AXIS}
         />
       );
-    } else if (layer.mapType === "GPS Map") {
+    } else if (layer.mapType === "GPS") {
       // Portland long lat
       const defaultLong = -122.6765;
       const defaultLat = 45.5231;
 
       const dataSource = parseDataSource(layer);
 
-      let distanceNum;
-
-      if (layer.gpsMapSize.includes("kilometer")) {
-        distanceNum = parseFloat(layer.gpsMapSize) * 1000;
-      } else {
-        distanceNum = parseFloat(layer.gpsMapSize);
-      }
+      const distanceNum = parseFloat(layer.gpsMapSize);
 
       return (
         <MapLayer
@@ -77,7 +71,7 @@ export function buildScene(
           treePath={[0, i]}
         />
       );
-    } else if (layer.mapType === "Occupancy Map") {
+    } else if (layer.mapType === "Occupancy") {
       const dataSource = parseDataSource(layer);
       return (
         <OccupancyGridLayer
@@ -91,20 +85,11 @@ export function buildScene(
     throw new Error("Unknown map type");
   });
   (config.visualizations || []).forEach((layer, i) => {
-    if (layer.visualizationType === "Position Indicator") {
+    if (layer.visualizationType === "Position indicator") {
       const positioning = layer.transformType
         ? parsePositioning(layer)
         : PositioningBuilder.fixed(0, 0, 0);
-      if (layer.positionIndicatorVisualType === "Circle") {
-        deviceLayers.push(
-          <MarkerLayer
-            key={"vis" + i + configHash}
-            positioning={positioning}
-            treePath={[1, i]}
-            name={layer.name || "Marker"}
-          />
-        );
-      } else if (layer.positionIndicatorVisualType === "URDF") {
+      if (layer.positionIndicatorUseURDF) {
         deviceLayers.push(
           <URDFLayer
             key={"vis" + i + configHash}
@@ -112,6 +97,16 @@ export function buildScene(
             treePath={[1, i]}
             name={layer.name || "URDF"}
             jointStatesDataSource={parseDataSource(layer)}
+          />
+        );
+
+      } else {
+        deviceLayers.push(
+          <MarkerLayer
+            key={"vis" + i + configHash}
+            positioning={positioning}
+            treePath={[1, i]}
+            name={layer.name || "Marker"}
           />
         );
       }
@@ -125,7 +120,7 @@ export function buildScene(
           name={layer.name || "Local Path "}
         />
       );
-    } else if (layer.visualizationType === "Point Cloud") {
+    } else if (layer.visualizationType === "Point cloud") {
       const dataSource = parseDataSource(layer);
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
