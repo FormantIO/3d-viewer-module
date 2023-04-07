@@ -57,7 +57,7 @@ export function buildScene(
       const dataSource = parseDataSource(layer);
 
       const distanceNum = parseFloat(layer.gpsMapSize);
-
+      // here Im using i+10 to make sure all ground layers come _before_ the map layers
       return (
         <MapLayer
           key={"map" + i + configHash}
@@ -68,7 +68,7 @@ export function buildScene(
           longitude={layer.gpsMapLongitude || defaultLong}
           dataSource={dataSource as UniverseTelemetrySource}
           name={layer.name || "Map"}
-          treePath={[0, i]}
+          treePath={[0, i + 10]}
         />
       );
     } else if (layer.mapType === "Occupancy") {
@@ -77,7 +77,7 @@ export function buildScene(
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
-          treePath={[0, i]}
+          treePath={[0, i + 10]}
           name={layer.name || "Occupancy Grid"}
         />
       );

@@ -121,6 +121,12 @@ overflow: hidden;
 }
 `;
 
+const MapSeparator = styled.hr`
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid #657197;
+`;
+
 interface IVisibilityIcon {
   layerVisible: boolean;
 }
@@ -159,6 +165,7 @@ const Sidebar = ({
     {}
   );
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
+  const [axisDividerIndex, setAxisDividerIndex] = React.useState<number>(0);
 
   const onToggleSidebarClicked = () => {
     toggleSidebarCallback();
@@ -207,8 +214,14 @@ const Sidebar = ({
     _sortedLayers.forEach((l) => {
       _layerMap[l.id] = l;
     });
+
+    const axisLayers = _sortedLayers.filter((l) => l.type === LayerType.AXIS);
+
+    const lastAxisIndex = _sortedLayers.indexOf(axisLayers[axisLayers.length - 1]);
+
     setLayerMap(_layerMap);
     setSortedLayers(_sortedLayers);
+    setAxisDividerIndex(lastAxisIndex);
   }, [layers]);
 
   const hasChildren = (layer: LayerData) => {
@@ -391,26 +404,30 @@ const Sidebar = ({
               </LayerRow>
             </>
           )}
-          {sortedLayers.map((c) => {
+          {sortedLayers.map((c, i) => {
             if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
             return (
-              <LayerRow
-                key={c.id}
-                hasChildren={hasChildren(c)}
-                isChild={isChild(c)}
-                isLastChild={isLastChild(c)}
-                onClick={() => onLayerClicked(c)}
-                onDoubleClick={() => onLayerDoubleClicked(c)}
-                layerVisible={c.visible}
-                isSelectedMap={isLayerMap(c) && c.visible}
-              >
-                <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}>
-                    {c.name}
-                  </Typography>
-                </LayerTitle>
-                {renderIcons(c)}
-              </LayerRow>
+              <>
+                <LayerRow
+                  key={c.id}
+                  hasChildren={hasChildren(c)}
+                  isChild={isChild(c)}
+                  isLastChild={isLastChild(c)}
+                  onClick={() => onLayerClicked(c)}
+                  onDoubleClick={() => onLayerDoubleClicked(c)}
+                  layerVisible={c.visible}
+                  isSelectedMap={isLayerMap(c) && c.visible}
+                >
+                  <LayerTitle>
+                    <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}>
+                      {c.name}
+                    </Typography>
+                  </LayerTitle>
+                  {renderIcons(c)}
+                </LayerRow>
+                {axisDividerIndex === i && sortedLayers.length - 2 !== i && (
+                  <MapSeparator />)}
+              </>
             );
           })}
         </SidebarContent>
