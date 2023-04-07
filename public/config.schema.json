@@ -30,6 +30,7 @@
           },
           "gpsMapSize": {
             "title": "Map edge length",
+            "description": "Select the size of your map. Larger map boundaries take longer to render and update.",
             "type": "string",
             "default": "200m",
             "enum": ["200m", "400m", "600m", "800m", "1000m"],
@@ -38,11 +39,13 @@
           "gpsMapLatitude": {
             "title": "Default latitude (optional)",
             "type": "number",
+            "$formant.placeholder": "e.g 37.7749",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude (optional)",
             "type": "number",
+            "$formant.placeholder": "e.g 122.4194",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "telemetryStreamName": {
@@ -59,7 +62,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
             "$formant.visible.when": [
               "and",
               ["or", ["mapType", "=", "GPS"], ["mapType", "=", "Occupancy"]],
@@ -109,6 +112,7 @@
             "type": "boolean",
             "title": "Use URDF",
             "default": false,
+            "description": "URDF is set in Device Configuration. To add a URDF file, click on the three dots (meatball menu) and go to Configure device >> Add URDF.",
             "$formant.visible.when": [
               "and",
               ["visualizationType", "=", "Position indicator"]
@@ -116,7 +120,7 @@
           },
           "imageFileId": {
             "type": "string",
-            "title": "Image File ID",
+            "title": "Image file ID",
             "$formant.visible.when": ["visualizationType", "=", "Image"]
           },
           "imageWidth": {
@@ -127,7 +131,7 @@
           },
           "gltfFileId": {
             "type": "string",
-            "title": "GLTF File ID",
+            "title": "GLTF file ID",
             "$formant.visible.when": ["visualizationType", "=", "GLTF"]
           },
           "gltfScale": {
@@ -143,7 +147,8 @@
             "default": 1
           },
           "pointCloudDecayTime": {
-            "title": "Decay time",
+            "title": "Decay time (s)",
+            "$formant.placeholder": "e.g 2",
             "type": "number",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
@@ -167,7 +172,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
             "$formant.visible.when": [
               "and",
               [
@@ -225,7 +230,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
             "$formant.visible.when": [
               "and",
               ["transformType", "=", "Odometry"],
