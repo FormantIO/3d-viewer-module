@@ -306,9 +306,11 @@ const Sidebar = ({
     </VisibilityIcon>;
   };
 
-  const deviceLayersVisible = sortedLayers.some(
-    (l) => l.treePath && l.treePath[0] === 1 && l.visible && l.treePath.length > 1
+  const deviceLayers = sortedLayers.filter(
+    (l) => l.treePath && l.treePath[0] === 1 && l.treePath.length > 1
   );
+
+  const deviceLayersVisible = deviceLayers.some((l) => l.visible);
 
   const onToggleDeviceLayers = () => {
     const deviceLayers = sortedLayers.filter(
@@ -328,6 +330,16 @@ const Sidebar = ({
 
   };
 
+  const getLayerTextColor = (layer: LayerData) => {
+    if (layer.treePath?.length === 1) {
+      return FormantColors.white;
+    }
+    if (layer.visible) {
+      return FormantColors.silver;
+    }
+    return FormantColors.steel03;
+  };
+
   return (
     <>
       <ToggleButton onClick={onToggleSidebarClicked} sidebarVisible={visible}>
@@ -337,45 +349,48 @@ const Sidebar = ({
         visible={visible}
       >
         <SidebarContent>
+          {deviceLayers.length > 0 && (
+            <>
+              <LayerRow
+                hasChildren={true}
+                isChild={false}
+                isLastChild={false}
+                isSelectedMap={false}
+                layerVisible={true}
+              >
+                <LayerTitle>
+                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
+                    Device
+                  </Typography>
+                </LayerTitle>
 
-          <LayerRow
-            hasChildren={true}
-            isChild={false}
-            isLastChild={false}
-            isSelectedMap={false}
-            layerVisible={true}
-          >
-            <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
-                Device
-              </Typography>
-            </LayerTitle>
-
-          </LayerRow>
-          <LayerRow
-            hasChildren={false}
-            isChild={true}
-            isLastChild={true}
-            isSelectedMap={false}
-            layerVisible={true}>
-            <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
-                {deviceName}
-              </Typography>
-            </LayerTitle>
-            <VisibilityIcon
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-                onToggleDeviceLayers();
-              }}
-              onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-              }}
-              layerVisible={deviceLayersVisible}
-            >
-              {deviceLayersVisible ? <EyeIcon /> : <EyeCloseIcon />}
-            </VisibilityIcon>
-          </LayerRow>
+              </LayerRow>
+              <LayerRow
+                hasChildren={false}
+                isChild={true}
+                isLastChild={true}
+                isSelectedMap={false}
+                layerVisible={true}>
+                <LayerTitle>
+                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
+                    {deviceName}
+                  </Typography>
+                </LayerTitle>
+                <VisibilityIcon
+                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                    onToggleDeviceLayers();
+                  }}
+                  onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                  }}
+                  layerVisible={deviceLayersVisible}
+                >
+                  {deviceLayersVisible ? <EyeIcon /> : <EyeCloseIcon />}
+                </VisibilityIcon>
+              </LayerRow>
+            </>
+          )}
           {sortedLayers.map((c) => {
             if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
             return (
@@ -390,7 +405,7 @@ const Sidebar = ({
                 isSelectedMap={isLayerMap(c) && c.visible}
               >
                 <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle} color={c.visible ? FormantColors.silver : FormantColors.steel03}>
+                  <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}>
                     {c.name}
                   </Typography>
                 </LayerTitle>
