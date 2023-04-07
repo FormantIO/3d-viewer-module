@@ -77,9 +77,9 @@ const LayerRow = styled.div<ILayerRow>`
   transition: all 0.05s ease;
   /* color: ${(props: ILayerRow) =>
     props.layerVisible ? FormantColors.silver : "#657197"}; */
-  color: ${(props: ILayerRow) =>
+  /* color: ${(props: ILayerRow) =>
     props.hasChildren || props.isSelectedMap ? "#FFFFFF" : "#BAC3E2"
-  };
+  }; */
   font-weight: ${(props: ILayerRow) =>
     props.hasChildren ? "700" : "400"
   };
@@ -134,7 +134,6 @@ const VisibilityIcon = styled.div<IVisibilityIcon>`
 `;
 
 const typographyStyle = {
-  color: FormantColors.silver,
   fontSize: "0.9375rem",
   lineHeight: "24px",
   letterSpacing: "1px",
@@ -338,6 +337,7 @@ const Sidebar = ({
         visible={visible}
       >
         <SidebarContent>
+
           <LayerRow
             hasChildren={true}
             isChild={false}
@@ -346,7 +346,7 @@ const Sidebar = ({
             layerVisible={true}
           >
             <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle}>
+              <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
                 Device
               </Typography>
             </LayerTitle>
@@ -359,7 +359,7 @@ const Sidebar = ({
             isSelectedMap={false}
             layerVisible={true}>
             <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle}>
+              <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
                 {deviceName}
               </Typography>
             </LayerTitle>
@@ -390,7 +390,7 @@ const Sidebar = ({
                 isSelectedMap={isLayerMap(c) && c.visible}
               >
                 <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle}>
+                  <Typography variant="body1" sx={typographyStyle} color={c.visible ? FormantColors.silver : FormantColors.steel03}>
                     {c.name}
                   </Typography>
                 </LayerTitle>
