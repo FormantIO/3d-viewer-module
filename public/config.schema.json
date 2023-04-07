@@ -68,7 +68,6 @@
           },
           "transformX": {
             "title": "X offset (m)",
-            "$formant.placeholder": "alskdj",
             "type": "number"
           },
           "transformY": {
@@ -186,17 +185,17 @@
             "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
           },
           "transformX": {
-            "title": "X-axis",
+            "title": "X offset (m)",
             "type": "number",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformY": {
-            "title": "Y-axis",
+            "title": "Y offset (m)",
             "type": "number",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformZ": {
-            "title": "Z-axis",
+            "title": "Z offset (m)",
             "type": "number",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
