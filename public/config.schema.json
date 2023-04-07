@@ -11,15 +11,16 @@
         "$formant.itemName": "maps",
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name",
-            "$formant.placeholder": "Map name"
-          },
           "mapType": {
             "title": "Map type",
             "type": "string",
+            "description": "Select the type of map you want to visualize.",
             "enum": ["Ground plane", "GPS", "Occupancy"]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "gpsMapType": {
             "title": "World map type",
@@ -39,18 +40,19 @@
           "gpsMapLatitude": {
             "title": "Default latitude (optional)",
             "type": "number",
-            "$formant.placeholder": "e.g 37.7749",
+            "$formant.placeholder": "Edit (e.g 37.7749)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude (optional)",
             "type": "number",
-            "$formant.placeholder": "e.g 122.4194",
+            "$formant.placeholder": "Edit (e.g 122.4194)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "telemetryStreamName": {
             "title": "Telemetry stream",
             "type": "string",
+            "description": "Provide a GPS telemetry stream. If you specify a latitude and longitude, that location will become the origin of your visualization and override the stream.",
             "$formant.streams.byType": "json,location,localization",
             "$formant.visible.when": [
               "or",
@@ -71,18 +73,21 @@
           },
           "transformX": {
             "title": "X offset (m)",
-            "type": "number"
+            "type": "number",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformY": {
             "title": "Y offset (m)",
-            "type": "number"
+            "type": "number",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformZ": {
             "title": "Z offset (m)",
-            "type": "number"
+            "type": "number",
+            "$formant.visible.when": ["mapType", "!=", ""]
           }
         },
-        "required": ["mapType", "name"]
+        "required": ["mapType"]
       }
     },
     "visualizations": {
@@ -92,10 +97,6 @@
         "type": "object",
         "$formant.itemName": "Device Layers",
         "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
           "visualizationType": {
             "title": "Type",
             "type": "string",
@@ -118,6 +119,12 @@
               ["visualizationType", "=", "Position indicator"]
             ]
           },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "$formant.visible.when": ["visualizationType", "!=", ""]
+          },
+
           "imageFileId": {
             "type": "string",
             "title": "Image file ID",
@@ -187,7 +194,8 @@
           "transformType": {
             "title": "Transform type (optional)",
             "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
+            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+            "$formant.visible.when": ["visualizationType", "!=", ""]
           },
           "transformX": {
             "title": "X offset (m)",
@@ -258,7 +266,7 @@
             "$formant.visible.when": ["transformType", "=", "Transform tree"]
           }
         },
-        "required": ["visualizationType", "name"]
+        "required": ["visualizationType"]
       }
     }
   }
