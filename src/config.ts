@@ -66,6 +66,7 @@ export type WaypointPropertyType = {
   enumLists?: string[];
 };
 export type Viewer3DMission = {
+  commandName: string;
   waypointsProperties: WaypointPropertyType[];
 };
 

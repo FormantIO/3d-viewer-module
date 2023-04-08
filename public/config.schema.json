@@ -326,6 +326,11 @@
       "title": "Mission",
       "type": "object",
       "properties": {
+        "commandName": {
+          "title": "Command Name",
+          "type": "string",
+          "default": "Send mission waypoint"
+        },
         "waypointsProperties": {
           "title": "Add Properties",
           "type": "array",
