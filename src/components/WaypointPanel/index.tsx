@@ -18,6 +18,7 @@ interface Props {
 }
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
+  console.log("ttt", config);
   const {
     waypoints,
     state: { selectedWaypoint, isWaypointEditing },
@@ -150,7 +151,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             ...Array(item.enumLists!.length)
               .fill(0)
               // @ts-ignore
-              .map((_, idx) => item[idx]),
+              .map((_, idx) => item.enumLists[idx].enumList),
           ]
             .indexOf(c)
             .toString();
@@ -228,7 +229,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             content={Array(item.enumLists!.length)
               .fill(0)
               // @ts-ignore
-              .map((_, idx) => item[idx])}
+              .map((_, idx) => item.enumLists[idx].enumList)}
             onChange={(e) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] = [
@@ -236,7 +237,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                   ...Array(item.enumLists!.length)
                     .fill(0)
                     // @ts-ignore
-                    .map((_, idx) => item[idx]),
+                    .map((_, idx) => item.enumLists[idx].enumList),
                 ][parseInt(e.target.value)];
               }
             }}
