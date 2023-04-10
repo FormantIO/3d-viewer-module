@@ -38,13 +38,13 @@
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLatitude": {
-            "title": "Default latitude (optional)",
+            "title": "Default latitude",
             "type": "number",
             "$formant.placeholder": "Edit (e.g 37.7749)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
-            "title": "Default longitude (optional)",
+            "title": "Default longitude",
             "type": "number",
             "$formant.placeholder": "Edit (e.g 122.4194)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
@@ -52,7 +52,6 @@
           "telemetryStreamName": {
             "title": "Telemetry stream",
             "type": "string",
-            "description": "Provide a GPS telemetry stream. If you specify a latitude and longitude, that location will become the origin of your visualization and override the stream.",
             "$formant.streams.byType": "json,location,localization",
             "$formant.visible.when": [
               "or",
@@ -64,7 +63,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
             "$formant.visible.when": [
               "and",
               ["or", ["mapType", "=", "GPS"], ["mapType", "=", "Occupancy"]],
@@ -179,7 +178,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available. ",
             "$formant.visible.when": [
               "and",
               [
@@ -238,7 +237,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Enable to use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
             "$formant.visible.when": [
               "and",
               ["transformType", "=", "Odometry"],

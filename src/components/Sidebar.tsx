@@ -217,7 +217,7 @@ const Sidebar = ({
 
     const axisLayers = _sortedLayers.filter((l) => l.type === LayerType.AXIS);
 
-    const lastAxisIndex = _sortedLayers.indexOf(axisLayers[axisLayers.length - 1]);
+    const lastAxisIndex = _sortedLayers.indexOf(axisLayers[axisLayers.length - 1]) - 1;
 
     setLayerMap(_layerMap);
     setSortedLayers(_sortedLayers);
@@ -426,7 +426,7 @@ const Sidebar = ({
                   {renderIcons(c)}
                 </LayerRow>
                 {axisDividerIndex === i && sortedLayers.length - 2 !== i && (
-                  <MapSeparator />)}
+                  <MapSeparator key={c.id + 'separator'} />)}
               </>
             );
           })}
