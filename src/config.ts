@@ -63,7 +63,7 @@ export type WaypointPropertyType = {
   integerDefault?: string;
   booleanDefault?: boolean;
   enumDefault?: string;
-  enumLists?: string[];
+  enumLists?: { enumList: string }[];
 };
 export type Viewer3DMission = {
   commandName: string;
@@ -73,7 +73,7 @@ export type Viewer3DMission = {
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
-  mission: any; //Viewer3DMission;
+  mission?: Viewer3DMission;
 };
 
 export function parseDataSource(

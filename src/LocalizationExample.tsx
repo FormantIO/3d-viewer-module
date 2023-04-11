@@ -43,7 +43,10 @@ export const Localization = () => {
     (config: Viewer3DConfiguration) => {
       return (
         <UniverseDataContext.Provider value={universeData}>
-          <Universe configHash={getUuidByString(JSON.stringify(config))}>
+          <Universe
+            configHash={getUuidByString(JSON.stringify(config))}
+            config={config}
+          >
             <ambientLight />
             {buildScene(config, definedAndNotNull(currentDeviceId))};
           </Universe>

@@ -18,7 +18,6 @@ interface Props {
 }
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
-  console.log("ttt", config);
   const {
     waypoints,
     state: { selectedWaypoint, isWaypointEditing },
