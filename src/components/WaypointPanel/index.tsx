@@ -5,11 +5,12 @@ import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
-import { Viewer3DConfiguration } from "../../config";
+import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
 import { ControlButtonGroup, Container, PanelContainer } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { TYPES } from "./types";
+import { BooleanToggle } from "./BooleanToggle";
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
+  console.log("ttt", config);
   const {
     waypoints,
     state: { selectedWaypoint, isWaypointEditing },
@@ -25,18 +27,11 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     setWaypoints,
   } = controlsStates;
   const device = useContext(DeviceContext);
-
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-
-  let waypointsProperties: any[] = [];
-  if (config) {
-    const v = config.visualizations.filter(
-      (_) => _.visualizationType === "Waypoints"
-    ) as any;
-    waypointsProperties =
-      v.length > 0 && v[0].waypointsProperties ? v[0].waypointsProperties : [];
-  }
+  const waypointsProperties: WaypointPropertyType[] = config.mission
+    ? config.mission.waypointsProperties || []
+    : [];
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
   for (let i = 0; i < waypointsProperties!.length; ++i) {
@@ -117,11 +112,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       waypointsProperties!.forEach((item, idx) => {
         if (item.propertyType === TYPES.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v
-            ? v
-            : item.stringDefault !== undefined
-            ? item.stringDefault
-            : "";
+          elements[idx].current!.value = v ? v : item.stringDefault || "";
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
         } else if (item.propertyType === TYPES.INTEGER) {
@@ -150,9 +141,8 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               : item.booleanDefault !== undefined
               ? item.booleanDefault
               : false;
-          elements[idx].current!.value = (
-            [true, false].indexOf(c) + 1
-          ).toString();
+          //@ts-ignore
+          elements[idx].current!(v);
         } else if (item.propertyType === TYPES.ENUM) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c = v !== undefined ? v : item.enumDefault;
@@ -161,7 +151,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             ...Array(item.enumLists!.length)
               .fill(0)
               // @ts-ignore
-              .map((_, idx) => item[idx]),
+              .map((_, idx) => item.enumLists[idx].enumList),
           ]
             .indexOf(c)
             .toString();
@@ -220,18 +210,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
         );
       } else if (propertyType === TYPES.BOOLEAN) {
         comps.push(
-          <DropdownInput
-            key={idx}
+          <BooleanToggle
             ref={elements[idx]}
-            label={item.propertyName}
-            content={["True", "False"]}
-            onChange={(e) => {
+            label={"Boolean"}
+            onChange={(value: boolean) => {
               if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] = [
-                  null,
-                  true,
-                  false,
-                ][parseInt(e.target.value)];
+                store.waypoints[selectedWaypoint][item.propertyName] = value;
               }
             }}
           />
@@ -245,7 +229,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             content={Array(item.enumLists!.length)
               .fill(0)
               // @ts-ignore
-              .map((_, idx) => item[idx])}
+              .map((_, idx) => item.enumLists[idx].enumList)}
             onChange={(e) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] = [
@@ -253,7 +237,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                   ...Array(item.enumLists!.length)
                     .fill(0)
                     // @ts-ignore
-                    .map((_, idx) => item[idx]),
+                    .map((_, idx) => item.enumLists[idx].enumList),
                 ][parseInt(e.target.value)];
               }
             }}
@@ -373,6 +357,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               onClick={() => {
                 if (waypoints.length !== 0) sendBtnHandler();
               }}
+              disabled={waypoints.length === 0}
             >
               Send Path
             </Button>

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { IPose } from "@formant/universe-core";
 import * as THREE from "three";
 import { extend, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
@@ -71,7 +71,9 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
       <PivotControls
         ref={pivotRef}
         visible={selectedWaypoint === pointIndex}
-        lineWidth={4}
+        lineWidth={2}
+        axisColors={["#ff618e", "#00ff80", "#ffffff"]}
+        hoveredColor={"#ffff00"}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}

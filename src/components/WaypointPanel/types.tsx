@@ -7,3 +7,10 @@ export enum TYPES {
 }
 
 export type INPUT_TYPE = TYPES.FLOAT | TYPES.INTEGER | TYPES.STRING;
+
+export type PropertyType =
+  | TYPES.FLOAT
+  | TYPES.INTEGER
+  | TYPES.BOOLEAN
+  | TYPES.STRING
+  | TYPES.ENUM;
