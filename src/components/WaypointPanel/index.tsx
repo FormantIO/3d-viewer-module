@@ -211,7 +211,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
         comps.push(
           <BooleanToggle
             ref={elements[idx]}
-            label={"Boolean"}
+            label={item.propertyName}
             onChange={(value: boolean) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] = value;
