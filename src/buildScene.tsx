@@ -32,9 +32,12 @@ export function buildScene(
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
   let mapLayers: JSX.Element[] = [];
+  let sceneLayers: React.ReactNode[] = [];
 
   const MAP_TREEPATH = 0;
   const DEVICE_TREEPATH = 1;
+  const SCENE_TREEPATH = 2;
+
   // treePath is used to identify the layer in the scene graph
   // it is an array of numbers that represent the path to the layer
   // from the root of the scene graph
@@ -48,17 +51,7 @@ export function buildScene(
       ? parsePositioning(layer)
       : PositioningBuilder.fixed(0, 0, 0);
 
-    if (layer.mapType === "Ground plane") {
-      return (
-        <GroundLayer
-          key={"ground" + i + configHash}
-          positioning={positioning}
-          treePath={[MAP_TREEPATH, i + 10]}
-          name={layer.name || "Ground Plane"}
-          type={LayerType.AXIS}
-        />
-      );
-    } else if (layer.mapType === "GPS") {
+    if (layer.mapType === "GPS") {
       const defaultLong = -122.6765;
       const defaultLat = 45.5231;
 
@@ -91,7 +84,7 @@ export function buildScene(
     }
     // add a new map layer type, example:
     // else if (layer.mapType === "CustomMap") {
-    //   const dataSource = parseDataSource(layer);
+    //   const dataSource = parseDataSource(layer); // parse the data source if needed
     //   return (
     //     <CustomMapLayer
     //       key={"customMap" + i + configHash} // use configHash to make sure the key is unique
@@ -105,6 +98,17 @@ export function buildScene(
 
     throw new Error("Unknown map type");
   });
+
+  if (config.showGroundPlane) {
+    sceneLayers.push(
+      <GroundLayer
+        key={"ground" + configHash}
+        treePath={[SCENE_TREEPATH, 255]}
+        name={"Ground Plane"}
+        type={LayerType.AXIS}
+      />
+    );
+  }
   (config.visualizations || []).forEach((layer, i) => {
     // positioning for all device layers.
     const positioning = layer.transformType
@@ -199,17 +203,9 @@ export function buildScene(
     }
   });
 
-  // first map layer that isnt a ground plane is visible, others are hidden, except for the ground plane
-  let firstMapLayer = true;
-  mapLayers = mapLayers.map((layer) => {
-    if (firstMapLayer && layer.props.type !== LayerType.AXIS) {
-      firstMapLayer = false;
-      return cloneElement(layer, { visible: true });
-    } else if (layer.props.type === LayerType.AXIS) {
-      return cloneElement(layer, { visible: true });
-    } else {
-      return cloneElement(layer, { visible: false });
-    }
+  // first map layer is visible, others are hidden
+  mapLayers = mapLayers.map((layer, i) => {
+    return cloneElement(layer, { visible: i === 0 });
   });
 
   devices.push(
@@ -236,6 +232,11 @@ export function buildScene(
       </EmptyLayer>
     </LayerContext.Provider>
   );
+  devices.push(
+    <EmptyLayer name={"Scene"} treePath={[SCENE_TREEPATH]}>
+      {sceneLayers}
+    </EmptyLayer>
+  )
   deviceLayers = [];
   return devices;
 }

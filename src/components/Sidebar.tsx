@@ -165,7 +165,6 @@ const Sidebar = ({
     {}
   );
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
-  const [axisDividerIndex, setAxisDividerIndex] = React.useState<number>(0);
 
   const onToggleSidebarClicked = () => {
     toggleSidebarCallback();
@@ -173,7 +172,7 @@ const Sidebar = ({
   };
 
   const isLayerMap = (layer: LayerData) => {
-    return layer.treePath && layer.treePath[0] === 0 && layer.treePath.length > 1 && layer.type !== LayerType.AXIS || false;
+    return layer.treePath && layer.treePath[0] === 0 && layer.treePath.length > 1 || false;
   }
 
   const onLayerClicked = (layer: LayerData) => {
@@ -215,13 +214,9 @@ const Sidebar = ({
       _layerMap[l.id] = l;
     });
 
-    const axisLayers = _sortedLayers.filter((l) => l.type === LayerType.AXIS);
-
-    const lastAxisIndex = _sortedLayers.indexOf(axisLayers[axisLayers.length - 1]) - 1;
 
     setLayerMap(_layerMap);
     setSortedLayers(_sortedLayers);
-    setAxisDividerIndex(lastAxisIndex);
   }, [layers]);
 
   const hasChildren = (layer: LayerData) => {
@@ -281,14 +276,13 @@ const Sidebar = ({
       return;
     }
 
-    // all other visible maps that arent axis
+    // all other visible maps
     const siblings = Object.values(layerMap).filter((sibling) => {
       return (
         sibling.id !== layer.id &&
         sibling.id !== parentLayer.id &&
         sibling.treePath &&
         sibling.treePath[0] === layer.treePath![0] &&
-        sibling.type !== LayerType.AXIS &&
         sibling.visible
       );
     });
@@ -425,8 +419,6 @@ const Sidebar = ({
                   </LayerTitle>
                   {renderIcons(c)}
                 </LayerRow>
-                {axisDividerIndex === i && sortedLayers.length - 2 !== i && (
-                  <MapSeparator key={c.id + 'separator'} />)}
               </>
             );
           })}

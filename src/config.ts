@@ -47,7 +47,7 @@ export type Viewer3DVisualization = {
 
 export type Viewer3DMap = {
   name?: string;
-  mapType?: "Ground plane" | "GPS" | "Occupancy";
+  mapType?: "GPS" | "Occupancy";
   gpsMapType?: "Satellite" | "Street" | "Satellite street";
   gpsMapSize: string;
   gpsMapLongitude?: number;
@@ -58,6 +58,7 @@ export type Viewer3DMap = {
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
+  showGroundPlane?: boolean;
 };
 
 export function parseDataSource(

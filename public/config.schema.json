@@ -15,7 +15,7 @@
             "title": "Map type",
             "type": "string",
             "description": "Select the type of map you want to visualize.",
-            "enum": ["Ground plane", "GPS", "Occupancy"]
+            "enum": ["GPS", "Occupancy"]
           },
           "name": {
             "type": "string",
@@ -267,6 +267,12 @@
         },
         "required": ["visualizationType"]
       }
+    },
+    "showGroundPlane": {
+      "type": "boolean",
+      "title": "Show ground plane",
+      "description": "Show axis and ground plane at the origin of the map.",
+      "default": true
     }
   }
 }
