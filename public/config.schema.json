@@ -40,13 +40,13 @@
           "gpsMapLatitude": {
             "title": "Default latitude",
             "type": "number",
-            "$formant.placeholder": "Edit (e.g 37.7749)",
+            "$formant.placeholder": "Edit (e.g. 37.7749)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude",
             "type": "number",
-            "$formant.placeholder": "Edit (e.g 122.4194)",
+            "$formant.placeholder": "Edit (e.g. 122.4194)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "telemetryStreamName": {
@@ -73,16 +73,19 @@
           "transformX": {
             "title": "X offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformY": {
             "title": "Y offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformZ": {
             "title": "Z offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["mapType", "!=", ""]
           }
         },
@@ -101,7 +104,7 @@
             "type": "string",
             "enum": [
               "Position indicator",
-              "Geometry",
+              "Marker array",
               "Point cloud",
               "Path",
               "Image",
@@ -126,7 +129,7 @@
 
           "imageFileId": {
             "type": "string",
-            "title": "Image file ID",
+            "title": "Cloud file ID",
             "$formant.visible.when": ["visualizationType", "=", "Image"]
           },
           "imageWidth": {
@@ -137,12 +140,12 @@
           },
           "gltfFileId": {
             "type": "string",
-            "title": "GLTF file ID",
+            "title": "Cloud file ID",
             "$formant.visible.when": ["visualizationType", "=", "GLTF"]
           },
           "gltfScale": {
             "type": "number",
-            "title": "GLTF Scale",
+            "title": "GLTF scale factor",
             "$formant.visible.when": ["visualizationType", "=", "GLTF"],
             "default": 1
           },
@@ -154,7 +157,7 @@
           },
           "pointCloudDecayTime": {
             "title": "Decay time (s)",
-            "$formant.placeholder": "e.g 2",
+            "$formant.placeholder": "Edit (e.g. 2)",
             "type": "number",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
@@ -171,7 +174,7 @@
               "or",
               ["visualizationType", "=", "Point cloud"],
               ["visualizationType", "=", "Path"],
-              ["visualizationType", "=", "Geometry"]
+              ["visualizationType", "=", "Marker array"]
             ]
           },
           "telemetryLatestDataPoint": {
@@ -185,7 +188,7 @@
                 "or",
                 ["visualizationType", "=", "Point cloud"],
                 ["visualizationType", "=", "Path"],
-                ["visualizationType", "=", "Geometry"]
+                ["visualizationType", "=", "Marker array"]
               ],
               ["telemetryStreamName", "!=", ""]
             ]
@@ -199,26 +202,31 @@
           "transformX": {
             "title": "X offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformY": {
             "title": "Y offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformZ": {
             "title": "Z offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformRelativeLatitude": {
             "title": "Relative latitude",
             "type": "number",
+            "$formant.placeholder": "Edit (e.g. 37.7749)",
             "$formant.visible.when": ["transformType", "=", "Gps"]
           },
           "transformRelativeLongitude": {
             "title": "Relative longitude",
             "type": "number",
+            "$formant.placeholder": "Edit (e.g. 122.4194)",
             "$formant.visible.when": ["transformType", "=", "Gps"]
           },
           "transformGpsStream": {
@@ -247,6 +255,7 @@
           "transformLocalizationWorldToLocal": {
             "title": "Localization world to local",
             "type": "boolean",
+            "description": "Enable if the localization stream is in world coordinates and you want to convert it to local coordinates.",
             "default": true,
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
