@@ -11,6 +11,8 @@ import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { TYPES } from "./types";
 import { BooleanToggle } from "./BooleanToggle";
+import { Authentication } from "@formant/data-sdk";
+import { upload } from "./upload";
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -26,6 +28,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     setWaypoints,
   } = controlsStates;
   const device = useContext(DeviceContext);
+  console.log(device);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const waypointsProperties: WaypointPropertyType[] = config.mission
@@ -67,14 +70,17 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     return () => window.removeEventListener("keydown", keydownHandler);
   }, []);
 
-  const sendBtnHandler = () => {
+  const sendBtnHandler = async () => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
       // Send
+      console.log(device);
       if (device) {
-        device.sendCommand("send_mission_waypoints", JSON.stringify(waypoints));
+        const fileID = await upload(Authentication.token!, { waypoints });
+        console.log("fileID", fileID);
+        device.sendCommand("send_mission_waypoints", fileID);
       }
-      alert(JSON.stringify(waypoints));
+      // alert(JSON.stringify(waypoints));
     } else {
       alert("Create Waypoints To Send.");
     }
