@@ -76,7 +76,7 @@ export function Universe(props: IUniverseProps) {
 
   const controlsStates = useControlsContextStates();
   const {
-    state: { isWaypointVisible },
+    state: { isWaypointVisible, isWaypointEditing },
   } = controlsStates;
 
   useEffect(() => {
@@ -167,10 +167,12 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode,
         }}
       >
-        <Sidebar
-          lookAtTargetId={lookAtTargetId}
-          toggleSidebarCallback={sidebarOpenCallback}
-        />
+        {!isWaypointEditing && (
+          <Sidebar
+            lookAtTargetId={lookAtTargetId}
+            toggleSidebarCallback={sidebarOpenCallback}
+          />
+        )}
         <SceneContainer sidebarOpen={sidebarOpen}>
           {vr && <VRButton />}
           <Canvas
