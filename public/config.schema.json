@@ -12,9 +12,10 @@
         "type": "object",
         "properties": {
           "mapType": {
-            "title": "Map type",
+            "title": "Type",
             "type": "string",
             "description": "Select the type of map you want to visualize.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#maps",
             "enum": ["GPS", "Occupancy"]
           },
           "name": {
@@ -25,7 +26,7 @@
           "gpsMapType": {
             "title": "World map type",
             "type": "string",
-            "enum": ["Satellite", "Street", "Satellite street"],
+            "enum": ["Satellite", "Street"],
             "default": "Satellite",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
@@ -33,19 +34,21 @@
             "title": "Map edge length",
             "description": "Select the size of your map. Larger map boundaries take longer to render and update.",
             "type": "string",
-            "default": "200m",
-            "enum": ["200m", "400m", "600m", "800m", "1000m"],
+            "default": "200 m",
+            "enum": ["200 m", "400 m", "600 m", "800 m", "1000 m"],
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLatitude": {
             "title": "Default latitude",
             "type": "number",
+            "description": "Manual entry of the default latitude of your GPS map. N and E are positive values, S and W are negative values.",
             "$formant.placeholder": "Edit (e.g. 37.7749)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude",
             "type": "number",
+            "description": "Manual entry of the default longitude of your GPS map. N and E are positive values, S and W are negative values.",
             "$formant.placeholder": "Edit (e.g. 122.4194)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
@@ -53,6 +56,7 @@
             "title": "Telemetry stream",
             "type": "string",
             "$formant.streams.byType": "json,location,localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": [
               "or",
               ["mapType", "=", "GPS"],
@@ -93,22 +97,22 @@
       }
     },
     "visualizations": {
-      "title": "Device Layers",
+      "title": "Device layers",
       "type": "array",
       "items": {
         "type": "object",
-        "$formant.itemName": "Device Layers",
+        "$formant.itemName": "Device layers",
         "properties": {
           "visualizationType": {
             "title": "Type",
             "type": "string",
+            "description": "Select the type of visualization you want to add.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#layers",
             "enum": [
               "Position indicator",
               "Marker array",
               "Point cloud",
-              "Path",
-              "Image",
-              "GLTF"
+              "Path"
             ]
           },
           "positionIndicatorUseURDF": {
@@ -116,6 +120,7 @@
             "title": "Use URDF",
             "default": false,
             "description": "URDF is set in Device Configuration. To add a URDF file, click on the three dots (meatball menu) and go to Configure device >> Add URDF.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/urdf",
             "$formant.visible.when": [
               "and",
               ["visualizationType", "=", "Position indicator"]
@@ -162,7 +167,7 @@
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "pointCloudUseColors": {
-            "title": "Full Color",
+            "title": "Use color data",
             "type": "boolean",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
@@ -170,6 +175,7 @@
             "title": "Telemetry stream",
             "type": "string",
             "$formant.streams.byType": "json,localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": [
               "or",
               ["visualizationType", "=", "Point cloud"],
@@ -194,9 +200,11 @@
             ]
           },
           "transformType": {
-            "title": "Transform type (optional)",
+            "title": "Transform type",
             "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"],
+            "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
+            "enum": ["Cartesian", "GPS", "Odometry", "Transform tree"],
             "$formant.visible.when": ["visualizationType", "!=", ""]
           },
           "transformX": {
@@ -221,24 +229,26 @@
             "title": "Relative latitude",
             "type": "number",
             "$formant.placeholder": "Edit (e.g. 37.7749)",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformRelativeLongitude": {
             "title": "Relative longitude",
             "type": "number",
             "$formant.placeholder": "Edit (e.g. 122.4194)",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformGpsStream": {
             "title": "GPS stream",
             "type": "string",
             "$formant.streams.byType": "location",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.placeholder": "Select",
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformLocalizationStream": {
             "title": "Localization stream",
             "type": "string",
             "$formant.streams.byType": "localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
           "transformLocalizationLatestDataPoint": {
@@ -255,7 +265,6 @@
           "transformLocalizationWorldToLocal": {
             "title": "Localization world to local",
             "type": "boolean",
-            "description": "Enable if the localization stream is in world coordinates and you want to convert it to local coordinates.",
             "default": true,
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
@@ -267,6 +276,7 @@
           "transformTreeStream": {
             "type": "string",
             "$formant.streams.byType": "transform tree",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": ["transformType", "=", "Transform tree"]
           },
           "transformTreeEndPoint": {
@@ -276,12 +286,6 @@
         },
         "required": ["visualizationType"]
       }
-    },
-    "showGroundPlane": {
-      "type": "boolean",
-      "title": "Show ground plane",
-      "description": "Show axis and ground plane at the origin of the map.",
-      "default": true
     }
   }
 }

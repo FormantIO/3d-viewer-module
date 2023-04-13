@@ -98,17 +98,6 @@ export function buildScene(
 
     throw new Error("Unknown map type");
   });
-
-  if (config.showGroundPlane) {
-    sceneLayers.push(
-      <GroundLayer
-        key={"ground" + configHash}
-        treePath={[SCENE_TREEPATH, 255]}
-        name={"Ground Plane"}
-        type={LayerType.AXIS}
-      />
-    );
-  }
   (config.visualizations || []).forEach((layer, i) => {
     // positioning for all device layers.
     const positioning = layer.transformType
@@ -202,6 +191,14 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
+  sceneLayers.push(
+    <GroundLayer
+      key={"ground" + configHash}
+      treePath={[SCENE_TREEPATH, 255]}
+      name={"Ground Plane"}
+      type={LayerType.AXIS}
+    />
+  );
 
   // first map layer is visible, others are hidden
   mapLayers = mapLayers.map((layer, i) => {
