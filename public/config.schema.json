@@ -286,6 +286,77 @@
         },
         "required": ["visualizationType"]
       }
+    },
+    "mission": {
+      "title": "Mission",
+      "type": "object",
+      "properties": {
+        "commandName": {
+          "title": "Command Name",
+          "type": "string",
+          "default": "Send mission waypoint"
+        },
+        "waypointsProperties": {
+          "title": "Add Properties",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$formant.itemName": "waypointsProperties",
+            "properties": {
+              "propertyType": {
+                "title": "Type",
+                "type": "string",
+                "enum": ["Boolean", "Enum", "Integer", "Float", "String"],
+                "default": "String"
+              },
+              "propertyName": {
+                "title": "Name",
+                "type": "string"
+              },
+              "enumLists": {
+                "title": "Enum Lists",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "$formant.itemName": "enumLists",
+                  "properties": {
+                    "enumList": {
+                      "title": "Enum List",
+                      "type": "string"
+                    }
+                  }
+                },
+                "$formant.visible.when": ["propertyType", "=", "Enum"]
+              },
+              "integerDefault": {
+                "title": "Default",
+                "type": "number",
+                "$formant.visible.when": ["propertyType", "=", "Integer"]
+              },
+              "floatDefault": {
+                "title": "Default",
+                "type": "number",
+                "$formant.visible.when": ["propertyType", "=", "Float"]
+              },
+              "stringDefault": {
+                "title": "Default",
+                "type": "string",
+                "$formant.visible.when": ["propertyType", "=", "String"]
+              },
+              "booleanDefault": {
+                "title": "Default",
+                "type": "boolean",
+                "$formant.visible.when": ["propertyType", "=", "Boolean"]
+              },
+              "enumDefault": {
+                "title": "Default",
+                "type": "string",
+                "$formant.visible.when": ["propertyType", "=", "Enum"]
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -149,8 +149,6 @@ export function buildScene(
           useColors={pointCloudUseColors || false}
         />
       );
-    } else if (layer.visualizationType === "Waypoints") {
-      deviceLayers.push(<WaypointsLayer />);
     } else if (layer.visualizationType === "Geometry") {
       const dataSource = parseDataSource(layer);
       if (dataSource) {
@@ -203,6 +201,8 @@ export function buildScene(
   // first map layer is visible, others are hidden
   mapLayers = mapLayers.map((layer, i) => {
     return cloneElement(layer, { visible: i === 0 });
+  config.mission && deviceLayers.push(<WaypointsLayer key="waypointsLayer" />);
+
   });
 
   devices.push(

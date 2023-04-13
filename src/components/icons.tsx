@@ -78,3 +78,19 @@ export function WaypointToggleIcon(){
     <circle cx="1.125" cy="1.125" r="1.5" transform="matrix(-1 0 0 1 4.69336 14.1641)" stroke="#BAC4E2" strokeWidth="0.75"/>
     </svg>    
 }
+
+interface BooleanProps{
+    value: boolean;
+    onClick?: ()=>void;
+}
+export function BooleanToggleIcon({value, onClick}: BooleanProps){
+    return <svg width="36" height="22" viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask0_471_35715" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="22">
+    <path fillRule="evenodd" clipRule="evenodd" d={!value?"M36 0H0V22H36V0ZM11 21C16.5228 21 21 16.5228 21 11C21 5.47715 16.5228 1 11 1C5.47715 1 1 5.47715 1 11C1 16.5228 5.47715 21 11 21Z": "M36 0H0V22H36V0ZM25 21C30.5228 21 35 16.5228 35 11C35 5.47715 30.5228 1 25 1C19.4772 1 15 5.47715 15 11C15 16.5228 19.4772 21 25 21Z"} fill="#D9D9D9"/>
+    </mask>
+    <g mask="url(#mask0_471_35715)">
+    <rect x="3" y="7" width="30" height="9" rx="4.5" fill="#282F45" onClick={()=>onClick && onClick()}/>
+    </g>
+    <circle cx={!value? "11": "25"} cy="11" r="8" fill={!value? "#BAC4E2": "#18D2FF"} onClick={()=>onClick && onClick()}/>
+    </svg>    
+}

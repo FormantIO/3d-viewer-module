@@ -7,6 +7,15 @@ export const Container = styled.div`
   left: 0px;
   width: 100%;
   height: 100%;
+
+  /* Prevent Text Selection */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+
   pointer-events: none;
 `;
 
@@ -71,6 +80,12 @@ export const ControlButtonGroup = styled.div`
     background-color: #18d2ff;
     &:hover {
       background-color: #6ee0fd;
+    }
+    &:disabled {
+      background-color: #3b4668;
+      color: #888585;
+      cursor: not-allowed;
+      pointer-events: all !important;
     }
   }
 `;
@@ -152,6 +167,7 @@ export const ToggleIconContainer = styled.div`
   pointer-events: none;
 
   & > div {
+    background-color: #1c1e2d;
     box-shadow: 0 0 1.25rem #0a0b10;
     box-sizing: border-box;
     width: 28px;
@@ -190,5 +206,33 @@ export const DropdownContainer = styled.div`
       no-repeat 30px;
     background-position-x: calc(100% - 5px);
     background-position-y: center;
+  }
+`;
+
+export const BooleanToggleContainer = styled.div`
+  height: 70px;
+  margin-top: 10px;
+  font-family: Inter;
+
+  & > label {
+    font-size: 12px;
+    padding-left: 5px;
+  }
+
+  & > div {
+    width: 100%;
+    height: 40px;
+    background-color: ${FormantColors.steel02};
+    padding: 0 15px 0 15px;
+    border-radius: 0.25rem;
+    color: white;
+    margin-top: 0.5rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > div:nth-of-type(1) {
+      font-size: 12px;
+    }
   }
 `;
