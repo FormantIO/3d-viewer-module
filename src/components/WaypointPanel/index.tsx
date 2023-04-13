@@ -28,9 +28,11 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const device = useContext(DeviceContext);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const waypointsProperties: WaypointPropertyType[] = config.waypointMission
-    ? config.waypointMission[0].waypointsProperties || []
-    : [];
+
+  const waypointsProperties: WaypointPropertyType[] =
+    config.waypointMission!.length > 0
+      ? config.waypointMission![0].waypointsProperties || []
+      : [];
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
   for (let i = 0; i < waypointsProperties!.length; ++i) {

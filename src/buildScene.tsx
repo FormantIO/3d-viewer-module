@@ -188,7 +188,7 @@ export function buildScene(
     }
   });
 
-  config.waypointMission &&
+  config.waypointMission!.length > 0 &&
     deviceLayers.push(<WaypointsLayer key="waypointsLayer" />);
 
   // first map layer that isnt a ground plane is visible, others are hidden, except for the ground plane
