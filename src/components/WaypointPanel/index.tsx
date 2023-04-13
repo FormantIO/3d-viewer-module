@@ -11,7 +11,7 @@ import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { TYPES } from "./types";
 import { BooleanToggle } from "./BooleanToggle";
-import { Authentication } from "@formant/data-sdk";
+import { Authentication, Fleet } from "@formant/data-sdk";
 import { upload } from "./upload";
 
 interface Props {
@@ -27,8 +27,6 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     store,
     setWaypoints,
   } = controlsStates;
-  const device = useContext(DeviceContext);
-  console.log(device);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const waypointsProperties: WaypointPropertyType[] = config.mission
@@ -74,7 +72,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
       // Send
-      console.log(device);
+      const device = await Fleet.getCurrentDevice();
       if (device) {
         const fileID = await upload(Authentication.token!, { waypoints });
         console.log("fileID", fileID);
