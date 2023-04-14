@@ -14,8 +14,8 @@ const newConfig: Viewer3DConfiguration = {
   maps: [
     {
       name: "ocupancy grid name",
-      mapType: "Occupancy Map",
-      gpsMapSize: "200",
+      mapType: "Occupancy",
+      gpsMapSize: "200 m",
       telemetryStreamName: "Map",
       telemetryLatestDataPoint: false,
       transformLocalizationWorldToLocal: true,
@@ -24,8 +24,7 @@ const newConfig: Viewer3DConfiguration = {
   visualizations: [
     {
       name: "device name",
-      visualizationType: "Position Indicator",
-      positionIndicatorVisualType: "Circle",
+      visualizationType: "Position indicator",
 
       transformLocalizationWorldToLocal: true,
       transformLocalizationStream: "Map", //replace with stream name

@@ -5,7 +5,7 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { PropertyType } from "./components/WaypointPanel/types";
 
 export type Viewer3DConfiguarationTransform = {
-  transformType?: "Cartesian" | "GPS" | "Odometry" | "Transform Tree";
+  transformType?: "Cartesian" | "GPS" | "Odometry" | "Transform tree";
   transformX?: number;
   transformY?: number;
   transformZ?: number;
@@ -32,7 +32,9 @@ export type Viewer3DVisualization = {
     | "Geometry"
     | "Point cloud"
     | "Path"
-    | "Waypoints";
+    | "Waypoints"
+    | "Image"
+    | "GLTF";
   positionIndicatorUseURDF?: boolean;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
@@ -110,7 +112,7 @@ export function parsePositioning(
         positioning.transformLocalizationStream || "",
         positioning.transformLocalizationLatestDataPoint || false
       );
-    case "Transform Tree":
+    case "Transform tree":
       return PositioningBuilder.tranformTree(
         positioning.transformTreeStream || "",
         positioning.transformTreeEndPoint || ""
