@@ -204,7 +204,7 @@ export abstract class BaseClient {
           ...this.getHeaders(),
           ...(init.headers || {}),
           ...(token !== undefined ? { Authorization: `Bearer ${token}` } : {}),
-          "app-id": "formant/3D-Viewer",
+          "app-id": "formant/admin-api",
         },
         // TODO: this project is abandondoned and we should not use it
         // it throws an type error when we try to use it because it's
