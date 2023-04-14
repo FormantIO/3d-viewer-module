@@ -180,7 +180,6 @@ export abstract class BaseClient {
         abortController.abort();
       }
     }
-
     try {
       let waitTimeout: Timeout | undefined;
       await Promise.race([
@@ -205,13 +204,14 @@ export abstract class BaseClient {
           ...this.getHeaders(),
           ...(init.headers || {}),
           ...(token !== undefined ? { Authorization: `Bearer ${token}` } : {}),
+          "app-id": "formant/3D-Viewer",
         },
         // TODO: this project is abandondoned and we should not use it
         // it throws an type error when we try to use it because it's
         // missing certain handler methods
         signal: abortController.signal as any,
       });
-
+      console.log("ttt", response, url, this.getHeaders(), init, token);
       const contentType: string = response.headers.get("content-type") || "";
       const isJson = contentType && contentType.startsWith("application/json");
       const body = isJson ? await response.json() : await response.text();
