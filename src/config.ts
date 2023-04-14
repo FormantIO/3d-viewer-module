@@ -5,7 +5,7 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { PropertyType } from "./components/WaypointPanel/types";
 
 export type Viewer3DConfiguarationTransform = {
-  transformType?: "Cartesian" | "Gps" | "Odometry" | "Transform Tree";
+  transformType?: "Cartesian" | "GPS" | "Odometry" | "Transform Tree";
   transformX?: number;
   transformY?: number;
   transformZ?: number;
@@ -28,11 +28,12 @@ export type Viewer3DConfigurationDataSource = {
 export type Viewer3DVisualization = {
   name?: string;
   visualizationType?:
-    | "Position Indicator"
+    | "Position indicator"
     | "Geometry"
-    | "Point Cloud"
-    | "Path";
-  positionIndicatorVisualType?: "Circle";
+    | "Point cloud"
+    | "Path"
+    | "Waypoints";
+  positionIndicatorUseURDF?: boolean;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
@@ -47,8 +48,8 @@ export type Viewer3DVisualization = {
 
 export type Viewer3DMap = {
   name?: string;
-  mapType?: "Ground Plane" | "GPS Map" | "Occupancy Map";
-  gpsMapType?: "Satellite" | "Street" | "Satellite Street";
+  mapType?: "GPS" | "Occupancy";
+  gpsMapType?: "Satellite" | "Street" | "Satellite street";
   gpsMapSize: string;
   gpsMapLongitude?: number;
   gpsMapLatitude?: number;
@@ -73,6 +74,7 @@ export type Viewer3DMission = {
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
+  showGroundPlane?: boolean;
   mission?: Viewer3DMission;
 };
 
@@ -99,7 +101,7 @@ export function parsePositioning(
         positioning.transformY || 0,
         positioning.transformZ || 0
       );
-    case "Gps":
+    case "GPS":
       return PositioningBuilder.gps(positioning.transformGpsStream || "", {
         long: positioning.transformRelativeLongitude || 0,
         lat: positioning.transformRelativeLatitude || 0,

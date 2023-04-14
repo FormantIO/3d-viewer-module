@@ -1,190 +1,140 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "3D viewer",
+  "title": "Scene",
   "type": "object",
   "required": ["maps"],
   "properties": {
     "maps": {
-      "title": "Add maps",
+      "title": "Maps",
       "type": "array",
       "items": {
         "$formant.itemName": "maps",
         "type": "object",
         "properties": {
+          "mapType": {
+            "title": "Type",
+            "type": "string",
+            "description": "Select the type of map you want to visualize.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#maps",
+            "enum": ["GPS", "Occupancy"]
+          },
           "name": {
             "type": "string",
-            "title": "Name"
-          },
-          "mapType": {
-            "title": "Map type",
-            "type": "string",
-            "enum": ["Ground Plane", "GPS Map", "Occupancy Map"]
+            "title": "Name",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "gpsMapType": {
             "title": "World map type",
             "type": "string",
-            "enum": ["Satellite", "Street", "Satellite Street"],
+            "enum": ["Satellite", "Street"],
             "default": "Satellite",
-            "$formant.visible.when": ["mapType", "=", "GPS Map"]
+            "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapSize": {
-            "title": "Map edge length (meters)",
+            "title": "Map edge length",
+            "description": "Select the size of your map. Larger map boundaries take longer to render and update.",
             "type": "string",
-            "default": "200 meters",
-            "enum": [
-              "200 meters",
-              "400 meters",
-              "600 meters",
-              "800 meters",
-              "1 kilometer"
-            ],
-            "$formant.visible.when": ["mapType", "=", "GPS Map"]
+            "default": "200 m",
+            "enum": ["200 m", "400 m", "600 m", "800 m", "1000 m"],
+            "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLatitude": {
-            "title": "Default latitude (optional)",
+            "title": "Default latitude",
             "type": "number",
-            "$formant.visible.when": ["mapType", "=", "GPS Map"]
+            "description": "Manual entry of the default latitude of your GPS map. N and E are positive values, S and W are negative values.",
+            "$formant.placeholder": "Edit (e.g. 37.7749)",
+            "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
-            "title": "Default longitude (optional)",
+            "title": "Default longitude",
             "type": "number",
-            "$formant.visible.when": ["mapType", "=", "GPS Map"]
+            "description": "Manual entry of the default longitude of your GPS map. N and E are positive values, S and W are negative values.",
+            "$formant.placeholder": "Edit (e.g. 122.4194)",
+            "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "telemetryStreamName": {
+            "title": "Telemetry stream",
             "type": "string",
             "$formant.streams.byType": "json,location,localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": [
               "or",
-              ["mapType", "=", "GPS Map"],
-              ["mapType", "=", "Occupancy Map"]
+              ["mapType", "=", "GPS"],
+              ["mapType", "=", "Occupancy"]
             ]
           },
           "telemetryLatestDataPoint": {
+            "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
             "$formant.visible.when": [
               "and",
-              [
-                "or",
-                ["mapType", "=", "GPS Map"],
-                ["mapType", "=", "Occupancy Map"]
-              ],
+              ["or", ["mapType", "=", "GPS"], ["mapType", "=", "Occupancy"]],
               ["telemetryStreamName", "!=", ""]
             ]
           },
-          "transformType": {
-            "title": "Transform type (optional)",
-            "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
-          },
           "transformX": {
-            "title": "X-axis",
+            "title": "X offset (m)",
             "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+            "$formant.placeholder": "Edit",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformY": {
-            "title": "Y-axis",
+            "title": "Y offset (m)",
             "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Cartesian"]
+            "$formant.placeholder": "Edit",
+            "$formant.visible.when": ["mapType", "!=", ""]
           },
           "transformZ": {
-            "title": "Z-axis",
+            "title": "Z offset (m)",
             "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Cartesian"]
-          },
-          "transformRelativeLatitude": {
-            "title": "Relative latitude",
-            "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
-          },
-          "transformRelativeLongitude": {
-            "title": "Relative longitude",
-            "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
-          },
-          "transformGpsStream": {
-            "title": "GPS stream",
-            "type": "string",
-            "$formant.streams.byType": "location",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
-          },
-          "transformLocalizationStream": {
-            "title": "Localization stream",
-            "type": "string",
-            "$formant.streams.byType": "localization",
-            "$formant.visible.when": ["transformType", "=", "Odometry"]
-          },
-          "transformLocalizationLatestDataPoint": {
-            "type": "boolean",
-            "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
-            "$formant.visible.when": [
-              "and",
-              ["transformType", "=", "Odometry"],
-              ["transformLocalizationStream", "!=", ""]
-            ]
-          },
-          "transformLocalizationWorldToLocal": {
-            "title": "Localization world to local",
-            "type": "boolean",
-            "default": true,
-            "$formant.visible.when": ["transformType", "=", "Odometry"]
-          },
-          "transformLocalizationRealtimeStream": {
-            "title": "Localization realtime stream",
-            "type": "string",
-            "$formant.visible.when": ["transformType", "=", "Odometry"]
-          },
-          "transformTreeStream": {
-            "type": "string",
-            "$formant.streams.byType": "transform tree",
-            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
-          },
-          "transformTreeEndPoint": {
-            "type": "string",
-            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
+            "$formant.placeholder": "Edit",
+            "$formant.visible.when": ["mapType", "!=", ""]
           }
         },
-        "required": ["mapType", "name"]
+        "required": ["mapType"]
       }
     },
     "visualizations": {
-      "title": "Add visualizations",
+      "title": "Device layers",
       "type": "array",
       "items": {
         "type": "object",
-        "$formant.itemName": "visualizations",
+        "$formant.itemName": "Device layers",
         "properties": {
+          "visualizationType": {
+            "title": "Type",
+            "type": "string",
+            "description": "Select the type of visualization you want to add.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#layers",
+            "enum": [
+              "Position indicator",
+              "Marker array",
+              "Point cloud",
+              "Path"
+            ]
+          },
+          "positionIndicatorUseURDF": {
+            "type": "boolean",
+            "title": "Use URDF",
+            "default": false,
+            "description": "URDF is set in Device Configuration. To add a URDF file, click on the three dots (meatball menu) and go to Configure device >> Add URDF.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/urdf",
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "=", "Position indicator"]
+            ]
+          },
           "name": {
             "type": "string",
-            "title": "Name"
+            "title": "Name",
+            "$formant.visible.when": ["visualizationType", "!=", ""]
           },
-          "visualizationType": {
-            "type": "string",
-            "enum": [
-              "Position Indicator",
-              "Geometry",
-              "Point Cloud",
-              "Path",
-              "Image",
-              "GLTF"
-            ]
-          },
-          "positionIndicatorVisualType": {
-            "type": "string",
-            "title": "Visual type",
-            "enum": ["Circle", "URDF"],
-            "default": "Circle",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Position Indicator"
-            ]
-          },
+
           "imageFileId": {
             "type": "string",
-            "title": "Image File ID",
+            "title": "Cloud file ID",
             "$formant.visible.when": ["visualizationType", "=", "Image"]
           },
           "imageWidth": {
@@ -195,12 +145,12 @@
           },
           "gltfFileId": {
             "type": "string",
-            "title": "GLTF File ID",
+            "title": "Cloud file ID",
             "$formant.visible.when": ["visualizationType", "=", "GLTF"]
           },
           "gltfScale": {
             "type": "number",
-            "title": "GLTF Scale",
+            "title": "GLTF scale factor",
             "$formant.visible.when": ["visualizationType", "=", "GLTF"],
             "default": 1
           },
@@ -211,87 +161,101 @@
             "default": 1
           },
           "pointCloudDecayTime": {
-            "title": "Decay time",
+            "title": "Decay time (s)",
+            "$formant.placeholder": "Edit (e.g. 2)",
             "type": "number",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "pointCloudUseColors": {
-            "title": "Full Color",
+            "title": "Use color data",
             "type": "boolean",
-            "$formant.visible.when": ["visualizationType", "=", "Point Cloud"]
+            "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
-
           "telemetryStreamName": {
+            "title": "Telemetry stream",
             "type": "string",
             "$formant.streams.byType": "json,localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": [
               "or",
-              ["visualizationType", "=", "Point Cloud"],
+              ["visualizationType", "=", "Point cloud"],
               ["visualizationType", "=", "Path"],
-              ["visualizationType", "=", "Geometry"]
+              ["visualizationType", "=", "Marker array"]
             ]
           },
           "telemetryLatestDataPoint": {
+            "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available. ",
             "$formant.visible.when": [
               "and",
               [
                 "or",
-                ["visualizationType", "=", "Point Cloud"],
+                ["visualizationType", "=", "Point cloud"],
                 ["visualizationType", "=", "Path"],
-                ["visualizationType", "=", "Geometry"]
+                ["visualizationType", "=", "Marker array"]
               ],
               ["telemetryStreamName", "!=", ""]
             ]
           },
           "transformType": {
-            "title": "Transform type (optional)",
+            "title": "Transform type",
             "type": "string",
-            "enum": ["Cartesian", "Gps", "Odometry", "Transform Tree"]
+            "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
+            "enum": ["Cartesian", "GPS", "Odometry", "Transform tree"],
+            "$formant.visible.when": ["visualizationType", "!=", ""]
           },
           "transformX": {
-            "title": "X-axis",
+            "title": "X offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformY": {
-            "title": "Y-axis",
+            "title": "Y offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformZ": {
-            "title": "Z-axis",
+            "title": "Z offset (m)",
             "type": "number",
+            "$formant.placeholder": "Edit",
             "$formant.visible.when": ["transformType", "=", "Cartesian"]
           },
           "transformRelativeLatitude": {
             "title": "Relative latitude",
             "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.placeholder": "Edit (e.g. 37.7749)",
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformRelativeLongitude": {
             "title": "Relative longitude",
             "type": "number",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.placeholder": "Edit (e.g. 122.4194)",
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformGpsStream": {
             "title": "GPS stream",
             "type": "string",
             "$formant.streams.byType": "location",
-            "$formant.visible.when": ["transformType", "=", "Gps"]
+            "$formant.placeholder": "Select",
+            "$formant.visible.when": ["transformType", "=", "GPS"]
           },
           "transformLocalizationStream": {
             "title": "Localization stream",
             "type": "string",
             "$formant.streams.byType": "localization",
+            "$formant.placeholder": "Select",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
           "transformLocalizationLatestDataPoint": {
+            "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Use latest data point in the last year, or the most recent data point within the last 15 seconds",
+            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
             "$formant.visible.when": [
               "and",
               ["transformType", "=", "Odometry"],
@@ -312,14 +276,15 @@
           "transformTreeStream": {
             "type": "string",
             "$formant.streams.byType": "transform tree",
-            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
+            "$formant.placeholder": "Select",
+            "$formant.visible.when": ["transformType", "=", "Transform tree"]
           },
           "transformTreeEndPoint": {
             "type": "string",
-            "$formant.visible.when": ["transformType", "=", "Transform Tree"]
+            "$formant.visible.when": ["transformType", "=", "Transform tree"]
           }
         },
-        "required": ["visualizationType", "name"]
+        "required": ["visualizationType"]
       }
     },
     "mission": {

@@ -21,14 +21,14 @@ const URL_SCOPED_TOKEN =
 const mapStyles = {
   Street: "streets-v11",
   Satellite: "satellite-v9",
-  "Satellite Street": "satellite-streets-v11",
+  "Satellite street": "satellite-streets-v11",
 };
 interface IMapLayer extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   latitude?: number;
   longitude?: number;
   size: number;
-  mapType: "Street" | "Satellite" | "Satellite Street";
+  mapType: "Street" | "Satellite" | "Satellite street";
 }
 
 const ColorShiftMaterial = shaderMaterial(
