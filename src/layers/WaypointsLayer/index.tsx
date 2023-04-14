@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
-import { Mesh } from "three";
+import { Euler, Mesh, Quaternion, Vector3 } from "three";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
@@ -51,13 +51,39 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
               w: 1,
             },
     };
-    setWaypoints([...waypoints, pose]);
+
+    // Snap orientation of previous waypoint
+    if (waypoints.length > 0) {
+      // pose.rotation
+      const prev = waypoints[waypoints.length - 1].translation;
+      const next = pose.translation;
+      const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
+      let angle = vector.angleTo(new Vector3(1, 0, 0));
+      angle *= Math.sign(next.y - prev.y);
+      const euler = new Euler(0, 0, angle);
+      const { x, y, z, w } = new Quaternion().setFromEuler(euler);
+      const prevWaypoint = { translation: prev, rotation: { x, y, z, w } };
+      setWaypoints([
+        ...waypoints.slice(0, waypoints.length - 1),
+        prevWaypoint,
+        pose,
+      ]);
+
+      store.waypoints[waypoints.length - 1].pose = prevWaypoint;
+      store.waypoints[waypoints.length] = {
+        ...store.waypoints[waypoints.length - 1],
+        pointIndex: waypoints.length,
+        pose,
+      };
+    } else {
+      setWaypoints([pose]);
+      store.waypoints.push({
+        pointIndex: waypoints.length,
+        pose,
+      });
+    }
+
     updateState({ selectedWaypoint: waypoints.length });
-    store.waypoints.push({
-      ...(waypoints.length > 0 ? store.waypoints[waypoints.length - 1] : {}),
-      pointIndex: waypoints.length,
-      pose,
-    });
   };
 
   const poseChangeHandler = (updatedPose: IPose, index: number) => {
@@ -112,14 +138,24 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
                 return;
               }
               let p = e.point;
+
+              const prev = waypoints[e.faceIndex!].translation;
+              const next = waypoints[e.faceIndex! + 1].translation;
+              const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
+              let angle = vector.angleTo(new Vector3(1, 0, 0));
+              angle *= Math.sign(next.y - prev.y);
+              const euler = new Euler(0, 0, angle);
+              const { x, y, z, w } = new Quaternion().setFromEuler(euler);
+
               const pose = {
                 translation: {
                   x: p.x,
-                  y: p.y,
+                  y: (p.x - prev.x) * Math.tan(angle) + prev.y,
                   z: 0,
                 },
-                rotation: waypoints[e.faceIndex!].rotation,
+                rotation: { x, y, z, w },
               };
+
               setWaypoints((prev) => {
                 prev.splice(e.faceIndex! + 1, 0, pose);
                 return [...prev];

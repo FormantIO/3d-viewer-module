@@ -77,9 +77,9 @@ const LayerRow = styled.div<ILayerRow>`
   transition: all 0.05s ease;
   /* color: ${(props: ILayerRow) =>
     props.layerVisible ? FormantColors.silver : "#657197"}; */
-  color: ${(props: ILayerRow) =>
+  /* color: ${(props: ILayerRow) =>
     props.hasChildren || props.isSelectedMap ? "#FFFFFF" : "#BAC3E2"
-  };
+  }; */
   font-weight: ${(props: ILayerRow) =>
     props.hasChildren ? "700" : "400"
   };
@@ -121,6 +121,12 @@ overflow: hidden;
 }
 `;
 
+const MapSeparator = styled.hr`
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid #657197;
+`;
+
 interface IVisibilityIcon {
   layerVisible: boolean;
 }
@@ -134,7 +140,6 @@ const VisibilityIcon = styled.div<IVisibilityIcon>`
 `;
 
 const typographyStyle = {
-  color: FormantColors.silver,
   fontSize: "0.9375rem",
   lineHeight: "24px",
   letterSpacing: "1px",
@@ -167,7 +172,7 @@ const Sidebar = ({
   };
 
   const isLayerMap = (layer: LayerData) => {
-    return layer.treePath && layer.treePath[0] === 0 && layer.treePath.length > 1 && layer.type !== LayerType.AXIS || false;
+    return layer.treePath && layer.treePath[0] === 0 && layer.treePath.length > 1 || false;
   }
 
   const onLayerClicked = (layer: LayerData) => {
@@ -208,6 +213,8 @@ const Sidebar = ({
     _sortedLayers.forEach((l) => {
       _layerMap[l.id] = l;
     });
+
+
     setLayerMap(_layerMap);
     setSortedLayers(_sortedLayers);
   }, [layers]);
@@ -269,14 +276,13 @@ const Sidebar = ({
       return;
     }
 
-    // all other visible maps that arent axis
+    // all other visible maps
     const siblings = Object.values(layerMap).filter((sibling) => {
       return (
         sibling.id !== layer.id &&
         sibling.id !== parentLayer.id &&
         sibling.treePath &&
         sibling.treePath[0] === layer.treePath![0] &&
-        sibling.type !== LayerType.AXIS &&
         sibling.visible
       );
     });
@@ -307,9 +313,11 @@ const Sidebar = ({
     </VisibilityIcon>;
   };
 
-  const deviceLayersVisible = sortedLayers.some(
-    (l) => l.treePath && l.treePath[0] === 1 && l.visible && l.treePath.length > 1
+  const deviceLayers = sortedLayers.filter(
+    (l) => l.treePath && l.treePath[0] === 1 && l.treePath.length > 1
   );
+
+  const deviceLayersVisible = deviceLayers.some((l) => l.visible);
 
   const onToggleDeviceLayers = () => {
     const deviceLayers = sortedLayers.filter(
@@ -329,6 +337,16 @@ const Sidebar = ({
 
   };
 
+  const getLayerTextColor = (layer: LayerData) => {
+    if (layer.treePath?.length === 1) {
+      return FormantColors.white;
+    }
+    if (layer.visible) {
+      return FormantColors.silver;
+    }
+    return FormantColors.steel03;
+  };
+
   return (
     <>
       <ToggleButton onClick={onToggleSidebarClicked} sidebarVisible={visible}>
@@ -338,64 +356,70 @@ const Sidebar = ({
         visible={visible}
       >
         <SidebarContent>
-          <LayerRow
-            hasChildren={true}
-            isChild={false}
-            isLastChild={false}
-            isSelectedMap={false}
-            layerVisible={true}
-          >
-            <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle}>
-                Device
-              </Typography>
-            </LayerTitle>
-
-          </LayerRow>
-          <LayerRow
-            hasChildren={false}
-            isChild={true}
-            isLastChild={true}
-            isSelectedMap={false}
-            layerVisible={true}>
-            <LayerTitle>
-              <Typography variant="body1" sx={typographyStyle}>
-                {deviceName}
-              </Typography>
-            </LayerTitle>
-            <VisibilityIcon
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-                onToggleDeviceLayers();
-              }}
-              onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                e.stopPropagation();
-              }}
-              layerVisible={deviceLayersVisible}
-            >
-              {deviceLayersVisible ? <EyeIcon /> : <EyeCloseIcon />}
-            </VisibilityIcon>
-          </LayerRow>
-          {sortedLayers.map((c) => {
-            if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
-            return (
+          {deviceLayers.length > 0 && (
+            <>
               <LayerRow
-                key={c.id}
-                hasChildren={hasChildren(c)}
-                isChild={isChild(c)}
-                isLastChild={isLastChild(c)}
-                onClick={() => onLayerClicked(c)}
-                onDoubleClick={() => onLayerDoubleClicked(c)}
-                layerVisible={c.visible}
-                isSelectedMap={isLayerMap(c) && c.visible}
+                hasChildren={true}
+                isChild={false}
+                isLastChild={false}
+                isSelectedMap={false}
+                layerVisible={true}
               >
                 <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle}>
-                    {c.name}
+                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
+                    Device
                   </Typography>
                 </LayerTitle>
-                {renderIcons(c)}
+
               </LayerRow>
+              <LayerRow
+                hasChildren={false}
+                isChild={true}
+                isLastChild={true}
+                isSelectedMap={false}
+                layerVisible={true}>
+                <LayerTitle>
+                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
+                    {deviceName}
+                  </Typography>
+                </LayerTitle>
+                <VisibilityIcon
+                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                    onToggleDeviceLayers();
+                  }}
+                  onDoubleClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                  }}
+                  layerVisible={deviceLayersVisible}
+                >
+                  {deviceLayersVisible ? <EyeIcon /> : <EyeCloseIcon />}
+                </VisibilityIcon>
+              </LayerRow>
+            </>
+          )}
+          {sortedLayers.map((c, i) => {
+            if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
+            return (
+              <>
+                <LayerRow
+                  key={c.id}
+                  hasChildren={hasChildren(c)}
+                  isChild={isChild(c)}
+                  isLastChild={isLastChild(c)}
+                  onClick={() => onLayerClicked(c)}
+                  onDoubleClick={() => onLayerDoubleClicked(c)}
+                  layerVisible={c.visible}
+                  isSelectedMap={isLayerMap(c) && c.visible}
+                >
+                  <LayerTitle>
+                    <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}>
+                      {c.name}
+                    </Typography>
+                  </LayerTitle>
+                  {renderIcons(c)}
+                </LayerRow>
+              </>
             );
           })}
         </SidebarContent>

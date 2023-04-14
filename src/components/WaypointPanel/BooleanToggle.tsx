@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { BooleanToggleContainer } from "./style";
-import { BooleanToggleIcon } from "../icons";
+import { BooleanToggleTrueIcon, BooleanToggleFalseIcon } from "../icons";
 
 interface Props {
   label: string;
@@ -13,20 +13,17 @@ export const BooleanToggle = forwardRef<any, Props>(
     const [toggle, setToggle] = React.useState<boolean>(value);
     //@ts-ignore
     ref.current = (s: boolean) => setToggle(s);
-
+    const onClick = () => {
+      setToggle((p) => !p);
+      onChange && onChange(!toggle);
+    };
     return (
       <BooleanToggleContainer>
         <label>{label}</label>
-        <div>
+        <div onClick={onClick}>
           <div>{toggle ? "On" : "Off"}</div>
           <div>
-            <BooleanToggleIcon
-              value={toggle}
-              onClick={() => {
-                setToggle((p) => !p);
-                onChange && onChange(!toggle);
-              }}
-            />
+            {toggle ? <BooleanToggleTrueIcon /> : <BooleanToggleFalseIcon />}
           </div>
         </div>
       </BooleanToggleContainer>

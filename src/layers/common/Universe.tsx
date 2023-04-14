@@ -12,7 +12,7 @@ import { VRButton, XR, Controllers, Hands } from "@react-three/xr";
 import { BlendFunction } from "postprocessing";
 import Sidebar from "../../components/Sidebar";
 import { UIDataContext, useUI } from "./UIDataContext";
-import { Scene, Vector3 } from "three";
+import { Scene } from "three";
 import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
@@ -76,7 +76,7 @@ export function Universe(props: IUniverseProps) {
 
   const controlsStates = useControlsContextStates();
   const {
-    state: { isWaypointVisible },
+    state: { isWaypointVisible, isWaypointEditing },
   } = controlsStates;
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export function Universe(props: IUniverseProps) {
 
   const sidebarOpenCallback = () => {
     setSidebarOpen(!sidebarOpen);
-  }
+  };
 
   return (
     <>
@@ -167,7 +167,12 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode,
         }}
       >
-        <Sidebar lookAtTargetId={lookAtTargetId} toggleSidebarCallback={sidebarOpenCallback} />
+        {!isWaypointEditing && (
+          <Sidebar
+            lookAtTargetId={lookAtTargetId}
+            toggleSidebarCallback={sidebarOpenCallback}
+          />
+        )}
         <SceneContainer sidebarOpen={sidebarOpen}>
           {vr && <VRButton />}
           <Canvas
