@@ -211,7 +211,7 @@ export abstract class BaseClient {
         // missing certain handler methods
         signal: abortController.signal as any,
       });
-      console.log("ttt", response, url, this.getHeaders(), init, token);
+
       const contentType: string = response.headers.get("content-type") || "";
       const isJson = contentType && contentType.startsWith("application/json");
       const body = isJson ? await response.json() : await response.text();

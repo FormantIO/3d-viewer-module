@@ -73,14 +73,11 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const sendBtnHandler = async () => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
-      // Send
       const device = await Fleet.getCurrentDevice();
       if (device) {
         const fileID = await upload(Authentication.token!, { waypoints });
-        console.log("fileID", fileID);
-        device.sendCommand("send_mission_waypoints", fileID);
+        device.sendCommand("send_mission_waypoints", fileID.toString());
       }
-      // alert(JSON.stringify(waypoints));
     } else {
       alert("Create Waypoints To Send.");
     }

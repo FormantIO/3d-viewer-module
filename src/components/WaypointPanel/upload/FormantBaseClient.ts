@@ -24,8 +24,6 @@ export abstract class FormantBaseClient extends BaseClient {
   protected getHeaders(): { [_: string]: string } {
     return {
       ...FormantBaseClient.headers,
-      //   "App-ID": `formant/${app}`,
-      //   "App-Version": version,
     };
   }
 }
