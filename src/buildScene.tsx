@@ -198,10 +198,12 @@ export function buildScene(
     />
   );
 
+  config.waypointMission!.length > 0 &&
+    deviceLayers.push(<WaypointsLayer key="waypointsLayer" />);
+
   // first map layer is visible, others are hidden
   mapLayers = mapLayers.map((layer, i) => {
     return cloneElement(layer, { visible: i === 0 });
-  config.mission && deviceLayers.push(<WaypointsLayer key="waypointsLayer" />);
 
   });
 

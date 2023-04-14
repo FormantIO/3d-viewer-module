@@ -28,9 +28,11 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const device = useContext(DeviceContext);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const waypointsProperties: WaypointPropertyType[] = config.mission
-    ? config.mission.waypointsProperties || []
-    : [];
+
+  const waypointsProperties: WaypointPropertyType[] =
+    config.waypointMission!.length > 0
+      ? config.waypointMission![0].waypointsProperties || []
+      : [];
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
   for (let i = 0; i < waypointsProperties!.length; ++i) {
@@ -210,8 +212,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       } else if (propertyType === TYPES.BOOLEAN) {
         comps.push(
           <BooleanToggle
+            key={idx}
             ref={elements[idx]}
-            label={"Boolean"}
+            label={item.propertyName}
             onChange={(value: boolean) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] = value;

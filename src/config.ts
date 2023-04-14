@@ -74,8 +74,7 @@ export type Viewer3DMission = {
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
-  showGroundPlane?: boolean;
-  mission?: Viewer3DMission;
+  waypointMission?: Viewer3DMission[];
 };
 
 export function parseDataSource(
