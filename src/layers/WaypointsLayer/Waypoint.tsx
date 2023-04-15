@@ -6,6 +6,7 @@ import { PivotControls } from "@react-three/drei";
 import { useControlsContext } from "../common/ControlsContext";
 import { FormantColors } from "../utils/FormantColors";
 import { CircleMaterial } from "../utils/CircleMaterial";
+import { PathType } from "../../components/WaypointPanel/types";
 extend({ CircleMaterial });
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
   onPose: (pose: IPose) => void;
   toggle?: boolean;
   pointIndex: number;
+  pathType: PathType;
 }
 
 export type WaypointData = {
@@ -21,7 +23,7 @@ export type WaypointData = {
 } & any;
 
 export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
-  const { pose, pointIndex } = props;
+  const { pose, pointIndex, pathType } = props;
   const {
     updateState,
     state: { selectedWaypoint },
@@ -63,7 +65,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     if (!groupRef.current) return;
     const marker = groupRef.current;
     const scale = marker.position.distanceTo(camera.position) / 25;
-    marker.scale.setScalar(scale);
+    marker.scale.setScalar(pathType === PathType.DYNAMIC ? scale : 20);
   });
 
   return (
@@ -128,13 +130,13 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
             position-z={0.1}
             renderOrder={2}
           >
-            <circleGeometry args={[0.38, 20]} />
+            <circleGeometry args={[0.38, 36]} />
             <circleMaterial
               args={[
                 selectedWaypoint !== pointIndex
                   ? FormantColors.purple
-                  : FormantColors.blue,
-                selectedWaypoint !== pointIndex ? "white" : FormantColors.blue,
+                  : "#10c7ff",
+                selectedWaypoint !== pointIndex ? "white" : "#10c7ff",
               ]}
             />
           </mesh>

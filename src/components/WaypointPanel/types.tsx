@@ -14,3 +14,8 @@ export type PropertyType =
   | TYPES.BOOLEAN
   | TYPES.STRING
   | TYPES.ENUM;
+
+export enum PathType {
+  STATIC = "Static",
+  DYNAMIC = "Dynamic",
+}

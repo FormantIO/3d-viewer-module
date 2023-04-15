@@ -21,7 +21,7 @@ interface Props {
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
-    state: { selectedWaypoint, isWaypointEditing },
+    state: { selectedWaypoint, isWaypointEditing, commandName },
     updateState,
     store,
     setWaypoints,
@@ -30,7 +30,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const [showCancel, setShowCancel] = useState(false);
 
   const waypointsProperties: WaypointPropertyType[] =
-    config.waypointMission!.length > 0
+    config.waypointMission && config.waypointMission.length > 0
       ? config.waypointMission![0].waypointsProperties || []
       : [];
 
@@ -75,7 +75,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       const device = await Fleet.getCurrentDevice();
       if (device) {
         const fileID = await upload(Authentication.token!, { waypoints });
-        device.sendCommand("send_mission_waypoints", fileID.toString());
+        device.sendCommand(commandName, fileID.toString());
       }
     } else {
       alert("Create Waypoints To Send.");
