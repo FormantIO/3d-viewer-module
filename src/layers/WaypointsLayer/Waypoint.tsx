@@ -71,7 +71,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
       <PivotControls
         ref={pivotRef}
         visible={selectedWaypoint === pointIndex}
-        lineWidth={2}
+        lineWidth={3}
         axisColors={["#ff618e", "#00ff80", "#ffffff"]}
         hoveredColor={"#ffff00"}
         activeAxes={[true, true, false]}

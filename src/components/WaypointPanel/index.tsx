@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import * as THREE from "three";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
-import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
