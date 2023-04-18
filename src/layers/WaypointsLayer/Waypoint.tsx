@@ -15,6 +15,7 @@ interface Props {
   toggle?: boolean;
   pointIndex: number;
   pathType: PathType;
+  pathWidth: number;
 }
 
 export type WaypointData = {
@@ -23,7 +24,7 @@ export type WaypointData = {
 } & any;
 
 export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
-  const { pose, pointIndex, pathType } = props;
+  const { pose, pointIndex, pathType, pathWidth } = props;
   const {
     updateState,
     state: { selectedWaypoint },
@@ -43,6 +44,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const targetRef = useRef<THREE.Group>(null!);
   const pivotRef = useRef<THREE.Group>(null!);
   const groupRef = useRef<THREE.Group>(null!);
+  const arrowGroupRef = useRef<THREE.Group>(null!);
   const matrix = new THREE.Matrix4();
 
   const arrowShape = React.useMemo(() => {
@@ -61,11 +63,15 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     updateState({ selectedWaypoint: pointIndex });
   };
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera, size: { height } }) => {
     if (!groupRef.current) return;
     const marker = groupRef.current;
-    const scale = marker.position.distanceTo(camera.position) / 25;
-    marker.scale.setScalar(pathType === PathType.DYNAMIC ? scale : 20);
+    const factor = height > 600 ? 25 : 25 * (height / 600);
+    const scale = marker.position.distanceTo(camera.position) / factor;
+    marker.scale.setScalar(scale);
+
+    const arrowScale = (pathWidth * 55) / scale / factor;
+    arrowGroupRef.current.scale.set(arrowScale, arrowScale, 1);
   });
 
   return (
@@ -129,6 +135,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
             onClick={onClick}
             position-z={0.1}
             renderOrder={2}
+            visible={pathType === PathType.DYNAMIC}
           >
             <circleGeometry args={[0.38, 36]} />
             <circleMaterial
@@ -143,17 +150,37 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         </group>
       </PivotControls>
 
-      <mesh
-        name="arrow"
-        rotation={[0, 0, -Math.PI / 2]}
-        onClick={onClick}
-        scale={1.2}
-        position-z={0.1}
-        renderOrder={2}
-      >
-        <shapeGeometry args={[arrowShape]} />
-        <meshStandardMaterial color={"white"} depthTest={false} />
-      </mesh>
+      <group ref={arrowGroupRef}>
+        {pathType === PathType.STATIC && (
+          <mesh
+            name="circle"
+            onClick={onClick}
+            position-z={0.01}
+            renderOrder={2}
+          >
+            <circleGeometry args={[0.38, 36]} />
+            <circleMaterial
+              args={[
+                selectedWaypoint !== pointIndex
+                  ? FormantColors.purple
+                  : "#10c7ff",
+                selectedWaypoint !== pointIndex ? "white" : "#10c7ff",
+              ]}
+            />
+          </mesh>
+        )}
+        <mesh
+          name="arrow"
+          rotation={[0, 0, -Math.PI / 2]}
+          onClick={onClick}
+          scale={1.2}
+          position-z={0.1}
+          renderOrder={2}
+        >
+          <shapeGeometry args={[arrowShape]} />
+          <meshStandardMaterial color={"white"} depthTest={false} />
+        </mesh>
+      </group>
     </group>
   );
 });

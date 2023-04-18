@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
@@ -9,12 +9,11 @@ import { Line } from "@react-three/drei";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
 import { PathType } from "../../components/WaypointPanel/types";
-import { StaticPath } from "./StaticPath";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   pathType?: PathType;
-  pathWidth?: string;
+  pathWidth?: number;
   commandName?: string;
 }
 
@@ -26,7 +25,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     setWaypoints,
     state: { isWaypointEditing },
   } = useControlsContext();
-  const { pathWidth = "5", pathType = PathType.STATIC, commandName } = props;
+  const { pathWidth = 2.5, pathType = PathType.STATIC, commandName } = props;
   useEffect(() => {
     updateState({ isWaypointVisible: true, commandName }); // Show UI
     return () => {
@@ -92,7 +91,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
   };
 
   // Add middle waypoint
-  const addMiddleWaypoint = (e: ThreeEvent<PointerEvent>, type: PathType) => {
+  const addMiddleWaypoint = (e: ThreeEvent<PointerEvent>) => {
     if (!isWaypointEditing) return;
 
     e.stopPropagation();
@@ -100,8 +99,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
       return;
     }
     let p = e.point;
-    const index =
-      type === PathType.DYNAMIC ? e.faceIndex! : parseInt(e.eventObject.name);
+    const index = e.faceIndex!;
     const prev = waypoints[index].translation;
     const next = waypoints[index + 1].translation;
     const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
@@ -165,33 +163,20 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
             pose={pose}
             onPose={(p: IPose) => poseChangeHandler(p, idx)}
             pathType={pathType}
+            pathWidth={pathWidth}
           />
         ))}
 
         {waypoints.length > 0 && (
-          <>
-            {pathType === PathType.DYNAMIC ? (
-              <Line
-                points={waypoints.map(({ translation: { x, y, z } }) => [
-                  x,
-                  y,
-                  z,
-                ])}
-                lineWidth={12}
-                depthTest={false}
-                renderOrder={1}
-                color={FormantColors.blue}
-                onPointerDown={(e) => addMiddleWaypoint(e, PathType.DYNAMIC)}
-              />
-            ) : (
-              <StaticPath
-                points={waypoints}
-                pathWidth={parseInt(pathWidth)}
-                color={FormantColors.blue}
-                onPointerDown={(e) => addMiddleWaypoint(e, PathType.STATIC)}
-              />
-            )}
-          </>
+          <Line
+            points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
+            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
+            depthTest={false}
+            worldUnits={pathType === PathType.STATIC}
+            renderOrder={1}
+            color={FormantColors.blue}
+            onPointerDown={addMiddleWaypoint}
+          />
         )}
       </group>
     </DataVisualizationLayer>

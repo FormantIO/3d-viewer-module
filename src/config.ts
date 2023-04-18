@@ -71,7 +71,7 @@ export type WaypointPropertyType = {
 export type Viewer3DMission = {
   commandName: string;
   pathType: PathType;
-  pathWidth: string;
+  pathWidth: number;
   waypointsProperties: WaypointPropertyType[];
 };
 
