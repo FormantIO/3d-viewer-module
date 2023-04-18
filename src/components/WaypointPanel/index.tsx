@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import * as THREE from "three";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
-import { DeviceContext } from "../../layers/common/DeviceContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
@@ -11,6 +10,8 @@ import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { TYPES } from "./types";
 import { BooleanToggle } from "./BooleanToggle";
+import { Authentication, Fleet } from "@formant/data-sdk";
+import { upload } from "./upload";
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -20,17 +21,16 @@ interface Props {
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
-    state: { selectedWaypoint, isWaypointEditing },
+    state: { selectedWaypoint, isWaypointEditing, commandName },
     updateState,
     store,
     setWaypoints,
   } = controlsStates;
-  const device = useContext(DeviceContext);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
 
   const waypointsProperties: WaypointPropertyType[] =
-    config.waypointMission!.length > 0
+    config.waypointMission && config.waypointMission.length > 0
       ? config.waypointMission![0].waypointsProperties || []
       : [];
 
@@ -69,14 +69,14 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     return () => window.removeEventListener("keydown", keydownHandler);
   }, []);
 
-  const sendBtnHandler = () => {
+  const sendBtnHandler = async () => {
     const { waypoints } = store;
     if (waypoints.length > 0) {
-      // Send
+      const device = await Fleet.getCurrentDevice();
       if (device) {
-        device.sendCommand("send_mission_waypoints", JSON.stringify(waypoints));
+        const fileID = await upload(Authentication.token!, { waypoints });
+        device.sendCommand(commandName, fileID.toString());
       }
-      alert(JSON.stringify(waypoints));
     } else {
       alert("Create Waypoints To Send.");
     }

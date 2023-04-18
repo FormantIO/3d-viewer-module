@@ -199,7 +199,15 @@ export function buildScene(
   );
 
   if (config.waypointMission && config.waypointMission!.length > 0) {
-    deviceLayers.push(<WaypointsLayer key="waypointsLayer" />);
+    const { pathWidth, pathType, commandName } = config.waypointMission[0];
+    deviceLayers.push(
+      <WaypointsLayer
+        key="waypointsLayer"
+        pathType={pathType}
+        pathWidth={pathWidth}
+        commandName={commandName}
+      />
+    );
   }
 
   // first map layer is visible, others are hidden

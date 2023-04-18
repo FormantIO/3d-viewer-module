@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
 import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
@@ -8,9 +8,13 @@ import { ThreeEvent } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
+import { PathType } from "../../components/WaypointPanel/types";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  pathType?: PathType;
+  pathWidth?: number;
+  commandName?: string;
 }
 
 export const WaypointsLayer = (props: IWaypointsProps) => {
@@ -21,16 +25,16 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     setWaypoints,
     state: { isWaypointEditing },
   } = useControlsContext();
-
+  const { pathWidth = 2.5, pathType = PathType.STATIC, commandName } = props;
   useEffect(() => {
-    updateState({ isWaypointVisible: true }); // Show UI
+    updateState({ isWaypointVisible: true, commandName }); // Show UI
     return () => {
       store.waypoints = [];
     };
-  }, [store, updateState]);
+  }, [store, commandName, updateState]);
 
   // Add new waypoint
-  const mouseDownHandler = (e: ThreeEvent<PointerEvent>) => {
+  const addNewWaypoint = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     if (!isWaypointEditing || !e.shiftKey) return;
 
@@ -86,6 +90,45 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     updateState({ selectedWaypoint: waypoints.length });
   };
 
+  // Add middle waypoint
+  const addMiddleWaypoint = (e: ThreeEvent<PointerEvent>) => {
+    if (!isWaypointEditing) return;
+
+    e.stopPropagation();
+    if (!e.shiftKey) {
+      return;
+    }
+    let p = e.point;
+    const index = e.faceIndex!;
+    const prev = waypoints[index].translation;
+    const next = waypoints[index + 1].translation;
+    const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
+    let angle = vector.angleTo(new Vector3(1, 0, 0));
+    angle *= Math.sign(next.y - prev.y);
+    const euler = new Euler(0, 0, angle);
+    const { x, y, z, w } = new Quaternion().setFromEuler(euler);
+
+    const pose = {
+      translation: {
+        x: p.x,
+        y: (p.x - prev.x) * Math.tan(angle) + prev.y,
+        z: 0,
+      },
+      rotation: { x, y, z, w },
+    };
+
+    setWaypoints((prev) => {
+      prev.splice(index + 1, 0, pose);
+      return [...prev];
+    });
+    updateState({ selectedWaypoint: index + 1 });
+    store.waypoints.splice(index + 1, 0, {
+      ...store.waypoints[index],
+      pointIndex: index + 1,
+      pose,
+    });
+  };
+
   const poseChangeHandler = (updatedPose: IPose, index: number) => {
     const newPoints = [...waypoints];
     newPoints[index] = updatedPose;
@@ -99,7 +142,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <mesh
         name="plane"
-        onPointerDown={mouseDownHandler}
+        onPointerDown={addNewWaypoint}
         ref={plane}
         visible={false}
         position-z={-0.1}
@@ -119,54 +162,20 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
             pointIndex={idx}
             pose={pose}
             onPose={(p: IPose) => poseChangeHandler(p, idx)}
+            pathType={pathType}
+            pathWidth={pathWidth}
           />
         ))}
 
         {waypoints.length > 0 && (
           <Line
             points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={12}
+            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
             depthTest={false}
+            worldUnits={pathType === PathType.STATIC}
             renderOrder={1}
             color={FormantColors.blue}
-            // Add a middle waypoint
-            onPointerDown={(e) => {
-              if (!isWaypointEditing) return;
-
-              e.stopPropagation();
-              if (!e.shiftKey) {
-                return;
-              }
-              let p = e.point;
-
-              const prev = waypoints[e.faceIndex!].translation;
-              const next = waypoints[e.faceIndex! + 1].translation;
-              const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
-              let angle = vector.angleTo(new Vector3(1, 0, 0));
-              angle *= Math.sign(next.y - prev.y);
-              const euler = new Euler(0, 0, angle);
-              const { x, y, z, w } = new Quaternion().setFromEuler(euler);
-
-              const pose = {
-                translation: {
-                  x: p.x,
-                  y: (p.x - prev.x) * Math.tan(angle) + prev.y,
-                  z: 0,
-                },
-                rotation: { x, y, z, w },
-              };
-
-              setWaypoints((prev) => {
-                prev.splice(e.faceIndex! + 1, 0, pose);
-                return [...prev];
-              });
-              updateState({ selectedWaypoint: e.faceIndex! + 1 });
-              store.waypoints.splice(e.faceIndex! + 1, 0, {
-                ...store.waypoints[e.faceIndex!],
-                pointIndex: e.faceIndex! + 1,
-                pose,
-              });
-            }}
+            onPointerDown={addMiddleWaypoint}
           />
         )}
       </group>

@@ -5,8 +5,9 @@ import { WaypointData } from "../WaypointsLayer/Waypoint";
 interface StateProps {
   isWaypointVisible: boolean;
   isWaypointEditing: boolean;
-  hasPointCloud: boolean;
   selectedWaypoint: number | null;
+  commandName: string;
+  hasPointCloud: boolean;
   pointSize: number;
 }
 
@@ -37,6 +38,7 @@ export function useControlsContextStates() {
     isWaypointVisible: false,
     isWaypointEditing: false,
     selectedWaypoint: null,
+    commandName: "",
     pointSize: 1,
     hasPointCloud: false,
   });
