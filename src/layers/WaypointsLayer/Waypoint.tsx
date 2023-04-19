@@ -2,7 +2,7 @@ import React, { forwardRef, useRef } from "react";
 import { IPose } from "@formant/universe-core";
 import * as THREE from "three";
 import { extend, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import { PivotControls } from "@react-three/drei";
+import { PivotControls } from "./PivotControls";
 import { useControlsContext } from "../common/ControlsContext";
 import { FormantColors } from "../utils/FormantColors";
 import { CircleMaterial } from "../utils/CircleMaterial";
@@ -79,14 +79,15 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
       <PivotControls
         ref={pivotRef}
         visible={selectedWaypoint === pointIndex}
-        lineWidth={3}
-        axisColors={["#ff618e", "#00ff80", "#ffffff"]}
-        hoveredColor={"#ffff00"}
+        lineWidth={8}
+        axisColors={["#EA719D", "#2EC495", "#F9C36E"]}
+        hoveredColor={"#18D2FF"}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}
         anchor={[0, 0, 0]}
-        scale={2}
+        scale={4}
+        // fixed={true}
         matrix={matrix}
         autoTransform={false}
         onDragStart={() => {
