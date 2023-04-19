@@ -174,7 +174,7 @@ export function Universe(props: IUniverseProps) {
             onCreated={(state) => {
               setScene(state.scene);
             }}
-            dpr={[1, 2]}
+            dpr={1}
             flat
           >
             <XR>
