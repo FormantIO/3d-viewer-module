@@ -204,7 +204,7 @@ export const PlaneSlider: React.FC<{
 
   const pos1 = fixed ? 1 / 7 : scale / 7;
   const length = fixed ? 0.225 : scale * 0.225;
-  const color = isHovered ? hoveredColor : axisColors[axis];
+  const color = isHovered ? hoveredColor : "#BAC4E2"; //axisColors[axis];
 
   const points = React.useMemo(
     () => [
@@ -245,7 +245,7 @@ export const PlaneSlider: React.FC<{
           scale={length}
           userData={userData}
         >
-          <planeGeometry />
+          <boxGeometry args={[1, 1, 0.3]} />
           <meshBasicMaterial
             transparent
             depthTest={depthTest}
@@ -255,7 +255,7 @@ export const PlaneSlider: React.FC<{
             side={THREE.DoubleSide}
           />
         </mesh>
-        <Line
+        {/* <Line
           position={[-length / 2, -length / 2, 0]}
           transparent
           depthTest={depthTest}
@@ -266,7 +266,7 @@ export const PlaneSlider: React.FC<{
           polygonOffset
           polygonOffsetFactor={-10}
           userData={userData}
-        />
+        /> */}
       </group>
     </group>
   );

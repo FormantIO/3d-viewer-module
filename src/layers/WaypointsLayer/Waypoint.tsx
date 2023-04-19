@@ -86,8 +86,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         rotation={[0, 0, Math.PI / 2]}
         offset={[0, 0, 0.1]}
         anchor={[0, 0, 0]}
-        scale={4}
-        // fixed={true}
+        scale={3}
         matrix={matrix}
         autoTransform={false}
         onDragStart={() => {
