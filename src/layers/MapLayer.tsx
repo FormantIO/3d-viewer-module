@@ -4,7 +4,7 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Color, Mesh, MeshBasicMaterial, NearestFilter, ShaderMaterial, sRGBEncoding, Texture } from "three";
+import { Color, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, ShaderMaterial, sRGBEncoding, Texture } from "three";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
@@ -72,12 +72,16 @@ export function MapLayer(props: IMapLayer) {
   const [lowMapTextures, setLowMapTextures] = useState<Texture[]>([]);
   const shaderMaterialRef = useRef<ShaderMaterial>(null);
   const [highResLoaded, setHighResLoaded] = useState(false);
+  const [unsubscribeToLocation, setUnsubscribeToLocation] = useState<(() => void) | null>(null);
+
 
   useEffect(() => {
     (async () => {
       if (currentLocation === undefined) {
         return;
       }
+      unsubscribeToLocation && unsubscribeToLocation();
+
       if (bounds) {
         bounds.refresh().clip().fit();
       }
@@ -136,7 +140,7 @@ export function MapLayer(props: IMapLayer) {
     (async () => {
       let location: [number, number];
       if (dataSource) {
-        universeData.subscribeToLocation(
+        const unsubscribeToLocation = universeData.subscribeToLocation(
           defined(layerData?.deviceId),
           dataSource,
           (data) => {
@@ -148,8 +152,6 @@ export function MapLayer(props: IMapLayer) {
                 currentLocation[0] !== loc.longitude &&
                 currentLocation[1] !== loc.latitude)
             ) {
-              // only update state if the location has changed
-              // we have to be careful not to spam mapbox
               setCurrentLocation((a) => {
                 if (
                   a !== undefined &&
@@ -163,6 +165,7 @@ export function MapLayer(props: IMapLayer) {
             }
           }
         );
+        setUnsubscribeToLocation(() => unsubscribeToLocation);
       } else {
         location = [Number(longitude), Number(latitude)];
         setCurrentLocation(location);
@@ -174,10 +177,10 @@ export function MapLayer(props: IMapLayer) {
           map: null,
         });
       });
+      const sharedPlaneGeometry = new PlaneGeometry(200, 200);
       meshesArrayRef.current = coordinates.map((coord, i) => {
         return (
-          <mesh position={coord} key={JSON.stringify(coord)}>
-            <planeGeometry attach="geometry" args={[200, 200]} />
+          <mesh position={coord} key={JSON.stringify(coord)} geometry={sharedPlaneGeometry} >
             <meshBasicMaterial ref={(ref) => (materialRef.current[i] = ref)} />
           </mesh>
         );
@@ -186,7 +189,7 @@ export function MapLayer(props: IMapLayer) {
   }, []);
 
   useFrame(({ clock }) => {
-    if (shaderMaterialRef.current) {
+    if (shaderMaterialRef.current && !highResLoaded) {
       const material = shaderMaterialRef.current;
       material.uniforms.time.value = clock.elapsedTime;
     }
