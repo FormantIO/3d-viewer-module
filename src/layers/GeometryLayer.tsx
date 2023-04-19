@@ -4,7 +4,14 @@ import {
   IMarker3DArray,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
-import { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Box3,
   BufferGeometry,
@@ -48,16 +55,21 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
   const boundingBox = useRef<Box3>(new Box3());
   const type = instances[0].type;
 
-
   const matrixCache = useRef<Map<string, Matrix4>>(new Map());
   const dummy = useMemo(() => new Object3D(), []);
   useLayoutEffect(() => {
     if (ref.current) {
-      boundingBox.current.setFromCenterAndSize(new Vector3(instances[0].position.x, instances[0].position.y, instances[0].position.z), new Vector3(0.1, 0.1, 0.1));
+      boundingBox.current.setFromCenterAndSize(
+        new Vector3(
+          instances[0].position.x,
+          instances[0].position.y,
+          instances[0].position.z
+        ),
+        new Vector3(0.1, 0.1, 0.1)
+      );
 
       instances.forEach((data, index) => {
         const { position, rotation, scale, color } = data;
-
 
         const transformKey = `${position.x},${position.y},${position.z}|${rotation.x},${rotation.y},${rotation.z},${rotation.w}|${scale.x},${scale.y},${scale.z}`;
         let instanceMatrix = matrixCache.current.get(transformKey);
@@ -78,21 +90,27 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
           ref.current.setMatrixAt(index, dummy.matrix);
           ref.current.setColorAt(index, new Color(color.r, color.g, color.b));
         }
-
       });
     }
   }, []);
 
   return (
     <>
-      <instancedMesh ref={ref} args={[null as any, null as any, instances.length]}>
+      <instancedMesh
+        ref={ref}
+        args={[null as any, null as any, instances.length]}
+      >
         {type === "sphere" && (
-          <sphereBufferGeometry attach="geometry" args={[0.5, 32, 16]}>
-          </sphereBufferGeometry>
+          <sphereBufferGeometry
+            attach="geometry"
+            args={[0.5, 32, 16]}
+          ></sphereBufferGeometry>
         )}
         {type === "cube" && (
-          <boxBufferGeometry attach="geometry" args={[0.9, 0.9, 0.9]}>
-          </boxBufferGeometry>
+          <boxBufferGeometry
+            attach="geometry"
+            args={[0.9, 0.9, 0.9]}
+          ></boxBufferGeometry>
         )}
         <meshBasicMaterial attach="material" />
       </instancedMesh>
@@ -127,8 +145,12 @@ export function GeometryLayer(props: IGeometryLayer) {
         const markerArray = d as IMarker3DArray;
         world.processMarkers(markerArray);
         const geometry = world.getAllGeometry();
-        const cubes = geometry.filter((g) => g.type === "cube") as GeoInstanceData[];
-        const spheres = geometry.filter((g) => g.type === "sphere") as GeoInstanceData[];
+        const cubes = geometry.filter(
+          (g) => g.type === "cube"
+        ) as GeoInstanceData[];
+        const spheres = geometry.filter(
+          (g) => g.type === "sphere"
+        ) as GeoInstanceData[];
 
         geometry.forEach((g) => {
           if (g.dirty) {
@@ -251,17 +273,17 @@ export function GeometryLayer(props: IGeometryLayer) {
         setGeoKey((k) => k + 1);
       }
     );
-  });
+  }, []);
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group>
         <primitive object={root} />
-        {cubesData.length > 0 &&
+        {cubesData.length > 0 && (
           <InstancedGeometry instances={cubesData} key={geoKey} />
-        }
-        {spheresData.length > 0 &&
+        )}
+        {spheresData.length > 0 && (
           <InstancedGeometry instances={spheresData} key={geoKey} />
-        }
+        )}
       </group>
       {children}
     </DataVisualizationLayer>
