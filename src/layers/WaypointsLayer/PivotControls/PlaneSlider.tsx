@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as THREE from "three";
 import { ThreeEvent, useThree } from "@react-three/fiber";
-import { Line, Html } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import { context } from "./context";
 
 const decomposeIntoBasis = (
@@ -245,6 +245,18 @@ export const PlaneSlider: React.FC<{
           scale={length}
           userData={userData}
         >
+          <planeGeometry />
+          <meshBasicMaterial
+            transparent
+            depthTest={depthTest}
+            color={color}
+            polygonOffset
+            polygonOffsetFactor={-10}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        <mesh scale={length}>
           <boxGeometry args={[1, 1, 0.3]} />
           <meshBasicMaterial
             transparent
@@ -255,18 +267,6 @@ export const PlaneSlider: React.FC<{
             side={THREE.DoubleSide}
           />
         </mesh>
-        {/* <Line
-          position={[-length / 2, -length / 2, 0]}
-          transparent
-          depthTest={depthTest}
-          points={points}
-          lineWidth={lineWidth}
-          color={color as any}
-          opacity={opacity}
-          polygonOffset
-          polygonOffsetFactor={-10}
-          userData={userData}
-        /> */}
       </group>
     </group>
   );

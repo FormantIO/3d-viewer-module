@@ -156,7 +156,7 @@ export const AxisArrow: React.FC<{
 
   const { cylinderLength, coneWidth, coneLength, matrixL } =
     React.useMemo(() => {
-      const coneWidth = 0.4; // fixed ? (lineWidth / scale) * 1.6 : scale / 20;
+      const coneWidth = fixed ? (lineWidth / scale) * 1.6 : scale / 20;
       const coneLength = fixed ? 0.2 : scale / 5;
       const cylinderLength = fixed ? 1 - coneLength : scale - coneLength;
       const quaternion = new THREE.Quaternion().setFromUnitVectors(
@@ -231,7 +231,7 @@ export const AxisArrow: React.FC<{
           position={[0, cylinderLength + coneLength / 2.0, 0]}
           renderOrder={500}
         >
-          <coneGeometry args={[coneWidth, coneLength, 24, 1]} />
+          <coneGeometry args={[0.15, coneLength, 24, 1]} />
           <meshBasicMaterial
             transparent
             depthTest={depthTest}

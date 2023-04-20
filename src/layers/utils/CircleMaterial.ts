@@ -48,10 +48,10 @@ export class CircleMaterial extends ShaderMaterial {
   
     void main(){  
         vec2 uv = vUv - vec2(0.5);
-        float core = ring(vUv, vec2(.5), .0, .45);
-        float border = ring(vUv, vec2(.5), .45, .5);
+        float core = ring(vUv, vec2(.5), .0, .44);
+        float border = ring(vUv, vec2(.5), .44, .5);
         vec3 color = border * color2 + core * color1 ;
-        gl_FragColor = vec4(color, 1.0);
+        gl_FragColor = vec4(color*1.5, 1.0);
     }
     `;
   }

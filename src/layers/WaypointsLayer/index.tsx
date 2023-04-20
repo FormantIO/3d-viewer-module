@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
-import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
+import {
+  IPose,
+  IVector3,
+  UniverseTelemetrySource,
+} from "@formant/universe-core";
 import { Euler, Mesh, Quaternion, Vector3 } from "three";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
@@ -25,7 +29,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     setWaypoints,
     state: { isWaypointEditing },
   } = useControlsContext();
-  const { pathWidth = 2.5, pathType = PathType.STATIC, commandName } = props;
+  const { pathWidth = 2.5, pathType = PathType.DYNAMIC, commandName } = props;
   useEffect(() => {
     updateState({ isWaypointVisible: true, commandName }); // Show UI
     return () => {
@@ -98,10 +102,23 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     if (!e.shiftKey) {
       return;
     }
+
     let p = e.point;
-    const index = e.faceIndex!;
-    const prev = waypoints[index].translation;
-    const next = waypoints[index + 1].translation;
+    const index = true ? e.faceIndex! : parseInt(e.eventObject.name);
+    const v = (e: IVector3) => new Vector3(e.x, e.y, 0);
+    const prev = v(waypoints[index].translation);
+    const next = v(waypoints[index + 1].translation);
+
+    // Get translation
+    const dir1 = new Vector3().subVectors(next, prev);
+    const dir2 = new Vector3().subVectors(p, prev);
+    const projection = dir2.dot(dir1) / dir1.lengthSq();
+    const positionToAdd = new Vector3().addVectors(
+      prev,
+      dir1.clone().multiplyScalar(projection)
+    );
+
+    // Get snap angle
     const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
     let angle = vector.angleTo(new Vector3(1, 0, 0));
     angle *= Math.sign(next.y - prev.y);
@@ -110,8 +127,8 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
 
     const pose = {
       translation: {
-        x: p.x,
-        y: (p.x - prev.x) * Math.tan(angle) + prev.y,
+        x: positionToAdd.x,
+        y: positionToAdd.y,
         z: 0,
       },
       rotation: { x, y, z, w },
@@ -145,7 +162,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         onPointerDown={addNewWaypoint}
         ref={plane}
         visible={false}
-        position-z={-0.1}
+        position-z={-0.1 - pathWidth / 10}
       >
         <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
