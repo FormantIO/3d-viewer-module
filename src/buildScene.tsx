@@ -149,7 +149,7 @@ export function buildScene(
           useColors={pointCloudUseColors || false}
         />
       );
-    } else if (layer.visualizationType === "Geometry") {
+    } else if (layer.visualizationType === "Marker array") {
       const dataSource = parseDataSource(layer);
       if (dataSource) {
         deviceLayers.push(

@@ -29,7 +29,7 @@ export type Viewer3DVisualization = {
   name?: string;
   visualizationType?:
     | "Position indicator"
-    | "Geometry"
+    | "Marker array"
     | "Point cloud"
     | "Path"
     | "Waypoints"

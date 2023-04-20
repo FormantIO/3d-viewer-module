@@ -4,17 +4,23 @@ import {
   IMarker3DArray,
   UniverseTelemetrySource,
 } from "@formant/universe-core";
-import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-  BoxGeometry,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Box3,
   BufferGeometry,
   Color,
   Line,
   LineBasicMaterial,
+  Matrix4,
   Mesh,
-  MeshBasicMaterial,
   Object3D,
-  SphereGeometry,
   Sprite,
   SpriteMaterial,
   Texture,
@@ -30,21 +36,88 @@ interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
 
-//lets make a really efficient cache for materials based on color
-const materialCache = new Map<string, MeshBasicMaterial>();
-
-const getOrCreateMaterial = (r: number, g: number, b: number, a: number) => {
-  const key = `${r},${g},${b},${a}`;
-  let material = materialCache.get(key);
-  if (!material) {
-    material = new MeshBasicMaterial({
-      color: new Color(r, g, b),
-      opacity: a,
-    });
-    materialCache.set(key, material);
-  }
-  return material;
+type GeoInstanceData = {
+  id: string;
+  type: string;
+  position: { x: number; y: number; z: number };
+  rotation: { w: number; x: number; y: number; z: number };
+  scale: { x: number; y: number; z: number };
+  color: { r: number; g: number; b: number; a: number };
+  dirty: boolean;
 };
+
+type InstancedGeoProps = {
+  instances: GeoInstanceData[];
+};
+
+function InstancedGeometry({ instances }: InstancedGeoProps) {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const boundingBox = useRef<Box3>(new Box3());
+  const type = instances[0].type;
+
+  const matrixCache = useRef<Map<string, Matrix4>>(new Map());
+  const dummy = useMemo(() => new Object3D(), []);
+  useLayoutEffect(() => {
+    if (ref.current) {
+      boundingBox.current.setFromCenterAndSize(
+        new Vector3(
+          instances[0].position.x,
+          instances[0].position.y,
+          instances[0].position.z
+        ),
+        new Vector3(0.1, 0.1, 0.1)
+      );
+
+      instances.forEach((data, index) => {
+        const { position, rotation, scale, color } = data;
+
+        const transformKey = `${position.x},${position.y},${position.z}|${rotation.x},${rotation.y},${rotation.z},${rotation.w}|${scale.x},${scale.y},${scale.z}`;
+        let instanceMatrix = matrixCache.current.get(transformKey);
+
+        if (!instanceMatrix) {
+          dummy.position.set(position.x, position.y, position.z);
+          dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+          dummy.scale.set(scale.x, scale.y, scale.z);
+          dummy.updateMatrix();
+
+          instanceMatrix = dummy.matrix.clone();
+          matrixCache.current.set(transformKey, instanceMatrix);
+        }
+        boundingBox.current.expandByPoint(dummy.position);
+
+        if (ref.current) {
+          ref.current.up = new Vector3(0, 0, 1);
+          ref.current.setMatrixAt(index, dummy.matrix);
+          ref.current.setColorAt(index, new Color(color.r, color.g, color.b));
+        }
+      });
+    }
+  }, []);
+
+  return (
+    <>
+      <instancedMesh
+        ref={ref}
+        args={[null as any, null as any, instances.length]}
+      >
+        {type === "sphere" && (
+          <sphereBufferGeometry
+            attach="geometry"
+            args={[0.5, 32, 16]}
+          ></sphereBufferGeometry>
+        )}
+        {type === "cube" && (
+          <boxBufferGeometry
+            attach="geometry"
+            args={[0.9, 0.9, 0.9]}
+          ></boxBufferGeometry>
+        )}
+        <meshBasicMaterial attach="material" />
+      </instancedMesh>
+      <box3Helper args={[boundingBox.current]} visible={false} />
+    </>
+  );
+}
 
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource } = props;
@@ -55,6 +128,9 @@ export function GeometryLayer(props: IGeometryLayer) {
   const root = new Object3D();
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
+  const [cubesData, setCubesData] = useState<GeoInstanceData[]>([]);
+  const [spheresData, setSpheresData] = useState<GeoInstanceData[]>([]);
+  const [geoKey, setGeoKey] = useState(0);
 
   useEffect(() => {
     universeData.subscribeToGeometry(
@@ -69,6 +145,12 @@ export function GeometryLayer(props: IGeometryLayer) {
         const markerArray = d as IMarker3DArray;
         world.processMarkers(markerArray);
         const geometry = world.getAllGeometry();
+        const cubes = geometry.filter(
+          (g) => g.type === "cube"
+        ) as GeoInstanceData[];
+        const spheres = geometry.filter(
+          (g) => g.type === "sphere"
+        ) as GeoInstanceData[];
 
         geometry.forEach((g) => {
           if (g.dirty) {
@@ -147,61 +229,6 @@ export function GeometryLayer(props: IGeometryLayer) {
               } else {
                 mesh.material = spriteMaterial;
               }
-            } else if (g.type === "sphere" || g.type === "cube") {
-              if (!mesh) {
-                const meshGeometry =
-                  g.type === "sphere"
-                    ? new SphereGeometry(1, 32, 16)
-                    : new BoxGeometry(1, 1, 1);
-                const material = new MeshBasicMaterial({
-                  color: new Color(g.color.r, g.color.g, g.color.b),
-                  opacity: g.color.a,
-                });
-                const sphere = new Mesh(meshGeometry, material);
-                sphere.position.set(g.position.x, g.position.y, g.position.z);
-                sphere.scale.set(g.scale.x, g.scale.y, g.scale.z);
-                sphere.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
-
-                root.add(sphere);
-                worldGeometry.set(g.id, sphere);
-              } else {
-                const p = g.position;
-                if (
-                  mesh.position.x !== p.x ||
-                  mesh.position.y !== p.y ||
-                  mesh.position.z !== p.z
-                ) {
-                  mesh.position.set(p.x, p.y, p.z);
-                }
-                const s = g.scale;
-                if (
-                  mesh.scale.x !== s.x ||
-                  mesh.scale.y !== s.y ||
-                  mesh.scale.z !== s.z
-                ) {
-                  mesh.scale.set(s.x, s.y, s.z);
-                }
-                const r = g.rotation;
-                if (
-                  mesh.rotation.x !== r.x ||
-                  mesh.rotation.y !== r.y ||
-                  mesh.rotation.z !== r.z
-                ) {
-                  mesh.rotation.set(r.x, r.y, r.z);
-                }
-                const m = mesh.material as MeshBasicMaterial;
-                if (
-                  m.color.r !== g.color.r ||
-                  m.color.g !== g.color.g ||
-                  m.color.b !== g.color.b ||
-                  m.opacity !== g.color.a
-                ) {
-                  mesh.material = new MeshBasicMaterial({
-                    color: new Color(g.color.r, g.color.g, g.color.b),
-                    opacity: g.color.a,
-                  });
-                }
-              }
             } else if (g.type === "arrow") {
               if (!mesh) {
                 const material = new LineBasicMaterial({
@@ -241,12 +268,23 @@ export function GeometryLayer(props: IGeometryLayer) {
           root.remove(defined(worldGeometry.get(id)));
           worldGeometry.delete(id);
         });
+        setCubesData(cubes);
+        setSpheresData(spheres);
+        setGeoKey((k) => k + 1);
       }
     );
-  });
+  }, []);
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <primitive object={root} />
+      <group>
+        <primitive object={root} />
+        {cubesData.length > 0 && (
+          <InstancedGeometry instances={cubesData} key={geoKey} />
+        )}
+        {spheresData.length > 0 && (
+          <InstancedGeometry instances={spheresData} key={geoKey} />
+        )}
+      </group>
       {children}
     </DataVisualizationLayer>
   );
