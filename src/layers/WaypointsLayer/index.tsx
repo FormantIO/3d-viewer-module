@@ -12,7 +12,7 @@ import { ThreeEvent } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
-import { PathType } from "../../components/WaypointPanel/types";
+import { PathType } from "../types";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;

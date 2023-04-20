@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { IUniverseLayerProps } from "./types";
+import { IUniverseLayerProps, PathType } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
@@ -12,10 +12,12 @@ import { Line } from "@react-three/drei";
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  pathType?: PathType;
+  pathWidth?: number;
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource } = props;
+  const { dataSource, pathWidth = 0.5, pathType = PathType.STATIC } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
@@ -60,7 +62,12 @@ export const PathLayer = (props: ILocalPathProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group ref={groupRef}>
         {points.length > 0 && (
-          <Line points={points} lineWidth={10} color={FormantColors.blue} />
+          <Line
+            points={points}
+            lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth}
+            color={FormantColors.blue}
+            worldUnits={pathType === PathType.STATIC}
+          />
         )}
       </group>
     </DataVisualizationLayer>

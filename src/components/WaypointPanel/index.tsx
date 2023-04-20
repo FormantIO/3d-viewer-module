@@ -8,7 +8,7 @@ import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
 import { ControlButtonGroup, Container, PanelContainer } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
-import { TYPES } from "./types";
+import { PROPERTY_TYPE } from "../../layers/types";
 import { BooleanToggle } from "./BooleanToggle";
 import { Authentication, Fleet } from "@formant/data-sdk";
 import { upload } from "./upload";
@@ -91,7 +91,10 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       yPosRef.current.value = "";
       if (waypointsProperties.length > 0) {
         waypointsProperties!.forEach(({ propertyType }, idx) => {
-          if (propertyType === "String" || propertyType === "Integer") {
+          if (
+            propertyType === PROPERTY_TYPE.STRING ||
+            propertyType === PROPERTY_TYPE.INTEGER
+          ) {
             elements[idx].current!.value = "";
           } else {
             elements[idx].current!.value = "0";
@@ -111,12 +114,12 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
     if (waypointsProperties!.length > 0) {
       waypointsProperties!.forEach((item, idx) => {
-        if (item.propertyType === TYPES.STRING) {
+        if (item.propertyType === PROPERTY_TYPE.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v ? v : item.stringDefault || "";
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === TYPES.INTEGER) {
+        } else if (item.propertyType === PROPERTY_TYPE.INTEGER) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v
             ? v
@@ -125,7 +128,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === TYPES.FLOAT) {
+        } else if (item.propertyType === PROPERTY_TYPE.FLOAT) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v
             ? v
@@ -134,7 +137,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
-        } else if (item.propertyType === TYPES.BOOLEAN) {
+        } else if (item.propertyType === PROPERTY_TYPE.BOOLEAN) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c =
             v !== undefined
@@ -144,7 +147,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               : false;
           //@ts-ignore
           elements[idx].current!(v);
-        } else if (item.propertyType === TYPES.ENUM) {
+        } else if (item.propertyType === PROPERTY_TYPE.ENUM) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           const c = v !== undefined ? v : item.enumDefault;
           elements[idx].current!.value = [
@@ -177,7 +180,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     const comps: any[] = [];
     waypointsProperties!.forEach((item, idx) => {
       const { propertyType } = item;
-      if (propertyType === TYPES.STRING) {
+      if (propertyType === PROPERTY_TYPE.STRING) {
         comps.push(
           <TextInput
             key={idx}
@@ -192,15 +195,19 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           />
         );
       } else if (
-        propertyType === TYPES.INTEGER ||
-        propertyType === TYPES.FLOAT
+        propertyType === PROPERTY_TYPE.INTEGER ||
+        propertyType === PROPERTY_TYPE.FLOAT
       ) {
         comps.push(
           <TextInput
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
-            type={propertyType === TYPES.INTEGER ? propertyType : TYPES.FLOAT}
+            type={
+              propertyType === PROPERTY_TYPE.INTEGER
+                ? propertyType
+                : PROPERTY_TYPE.FLOAT
+            }
             onChange={(e) => {
               if (selectedWaypoint !== null) {
                 store.waypoints[selectedWaypoint][item.propertyName] =
@@ -209,7 +216,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === TYPES.BOOLEAN) {
+      } else if (propertyType === PROPERTY_TYPE.BOOLEAN) {
         comps.push(
           <BooleanToggle
             key={idx}
@@ -222,7 +229,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             }}
           />
         );
-      } else if (propertyType === TYPES.ENUM) {
+      } else if (propertyType === PROPERTY_TYPE.ENUM) {
         comps.push(
           <DropdownInput
             key={idx}
@@ -261,7 +268,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               <TextInput
                 ref={angleRef}
                 label={"Orientation"}
-                type={TYPES.FLOAT}
+                type={PROPERTY_TYPE.FLOAT}
                 onEnter={() => {
                   if (selectedWaypoint === null) return;
                   let v = parseFloat(getTaregt(angleRef).value);
@@ -291,13 +298,13 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               <TextInput
                 ref={xPosRef}
                 label="X-axis"
-                type={TYPES.FLOAT}
+                type={PROPERTY_TYPE.FLOAT}
                 onEnter={() => posHandler("x")}
               />
               <TextInput
                 ref={yPosRef}
                 label="Y-axis"
-                type={TYPES.FLOAT}
+                type={PROPERTY_TYPE.FLOAT}
                 onEnter={() => posHandler("y")}
               />
 

@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { TextInputContainer } from "./style";
-import { INPUT_TYPE, TYPES } from "./types";
+import { INPUT_TYPE, PROPERTY_TYPE } from "../../layers/types";
 
 interface Props {
   label: string;
@@ -24,11 +24,11 @@ export const TextInput = forwardRef<any, Props>(
           placeholder="Edit"
           onChange={(e) => {
             const t = divRef.current.childNodes[1] as HTMLInputElement;
-            if (type === TYPES.FLOAT) {
+            if (type === PROPERTY_TYPE.FLOAT) {
               const newValue = t.value.replace(/[^0-9.-]/g, "");
               t.value = newValue;
             }
-            if (type === TYPES.INTEGER) {
+            if (type === PROPERTY_TYPE.INTEGER) {
               const newValue = t.value.replace(/[^0-9-]/g, "");
               t.value = newValue;
             }

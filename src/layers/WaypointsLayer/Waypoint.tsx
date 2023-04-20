@@ -6,7 +6,7 @@ import { PivotControls } from "./PivotControls";
 import { useControlsContext } from "../common/ControlsContext";
 import { FormantColors } from "../utils/FormantColors";
 import { CircleMaterial } from "../utils/CircleMaterial";
-import { PathType } from "../../components/WaypointPanel/types";
+import { PathType } from "../types";
 extend({ CircleMaterial });
 
 interface Props {
