@@ -5,10 +5,15 @@ import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { getTaregt, TextInput } from "./TextInput";
 import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
-import { ControlButtonGroup, Container, PanelContainer } from "./style";
+import {
+  ControlButtonGroup,
+  Container,
+  PanelContainer,
+  LoadingBar,
+} from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
-import { PROPERTY_TYPE } from "../../layers/types";
+import { PROPERTY_TYPE, SENDING_STATUS } from "../../layers/types";
 import { BooleanToggle } from "./BooleanToggle";
 import { Authentication, Fleet } from "@formant/data-sdk";
 import { upload } from "./upload";
@@ -28,6 +33,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   } = controlsStates;
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
+  const [sending, setSending] = useState<SENDING_STATUS>(SENDING_STATUS.NONE);
 
   const waypointsProperties: WaypointPropertyType[] =
     config.waypointMission && config.waypointMission.length > 0
@@ -69,18 +75,37 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     return () => window.removeEventListener("keydown", keydownHandler);
   }, []);
 
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const sendBtnHandler = async () => {
-    const { waypoints } = store;
-    if (waypoints.length > 0) {
-      const device = await Fleet.getCurrentDevice();
-      if (device) {
-        const fileID = await upload(Authentication.token!, { waypoints });
-        device.sendCommand(commandName, fileID.toString());
-      }
-    } else {
-      alert("Create Waypoints To Send.");
-    }
+    setSending(SENDING_STATUS.WAITING);
+    await delay(2000);
+    setSending(SENDING_STATUS.FAIL);
+
+    // const { waypoints } = store;
+    // const device = await Fleet.getCurrentDevice()!;
+    // const fileID = await upload(Authentication.token!, { waypoints });
+    // const command = await device.sendCommand(commandName, fileID.toString());
+    // console.log("ttt", command);
+    // setSending(SENDING_STATUS.SUCCESS);
   };
+
+  // Remove failed red bar after 3s
+  const failTimer = React.useRef<number>();
+  useEffect(() => {
+    if (sending === SENDING_STATUS.FAIL) {
+      failTimer.current = window.setTimeout(() => {
+        setSending(SENDING_STATUS.NONE);
+      }, 3000);
+    } else {
+      clearTimeout(failTimer.current);
+    }
+    return () => {
+      failTimer.current && clearTimeout(failTimer.current);
+    };
+  }, [sending, setSending]);
 
   // Update fields with waypoints changed
   useEffect(() => {
@@ -259,7 +284,22 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   return (
     <Container>
-      {isWaypointEditing && (
+      {sending !== SENDING_STATUS.NONE && (
+        <LoadingBar
+          leftAlign={sending === SENDING_STATUS.WAITING}
+          fail={sending === SENDING_STATUS.FAIL}
+        >
+          <p>
+            {sending === SENDING_STATUS.WAITING
+              ? "Sending waypoints to device"
+              : sending === SENDING_STATUS.SUCCESS
+              ? "SENT"
+              : "FAIL"}
+          </p>
+        </LoadingBar>
+      )}
+
+      {isWaypointEditing && sending !== SENDING_STATUS.SUCCESS && (
         <>
           {waypoints.length > 0 && (
             <PanelContainer>
@@ -356,22 +396,54 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
             <Button
               variant="contained"
               onClick={() => {
-                setShowCancel(true);
+                if (sending === SENDING_STATUS.NONE) setShowCancel(true);
               }}
+              disabled={sending === SENDING_STATUS.WAITING}
             >
               Cancel
             </Button>
             <Button
               variant="contained"
               onClick={() => {
-                if (waypoints.length !== 0) sendBtnHandler();
+                if (
+                  waypoints.length !== 0 &&
+                  sending !== SENDING_STATUS.WAITING
+                )
+                  sendBtnHandler();
               }}
-              disabled={waypoints.length === 0}
+              disabled={
+                waypoints.length === 0 || sending === SENDING_STATUS.WAITING
+              }
             >
               Send Path
             </Button>
           </ControlButtonGroup>
         </>
+      )}
+
+      {isWaypointEditing && sending === SENDING_STATUS.SUCCESS && (
+        <ControlButtonGroup large>
+          <Button
+            variant="contained"
+            onClick={() => {
+              updateState({ isWaypointEditing: true });
+              setSending(SENDING_STATUS.NONE);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              updateState({ isWaypointEditing: false });
+              setSending(SENDING_STATUS.NONE);
+              setWaypoints([]);
+              store.waypoints = [];
+            }}
+          >
+            Complete Planning
+          </Button>
+        </ControlButtonGroup>
       )}
 
       <ToggleIcon controlsStates={controlsStates} />

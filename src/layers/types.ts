@@ -30,3 +30,10 @@ export type INPUT_TYPE =
   | PROPERTY_TYPE.FLOAT
   | PROPERTY_TYPE.INTEGER
   | PROPERTY_TYPE.STRING;
+
+export enum SENDING_STATUS {
+  NONE = "not sent yet",
+  WAITING = "waiting",
+  SUCCESS = "sucess",
+  FAIL = "fail",
+}

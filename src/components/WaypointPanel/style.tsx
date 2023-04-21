@@ -59,7 +59,7 @@ export const ControlButtonGroup = styled.div`
   position: absolute;
   bottom: 20px;
   left: 10px;
-  width: 300px;
+  width: ${({ large }: { large?: boolean }) => (large ? "400px" : "300px")};
   height: 35px;
   display: flex;
   justify-content: space-between;
@@ -69,6 +69,13 @@ export const ControlButtonGroup = styled.div`
     width: 48%;
     border-radius: 20px;
     color: black;
+
+    &:disabled {
+      background-color: #3b4668;
+      color: #888585;
+      cursor: not-allowed;
+      pointer-events: all !important;
+    }
   }
   & > button:nth-of-type(1) {
     background-color: #bac4e2;
@@ -78,14 +85,9 @@ export const ControlButtonGroup = styled.div`
   }
   & > button:nth-of-type(2) {
     background-color: #18d2ff;
+    white-space: nowrap;
     &:hover {
       background-color: #6ee0fd;
-    }
-    &:disabled {
-      background-color: #3b4668;
-      color: #888585;
-      cursor: not-allowed;
-      pointer-events: all !important;
     }
   }
 `;
@@ -235,4 +237,28 @@ export const BooleanToggleContainer = styled.div`
       font-size: 12px;
     }
   }
+`;
+
+interface LoadingProps {
+  leftAlign?: boolean;
+  fail?: boolean;
+}
+export const LoadingBar = styled.div`
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  padding: 0 10px;
+  display: flex;
+  justify-content: ${({ leftAlign }: LoadingProps) =>
+    leftAlign ? "start" : "center"};
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  background-color: ${({ fail }: LoadingProps) =>
+    fail ? "#f3411490" : "#1c1e2df5"};
+  color: white;
+  font-family: Inter;
+  font-size: 14px;
+  text-align: center;
 `;
