@@ -1,8 +1,8 @@
-import { StreamType, UniverseDataSource } from "@formant/universe-core";
+import { UniverseDataSource } from "@formant/universe-core";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
-import { PathType, PropertyType } from "./components/WaypointPanel/types";
+import { PathType, PROPERTY_TYPE } from "./layers/types";
 
 export type Viewer3DConfiguarationTransform = {
   transformType?: "Cartesian" | "GPS" | "Odometry" | "Transform tree";
@@ -40,6 +40,8 @@ export type Viewer3DVisualization = {
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
   pointCloudUseColors?: boolean;
+  pathType: PathType;
+  pathWidth: number;
   imageFileId?: string;
   imageWidth?: number;
   imageHeight?: number;
@@ -60,7 +62,7 @@ export type Viewer3DMap = {
 
 export type WaypointPropertyType = {
   propertyName: string;
-  propertyType: PropertyType;
+  propertyType: PROPERTY_TYPE;
   floatDefault?: string;
   stringDefault?: string;
   integerDefault?: string;

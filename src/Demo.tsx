@@ -12,7 +12,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { OccupancyGridLayer } from "./lib";
+import { OccupancyGridLayer, PathLayer } from "./lib";
 import { WaypointsLayer } from "./layers/WaypointsLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
@@ -61,6 +61,12 @@ export function Demo() {
               )}
               name="Occupancy Grid"
               treePath={[0, 1]}
+            />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
             />
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>

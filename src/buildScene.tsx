@@ -46,7 +46,6 @@ export function buildScene(
   const configHash = getUuidByString(JSON.stringify(config));
 
   mapLayers = (config.maps || []).map((layer, i) => {
-
     const positioning = layer.transformType
       ? parsePositioning(layer)
       : PositioningBuilder.fixed(0, 0, 0);
@@ -115,7 +114,6 @@ export function buildScene(
             jointStatesDataSource={parseDataSource(layer)}
           />
         );
-
       } else {
         deviceLayers.push(
           <MarkerLayer
@@ -128,9 +126,12 @@ export function buildScene(
       }
     } else if (layer.visualizationType === "Path") {
       const dataSource = parseDataSource(layer);
+      const { pathType, pathWidth } = layer;
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
+          pathType={pathType}
+          pathWidth={pathWidth}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Local Path "}
@@ -213,7 +214,6 @@ export function buildScene(
   // first map layer is visible, others are hidden
   mapLayers = mapLayers.map((layer, i) => {
     return cloneElement(layer, { visible: i === 0 });
-
   });
 
   devices.push(
@@ -244,7 +244,7 @@ export function buildScene(
     <EmptyLayer name={"Scene"} treePath={[SCENE_TREEPATH]}>
       {sceneLayers}
     </EmptyLayer>
-  )
+  );
   deviceLayers = [];
   return devices;
 }
