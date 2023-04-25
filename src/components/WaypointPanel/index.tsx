@@ -75,21 +75,20 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     return () => window.removeEventListener("keydown", keydownHandler);
   }, []);
 
-  function delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const sendBtnHandler = async () => {
     setSending(SENDING_STATUS.WAITING);
-    await delay(2000);
-    setSending(SENDING_STATUS.FAIL);
 
-    // const { waypoints } = store;
-    // const device = await Fleet.getCurrentDevice()!;
-    // const fileID = await upload(Authentication.token!, { waypoints });
-    // const command = await device.sendCommand(commandName, fileID.toString());
-    // console.log("ttt", command);
-    // setSending(SENDING_STATUS.SUCCESS);
+    const { waypoints } = store;
+    const device = await Fleet.getCurrentDevice()!;
+    const fileID = await upload(Authentication.token!, { waypoints });
+    const sendRes = await (
+      await device.sendCommand(commandName, fileID.toString())
+    ).json();
+
+    setTimeout(async () => {
+      const getRes = await (await device.getCommand(sendRes.id)).json();
+      setSending(getRes.success ? SENDING_STATUS.SUCCESS : SENDING_STATUS.FAIL);
+    }, 10000);
   };
 
   // Remove failed red bar after 3s
@@ -98,7 +97,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     if (sending === SENDING_STATUS.FAIL) {
       failTimer.current = window.setTimeout(() => {
         setSending(SENDING_STATUS.NONE);
-      }, 3000);
+      }, 4000);
     } else {
       clearTimeout(failTimer.current);
     }

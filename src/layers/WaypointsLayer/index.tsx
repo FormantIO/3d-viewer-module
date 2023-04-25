@@ -7,8 +7,9 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import { Euler, Mesh, Quaternion, Vector3 } from "three";
+import { Line2 } from "three-stdlib";
 import { FormantColors } from "../utils/FormantColors";
-import { ThreeEvent } from "@react-three/fiber";
+import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
@@ -154,6 +155,15 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
   };
 
   const plane = useRef<Mesh>(null!);
+  const dashedLine = useRef<Line2>(null!);
+
+  useFrame(({ camera, size: { height } }) => {
+    if (!dashedLine.current) return;
+    const factor = height > 600 ? 25 : 25 * (height / 600);
+    let scale =
+      dashedLine.current.position.distanceTo(camera.position) / factor;
+    dashedLine.current.material.dashScale = 1.8 / scale;
+  });
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
@@ -185,15 +195,37 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         ))}
 
         {waypoints.length > 0 && (
-          <Line
-            points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
-            depthTest={false}
-            worldUnits={pathType === PathType.STATIC}
-            renderOrder={1}
-            color={FormantColors.blue}
-            onPointerDown={addMiddleWaypoint}
-          />
+          <>
+            <Line
+              points={waypoints.map(({ translation: { x, y, z } }) => [
+                x,
+                y,
+                z,
+              ])}
+              lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
+              depthTest={false}
+              worldUnits={pathType === PathType.STATIC}
+              renderOrder={1}
+              color={FormantColors.blue}
+              onPointerDown={addMiddleWaypoint}
+              // visible={false}
+            />
+            {/* <Line
+              ref={dashedLine}
+              points={waypoints.map(({ translation: { x, y, z } }) => [
+                x,
+                y,
+                z,
+              ])}
+              lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
+              depthTest={false}
+              worldUnits={pathType === PathType.STATIC}
+              renderOrder={1}
+              color={"white"}
+              dashed={true}
+              dashScale={4}
+            /> */}
+          </>
         )}
       </group>
     </DataVisualizationLayer>
