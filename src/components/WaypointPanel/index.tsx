@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Button, Typography } from "@mui/material";
-import * as THREE from "three";
+import React, { useState } from "react";
+import { Button } from "@mui/material";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
-import { getTaregt, TextInput } from "./TextInput";
-import { DropdownInput } from "./DropdownInput";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
-import {
-  ControlButtonGroup,
-  Container,
-  PanelContainer,
-  LoadingBar,
-} from "./style";
+import { ControlButtonGroup, Container } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
-import { PROPERTY_TYPE, SENDING_STATUS } from "../../layers/types";
-import { BooleanToggle } from "./BooleanToggle";
-import { Authentication, Fleet } from "@formant/data-sdk";
+import { SENDING_STATUS } from "../../layers/types";
+import { Authentication, Device, Fleet } from "@formant/data-sdk";
 import { upload } from "./upload";
+import { PropertyPanel } from "./PropertyPanel";
+import { LoadingBar } from "./LoadingBar";
+
+const devMode = new URLSearchParams(window.location.search).get("module")
+  ? false
+  : true;
 
 interface Props {
   controlsStates: ControlsContextProps;
@@ -26,12 +23,11 @@ interface Props {
 export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const {
     waypoints,
-    state: { selectedWaypoint, isWaypointEditing, commandName },
+    state: { isWaypointPanelVisible, commandName },
     updateState,
     store,
     setWaypoints,
   } = controlsStates;
-  const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [sending, setSending] = useState<SENDING_STATUS>(SENDING_STATUS.NONE);
 
@@ -40,412 +36,144 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       ? config.waypointMission![0].waypointsProperties || []
       : [];
 
-  const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
-  for (let i = 0; i < waypointsProperties!.length; ++i) {
-    elements[i] = React.useRef<HTMLInputElement | HTMLSelectElement>(null!);
-  }
-  const angleRef = React.useRef<HTMLInputElement>(null!);
-  const xPosRef = React.useRef<HTMLInputElement>(null!);
-  const yPosRef = React.useRef<HTMLInputElement>(null!);
-
-  const removeBtnHandler = () => {
-    if (selectedWaypoint === null) return;
-    setWaypoints((prev) => prev.filter((_, idx) => idx !== selectedWaypoint));
-    const { waypoints } = store;
-    store.waypoints = waypoints.filter((_, idx) => idx !== selectedWaypoint);
-
-    // Update panel when gizmo moving to the next point
-    if (selectedWaypoint > 0) {
-      const w = store.waypoints[selectedWaypoint];
-      updateState({ selectedWaypoint: selectedWaypoint - 1 });
-    } else if (waypoints.length > 1) {
-      updateState({ selectedWaypoint: waypoints.length - 2 });
-    } else {
-      updateState({ selectedWaypoint: null });
-    }
-  };
-
-  useEffect(() => {
-    const keydownHandler = (e: KeyboardEvent) => {
-      if (e.key === "Delete") {
-        setShowDelete(true);
-      }
-    };
-    window.addEventListener("keydown", keydownHandler);
-    return () => window.removeEventListener("keydown", keydownHandler);
-  }, []);
-
   const sendBtnHandler = async () => {
-    setSending(SENDING_STATUS.WAITING);
+    if (!commandName) return;
 
     const { waypoints } = store;
-    const device = await Fleet.getCurrentDevice()!;
-    const fileID = await upload(Authentication.token!, { waypoints });
-    const sendRes = await (
-      await device.sendCommand(commandName, fileID.toString())
-    ).json();
+    let device: Device = null!,
+      sendRes: any = null!;
 
-    setTimeout(async () => {
-      const getRes = await (await device.getCommand(sendRes.id)).json();
-      setSending(getRes.success ? SENDING_STATUS.SUCCESS : SENDING_STATUS.FAIL);
-    }, 10000);
-  };
+    setSending(SENDING_STATUS.WAITING);
+    updateState({ isWaypointEditing: false });
 
-  // Remove failed red bar after 3s
-  const failTimer = React.useRef<number>();
-  useEffect(() => {
-    if (sending === SENDING_STATUS.FAIL) {
-      failTimer.current = window.setTimeout(() => {
-        setSending(SENDING_STATUS.NONE);
-      }, 4000);
-    } else {
-      clearTimeout(failTimer.current);
+    if (!devMode) {
+      device = await Fleet.getCurrentDevice()!;
+      const fileID = await upload(Authentication.token!, { waypoints });
+      sendRes = await (
+        await device.sendCommand(commandName, fileID.toString())
+      ).json();
     }
-    return () => {
-      failTimer.current && clearTimeout(failTimer.current);
-    };
-  }, [sending, setSending]);
 
-  // Update fields with waypoints changed
-  useEffect(() => {
-    if (!isWaypointEditing || waypoints.length === 0) return;
-    if (selectedWaypoint === null) {
-      angleRef.current.value = "";
-      xPosRef.current.value = "";
-      yPosRef.current.value = "";
-      if (waypointsProperties.length > 0) {
-        waypointsProperties!.forEach(({ propertyType }, idx) => {
-          if (
-            propertyType === PROPERTY_TYPE.STRING ||
-            propertyType === PROPERTY_TYPE.INTEGER
-          ) {
-            elements[idx].current!.value = "";
-          } else {
-            elements[idx].current!.value = "0";
-          }
+    setTimeout(
+      async () => {
+        const getRes = devMode
+          ? { success: Math.random() > 0.5 ? true : false }
+          : await (await device.getCommand(sendRes.id)).json();
+        const isSucceeded = getRes.success ? true : false;
+        setSending(isSucceeded ? SENDING_STATUS.SUCCESS : SENDING_STATUS.FAIL);
+        updateState({
+          isWaypointEditing: !isSucceeded,
+          hasPath: isSucceeded,
         });
-      }
-      return;
-    }
-    const { pose } = store.waypoints[selectedWaypoint];
-    const { x, y, z, w } = pose.rotation;
-    const e = new THREE.Euler().setFromQuaternion(
-      new THREE.Quaternion(x, y, z, w)
+      },
+      devMode ? 2000 : 20000
     );
-    angleRef.current.value = THREE.MathUtils.radToDeg(e.z).toFixed(2);
-    xPosRef.current.value = pose.translation.x.toFixed(2);
-    yPosRef.current.value = pose.translation.y.toFixed(2);
-
-    if (waypointsProperties!.length > 0) {
-      waypointsProperties!.forEach((item, idx) => {
-        if (item.propertyType === PROPERTY_TYPE.STRING) {
-          const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v ? v : item.stringDefault || "";
-          store.waypoints[selectedWaypoint][item.propertyName] =
-            elements[idx].current!.value;
-        } else if (item.propertyType === PROPERTY_TYPE.INTEGER) {
-          const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v
-            ? v
-            : item.integerDefault !== undefined
-            ? item.integerDefault
-            : 0;
-          store.waypoints[selectedWaypoint][item.propertyName] =
-            elements[idx].current!.value;
-        } else if (item.propertyType === PROPERTY_TYPE.FLOAT) {
-          const v = store.waypoints[selectedWaypoint][item.propertyName];
-          elements[idx].current!.value = v
-            ? v
-            : item.floatDefault !== undefined
-            ? item.floatDefault
-            : 0;
-          store.waypoints[selectedWaypoint][item.propertyName] =
-            elements[idx].current!.value;
-        } else if (item.propertyType === PROPERTY_TYPE.BOOLEAN) {
-          const v = store.waypoints[selectedWaypoint][item.propertyName];
-          const c =
-            v !== undefined
-              ? v
-              : item.booleanDefault !== undefined
-              ? item.booleanDefault
-              : false;
-          //@ts-ignore
-          elements[idx].current!(v);
-        } else if (item.propertyType === PROPERTY_TYPE.ENUM) {
-          const v = store.waypoints[selectedWaypoint][item.propertyName];
-          const c = v !== undefined ? v : item.enumDefault;
-          elements[idx].current!.value = [
-            undefined,
-            ...Array(item.enumLists!.length)
-              .fill(0)
-              // @ts-ignore
-              .map((_, idx) => item.enumLists[idx].enumList),
-          ]
-            .indexOf(c)
-            .toString();
-        }
-      });
-    }
-  }, [selectedWaypoint, waypoints]);
-
-  const posHandler = (axis: string) => {
-    if (selectedWaypoint !== null) {
-      let v = parseFloat(getTaregt(axis === "x" ? xPosRef : yPosRef).value);
-      v = isNaN(v) ? 0 : v;
-      const newPoints = [...waypoints];
-      if (axis === "x") newPoints[selectedWaypoint].translation.x = v;
-      else newPoints[selectedWaypoint].translation.y = v;
-      setWaypoints(newPoints);
-      store.waypoints[selectedWaypoint];
-    }
   };
 
-  const createPropertyFields = () => {
-    const comps: any[] = [];
-    waypointsProperties!.forEach((item, idx) => {
-      const { propertyType } = item;
-      if (propertyType === PROPERTY_TYPE.STRING) {
-        comps.push(
-          <TextInput
-            key={idx}
-            ref={elements[idx]}
-            label={item.propertyName}
-            onChange={(e) => {
-              if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] =
-                  e.target.value;
-              }
-            }}
-          />
-        );
-      } else if (
-        propertyType === PROPERTY_TYPE.INTEGER ||
-        propertyType === PROPERTY_TYPE.FLOAT
-      ) {
-        comps.push(
-          <TextInput
-            key={idx}
-            ref={elements[idx]}
-            label={item.propertyName}
-            type={
-              propertyType === PROPERTY_TYPE.INTEGER
-                ? propertyType
-                : PROPERTY_TYPE.FLOAT
-            }
-            onChange={(e) => {
-              if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] =
-                  e.target.value;
-              }
-            }}
-          />
-        );
-      } else if (propertyType === PROPERTY_TYPE.BOOLEAN) {
-        comps.push(
-          <BooleanToggle
-            key={idx}
-            ref={elements[idx]}
-            label={item.propertyName}
-            onChange={(value: boolean) => {
-              if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] = value;
-              }
-            }}
-          />
-        );
-      } else if (propertyType === PROPERTY_TYPE.ENUM) {
-        comps.push(
-          <DropdownInput
-            key={idx}
-            ref={elements[idx]}
-            label={item.propertyName}
-            content={Array(item.enumLists!.length)
-              .fill(0)
-              // @ts-ignore
-              .map((_, idx) => item.enumLists[idx].enumList)}
-            onChange={(e) => {
-              if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] = [
-                  null,
-                  ...Array(item.enumLists!.length)
-                    .fill(0)
-                    // @ts-ignore
-                    .map((_, idx) => item.enumLists[idx].enumList),
-                ][parseInt(e.target.value)];
-              }
-            }}
-          />
-        );
-      }
-    });
-    return comps;
-  };
+  const disableCancelBtn = sending === SENDING_STATUS.WAITING;
+  const disableSendBtn =
+    waypoints.length === 0 || sending === SENDING_STATUS.WAITING;
 
   return (
     <Container>
       {sending !== SENDING_STATUS.NONE && (
-        <LoadingBar
-          leftAlign={sending === SENDING_STATUS.WAITING}
-          fail={sending === SENDING_STATUS.FAIL}
-        >
-          <p>
-            {sending === SENDING_STATUS.WAITING
-              ? "Sending waypoints to device"
-              : sending === SENDING_STATUS.SUCCESS
-              ? "SENT"
-              : "FAIL"}
-          </p>
-        </LoadingBar>
+        <LoadingBar sending={sending} setSending={setSending} />
       )}
 
-      {isWaypointEditing && sending !== SENDING_STATUS.SUCCESS && (
+      {isWaypointPanelVisible && (
         <>
-          {waypoints.length > 0 && (
-            <PanelContainer>
-              <Typography>HEADING</Typography>
-
-              <TextInput
-                ref={angleRef}
-                label={"Orientation"}
-                type={PROPERTY_TYPE.FLOAT}
-                onEnter={() => {
-                  if (selectedWaypoint === null) return;
-                  let v = parseFloat(getTaregt(angleRef).value);
-                  v = isNaN(v) ? 0 : v;
-                  const euler = new THREE.Euler(
-                    0,
-                    0,
-                    THREE.MathUtils.degToRad(v)
-                  );
-                  const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
-                    euler
-                  );
-
-                  const newPoints = [...waypoints];
-                  newPoints[selectedWaypoint].rotation = { x, y, z, w };
-                  setWaypoints(newPoints);
-                  store.waypoints[selectedWaypoint].pose.rotation = {
-                    x,
-                    y,
-                    z,
-                    w,
-                  };
-                }}
+          {sending !== SENDING_STATUS.SUCCESS ? (
+            <>
+              <PropertyPanel
+                waypointsProperties={waypointsProperties}
+                controlsStates={controlsStates}
               />
 
-              <Typography marginTop={"20px"}>POSITION</Typography>
-              <TextInput
-                ref={xPosRef}
-                label="X-axis"
-                type={PROPERTY_TYPE.FLOAT}
-                onEnter={() => posHandler("x")}
-              />
-              <TextInput
-                ref={yPosRef}
-                label="Y-axis"
-                type={PROPERTY_TYPE.FLOAT}
-                onEnter={() => posHandler("y")}
-              />
-
-              {waypointsProperties.length > 0 && (
-                <Typography marginTop={"20px"}>PROPERTIES</Typography>
+              {showCancel && (
+                <Modal
+                  content={["Are you sure you want to cancel", "planning"]}
+                  subContent={
+                    "This action will delete all your progress and you will need to start over"
+                  }
+                  buttons={["BACK", "CANCEL"]}
+                  handler1={() => setShowCancel(false)}
+                  handler2={() => {
+                    setShowCancel(false);
+                    updateState({
+                      isWaypointPanelVisible: false,
+                      isWaypointEditing: false,
+                      hasPath: false,
+                    });
+                    setWaypoints([]);
+                    store.waypoints = [];
+                  }}
+                />
               )}
 
-              {createPropertyFields()}
-
+              <ControlButtonGroup
+                disableBtn1={disableCancelBtn}
+                disableBtn2={disableSendBtn}
+              >
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    if (sending === SENDING_STATUS.NONE) setShowCancel(true);
+                  }}
+                  disabled={disableCancelBtn}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    if (
+                      waypoints.length !== 0 &&
+                      sending !== SENDING_STATUS.WAITING
+                    )
+                      sendBtnHandler();
+                  }}
+                  disabled={disableSendBtn}
+                >
+                  Send Path
+                </Button>
+              </ControlButtonGroup>
+            </>
+          ) : (
+            <ControlButtonGroup large>
               <Button
                 variant="contained"
                 onClick={() => {
-                  if (waypoints.length === 0) return;
-                  setShowDelete(true);
+                  updateState({
+                    isWaypointEditing: true,
+                    isWaypointPanelVisible: true,
+                    hasPath: false,
+                    hasWaypointsPath: true,
+                  });
+                  setSending(SENDING_STATUS.NONE);
                 }}
               >
-                Delete
+                Edit
               </Button>
-            </PanelContainer>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  updateState({
+                    isWaypointPanelVisible: false,
+                    hasPath: false,
+                  });
+                  setSending(SENDING_STATUS.NONE);
+                  setWaypoints([]);
+                  store.waypoints = [];
+                }}
+              >
+                Complete Planning
+              </Button>
+            </ControlButtonGroup>
           )}
-
-          {showDelete && (
-            <Modal
-              content={["Delete", "waypoint"]}
-              buttons={["CANCEL", "DELETE"]}
-              handler1={() => setShowDelete(false)}
-              handler2={() => {
-                setShowDelete(false);
-                removeBtnHandler();
-              }}
-            />
-          )}
-
-          {showCancel && (
-            <Modal
-              content={["Are you sure you want to cancel", "planning"]}
-              buttons={["BACK", "CANCEL"]}
-              handler1={() => setShowCancel(false)}
-              handler2={() => {
-                setShowCancel(false);
-                updateState({ isWaypointEditing: false });
-                setWaypoints([]);
-                store.waypoints = [];
-              }}
-            />
-          )}
-
-          <ControlButtonGroup>
-            <Button
-              variant="contained"
-              onClick={() => {
-                if (sending === SENDING_STATUS.NONE) setShowCancel(true);
-              }}
-              disabled={sending === SENDING_STATUS.WAITING}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                if (
-                  waypoints.length !== 0 &&
-                  sending !== SENDING_STATUS.WAITING
-                )
-                  sendBtnHandler();
-              }}
-              disabled={
-                waypoints.length === 0 || sending === SENDING_STATUS.WAITING
-              }
-            >
-              Send Path
-            </Button>
-          </ControlButtonGroup>
         </>
       )}
 
-      {isWaypointEditing && sending === SENDING_STATUS.SUCCESS && (
-        <ControlButtonGroup large>
-          <Button
-            variant="contained"
-            onClick={() => {
-              updateState({ isWaypointEditing: true });
-              setSending(SENDING_STATUS.NONE);
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              updateState({ isWaypointEditing: false });
-              setSending(SENDING_STATUS.NONE);
-              setWaypoints([]);
-              store.waypoints = [];
-            }}
-          >
-            Complete Planning
-          </Button>
-        </ControlButtonGroup>
-      )}
-
-      <ToggleIcon controlsStates={controlsStates} />
+      <ToggleIcon controlsStates={controlsStates} sending={sending} />
     </Container>
   );
 };
