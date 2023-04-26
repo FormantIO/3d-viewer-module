@@ -42,7 +42,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
     const { waypoints } = store;
     let device: Device = null!,
       sendRes: any = null!;
-    console.log("ttt", waypoints);
+
     setSending(SENDING_STATUS.WAITING);
     updateState({ isWaypointEditing: false });
 
