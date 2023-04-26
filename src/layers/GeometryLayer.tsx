@@ -5,6 +5,7 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import {
+  startTransition,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -107,10 +108,10 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
           ></sphereBufferGeometry>
         )}
         {type === "cube" && (
-          <boxBufferGeometry
+          <boxGeometry
             attach="geometry"
             args={[0.9, 0.9, 0.9]}
-          ></boxBufferGeometry>
+          ></boxGeometry>
         )}
         <meshBasicMaterial attach="material" />
       </instancedMesh>
@@ -268,9 +269,11 @@ export function GeometryLayer(props: IGeometryLayer) {
           root.remove(defined(worldGeometry.get(id)));
           worldGeometry.delete(id);
         });
-        setCubesData(cubes);
-        setSpheresData(spheres);
-        setGeoKey((k) => k + 1);
+        startTransition(() => {
+          setCubesData(cubes);
+          setSpheresData(spheres);
+          setGeoKey((k) => k + 1)
+        })
       }
     );
   }, []);
