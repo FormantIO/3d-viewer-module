@@ -97,9 +97,9 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
         renderOrder={1}
         color={FormantColors.blue}
         onPointerDown={addMiddleWaypoint}
-        // visible={false}
+        visible={false}
       />
-      {/* <Line
+      <Line
         ref={dashedLine}
         points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
         lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth}
@@ -109,7 +109,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
         color={"white"}
         dashed={true}
         dashScale={4}
-      /> */}
+      />
     </>
   );
 };

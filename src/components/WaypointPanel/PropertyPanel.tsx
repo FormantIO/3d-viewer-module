@@ -90,26 +90,22 @@ export const PropertyPanel: React.FC<Props> = ({
             }}
           />
         );
-      } else if (propertyType === PROPERTY_TYPE.ENUM) {
+      } else if (propertyType === PROPERTY_TYPE.ENUM && item.enumLists) {
+        const { enumLists } = item;
+        const enumContent = enumLists.map((e) => e.enumList);
         comps.push(
           <DropdownInput
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
-            content={Array(item.enumLists!.length)
-              .fill(0)
-              // @ts-ignore
-              .map((_, idx) => item.enumLists[idx].enumList)}
+            content={enumContent}
             onChange={(e) => {
-              if (selectedWaypoint !== null) {
-                store.waypoints[selectedWaypoint][item.propertyName] = [
-                  null,
-                  ...Array(item.enumLists!.length)
-                    .fill(0)
-                    // @ts-ignore
-                    .map((_, idx) => item.enumLists[idx].enumList),
-                ][parseInt(e.target.value)];
-              }
+              if (selectedWaypoint === null) return;
+              const idx = parseInt(e.target.value) - 1;
+              store.waypoints[selectedWaypoint][item.propertyName] = [
+                idx,
+                enumContent[idx],
+              ];
             }}
           />
         );
@@ -219,20 +215,24 @@ export const PropertyPanel: React.FC<Props> = ({
               : item.booleanDefault !== undefined
               ? item.booleanDefault
               : false;
+          store.waypoints[selectedWaypoint][item.propertyName] = c;
           //@ts-ignore
           elements[idx].current!(v);
         } else if (item.propertyType === PROPERTY_TYPE.ENUM) {
+          const { enumDefault, enumLists } = item;
+          if (!enumLists) return;
           const v = store.waypoints[selectedWaypoint][item.propertyName];
-          const c = v !== undefined ? v : item.enumDefault;
-          elements[idx].current!.value = [
-            undefined,
-            ...Array(item.enumLists!.length)
-              .fill(0)
-              // @ts-ignore
-              .map((_, idx) => item.enumLists[idx].enumList),
-          ]
-            .indexOf(c)
-            .toString();
+          const c: [number, string] = [0, enumLists[0].enumList];
+
+          if (v) {
+            c[0] = v[0];
+            c[1] = v[1];
+          } else if (enumDefault !== undefined) {
+            c[0] = enumLists.map((el) => el.enumList).indexOf(enumDefault);
+            c[1] = enumDefault;
+          }
+          store.waypoints[selectedWaypoint][item.propertyName] = c;
+          elements[idx].current!.value = (c[0] + 1).toString();
         }
       });
     }
