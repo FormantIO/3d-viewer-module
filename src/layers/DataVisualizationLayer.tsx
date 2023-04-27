@@ -27,7 +27,7 @@ import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 
@@ -244,6 +244,12 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
           }
         );
         setPositionUnsubscriber(() => unsubscribe);
+      }
+    }
+    return () => {
+      if (positionUnsubscriber) {
+        positionUnsubscriber();
+        setPositionUnsubscriber(undefined);
       }
     }
   }, [groupRef, positioning, thisLayer]);
