@@ -10,10 +10,10 @@ import { ToggleIconContainer } from "./style";
 
 interface Props {
   controlsStates: ControlsContextProps;
-  sending: SENDING_STATUS;
+  hasPathLayer: boolean;
 }
 
-export function ToggleIcon({ controlsStates, sending }: Props) {
+export function ToggleIcon({ controlsStates, hasPathLayer }: Props) {
   const {
     state: { hasPointCloud, hasPath, hasWaypointsPath, isWaypointPanelVisible },
     updateState,
@@ -21,22 +21,20 @@ export function ToggleIcon({ controlsStates, sending }: Props) {
 
   return (
     <ToggleIconContainer hasPointCloud={hasPointCloud}>
-      {!isWaypointPanelVisible && (
+      {!isWaypointPanelVisible ? (
         <div
           onClick={() => {
             updateState({
               isWaypointPanelVisible: !isWaypointPanelVisible,
               isWaypointEditing: !isWaypointPanelVisible,
-              hasPath: false,
+              hasPath: true,
               hasWaypointsPath: true,
             });
           }}
         >
           <WaypointToggleIcon />
         </div>
-      )}
-
-      {sending === SENDING_STATUS.SUCCESS && (
+      ) : (
         <>
           <div
             onClick={() => {
@@ -46,13 +44,15 @@ export function ToggleIcon({ controlsStates, sending }: Props) {
             {hasWaypointsPath ? <WaypointsPathToggleIcon /> : <PathEyeIcon />}
           </div>
 
-          <div
-            onClick={() => {
-              updateState({ hasPath: !hasPath });
-            }}
-          >
-            {hasPath ? <PathToggleIcon /> : <PathEyeIcon />}
-          </div>
+          {hasPathLayer && (
+            <div
+              onClick={() => {
+                updateState({ hasPath: !hasPath });
+              }}
+            >
+              {hasPath ? <PathToggleIcon /> : <PathEyeIcon />}
+            </div>
+          )}
         </>
       )}
     </ToggleIconContainer>

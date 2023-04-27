@@ -36,38 +36,60 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
       ? config.waypointMission![0].waypointsProperties || []
       : [];
 
+  const hasPathLayer = config.visualizations
+    .map((e) => e.visualizationType)
+    .includes("Path");
+
   const sendBtnHandler = async () => {
     if (!commandName) return;
 
     const { waypoints } = store;
-    let device: Device = null!,
-      sendRes: any = null!;
 
     setSending(SENDING_STATUS.WAITING);
     updateState({ isWaypointEditing: false });
 
-    if (!devMode) {
-      device = await Fleet.getCurrentDevice()!;
+    if (devMode) {
+      setTimeout(() => {
+        const s = Math.random() > 0.5;
+        setSending(s ? SENDING_STATUS.SUCCESS : SENDING_STATUS.FAIL);
+        updateState({
+          isWaypointEditing: !s,
+          hasPath: s,
+        });
+      }, 2000);
+    } else {
+      const device = await Fleet.getCurrentDevice()!;
       const fileID = await upload(Authentication.token!, { waypoints });
-      sendRes = await (
+      const sendRes = await (
         await device.sendCommand(commandName, fileID.toString())
       ).json();
-    }
 
-    setTimeout(
-      async () => {
-        const getRes = devMode
-          ? { success: Math.random() > 0.5 ? true : false }
-          : await (await device.getCommand(sendRes.id)).json();
-        const isSucceeded = getRes.success ? true : false;
-        setSending(isSucceeded ? SENDING_STATUS.SUCCESS : SENDING_STATUS.FAIL);
-        updateState({
-          isWaypointEditing: !isSucceeded,
-          hasPath: isSucceeded,
-        });
-      },
-      devMode ? 2000 : 20000
-    );
+      let count = 0;
+      let isSuccess = false;
+      const timer = window.setInterval(async () => {
+        if (count === 12) {
+          clearInterval(timer);
+          if (!isSuccess) {
+            setSending(SENDING_STATUS.FAIL);
+            updateState({
+              isWaypointEditing: true,
+            });
+          }
+        }
+
+        const getRes = await (await device.getCommand(sendRes.id)).json();
+        isSuccess = getRes.success ? true : false;
+        if (isSuccess) {
+          clearInterval(timer);
+          setSending(SENDING_STATUS.SUCCESS);
+          updateState({
+            isWaypointEditing: false,
+          });
+        }
+
+        ++count;
+      }, 2000);
+    }
   };
 
   const disableCancelBtn = sending === SENDING_STATUS.WAITING;
@@ -76,9 +98,8 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   return (
     <Container>
-      {sending !== SENDING_STATUS.NONE && (
-        <LoadingBar sending={sending} setSending={setSending} />
-      )}
+      <LoadingBar sending={sending} />
+      <ToggleIcon controlsStates={controlsStates} hasPathLayer={hasPathLayer} />
 
       {isWaypointPanelVisible && (
         <>
@@ -102,7 +123,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                     updateState({
                       isWaypointPanelVisible: false,
                       isWaypointEditing: false,
-                      hasPath: false,
+                      hasPath: true,
                     });
                     setWaypoints([]);
                     store.waypoints = [];
@@ -146,7 +167,6 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                   updateState({
                     isWaypointEditing: true,
                     isWaypointPanelVisible: true,
-                    hasPath: false,
                     hasWaypointsPath: true,
                   });
                   setSending(SENDING_STATUS.NONE);
@@ -159,7 +179,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
                 onClick={() => {
                   updateState({
                     isWaypointPanelVisible: false,
-                    hasPath: false,
+                    hasPath: true,
                   });
                   setSending(SENDING_STATUS.NONE);
                   setWaypoints([]);
@@ -172,8 +192,6 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           )}
         </>
       )}
-
-      <ToggleIcon controlsStates={controlsStates} sending={sending} />
     </Container>
   );
 };

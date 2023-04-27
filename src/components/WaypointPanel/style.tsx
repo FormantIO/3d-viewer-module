@@ -105,7 +105,7 @@ export const ControlButtonGroup = styled.div`
     ${({ disableBtn2 }: CBGProps) =>
       disableBtn2 &&
       css`
-        color: white;
+        color: #8c909b;
         background-color: ${FormantColors.steel02};
         &:hover {
           background-color: ${FormantColors.steel02};
