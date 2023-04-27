@@ -27,7 +27,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
   const { pose, pointIndex, pathType, pathWidth } = props;
   const {
     updateState,
-    state: { selectedWaypoint },
+    state: { selectedWaypoint, isWaypointEditing },
   } = useControlsContext();
 
   const { controls } = useThree();
@@ -78,13 +78,13 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     <group ref={groupRef} position={position} rotation={rotation}>
       <PivotControls
         ref={pivotRef}
-        visible={selectedWaypoint === pointIndex}
+        visible={selectedWaypoint === pointIndex && isWaypointEditing}
         lineWidth={6}
         axisColors={["#EA719D", "#2EC495", "#F9C36E"]}
         hoveredColor={"#18D2FF"}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
-        offset={[0, 0, 0.1]}
+        offset={[0, 0, 0.01]}
         anchor={[0, 0, 0]}
         scale={100}
         matrix={matrix}
@@ -95,7 +95,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
           (controls as any).enabled = false;
         }}
         onDrag={(m) => {
-          if (selectedWaypoint !== pointIndex) return;
+          if (selectedWaypoint !== pointIndex || !isWaypointEditing) return;
           matrix.copy(m);
           if (targetRef.current && groupRef.current && pivotRef.current) {
             // get rotation out of matrix

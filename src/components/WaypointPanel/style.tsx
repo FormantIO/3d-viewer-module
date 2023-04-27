@@ -1,5 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { FormantColors } from "../../layers/utils/FormantColors";
+import { SENDING_STATUS } from "../../lib";
 
 export const Container = styled.div`
   position: absolute;
@@ -24,7 +25,7 @@ export const PanelContainer = styled.div`
   bottom: 80px;
   left: 10px;
   width: 300px;
-  height: calc(100% - 150px);
+  height: calc(100% - 100px);
   overflow-y: auto;
   background-color: #2d3855;
   border-radius: 10px;
@@ -55,11 +56,16 @@ export const PanelContainer = styled.div`
   }
 `;
 
+interface CBGProps {
+  large?: boolean;
+  disableBtn1?: boolean;
+  disableBtn2?: boolean;
+}
 export const ControlButtonGroup = styled.div`
   position: absolute;
   bottom: 20px;
   left: 10px;
-  width: 300px;
+  width: ${({ large }: CBGProps) => (large ? "400px" : "300px")};
   height: 35px;
   display: flex;
   justify-content: space-between;
@@ -69,24 +75,42 @@ export const ControlButtonGroup = styled.div`
     width: 48%;
     border-radius: 20px;
     color: black;
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: all !important;
+    }
   }
+
   & > button:nth-of-type(1) {
     background-color: #bac4e2;
     &:hover {
       background-color: #d9e0f0;
     }
+    ${({ disableBtn1 }: CBGProps) =>
+      disableBtn1 &&
+      css`
+        background-color: ${FormantColors.silver};
+        &:hover {
+          background-color: ${FormantColors.silver};
+        }
+      `}
   }
   & > button:nth-of-type(2) {
     background-color: #18d2ff;
+    white-space: nowrap;
     &:hover {
-      background-color: #6ee0fd;
+      background-color: #53d7f8;
     }
-    &:disabled {
-      background-color: #3b4668;
-      color: #888585;
-      cursor: not-allowed;
-      pointer-events: all !important;
-    }
+
+    ${({ disableBtn2 }: CBGProps) =>
+      disableBtn2 &&
+      css`
+        color: white;
+        background-color: ${FormantColors.steel02};
+        &:hover {
+          background-color: ${FormantColors.steel02};
+        }
+      `}
   }
 `;
 
@@ -107,6 +131,13 @@ export const ModalContainer = styled.div`
 
   & > div:nth-of-type(1) {
     margin: 10px 0 0 10px;
+  }
+  & > p {
+    position: absolute;
+    top: 70px;
+    margin: 0 20px 0 10px;
+    font-size: 15px;
+    font-style: italic;
   }
   & > div:nth-of-type(2) {
     margin: 70px 0 0 100px;
@@ -162,7 +193,7 @@ export const ToggleIconContainer = styled.div`
   flex-direction: column;
   position: absolute;
   top: ${({ hasPointCloud }: { hasPointCloud: boolean }) =>
-    hasPointCloud ? "210px" : "120px"};
+    hasPointCloud ? "195px" : "100px"};
   right: 10px;
   pointer-events: none;
 
@@ -170,14 +201,20 @@ export const ToggleIconContainer = styled.div`
     background-color: #1c1e2d;
     box-shadow: 0 0 1.25rem #0a0b10;
     box-sizing: border-box;
-    width: 28px;
-    height: 28px;
+    border: 0.078125rem solid #3b4668;
+    width: 26px;
+    height: 26px;
     border-radius: 14px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     pointer-events: all;
+    margin-top: 10px;
+    & > svg {
+      vertical-align: middle;
+      fill: #bac4e2;
+    }
   }
 `;
 
@@ -234,5 +271,70 @@ export const BooleanToggleContainer = styled.div`
     & > div:nth-of-type(1) {
       font-size: 12px;
     }
+  }
+`;
+
+interface LoadingProps {
+  sending: SENDING_STATUS;
+}
+export const LoadingBarContainer = styled.div`
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: ${({ sending }: LoadingProps) =>
+    sending === SENDING_STATUS.WAITING ? "start" : "center"};
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  background-color: #1c1e2df5;
+  color: white;
+  font-family: Inter;
+  font-size: 14px;
+  text-align: center;
+
+  & > p {
+    padding: 0 10px;
+  }
+
+  & > div {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 5px;
+
+    ${({ sending }: LoadingProps) =>
+      sending === SENDING_STATUS.WAITING
+        ? css`
+            background: linear-gradient(
+              to right,
+              rgba(0, 0, 0, 0),
+              #f5257a,
+              #18d2ff,
+              rgba(0, 0, 0, 0),
+              #f5257a,
+              #18d2ff,
+              rgba(0, 0, 0, 0)
+            );
+            background-size: 200%;
+            animation: background 1s linear infinite;
+            transition: opacity 200ms ease-in-out;
+
+            @keyframes background {
+              0% {
+                background-position-x: 0;
+              }
+              100% {
+                background-position-x: 100%;
+              }
+            }
+          `
+        : css`
+            background-color: ${({ sending }: LoadingProps) =>
+              sending === SENDING_STATUS.SUCCESS
+                ? FormantColors.green
+                : FormantColors.red};
+          `}
   }
 `;

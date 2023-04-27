@@ -1,18 +1,14 @@
 import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
-import {
-  IPose,
-  IVector3,
-  UniverseTelemetrySource,
-} from "@formant/universe-core";
+import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
 import { Euler, Mesh, Quaternion, Vector3 } from "three";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
 import { PathType } from "../types";
+import { WaypointPath } from "./WaypointPath";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -27,15 +23,18 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     updateState,
     waypoints,
     setWaypoints,
-    state: { isWaypointEditing },
+    state: { isWaypointEditing, hasWaypointsPath },
   } = useControlsContext();
-  const { pathWidth = 2.5, pathType = PathType.DYNAMIC, commandName } = props;
+  const {
+    pathWidth = 2.5,
+    pathType = PathType.DYNAMIC,
+    commandName = "send_mission_waypoints",
+  } = props;
+
+  // Initialization
   useEffect(() => {
-    updateState({ isWaypointVisible: true, commandName }); // Show UI
-    return () => {
-      store.waypoints = [];
-    };
-  }, [store, commandName, updateState]);
+    updateState({ commandName, hasPath: false });
+  }, [commandName, updateState]);
 
   // Add new waypoint
   const addNewWaypoint = (e: ThreeEvent<PointerEvent>) => {
@@ -94,58 +93,6 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     updateState({ selectedWaypoint: waypoints.length });
   };
 
-  // Add middle waypoint
-  const addMiddleWaypoint = (e: ThreeEvent<PointerEvent>) => {
-    if (!isWaypointEditing) return;
-
-    e.stopPropagation();
-    if (!e.shiftKey) {
-      return;
-    }
-
-    let p = e.point;
-    const index = true ? e.faceIndex! : parseInt(e.eventObject.name);
-    const v = (e: IVector3) => new Vector3(e.x, e.y, 0);
-    const prev = v(waypoints[index].translation);
-    const next = v(waypoints[index + 1].translation);
-
-    // Get translation
-    const dir1 = new Vector3().subVectors(next, prev);
-    const dir2 = new Vector3().subVectors(p, prev);
-    const projection = dir2.dot(dir1) / dir1.lengthSq();
-    const positionToAdd = new Vector3().addVectors(
-      prev,
-      dir1.clone().multiplyScalar(projection)
-    );
-
-    // Get snap angle
-    const vector = new Vector3(next.x - prev.x, next.y - prev.y, 0);
-    let angle = vector.angleTo(new Vector3(1, 0, 0));
-    angle *= Math.sign(next.y - prev.y);
-    const euler = new Euler(0, 0, angle);
-    const { x, y, z, w } = new Quaternion().setFromEuler(euler);
-
-    const pose = {
-      translation: {
-        x: positionToAdd.x,
-        y: positionToAdd.y,
-        z: 0,
-      },
-      rotation: { x, y, z, w },
-    };
-
-    setWaypoints((prev) => {
-      prev.splice(index + 1, 0, pose);
-      return [...prev];
-    });
-    updateState({ selectedWaypoint: index + 1 });
-    store.waypoints.splice(index + 1, 0, {
-      ...store.waypoints[index],
-      pointIndex: index + 1,
-      pose,
-    });
-  };
-
   const poseChangeHandler = (updatedPose: IPose, index: number) => {
     const newPoints = [...waypoints];
     newPoints[index] = updatedPose;
@@ -172,7 +119,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         />
       </mesh>
 
-      <group name="waypoints">
+      <group name="waypoints" visible={hasWaypointsPath}>
         {waypoints.map((pose: IPose, idx: number) => (
           <Waypoint
             key={idx}
@@ -183,18 +130,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
             pathWidth={pathWidth}
           />
         ))}
-
-        {waypoints.length > 0 && (
-          <Line
-            points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
-            depthTest={false}
-            worldUnits={pathType === PathType.STATIC}
-            renderOrder={1}
-            color={FormantColors.blue}
-            onPointerDown={addMiddleWaypoint}
-          />
-        )}
+        <WaypointPath pathType={pathType} pathWidth={pathWidth} />
       </group>
     </DataVisualizationLayer>
   );

@@ -104,3 +104,21 @@ export function BooleanToggleFalseIcon({ onClick}: BooleanProps){
     <circle cx="11" cy="11" r="8" fill="#BAC4E2"/>
     </svg>
 }
+
+export function WaypointsPathToggleIcon(){
+    return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.29297 16.293L16.293 1.29297" stroke="#BAC4E2" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 4"/>
+    </svg>
+}
+
+export function PathToggleIcon(){
+    return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.29297 16.293L16.293 1.29297" stroke="#18D2FF" strokeWidth="2" strokeLinecap="round"/>
+    </svg>    
+}
+
+export function PathEyeIcon(){
+    return <svg width="16" height="9" viewBox="0 0 16 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd" d="M5.25881 5.96492C4.37723 5.56852 3.54948 4.97678 2.7742 4.20449L0.98113 5.69872L0.020853 4.54639L1.78023 3.08024C1.37381 2.56284 0.983494 1.9914 0.609059 1.36849L1.89468 0.595703C3.75929 3.69771 5.80686 5.05352 8.00187 5.05352C10.1969 5.05352 12.2444 3.69771 14.1091 0.595703L15.3947 1.36849C15.0199 1.99189 14.6293 2.56374 14.2225 3.08145L15.9805 4.54639L15.0202 5.69872L13.2284 4.20558C12.4536 4.97721 11.6264 5.56852 10.7454 5.96472L11.6829 7.99609L10.321 8.62468L9.30648 6.42661C8.88276 6.51076 8.44793 6.55352 8.00187 6.55352C7.55597 6.55352 7.1213 6.5108 6.69773 6.4267L5.68328 8.62468L4.32134 7.99609L5.25881 5.96492Z" fill="#BAC4E2"/>
+    </svg>    
+}

@@ -76,7 +76,7 @@ export function Universe(props: IUniverseProps) {
 
   const controlsStates = useControlsContextStates();
   const {
-    state: { isWaypointVisible, isWaypointEditing },
+    state: { commandName, isWaypointPanelVisible },
   } = controlsStates;
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode,
         }}
       >
-        {!isWaypointEditing && (
+        {!isWaypointPanelVisible && (
           <Sidebar
             lookAtTargetId={lookAtTargetId}
             toggleSidebarCallback={sidebarOpenCallback}
@@ -253,7 +253,7 @@ export function Universe(props: IUniverseProps) {
           toggleEditMode={toggleEditMode}
         />
         <PointSizeSlider controlsStates={controlsStates} />
-        {isWaypointVisible && (
+        {commandName && (
           <WaypointPanel
             controlsStates={controlsStates}
             config={props.config}

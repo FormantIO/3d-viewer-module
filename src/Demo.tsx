@@ -12,7 +12,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { OccupancyGridLayer, PathLayer } from "./lib";
+import { OccupancyGridLayer, PathLayer, PathType } from "./lib";
 import { WaypointsLayer } from "./layers/WaypointsLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
@@ -67,6 +67,7 @@ export function Demo() {
                 "walter.localization",
                 "localization"
               )}
+              pathType={PathType.DYNAMIC}
             />
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>

@@ -3,10 +3,12 @@ import React from "react";
 import { WaypointData } from "../WaypointsLayer/Waypoint";
 
 interface StateProps {
-  isWaypointVisible: boolean;
+  isWaypointPanelVisible: boolean;
   isWaypointEditing: boolean;
   selectedWaypoint: number | null;
-  commandName: string;
+  commandName: string | undefined;
+  hasPath: boolean;
+  hasWaypointsPath: boolean;
   hasPointCloud: boolean;
   pointSize: number;
 }
@@ -35,12 +37,14 @@ export function useControlsContext() {
 export function useControlsContextStates() {
   const [waypoints, setWaypoints] = React.useState<IPose[]>([]);
   const [state, setState] = React.useState<StateProps>({
-    isWaypointVisible: false,
+    isWaypointPanelVisible: false,
     isWaypointEditing: false,
     selectedWaypoint: null,
-    commandName: "",
-    pointSize: 1,
+    commandName: undefined,
+    hasPath: true,
+    hasWaypointsPath: true,
     hasPointCloud: false,
+    pointSize: 1,
   });
   const storeRef = React.useRef<StoreProps>({
     waypoints: [],

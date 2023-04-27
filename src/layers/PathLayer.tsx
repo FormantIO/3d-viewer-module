@@ -9,6 +9,7 @@ import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/s
 import { transformMatrix } from "./utils/transformMatrix";
 import { FormantColors } from "./utils/FormantColors";
 import { Line } from "@react-three/drei";
+import { useControlsContext } from "./common/ControlsContext";
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -18,6 +19,9 @@ interface ILocalPathProps extends IUniverseLayerProps {
 
 export const PathLayer = (props: ILocalPathProps) => {
   const { dataSource, pathWidth = 0.5, pathType = PathType.STATIC } = props;
+  const {
+    state: { hasPath },
+  } = useControlsContext();
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
@@ -60,7 +64,7 @@ export const PathLayer = (props: ILocalPathProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <group ref={groupRef}>
+      <group ref={groupRef} visible={hasPath}>
         {points.length > 0 && (
           <Line
             points={points}
