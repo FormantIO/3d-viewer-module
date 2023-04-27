@@ -30,22 +30,22 @@ export function Viewer() {
           setConfiguration(parsedConfig);
         }
       }
-      FormantApp.addModuleConfigurationListener((config) => {
-        const parsedConfig = JSON.parse(
-          config.configuration
-        ) as Viewer3DConfiguration;
-        if (!checkConfiguration(parsedConfig)) {
-          setConfiguration(undefined);
-          return;
-        }
-        setConfiguration(parsedConfig);
-      });
-      FormantApp.addModuleDataListener((event) => {
-        const d = new Date(event.time);
-        universeData.setTime(d);
-      });
       setAuthenticated(true);
     })();
+    FormantApp.addModuleConfigurationListener((config) => {
+      const parsedConfig = JSON.parse(
+        config.configuration
+      ) as Viewer3DConfiguration;
+      if (!checkConfiguration(parsedConfig)) {
+        setConfiguration(undefined);
+        return;
+      }
+      setConfiguration(parsedConfig);
+    });
+    FormantApp.addModuleDataListener((event) => {
+      const d = new Date(event.time);
+      universeData.setTime(d);
+    });
   }, []);
 
   const checkConfiguration = (config: Viewer3DConfiguration) => {
