@@ -101,18 +101,18 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
         ref={ref}
         args={[null as any, null as any, instances.length]}
       >
-        {type === "sphere" && (
+        {type === "sphere" ? (
           <sphereBufferGeometry
             attach="geometry"
             args={[0.5, 32, 16]}
           ></sphereBufferGeometry>
-        )}
-        {type === "cube" && (
+        ) : null}
+        {type === "cube" ? (
           <boxGeometry
             attach="geometry"
             args={[0.9, 0.9, 0.9]}
           ></boxGeometry>
-        )}
+        ) : null}
         <meshBasicMaterial attach="material" />
       </instancedMesh>
       <box3Helper args={[boundingBox.current]} visible={false} />
@@ -140,7 +140,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       dataSource,
       (d) => {
         if (typeof d === "symbol") {
-          console.warn("geometry received error from universe data");
+          //console.warn("geometry received error from universe data");
           return;
         }
         const markerArray = d as IMarker3DArray;
@@ -281,12 +281,12 @@ export function GeometryLayer(props: IGeometryLayer) {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group>
         <primitive object={root} />
-        {cubesData.length > 0 && (
+        {cubesData.length > 0 ? (
           <InstancedGeometry instances={cubesData} key={geoKey} />
-        )}
-        {spheresData.length > 0 && (
+        ) : null}
+        {spheresData.length > 0 ? (
           <InstancedGeometry instances={spheresData} key={geoKey} />
-        )}
+        ) : null}
       </group>
       {children}
     </DataVisualizationLayer>
