@@ -5,16 +5,16 @@ import { LoadingBarContainer } from "./style";
 
 interface Props {
   sending: SENDING_STATUS;
-  setSending: (s: SENDING_STATUS) => void;
 }
 
-export const LoadingBar: React.FC<Props> = ({ sending, setSending }) => {
+export const LoadingBar: React.FC<Props> = ({ sending }) => {
   const timer = React.useRef<number>();
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
-    if (sending === SENDING_STATUS.FAIL) {
+    if (sending === SENDING_STATUS.SUCCESS || sending == SENDING_STATUS.FAIL) {
       timer.current = window.setTimeout(() => {
-        setSending(SENDING_STATUS.NONE);
+        setVisible(false);
       }, 4000);
     } else {
       clearTimeout(timer.current);
@@ -22,18 +22,26 @@ export const LoadingBar: React.FC<Props> = ({ sending, setSending }) => {
     return () => {
       timer.current && clearTimeout(timer.current);
     };
-  }, [sending, setSending]);
+  }, [sending]);
+
+  useEffect(() => {
+    if (sending !== SENDING_STATUS.NONE) setVisible(true);
+  }, [sending]);
 
   return (
-    <LoadingBarContainer sending={sending}>
-      <div />
-      <p>
-        {sending === SENDING_STATUS.WAITING
-          ? "Sending waypoints to device"
-          : sending === SENDING_STATUS.SUCCESS
-          ? "SUCCESS"
-          : "FAIL"}
-      </p>
-    </LoadingBarContainer>
+    <>
+      {visible && (
+        <LoadingBarContainer sending={sending}>
+          <div />
+          <p>
+            {sending === SENDING_STATUS.WAITING
+              ? "Sending waypoints to device"
+              : sending === SENDING_STATUS.SUCCESS
+              ? "SUCCESS"
+              : "FAIL"}
+          </p>
+        </LoadingBarContainer>
+      )}
+    </>
   );
 };

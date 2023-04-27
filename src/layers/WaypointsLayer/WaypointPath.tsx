@@ -82,8 +82,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
     const factor = height > 600 ? 25 : 25 * (height / 600);
     let scale =
       dashedLine.current.position.distanceTo(camera.position) / factor;
-    dashedLine.current.material.dashScale =
-      pathType === PathType.DYNAMIC ? 6 / scale : 1 / scale;
+    dashedLine.current.material.dashScale = 1.5 / scale;
   });
 
   if (waypoints.length === 0) return <></>;

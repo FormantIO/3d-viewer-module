@@ -33,7 +33,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
 
   // Initialization
   useEffect(() => {
-    updateState({ commandName, hasPath: false });
+    updateState({ commandName });
   }, [commandName, updateState]);
 
   // Add new waypoint
