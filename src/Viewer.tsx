@@ -30,6 +30,8 @@ export function Viewer() {
           setConfiguration(parsedConfig);
         }
       }
+      setAuthenticated(true);
+
       FormantApp.addModuleConfigurationListener((config) => {
         const parsedConfig = JSON.parse(
           config.configuration
@@ -44,7 +46,6 @@ export function Viewer() {
         const d = new Date(event.time);
         universeData.setTime(d);
       });
-      setAuthenticated(true);
     })();
   }, []);
 
