@@ -5,6 +5,7 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import {
+  MutableRefObject,
   startTransition,
   useContext,
   useEffect,
@@ -93,7 +94,7 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
         }
       });
     }
-  }, []);
+  }, [ref, instances]);
 
   return (
     <>
@@ -122,9 +123,10 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
 
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource } = props;
-  const world = new GeometryWorld();
 
-  const worldGeometry: Map<string, Mesh | Line | Sprite> = new Map();
+  const world = useRef(new GeometryWorld());
+
+  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite>> = useRef(new Map());
 
   const root = new Object3D();
   const universeData = useContext(UniverseDataContext);
@@ -134,7 +136,7 @@ export function GeometryLayer(props: IGeometryLayer) {
   const [geoKey, setGeoKey] = useState(0);
 
   useEffect(() => {
-    universeData.subscribeToGeometry(
+    const unsubscribe = universeData.subscribeToGeometry(
       definedAndNotNull(layerData, "geometry layer requires device context")
         .deviceId,
       dataSource,
@@ -144,8 +146,8 @@ export function GeometryLayer(props: IGeometryLayer) {
           return;
         }
         const markerArray = d as IMarker3DArray;
-        world.processMarkers(markerArray);
-        const geometry = world.getAllGeometry();
+        world.current.processMarkers(markerArray);
+        const geometry = world.current.getAllGeometry();
         const cubes = geometry.filter(
           (g) => g.type === "cube"
         ) as GeoInstanceData[];
@@ -155,7 +157,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
         geometry.forEach((g) => {
           if (g.dirty) {
-            const mesh = worldGeometry.get(g.id);
+            const mesh = worldGeometry.current.get(g.id);
             if (g.type === "line_list") {
               if (!mesh) {
                 const material = new LineBasicMaterial({
@@ -172,7 +174,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                 lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
 
                 root.add(lines);
-                worldGeometry.set(g.id, lines);
+                worldGeometry.current.set(g.id, lines);
               } else {
                 mesh.geometry.setFromPoints(g.points as Vector3[]);
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
@@ -226,7 +228,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                   1.0 / pixelScale
                 );
                 root.add(sprite);
-                worldGeometry.set(g.id, sprite);
+                worldGeometry.current.set(g.id, sprite);
               } else {
                 mesh.material = spriteMaterial;
               }
@@ -246,7 +248,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                 lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
 
                 root.add(lines);
-                worldGeometry.set(g.id, lines);
+                worldGeometry.current.set(g.id, lines);
               } else {
                 mesh.geometry.setFromPoints(g.points as Vector3[]);
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
@@ -262,12 +264,12 @@ export function GeometryLayer(props: IGeometryLayer) {
           }
         });
 
-        const oldGeoIds = [...worldGeometry.keys()];
+        const oldGeoIds = [...worldGeometry.current.keys()];
         const newGeoIds = new Set(geometry.map((g) => g.id));
         const toRemove = oldGeoIds.filter((id) => !newGeoIds.has(id));
         toRemove.forEach((id) => {
-          root.remove(defined(worldGeometry.get(id)));
-          worldGeometry.delete(id);
+          root.remove(defined(worldGeometry.current.get(id)));
+          worldGeometry.current.delete(id);
         });
         startTransition(() => {
           setCubesData(cubes);
@@ -276,16 +278,19 @@ export function GeometryLayer(props: IGeometryLayer) {
         })
       }
     );
+    return () => {
+      unsubscribe();
+    };
   }, []);
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group>
         <primitive object={root} />
         {cubesData.length > 0 ? (
-          <InstancedGeometry instances={cubesData} key={geoKey} />
+          <InstancedGeometry instances={cubesData} />
         ) : null}
         {spheresData.length > 0 ? (
-          <InstancedGeometry instances={spheresData} key={geoKey} />
+          <InstancedGeometry instances={spheresData} />
         ) : null}
       </group>
       {children}

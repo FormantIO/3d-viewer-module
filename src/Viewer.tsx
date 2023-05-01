@@ -31,21 +31,22 @@ export function Viewer() {
         }
       }
       setAuthenticated(true);
+
+      FormantApp.addModuleConfigurationListener((config) => {
+        const parsedConfig = JSON.parse(
+          config.configuration
+        ) as Viewer3DConfiguration;
+        if (!checkConfiguration(parsedConfig)) {
+          setConfiguration(undefined);
+          return;
+        }
+        setConfiguration(parsedConfig);
+      });
+      FormantApp.addModuleDataListener((event) => {
+        const d = new Date(event.time);
+        universeData.setTime(d);
+      });
     })();
-    FormantApp.addModuleConfigurationListener((config) => {
-      const parsedConfig = JSON.parse(
-        config.configuration
-      ) as Viewer3DConfiguration;
-      if (!checkConfiguration(parsedConfig)) {
-        setConfiguration(undefined);
-        return;
-      }
-      setConfiguration(parsedConfig);
-    });
-    FormantApp.addModuleDataListener((event) => {
-      const d = new Date(event.time);
-      universeData.setTime(d);
-    });
   }, []);
 
   const checkConfiguration = (config: Viewer3DConfiguration) => {
