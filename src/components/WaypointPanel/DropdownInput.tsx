@@ -18,9 +18,8 @@ export const DropdownInput = forwardRef<any, Props>(
             onChange && onChange(e);
           }}
         >
-          <option value={0}>Select ...</option>
           {content.map((item, idx) => (
-            <option value={idx + 1} key={idx}>
+            <option value={idx} key={idx}>
               {item}
             </option>
           ))}

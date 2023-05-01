@@ -101,7 +101,7 @@ export const PropertyPanel: React.FC<Props> = ({
             content={enumContent}
             onChange={(e) => {
               if (selectedWaypoint === null) return;
-              const idx = parseInt(e.target.value) - 1;
+              const idx = parseInt(e.target.value);
               store.waypoints[selectedWaypoint][item.propertyName] = [
                 idx,
                 enumContent[idx],
@@ -230,9 +230,13 @@ export const PropertyPanel: React.FC<Props> = ({
           } else if (enumDefault !== undefined) {
             c[0] = enumLists.map((el) => el.enumList).indexOf(enumDefault);
             c[1] = enumDefault;
+            if (c[0] === -1) {
+              c[0] = 0;
+              c[1] = enumLists[0].enumList;
+            }
           }
           store.waypoints[selectedWaypoint][item.propertyName] = c;
-          elements[idx].current!.value = (c[0] + 1).toString();
+          elements[idx].current!.value = c[0].toString();
         }
       });
     }
