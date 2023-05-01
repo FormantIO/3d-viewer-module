@@ -364,6 +364,7 @@ const Sidebar = ({
                 isLastChild={false}
                 isSelectedMap={false}
                 layerVisible={true}
+                id="device-title"
               >
                 <LayerTitle>
                   <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
@@ -377,7 +378,9 @@ const Sidebar = ({
                 isChild={true}
                 isLastChild={true}
                 isSelectedMap={false}
-                layerVisible={true}>
+                layerVisible={true}
+                id="device-name"
+              >
                 <LayerTitle>
                   <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
                     {deviceName}
@@ -403,7 +406,7 @@ const Sidebar = ({
             return (
               <>
                 <LayerRow
-                  key={c.id}
+                  key={c.id + c.name}
                   hasChildren={hasChildren(c)}
                   isChild={isChild(c)}
                   isLastChild={isLastChild(c)}
