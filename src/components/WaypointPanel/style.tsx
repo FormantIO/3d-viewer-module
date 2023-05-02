@@ -293,11 +293,7 @@ export const LoadingBarContainer = styled.div`
   font-family: Inter;
   font-size: 14px;
   text-align: center;
-
-  & > p {
-    padding: 0 10px;
-  }
-
+  pointer-events: none;
   & > div {
     position: absolute;
     top: 0;
@@ -336,5 +332,24 @@ export const LoadingBarContainer = styled.div`
                 ? FormantColors.green
                 : FormantColors.red};
           `}
+  }
+
+  & > p {
+    padding: 0 10px;
+  }
+
+  & > span {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: ${FormantColors.steel02};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    pointer-events: all;
   }
 `;
