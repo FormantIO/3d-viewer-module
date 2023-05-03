@@ -103,10 +103,12 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
           // traverse all children except axis and targetGroup
           [...mapGroup.children, ...visualizationsGroup.children].forEach((child: THREE.Object3D) => {
             if (child.name !== 'axis' && child.visible) {
-              const childBox = new THREE.Box3();
-              childBox.setFromObject(child);
-              tempBox.union(childBox);
-
+              const meshNames = child.children.map(e=>e.name);
+              if(!meshNames.includes('waypoints-plane')){
+               const childBox = new THREE.Box3();
+               childBox.setFromObject(child);
+               tempBox.union(childBox);
+             }
             }
           });
           box.copy(tempBox);
