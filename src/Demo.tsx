@@ -46,14 +46,14 @@ export function Demo() {
               treePath={[0, 0]}
               type={LayerType.AXIS}
             />
-            <MapLayer
+            {/* <MapLayer
               name="Map"
               latitude={37.6713541}
               longitude={-97.20016869}
               mapType="Satellite"
               size={400}
               treePath={[0, 2]}
-            />
+            /> */}
             <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",

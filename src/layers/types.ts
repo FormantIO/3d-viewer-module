@@ -24,12 +24,14 @@ export enum PROPERTY_TYPE {
   BOOLEAN = "Boolean",
   STRING = "String",
   ENUM = "Enum",
+  MEATADATA = "Metadata",
 }
 
 export type INPUT_TYPE =
   | PROPERTY_TYPE.FLOAT
   | PROPERTY_TYPE.INTEGER
-  | PROPERTY_TYPE.STRING;
+  | PROPERTY_TYPE.STRING
+  | PROPERTY_TYPE.MEATADATA;
 
 export enum SENDING_STATUS {
   NONE = "not sent yet",

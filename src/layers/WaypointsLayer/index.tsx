@@ -105,7 +105,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <mesh
-        name="plane"
+        name="waypoints-plane"
         onPointerDown={addNewWaypoint}
         ref={plane}
         visible={false}

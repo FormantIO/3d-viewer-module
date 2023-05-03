@@ -98,7 +98,11 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
 
   return (
     <Container>
-      <LoadingBar sending={sending} />
+      <LoadingBar
+        sending={sending}
+        setSending={setSending}
+        isWaypointPanelVisible={isWaypointPanelVisible}
+      />
       <ToggleIcon controlsStates={controlsStates} hasPathLayer={hasPathLayer} />
 
       {isWaypointPanelVisible && (
@@ -137,9 +141,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
               >
                 <Button
                   variant="contained"
-                  onClick={() => {
-                    if (sending === SENDING_STATUS.NONE) setShowCancel(true);
-                  }}
+                  onClick={() => setShowCancel(true)}
                   disabled={disableCancelBtn}
                 >
                   Cancel
