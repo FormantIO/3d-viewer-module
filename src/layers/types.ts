@@ -16,7 +16,6 @@ export interface IUniverseLayerProps {
 export enum PathType {
   STATIC = "Static",
   DYNAMIC = "Dynamic",
-  HYBRID = "Hybrid",
 }
 
 export enum PROPERTY_TYPE {

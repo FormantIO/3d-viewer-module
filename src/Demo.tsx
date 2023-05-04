@@ -67,7 +67,6 @@ export function Demo() {
                 "walter.localization",
                 "localization"
               )}
-              pathType={PathType.STATIC}
             />
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
@@ -89,7 +88,7 @@ export function Demo() {
               decayTime={1}
               treePath={[1, 2]}
             />
-            <WaypointsLayer pathType={PathType.STATIC} />
+            <WaypointsLayer />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
         </LayerContext.Provider>

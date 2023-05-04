@@ -318,7 +318,7 @@
             "title": "Path Type",
             "type": "string",
             "description": "Select the type of path width",
-            "enum": ["Static", "Dynamic", "Hybrid"],
+            "enum": ["Static", "Dynamic"],
             "default": "Dynamic"
           },
           "pathWidth": {
