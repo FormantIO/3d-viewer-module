@@ -74,17 +74,19 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     arrowGroupRef.current.scale.setScalar(scale);
   });
 
+  const isPivotVisible = selectedWaypoint === pointIndex && isWaypointEditing;
+
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       <PivotControls
         ref={pivotRef}
-        visible={selectedWaypoint === pointIndex && isWaypointEditing}
+        visible={isPivotVisible}
         lineWidth={6}
         axisColors={["#EA719D", "#2EC495", "#F9C36E"]}
         hoveredColor={"#18D2FF"}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
-        offset={[0, 0, 0.01]}
+        offset={[0, 0, isPivotVisible ? 0.02 : -1]}
         anchor={[0, 0, 0]}
         scale={100}
         matrix={matrix}
@@ -131,12 +133,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         }}
       >
         <group ref={targetRef}>
-          <mesh
-            name="circle"
-            onClick={onClick}
-            position-z={0.05}
-            renderOrder={2}
-          >
+          <mesh name="circle" onClick={onClick} renderOrder={2}>
             <circleGeometry args={[0.38, 36]} />
             <circleMaterial
               args={[
@@ -156,7 +153,6 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
           rotation={[0, 0, -Math.PI / 2]}
           onClick={onClick}
           scale={1.2}
-          position-z={0.05}
           renderOrder={2}
         >
           <shapeGeometry args={[arrowShape]} />

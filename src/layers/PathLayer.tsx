@@ -71,6 +71,8 @@ export const PathLayer = (props: ILocalPathProps) => {
             lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth}
             color={FormantColors.blue}
             worldUnits={pathType === PathType.STATIC}
+            transparent
+            opacity={0.5}
           />
         )}
       </group>

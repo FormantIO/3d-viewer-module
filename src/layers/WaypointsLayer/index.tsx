@@ -109,7 +109,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         onPointerDown={addNewWaypoint}
         ref={plane}
         visible={false}
-        position-z={-0.1 - pathWidth / 10}
+        // position-z={-0.1 - pathWidth / 10}
       >
         <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
