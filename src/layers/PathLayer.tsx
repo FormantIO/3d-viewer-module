@@ -18,7 +18,7 @@ interface ILocalPathProps extends IUniverseLayerProps {
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource, pathWidth = 0.5, pathType = PathType.DYNAMIC } = props;
+  const { dataSource, pathWidth = 0.5, pathType = PathType.STATIC } = props;
   const {
     state: { hasPath },
   } = useControlsContext();
