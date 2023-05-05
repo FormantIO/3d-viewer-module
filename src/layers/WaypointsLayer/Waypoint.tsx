@@ -86,7 +86,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         hoveredColor={"#18D2FF"}
         activeAxes={[true, true, false]}
         rotation={[0, 0, Math.PI / 2]}
-        offset={[0, 0, isPivotVisible ? 0.02 : -1]}
+        offset={[isPivotVisible ? 0 : 10e6, 0, 0.02]}
         anchor={[0, 0, 0]}
         scale={100}
         matrix={matrix}

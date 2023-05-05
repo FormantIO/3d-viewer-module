@@ -92,7 +92,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
         points={waypoints.map(({ translation: { x, y, z } }) => [
           x,
           y,
-          z + 0.01,
+          z + 0.005,
         ])}
         lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
         depthTest={false}
