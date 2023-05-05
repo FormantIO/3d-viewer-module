@@ -211,7 +211,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       invalidate()
       setTimeout(() => {
         reset();
-      }, 250);
+      }, 25);
     }
   }, [size, clip, fit, observe, camera, distance])
 

@@ -26,7 +26,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     state: { isWaypointEditing, hasWaypointsPath },
   } = useControlsContext();
   const {
-    pathWidth = 2.5,
+    pathWidth = 0.25,
     pathType = PathType.DYNAMIC,
     commandName = "send_mission_waypoints",
   } = props;
@@ -109,7 +109,6 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
         onPointerDown={addNewWaypoint}
         ref={plane}
         visible={false}
-        position-z={-0.1 - pathWidth / 10}
       >
         <planeGeometry args={[1000, 1000]} />
         <meshStandardMaterial
