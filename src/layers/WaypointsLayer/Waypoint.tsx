@@ -151,7 +151,6 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         <mesh
           name="arrow"
           rotation={[0, 0, -Math.PI / 2]}
-          onClick={onClick}
           scale={1.2}
           renderOrder={2}
         >
