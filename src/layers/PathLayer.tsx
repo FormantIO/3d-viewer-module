@@ -18,7 +18,7 @@ interface ILocalPathProps extends IUniverseLayerProps {
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource, pathWidth = 0.5, pathType = PathType.STATIC } = props;
+  const { dataSource, pathWidth = 2.5, pathType = PathType.STATIC } = props;
   const {
     state: { hasPath },
   } = useControlsContext();
@@ -68,11 +68,12 @@ export const PathLayer = (props: ILocalPathProps) => {
         {points.length > 0 && (
           <Line
             points={points}
-            lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth}
+            lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth / 10}
             color={FormantColors.blue}
             worldUnits={pathType === PathType.STATIC}
             transparent
             opacity={0.5}
+            renderOrder={1}
           />
         )}
       </group>

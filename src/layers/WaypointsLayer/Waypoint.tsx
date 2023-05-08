@@ -68,7 +68,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     const factor = height > 600 ? 25 : 25 * (height / 600);
     let scale = groupRef.current.position.distanceTo(camera.position) / factor;
 
-    if (pathType === PathType.STATIC) scale = (pathWidth * 55) / factor;
+    if (pathType === PathType.STATIC) scale = (pathWidth * 5.5) / factor;
 
     targetRef.current.scale.setScalar(scale);
     arrowGroupRef.current.scale.setScalar(scale);
@@ -92,6 +92,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         matrix={matrix}
         fixed
         autoTransform={false}
+        depthTest={false}
         onDragStart={() => {
           if (!controls) return;
           (controls as any).enabled = false;
