@@ -94,7 +94,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
           y,
           z + 0.005,
         ])}
-        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
+        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth! / 10}
         depthTest={false}
         worldUnits={pathType === PathType.STATIC}
         renderOrder={1}
@@ -104,8 +104,12 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
       />
       <Line
         ref={dashedLine}
-        points={waypoints.map(({ translation: { x, y, z } }) => [x, y, z])}
-        lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth}
+        points={waypoints.map(({ translation: { x, y, z } }) => [
+          x,
+          y,
+          z - 0.01,
+        ])}
+        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
         depthTest={false}
         worldUnits={pathType === PathType.STATIC}
         renderOrder={1}
