@@ -68,7 +68,7 @@ export const PathLayer = (props: ILocalPathProps) => {
         {points.length > 0 && (
           <Line
             points={points}
-            lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth / 10}
+            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
             color={FormantColors.blue}
             worldUnits={pathType === PathType.STATIC}
             transparent

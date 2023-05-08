@@ -82,8 +82,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
     const factor = height > 600 ? 25 : 25 * (height / 600);
     let scale =
       dashedLine.current.position.distanceTo(camera.position) / factor;
-    dashedLine.current.material.dashScale =
-      (pathType === PathType.STATIC ? 1.5 : 4) / scale;
+    dashedLine.current.material.dashScale = 1.5 / scale;
   });
 
   if (waypoints.length === 0) return <></>;
@@ -110,7 +109,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
           y,
           z - 0.01,
         ])}
-        lineWidth={pathType === PathType.DYNAMIC ? 10 : pathWidth! / 10}
+        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
         depthTest={false}
         worldUnits={pathType === PathType.STATIC}
         renderOrder={1}
