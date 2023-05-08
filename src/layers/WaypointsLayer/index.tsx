@@ -26,7 +26,7 @@ export const WaypointsLayer = (props: IWaypointsProps) => {
     state: { isWaypointEditing, hasWaypointsPath },
   } = useControlsContext();
   const {
-    pathWidth = 0.25,
+    pathWidth = 2.5,
     pathType = PathType.DYNAMIC,
     commandName = "send_mission_waypoints",
   } = props;
