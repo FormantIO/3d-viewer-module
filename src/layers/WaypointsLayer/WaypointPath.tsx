@@ -94,7 +94,7 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
           y,
           z + 0.005,
         ])}
-        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth! / 10}
+        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth!}
         depthTest={false}
         worldUnits={pathType === PathType.STATIC}
         renderOrder={1}

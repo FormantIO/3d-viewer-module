@@ -137,6 +137,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
           <mesh name="circle" onClick={onClick} renderOrder={2}>
             <circleGeometry args={[0.38, 36]} />
             <circleMaterial
+              depthTest={false}
               args={[
                 selectedWaypoint !== pointIndex
                   ? FormantColors.purple
