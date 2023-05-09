@@ -58,10 +58,12 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     return new THREE.Shape(points);
   }, []);
 
-  const onClick = (e: ThreeEvent<MouseEvent>) => {
+  const onPointerDown = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     updateState({ selectedWaypoint: pointIndex });
   };
+
+  const isPivotVisible = selectedWaypoint === pointIndex && isWaypointEditing;
 
   useFrame(({ camera, size: { height } }) => {
     if (!targetRef.current || !groupRef.current) return;
@@ -72,9 +74,10 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
 
     targetRef.current.scale.setScalar(scale);
     arrowGroupRef.current.scale.setScalar(scale);
-  });
 
-  const isPivotVisible = selectedWaypoint === pointIndex && isWaypointEditing;
+    targetRef.current.position.z = arrowGroupRef.current.position.z =
+      pathWidth / 2 + (isPivotVisible ? 0.01 : 0);
+  });
 
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
@@ -134,10 +137,9 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         }}
       >
         <group ref={targetRef}>
-          <mesh name="circle" onClick={onClick} renderOrder={2}>
+          <mesh name="circle" onPointerDown={onPointerDown} renderOrder={2}>
             <circleGeometry args={[0.38, 36]} />
             <circleMaterial
-              depthTest={false}
               args={[
                 selectedWaypoint !== pointIndex
                   ? FormantColors.purple
