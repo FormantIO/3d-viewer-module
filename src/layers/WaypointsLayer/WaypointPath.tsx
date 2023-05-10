@@ -8,6 +8,7 @@ import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
 import { useControlsContext } from "../common/ControlsContext";
 import { Euler, Quaternion, Vector3 } from "three";
+import { StaticLine } from "./StaticLine";
 
 interface Props {
   pathType?: PathType;
@@ -35,7 +36,10 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
     }
 
     let p = e.point;
-    const index = true ? e.faceIndex! : parseInt(e.eventObject.name);
+    const index =
+      pathType === PathType.DYNAMIC
+        ? e.faceIndex!
+        : parseInt(e.eventObject.name);
     const v = (e: IVector3) => new Vector3(e.x, e.y, 0);
     const prev = v(waypoints[index].translation);
     const next = v(waypoints[index + 1].translation);
@@ -86,22 +90,31 @@ export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
   });
 
   if (waypoints.length === 0) return <></>;
+
   return (
     <>
-      <Line
-        points={waypoints.map(({ translation: { x, y, z } }) => [
-          x,
-          y,
-          z + 0.005,
-        ])}
-        lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth!}
-        depthTest={false}
-        worldUnits={pathType === PathType.STATIC}
-        renderOrder={1}
-        color={FormantColors.blue}
-        onPointerDown={addMiddleWaypoint}
-        visible={false}
-      />
+      {pathType === PathType.DYNAMIC ? (
+        <Line
+          points={waypoints.map(({ translation: { x, y, z } }) => [
+            x,
+            y,
+            z + 0.005,
+          ])}
+          lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth! * 2}
+          renderOrder={1}
+          color={FormantColors.blue}
+          onPointerDown={addMiddleWaypoint}
+          visible={false}
+        />
+      ) : (
+        <StaticLine
+          points={waypoints}
+          pathWidth={pathWidth!}
+          color={FormantColors.blue}
+          onPointerDown={addMiddleWaypoint}
+          visible={false}
+        />
+      )}
       <Line
         ref={dashedLine}
         points={waypoints.map(({ translation: { x, y, z } }) => [
