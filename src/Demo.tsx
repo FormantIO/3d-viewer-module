@@ -1,7 +1,6 @@
 import { Universe } from "./layers/common/Universe";
 import { MarkerLayer } from "./layers/MarkerLayer";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
-import { DataVisualizationLayer } from "./layers/DataVisualizationLayer";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
