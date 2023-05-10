@@ -70,13 +70,14 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
     const factor = height > 600 ? 25 : 25 * (height / 600);
     let scale = groupRef.current.position.distanceTo(camera.position) / factor;
 
-    if (pathType === PathType.STATIC) scale = (pathWidth * 55) / factor;
+    if (pathType === PathType.STATIC) {
+      scale = (pathWidth * 55) / factor;
+      targetRef.current.position.z = arrowGroupRef.current.position.z =
+        pathWidth / 2 + (isPivotVisible ? 0.01 : 0);
+    }
 
     targetRef.current.scale.setScalar(scale);
     arrowGroupRef.current.scale.setScalar(scale);
-
-    targetRef.current.position.z = arrowGroupRef.current.position.z =
-      pathWidth / 2 + (isPivotVisible ? 0.01 : 0);
   });
 
   return (
