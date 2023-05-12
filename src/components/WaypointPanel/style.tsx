@@ -33,6 +33,16 @@ export const PanelContainer = styled.div`
   color: white;
   pointer-events: all;
 
+  & > p.description {
+    font-family: Inter;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    padding: 8px;
+    transform: translate(0, -50%);
+  }
+
   /* Delete Button */
   & > button {
     width: 100%;

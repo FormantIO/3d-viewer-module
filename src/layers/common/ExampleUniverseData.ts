@@ -67,7 +67,7 @@ export class ExampleUniverseData implements IUniverseData {
         worldToLocal: {
           translation: {
             x: 0,
-            y: 0,
+            y: -2,
             z: 0,
           },
           rotation: {
@@ -106,8 +106,21 @@ export class ExampleUniverseData implements IUniverseData {
           },
           {
             translation: {
-              x: 5.3545788855933396,
+              x: 2.3545788855933396,
               y: 1.1870991935927204,
+              z: 0.154354741654536,
+            },
+            rotation: {
+              x: -0.0007247281610034406,
+              y: 0.006989157758653164,
+              z: 0.9746800661087036,
+              w: 0.2234935611486435,
+            },
+          },
+          {
+            translation: {
+              x: -0.545788855933396,
+              y: -1.1870991935927204,
               z: 0.154354741654536,
             },
             rotation: {

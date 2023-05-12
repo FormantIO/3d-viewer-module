@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { IUniverseLayerProps, PathType } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -10,6 +10,9 @@ import { transformMatrix } from "./utils/transformMatrix";
 import { FormantColors } from "./utils/FormantColors";
 import { Line } from "@react-three/drei";
 import { useControlsContext } from "./common/ControlsContext";
+import { PathGeometry } from "./utils/PathGeometry";
+import { extend } from "@react-three/fiber";
+extend({ PathGeometry });
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -18,7 +21,7 @@ interface ILocalPathProps extends IUniverseLayerProps {
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource, pathWidth = 2.5, pathType = PathType.STATIC } = props;
+  const { dataSource, pathWidth = 0.25, pathType = PathType.STATIC } = props;
   const {
     state: { hasPath },
   } = useControlsContext();
@@ -66,13 +69,27 @@ export const PathLayer = (props: ILocalPathProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group ref={groupRef} visible={hasPath}>
         {points.length > 0 && (
-          <Line
-            points={points}
-            lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
-            color={FormantColors.blue}
-            worldUnits={pathType === PathType.STATIC}
-            renderOrder={1}
-          />
+          <>
+            {pathType === PathType.STATIC ? (
+              <mesh>
+                <pathGeometry args={[points, pathWidth, points.length]} />
+                <meshBasicMaterial
+                  transparent
+                  opacity={0.5}
+                  color={FormantColors.blue}
+                />
+              </mesh>
+            ) : (
+              <Line
+                points={points}
+                lineWidth={18}
+                color={FormantColors.blue}
+                worldUnits={false}
+                renderOrder={1}
+                alphaTest={0.3}
+              />
+            )}
+          </>
         )}
       </group>
     </DataVisualizationLayer>

@@ -244,64 +244,76 @@ export const PropertyPanel: React.FC<Props> = ({
 
   return (
     <>
-      {waypoints.length > 0 && (
-        <PanelContainer>
-          <Typography>HEADING</Typography>
+      <PanelContainer>
+        {waypoints.length > 0 ? (
+          <>
+            <Typography>HEADING</Typography>
 
-          <TextInput
-            ref={angleRef}
-            label={"Orientation"}
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => {
-              if (selectedWaypoint === null) return;
-              let v = parseFloat(getTaregt(angleRef).value);
-              v = isNaN(v) ? 0 : v;
-              const euler = new THREE.Euler(0, 0, THREE.MathUtils.degToRad(v));
-              const { x, y, z, w } = new THREE.Quaternion().setFromEuler(euler);
+            <TextInput
+              ref={angleRef}
+              label={"Orientation"}
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => {
+                if (selectedWaypoint === null) return;
+                let v = parseFloat(getTaregt(angleRef).value);
+                v = isNaN(v) ? 0 : v;
+                const euler = new THREE.Euler(
+                  0,
+                  0,
+                  THREE.MathUtils.degToRad(v)
+                );
+                const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
+                  euler
+                );
 
-              const newPoints = [...waypoints];
-              newPoints[selectedWaypoint].rotation = { x, y, z, w };
-              setWaypoints(newPoints);
-              store.waypoints[selectedWaypoint].pose.rotation = {
-                x,
-                y,
-                z,
-                w,
-              };
-            }}
-          />
+                const newPoints = [...waypoints];
+                newPoints[selectedWaypoint].rotation = { x, y, z, w };
+                setWaypoints(newPoints);
+                store.waypoints[selectedWaypoint].pose.rotation = {
+                  x,
+                  y,
+                  z,
+                  w,
+                };
+              }}
+            />
 
-          <Typography marginTop={"20px"}>POSITION</Typography>
-          <TextInput
-            ref={xPosRef}
-            label="X-axis"
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => posHandler("x")}
-          />
-          <TextInput
-            ref={yPosRef}
-            label="Y-axis"
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => posHandler("y")}
-          />
+            <Typography marginTop={"20px"}>POSITION</Typography>
+            <TextInput
+              ref={xPosRef}
+              label="X-axis"
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => posHandler("x")}
+            />
+            <TextInput
+              ref={yPosRef}
+              label="Y-axis"
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => posHandler("y")}
+            />
 
-          {waypointsProperties.length > 0 && (
-            <Typography marginTop={"20px"}>PROPERTIES</Typography>
-          )}
+            {waypointsProperties.length > 0 && (
+              <Typography marginTop={"20px"}>PROPERTIES</Typography>
+            )}
 
-          {createPropertyFields()}
+            {createPropertyFields()}
 
-          <Button
-            variant="contained"
-            onClick={() => {
-              if (waypoints.length === 0) return;
-              setShowDelete(true);
-            }}
-          >
-            Delete
-          </Button>
-        </PanelContainer>
-      )}
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (waypoints.length === 0) return;
+                setShowDelete(true);
+              }}
+            >
+              Delete
+            </Button>
+          </>
+        ) : (
+          <p className="description">
+            "Click Shift + Left click on the scene to drop a pin"
+          </p>
+        )}
+      </PanelContainer>
 
       {showDelete && (
         <Modal
