@@ -12,7 +12,7 @@ import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { OccupancyGridLayer, PathLayer, PathType } from "./lib";
-import { WaypointsLayer } from "./layers/WaypointsLayer";
+import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 
@@ -66,8 +66,6 @@ export function Demo() {
                 "walter.localization",
                 "localization"
               )}
-              pathType={PathType.STATIC}
-              pathWidth={0.25}
             />
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
@@ -89,7 +87,7 @@ export function Demo() {
               decayTime={1}
               treePath={[1, 2]}
             />
-            <WaypointsLayer pathType={PathType.STATIC} pathWidth={0.25} />
+            <MissionPlanningLayer />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
         </LayerContext.Provider>

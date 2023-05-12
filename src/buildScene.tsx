@@ -20,7 +20,7 @@ import { OccupancyGridLayer } from "./layers/OccupancyGridLayer";
 import { PathLayer } from "./layers/PathLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { cloneElement } from "react";
-import { WaypointsLayer } from "./layers/WaypointsLayer";
+import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { GLTFLayer } from "./layers/GLTFLayer";
@@ -199,11 +199,11 @@ export function buildScene(
     />
   );
 
-  if (config.waypointMission && config.waypointMission!.length > 0) {
-    const { pathWidth, pathType, commandName } = config.waypointMission[0];
+  if (config.missionPlanning && config.missionPlanning!.length > 0) {
+    const { pathWidth, pathType, commandName } = config.missionPlanning[0];
     deviceLayers.push(
-      <WaypointsLayer
-        key="waypointsLayer"
+      <MissionPlanningLayer
+        key="missionPlanningLayer"
         pathType={pathType}
         pathWidth={pathWidth}
         commandName={commandName}

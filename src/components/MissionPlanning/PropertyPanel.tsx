@@ -11,12 +11,12 @@ import { PROPERTY_TYPE } from "../../layers/types";
 import { BooleanToggle } from "./BooleanToggle";
 
 interface Props {
-  waypointsProperties: WaypointPropertyType[];
+  waypointProperties: WaypointPropertyType[];
   controlsStates: ControlsContextProps;
 }
 
 export const PropertyPanel: React.FC<Props> = ({
-  waypointsProperties,
+  waypointProperties,
   controlsStates,
 }) => {
   const {
@@ -30,7 +30,7 @@ export const PropertyPanel: React.FC<Props> = ({
   const [showDelete, setShowDelete] = useState(false);
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
-  for (let i = 0; i < waypointsProperties!.length; ++i) {
+  for (let i = 0; i < waypointProperties!.length; ++i) {
     elements[i] = React.useRef<HTMLInputElement | HTMLSelectElement>(null!);
   }
   const angleRef = React.useRef<HTMLInputElement>(null!);
@@ -39,7 +39,7 @@ export const PropertyPanel: React.FC<Props> = ({
 
   const createPropertyFields = () => {
     const comps: any[] = [];
-    waypointsProperties!.forEach((item, idx) => {
+    waypointProperties!.forEach((item, idx) => {
       const { propertyType } = item;
       if (propertyType === PROPERTY_TYPE.STRING) {
         comps.push(
@@ -64,6 +64,8 @@ export const PropertyPanel: React.FC<Props> = ({
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
+            min={item.min}
+            max={item.max}
             type={
               propertyType === PROPERTY_TYPE.INTEGER
                 ? propertyType
@@ -159,8 +161,8 @@ export const PropertyPanel: React.FC<Props> = ({
       angleRef.current.value = "";
       xPosRef.current.value = "";
       yPosRef.current.value = "";
-      if (waypointsProperties.length > 0) {
-        waypointsProperties!.forEach(({ propertyType }, idx) => {
+      if (waypointProperties.length > 0) {
+        waypointProperties!.forEach(({ propertyType }, idx) => {
           if (
             propertyType === PROPERTY_TYPE.STRING ||
             propertyType === PROPERTY_TYPE.INTEGER
@@ -182,8 +184,8 @@ export const PropertyPanel: React.FC<Props> = ({
     xPosRef.current.value = pose.translation.x.toFixed(2);
     yPosRef.current.value = pose.translation.y.toFixed(2);
 
-    if (waypointsProperties!.length > 0) {
-      waypointsProperties!.forEach((item, idx) => {
+    if (waypointProperties!.length > 0) {
+      waypointProperties!.forEach((item, idx) => {
         if (item.propertyType === PROPERTY_TYPE.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v ? v : item.stringDefault || "";
@@ -244,64 +246,76 @@ export const PropertyPanel: React.FC<Props> = ({
 
   return (
     <>
-      {waypoints.length > 0 && (
-        <PanelContainer>
-          <Typography>HEADING</Typography>
+      <PanelContainer>
+        {waypoints.length > 0 ? (
+          <>
+            <Typography>HEADING</Typography>
 
-          <TextInput
-            ref={angleRef}
-            label={"Orientation"}
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => {
-              if (selectedWaypoint === null) return;
-              let v = parseFloat(getTaregt(angleRef).value);
-              v = isNaN(v) ? 0 : v;
-              const euler = new THREE.Euler(0, 0, THREE.MathUtils.degToRad(v));
-              const { x, y, z, w } = new THREE.Quaternion().setFromEuler(euler);
+            <TextInput
+              ref={angleRef}
+              label={"Orientation"}
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => {
+                if (selectedWaypoint === null) return;
+                let v = parseFloat(getTaregt(angleRef).value);
+                v = isNaN(v) ? 0 : v;
+                const euler = new THREE.Euler(
+                  0,
+                  0,
+                  THREE.MathUtils.degToRad(v)
+                );
+                const { x, y, z, w } = new THREE.Quaternion().setFromEuler(
+                  euler
+                );
 
-              const newPoints = [...waypoints];
-              newPoints[selectedWaypoint].rotation = { x, y, z, w };
-              setWaypoints(newPoints);
-              store.waypoints[selectedWaypoint].pose.rotation = {
-                x,
-                y,
-                z,
-                w,
-              };
-            }}
-          />
+                const newPoints = [...waypoints];
+                newPoints[selectedWaypoint].rotation = { x, y, z, w };
+                setWaypoints(newPoints);
+                store.waypoints[selectedWaypoint].pose.rotation = {
+                  x,
+                  y,
+                  z,
+                  w,
+                };
+              }}
+            />
 
-          <Typography marginTop={"20px"}>POSITION</Typography>
-          <TextInput
-            ref={xPosRef}
-            label="X-axis"
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => posHandler("x")}
-          />
-          <TextInput
-            ref={yPosRef}
-            label="Y-axis"
-            type={PROPERTY_TYPE.FLOAT}
-            onEnter={() => posHandler("y")}
-          />
+            <Typography marginTop={"20px"}>POSITION</Typography>
+            <TextInput
+              ref={xPosRef}
+              label="X-axis"
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => posHandler("x")}
+            />
+            <TextInput
+              ref={yPosRef}
+              label="Y-axis"
+              type={PROPERTY_TYPE.FLOAT}
+              onEnter={() => posHandler("y")}
+            />
 
-          {waypointsProperties.length > 0 && (
-            <Typography marginTop={"20px"}>PROPERTIES</Typography>
-          )}
+            {waypointProperties.length > 0 && (
+              <Typography marginTop={"20px"}>PROPERTIES</Typography>
+            )}
 
-          {createPropertyFields()}
+            {createPropertyFields()}
 
-          <Button
-            variant="contained"
-            onClick={() => {
-              if (waypoints.length === 0) return;
-              setShowDelete(true);
-            }}
-          >
-            Delete
-          </Button>
-        </PanelContainer>
-      )}
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (waypoints.length === 0) return;
+                setShowDelete(true);
+              }}
+            >
+              Delete
+            </Button>
+          </>
+        ) : (
+          <p className="description">
+            "Click Shift + Left click on the scene to drop a pin"
+          </p>
+        )}
+      </PanelContainer>
 
       {showDelete && (
         <Modal

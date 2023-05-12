@@ -7,7 +7,7 @@ import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { SENDING_STATUS } from "../../layers/types";
 import { Authentication, Device, Fleet } from "@formant/data-sdk";
-import { upload } from "./upload";
+import { upload } from "../../common/upload";
 import { PropertyPanel } from "./PropertyPanel";
 import { LoadingBar } from "./LoadingBar";
 
@@ -20,7 +20,10 @@ interface Props {
   config: Viewer3DConfiguration;
 }
 
-export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
+export const MissionPlanning: React.FC<Props> = ({
+  controlsStates,
+  config,
+}) => {
   const {
     waypoints,
     state: { isWaypointPanelVisible, commandName },
@@ -31,9 +34,9 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
   const [showCancel, setShowCancel] = useState(false);
   const [sending, setSending] = useState<SENDING_STATUS>(SENDING_STATUS.NONE);
 
-  const waypointsProperties: WaypointPropertyType[] =
-    config.waypointMission && config.waypointMission.length > 0
-      ? config.waypointMission![0].waypointsProperties || []
+  const waypointProperties: WaypointPropertyType[] =
+    config.missionPlanning && config.missionPlanning.length > 0
+      ? config.missionPlanning![0].waypointProperties || []
       : [];
 
   const hasPathLayer = config.visualizations
@@ -110,7 +113,7 @@ export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
           {sending !== SENDING_STATUS.SUCCESS ? (
             <>
               <PropertyPanel
-                waypointsProperties={waypointsProperties}
+                waypointProperties={waypointProperties}
                 controlsStates={controlsStates}
               />
 

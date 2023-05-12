@@ -17,7 +17,7 @@ import ZoomControls from "../../components/ZoomControls";
 import { LayerType } from "./LayerTypes";
 import { ControlsContext, useControlsContextStates } from "./ControlsContext";
 import { Bounds } from "./CustomBounds";
-import { WaypointPanel } from "../../components/WaypointPanel";
+import { MissionPlanning } from "../../components/MissionPlanning";
 import { PointSizeSlider } from "../../components/PcdSizeSlider";
 import styled from "styled-components";
 import { Viewer3DConfiguration } from "../../config";
@@ -254,7 +254,7 @@ export function Universe(props: IUniverseProps) {
         />
         <PointSizeSlider controlsStates={controlsStates} />
         {commandName && (
-          <WaypointPanel
+          <MissionPlanning
             controlsStates={controlsStates}
             config={props.config}
           />

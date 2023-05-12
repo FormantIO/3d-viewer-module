@@ -119,6 +119,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         gridMat.map = texture;
         gridMat.needsUpdate = true;
         gridMat.opacity = 0.5;
+        gridMat.depthTest = false;
         mesh.up = new Vector3(0, 0, 1);
 
         if (!mesh.visible && size) {

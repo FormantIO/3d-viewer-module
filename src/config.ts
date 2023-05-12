@@ -32,7 +32,7 @@ export type Viewer3DVisualization = {
     | "Marker array"
     | "Point cloud"
     | "Path"
-    | "Waypoints"
+    | "Mission Planning"
     | "Image"
     | "GLTF";
   positionIndicatorUseURDF?: boolean;
@@ -63,6 +63,8 @@ export type Viewer3DMap = {
 export type WaypointPropertyType = {
   propertyName: string;
   propertyType: PROPERTY_TYPE;
+  min?: number;
+  max?: number;
   floatDefault?: string;
   stringDefault?: string;
   integerDefault?: string;
@@ -74,13 +76,13 @@ export type Viewer3DMission = {
   commandName: string;
   pathType: PathType;
   pathWidth: number;
-  waypointsProperties: WaypointPropertyType[];
+  waypointProperties: WaypointPropertyType[];
 };
 
 export type Viewer3DConfiguration = {
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
-  waypointMission?: Viewer3DMission[];
+  missionPlanning?: Viewer3DMission[];
 };
 
 export function parseDataSource(
