@@ -302,12 +302,12 @@
         "required": ["visualizationType"]
       }
     },
-    "waypointMission": {
+    "missionPlanning": {
       "title": "Mission *",
       "type": "array",
       "items": {
         "type": "object",
-        "$formant.itemName": "waypointMission",
+        "$formant.itemName": "missionPlanning",
         "properties": {
           "commandName": {
             "title": "Command Name",
@@ -328,12 +328,12 @@
             "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
-          "waypointsProperties": {
+          "waypointProperties": {
             "title": "Add Properties",
             "type": "array",
             "items": {
               "type": "object",
-              "$formant.itemName": "waypointsProperties",
+              "$formant.itemName": "waypointProperties",
               "properties": {
                 "propertyType": {
                   "title": "Type",
