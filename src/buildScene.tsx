@@ -199,8 +199,8 @@ export function buildScene(
     />
   );
 
-  if (config.waypointMission && config.waypointMission!.length > 0) {
-    const { pathWidth, pathType, commandName } = config.waypointMission[0];
+  if (config.missionPlanning && config.missionPlanning!.length > 0) {
+    const { pathWidth, pathType, commandName } = config.missionPlanning[0];
     deviceLayers.push(
       <MissionPlanningLayer
         key="missionPlanningLayer"

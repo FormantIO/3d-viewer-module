@@ -11,12 +11,12 @@ import { PROPERTY_TYPE } from "../../layers/types";
 import { BooleanToggle } from "./BooleanToggle";
 
 interface Props {
-  waypointsProperties: WaypointPropertyType[];
+  waypointProperties: WaypointPropertyType[];
   controlsStates: ControlsContextProps;
 }
 
 export const PropertyPanel: React.FC<Props> = ({
-  waypointsProperties,
+  waypointProperties,
   controlsStates,
 }) => {
   const {
@@ -30,7 +30,7 @@ export const PropertyPanel: React.FC<Props> = ({
   const [showDelete, setShowDelete] = useState(false);
 
   const elements: React.RefObject<HTMLInputElement | HTMLSelectElement>[] = [];
-  for (let i = 0; i < waypointsProperties!.length; ++i) {
+  for (let i = 0; i < waypointProperties!.length; ++i) {
     elements[i] = React.useRef<HTMLInputElement | HTMLSelectElement>(null!);
   }
   const angleRef = React.useRef<HTMLInputElement>(null!);
@@ -39,7 +39,7 @@ export const PropertyPanel: React.FC<Props> = ({
 
   const createPropertyFields = () => {
     const comps: any[] = [];
-    waypointsProperties!.forEach((item, idx) => {
+    waypointProperties!.forEach((item, idx) => {
       const { propertyType } = item;
       if (propertyType === PROPERTY_TYPE.STRING) {
         comps.push(
@@ -161,8 +161,8 @@ export const PropertyPanel: React.FC<Props> = ({
       angleRef.current.value = "";
       xPosRef.current.value = "";
       yPosRef.current.value = "";
-      if (waypointsProperties.length > 0) {
-        waypointsProperties!.forEach(({ propertyType }, idx) => {
+      if (waypointProperties.length > 0) {
+        waypointProperties!.forEach(({ propertyType }, idx) => {
           if (
             propertyType === PROPERTY_TYPE.STRING ||
             propertyType === PROPERTY_TYPE.INTEGER
@@ -184,8 +184,8 @@ export const PropertyPanel: React.FC<Props> = ({
     xPosRef.current.value = pose.translation.x.toFixed(2);
     yPosRef.current.value = pose.translation.y.toFixed(2);
 
-    if (waypointsProperties!.length > 0) {
-      waypointsProperties!.forEach((item, idx) => {
+    if (waypointProperties!.length > 0) {
+      waypointProperties!.forEach((item, idx) => {
         if (item.propertyType === PROPERTY_TYPE.STRING) {
           const v = store.waypoints[selectedWaypoint][item.propertyName];
           elements[idx].current!.value = v ? v : item.stringDefault || "";
@@ -294,7 +294,7 @@ export const PropertyPanel: React.FC<Props> = ({
               onEnter={() => posHandler("y")}
             />
 
-            {waypointsProperties.length > 0 && (
+            {waypointProperties.length > 0 && (
               <Typography marginTop={"20px"}>PROPERTIES</Typography>
             )}
 

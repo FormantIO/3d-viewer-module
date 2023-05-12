@@ -34,9 +34,9 @@ export const MissionPlanning: React.FC<Props> = ({
   const [showCancel, setShowCancel] = useState(false);
   const [sending, setSending] = useState<SENDING_STATUS>(SENDING_STATUS.NONE);
 
-  const waypointsProperties: WaypointPropertyType[] =
-    config.waypointMission && config.waypointMission.length > 0
-      ? config.waypointMission![0].waypointsProperties || []
+  const waypointProperties: WaypointPropertyType[] =
+    config.missionPlanning && config.missionPlanning.length > 0
+      ? config.missionPlanning![0].waypointProperties || []
       : [];
 
   const hasPathLayer = config.visualizations
@@ -113,7 +113,7 @@ export const MissionPlanning: React.FC<Props> = ({
           {sending !== SENDING_STATUS.SUCCESS ? (
             <>
               <PropertyPanel
-                waypointsProperties={waypointsProperties}
+                waypointProperties={waypointProperties}
                 controlsStates={controlsStates}
               />
 
