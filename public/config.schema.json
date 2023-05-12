@@ -360,6 +360,26 @@
                   },
                   "$formant.visible.when": ["propertyType", "=", "Enum"]
                 },
+                "min": {
+                  "title": "Min",
+                  "type": "number",
+                  "default": 0,
+                  "$formant.visible.when": [
+                    "propertyType",
+                    "=",
+                    ["Integer", "Float"]
+                  ]
+                },
+                "max": {
+                  "title": "Max",
+                  "type": "number",
+                  "default": 10,
+                  "$formant.visible.when": [
+                    "propertyType",
+                    "=",
+                    ["Integer", "Float"]
+                  ]
+                },
                 "integerDefault": {
                   "title": "Default",
                   "type": "number",

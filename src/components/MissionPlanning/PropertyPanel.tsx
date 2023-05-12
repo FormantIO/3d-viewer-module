@@ -64,6 +64,8 @@ export const PropertyPanel: React.FC<Props> = ({
             key={idx}
             ref={elements[idx]}
             label={item.propertyName}
+            min={item.min}
+            max={item.max}
             type={
               propertyType === PROPERTY_TYPE.INTEGER
                 ? propertyType

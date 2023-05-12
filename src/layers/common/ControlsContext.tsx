@@ -1,6 +1,6 @@
 import { IPose } from "@formant/universe-core";
 import React from "react";
-import { WaypointData } from "../WaypointsLayer/Waypoint";
+import { WaypointData } from "../MissionPlanningLayer/Waypoint";
 
 interface StateProps {
   isWaypointPanelVisible: boolean;

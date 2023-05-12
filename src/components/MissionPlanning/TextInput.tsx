@@ -6,6 +6,8 @@ interface Props {
   label: string;
   value?: string;
   type?: INPUT_TYPE;
+  min?: number;
+  max?: number;
   onEnter?: () => void;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -13,7 +15,10 @@ interface Props {
 }
 
 export const TextInput = forwardRef<any, Props>(
-  ({ label, onChange, onEnter, value, type = "string" }, ref) => {
+  (
+    { label, onChange, onEnter, value, min, max, type = PROPERTY_TYPE.STRING },
+    ref
+  ) => {
     const divRef = React.useRef<HTMLDivElement>(null!);
     return (
       <TextInputContainer ref={divRef}>
@@ -26,11 +31,23 @@ export const TextInput = forwardRef<any, Props>(
             const t = divRef.current.childNodes[1] as HTMLInputElement;
             if (type === PROPERTY_TYPE.FLOAT) {
               const newValue = t.value.replace(/[^0-9.-]/g, "");
-              t.value = newValue;
+              t.value = (
+                parseFloat(newValue) > max!
+                  ? max
+                  : parseFloat(newValue) < min!
+                  ? min
+                  : newValue
+              )!.toString();
             }
             if (type === PROPERTY_TYPE.INTEGER) {
               const newValue = t.value.replace(/[^0-9-]/g, "");
-              t.value = newValue;
+              t.value = (
+                parseInt(newValue) > max!
+                  ? max
+                  : parseInt(newValue) < min!
+                  ? min
+                  : newValue
+              )!.toString();
             }
             onChange && onChange(e);
           }}

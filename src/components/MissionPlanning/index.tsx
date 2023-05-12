@@ -7,7 +7,7 @@ import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { SENDING_STATUS } from "../../layers/types";
 import { Authentication, Device, Fleet } from "@formant/data-sdk";
-import { upload } from "./upload";
+import { upload } from "../../common/upload";
 import { PropertyPanel } from "./PropertyPanel";
 import { LoadingBar } from "./LoadingBar";
 
@@ -20,7 +20,10 @@ interface Props {
   config: Viewer3DConfiguration;
 }
 
-export const WaypointPanel: React.FC<Props> = ({ controlsStates, config }) => {
+export const MissionPlanning: React.FC<Props> = ({
+  controlsStates,
+  config,
+}) => {
   const {
     waypoints,
     state: { isWaypointPanelVisible, commandName },

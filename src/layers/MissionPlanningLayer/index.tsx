@@ -17,7 +17,7 @@ interface IWaypointsProps extends IUniverseLayerProps {
   commandName?: string;
 }
 
-export const WaypointsLayer = (props: IWaypointsProps) => {
+export const MissionPlanningLayer = (props: IWaypointsProps) => {
   const {
     store,
     updateState,

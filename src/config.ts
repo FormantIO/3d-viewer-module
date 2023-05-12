@@ -63,6 +63,8 @@ export type Viewer3DMap = {
 export type WaypointPropertyType = {
   propertyName: string;
   propertyType: PROPERTY_TYPE;
+  min?: number;
+  max?: number;
   floatDefault?: string;
   stringDefault?: string;
   integerDefault?: string;

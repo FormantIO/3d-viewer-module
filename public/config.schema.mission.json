@@ -176,14 +176,14 @@
             "type": "string",
             "description": "Select the type of path width",
             "enum": ["Static", "Dynamic"],
-            "default": "Dynamic",
+            "default": "Static",
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pathWidth": {
             "type": "number",
             "title": "Path Width",
             "description": "Input a number between 0 to 10.",
-            "default": 2.5,
+            "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
           "telemetryStreamName": {
@@ -303,7 +303,7 @@
       }
     },
     "waypointMission": {
-      "title": "Mission",
+      "title": "* Mission *",
       "type": "array",
       "items": {
         "type": "object",
@@ -319,13 +319,13 @@
             "type": "string",
             "description": "Select the type of path width",
             "enum": ["Static", "Dynamic"],
-            "default": "Dynamic"
+            "default": "Static"
           },
           "pathWidth": {
             "type": "number",
             "title": "Path Width",
             "description": "Input a number between 0 to 10.",
-            "default": 2.5,
+            "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
           "waypointsProperties": {
