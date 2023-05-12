@@ -2,7 +2,7 @@ import React, { forwardRef, useRef } from "react";
 import { IPose } from "@formant/universe-core";
 import * as THREE from "three";
 import { extend, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import { PivotControls } from "./PivotControls";
+import { PivotControls } from "../objects/PivotControls";
 import { useControlsContext } from "../common/ControlsContext";
 import { FormantColors } from "../utils/FormantColors";
 import { CircleMaterial } from "../utils/CircleMaterial";

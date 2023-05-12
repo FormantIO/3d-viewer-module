@@ -8,7 +8,7 @@ import { ThreeEvent } from "@react-three/fiber";
 import { Waypoint } from "./Waypoint";
 import { useControlsContext } from "../common/ControlsContext";
 import { PathType } from "../types";
-import { WaypointPath } from "./WaypointPath";
+import { MissionPlanningPath } from "./MissionPlanningPath";
 
 interface IWaypointsProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -129,7 +129,7 @@ export const MissionPlanningLayer = (props: IWaypointsProps) => {
             pathWidth={pathWidth}
           />
         ))}
-        <WaypointPath pathType={pathType} pathWidth={pathWidth} />
+        <MissionPlanningPath pathType={pathType} pathWidth={pathWidth} />
       </group>
     </DataVisualizationLayer>
   );

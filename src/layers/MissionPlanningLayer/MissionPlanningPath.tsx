@@ -15,7 +15,10 @@ interface Props {
   pathWidth?: number;
 }
 
-export const WaypointPath: React.FC<Props> = ({ pathType, pathWidth }) => {
+export const MissionPlanningPath: React.FC<Props> = ({
+  pathType,
+  pathWidth,
+}) => {
   const {
     store,
     updateState,
