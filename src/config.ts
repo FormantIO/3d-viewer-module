@@ -40,6 +40,7 @@ export type Viewer3DVisualization = {
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
   pointCloudUseColors?: boolean;
+  pathOpacity?: number;
   pathType?: PathType;
   pathWidth?: number;
   imageFileId?: string;

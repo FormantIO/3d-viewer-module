@@ -67,22 +67,9 @@ export const MissionPlanning: React.FC<Props> = ({
         await device.sendCommand(commandName, fileID.toString())
       ).json();
 
-      let count = 0;
-      let isSuccess = false;
       const timer = window.setInterval(async () => {
-        if (count === 12) {
-          clearInterval(timer);
-          if (!isSuccess) {
-            setSending(SENDING_STATUS.FAIL);
-            updateState({
-              isWaypointEditing: true,
-            });
-          }
-        }
-
-        const getRes = await (await device.getCommand(sendRes.id)).json();
-        isSuccess = getRes.success ? true : false;
-        if (isSuccess) {
+        const res = await (await device.getCommand(sendRes.id)).json();
+        if (res.success === true) {
           clearInterval(timer);
           setSending(SENDING_STATUS.SUCCESS);
           updateState({
@@ -90,7 +77,13 @@ export const MissionPlanning: React.FC<Props> = ({
           });
         }
 
-        ++count;
+        if (res.success === false) {
+          clearInterval(timer);
+          setSending(SENDING_STATUS.FAIL);
+          updateState({
+            isWaypointEditing: true,
+          });
+        }
       }, 2000);
     }
   };
