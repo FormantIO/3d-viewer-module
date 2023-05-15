@@ -197,6 +197,8 @@ export const PropertyPanel: React.FC<Props> = ({
             ? v
             : item.integerDefault !== undefined
             ? item.integerDefault
+            : item.min! > 0
+            ? item.min
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
@@ -206,6 +208,8 @@ export const PropertyPanel: React.FC<Props> = ({
             ? v
             : item.floatDefault !== undefined
             ? item.floatDefault
+            : item.min! > 0
+            ? item.min
             : 0;
           store.waypoints[selectedWaypoint][item.propertyName] =
             elements[idx].current!.value;
