@@ -24,6 +24,7 @@ import { WaypointsLayer } from "./layers/WaypointsLayer";
 import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { GLTFLayer } from "./layers/GLTFLayer";
+import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -72,6 +73,7 @@ export function buildScene(
       );
     } else if (layer.mapType === "Occupancy") {
       const dataSource = parseDataSource(layer);
+      console.log("ttt here occupancy", layer, parseDataSource(layer));
       return (
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
@@ -104,6 +106,13 @@ export function buildScene(
       : PositioningBuilder.fixed(0, 0, 0);
 
     if (layer.visualizationType === "Position indicator") {
+      const dataSource = DataSourceBuilder.telemetry(
+        layer.transformLocalizationStream!,
+        undefined,
+        layer.telemetryLatestDataPoint
+      );
+
+      console.log("ttt here layer", layer, dataSource);
       if (layer.positionIndicatorUseURDF) {
         deviceLayers.push(
           <URDFLayer
@@ -111,7 +120,7 @@ export function buildScene(
             positioning={positioning}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "URDF"}
-            jointStatesDataSource={parseDataSource(layer)}
+            jointStatesDataSource={dataSource}
           />
         );
       } else {

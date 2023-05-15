@@ -99,12 +99,13 @@ export function URDFLayer(props: URDFLayerProps) {
     if (!layerData) return;
     const { deviceId } = layerData;
     let unsubscribe: CloseSubscription | undefined;
-
+    console.log("ttt", jointStatesDataSource, urdf);
     if (jointStatesDataSource && urdf) {
       unsubscribe = universeData.subscribeToJointState(
         deviceId,
         jointStatesDataSource,
         (data) => {
+          console.log("ttt", data);
           if (typeof data === "symbol") return;
 
           const jointStates = data as IJointState;
