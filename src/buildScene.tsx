@@ -24,6 +24,7 @@ import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { GLTFLayer } from "./layers/GLTFLayer";
+import PointOfInterstLayer from "./layers/PointOfInterestLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,
@@ -186,6 +187,19 @@ export function buildScene(
           fileId={layer.gltfFileId || ""}
         />
       );
+    } else if (layer.visualizationType === "Points of interest") {
+      const dataSource = parseDataSource(layer);
+      if (dataSource) {
+        deviceLayers.push(
+          <PointOfInterstLayer
+            key={"geo" + i + configHash}
+            positioning={positioning}
+            dataSource={dataSource as UniverseTelemetrySource}
+            treePath={[DEVICE_TREEPATH, i]}
+            name={layer.name || "Geometry"}
+          />
+        );
+      }
     } else {
       throw new Error("Unknown visualization type");
     }

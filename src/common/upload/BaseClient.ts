@@ -8,7 +8,6 @@ import {
   ResponseError,
   ResponseHeadersError,
 } from "./types";
-import AbortController from "abort-controller";
 import crossFetch from "cross-fetch";
 
 export interface IRequestInit {
