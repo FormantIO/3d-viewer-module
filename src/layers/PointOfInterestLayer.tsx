@@ -1,39 +1,53 @@
-import { Html } from "@react-three/drei";
-import { LayerType } from "./common/LayerTypes";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import { FC, useContext, useEffect, useMemo, useState, useRef } from "react";
-import { UniverseDataContext } from "./common/UniverseDataContext";
-import { LayerContext } from "./common/LayerContext";
-import { DataSourceBuilder } from "./utils/DataSourceBuilder";
-import { Fleet, IDataPoint, INumericSetEntry } from "@formant/data-sdk";
 import {
-  App,
-  aggregateByDateFunctions,
-  IStreamData,
-  IStreamTypeMap,
-} from "@formant/data-sdk";
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
+import { LayerContext } from "./common/LayerContext";
+import { Fleet } from "@formant/data-sdk";
+import { App, aggregateByDateFunctions, IStreamData } from "@formant/data-sdk";
 import { UniverseTelemetrySource } from "@formant/universe-core";
-import { Vector3, Mesh, BufferGeometry, Material } from "three";
-
+import { Vector3, Mesh, BufferGeometry } from "three";
+import LoadingIndicator from "../images/loading.png";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
 interface IPointOfInterstLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
 
 type Interval = "day" | "week" | "flock";
 
+type PointData = [number, IPosition];
+
+interface IPosition {
+  x: number;
+  y: number;
+  z: number;
+}
+
+interface IPeriod {
+  startDate: string | Date;
+  endDate: string | Date;
+}
+
+interface IFlockPeriod {
+  currentFlock: IPeriod;
+  previousFlock: IPeriod;
+}
+
 const queryPoints = async (
-  range: "week" | "day",
+  start: string,
+  end: string,
   streamName: string,
   deviceId: string
-) => {
-  const now = new Date(Date.now());
-  const start = aggregateByDateFunctions[range].start(now);
-  const end = new Date(Date.now()).toISOString();
-
+): Promise<PointData[]> => {
   const points = (await Fleet.queryTelemetry({
     names: [streamName],
-    start: (start as Date).toISOString(),
+    start,
     end,
     types: ["json"],
     deviceIds: [deviceId],
@@ -41,9 +55,7 @@ const queryPoints = async (
 
   if (points.length === 0 || points[0].points.length === 0) {
     App.showMessage("No data in current time interval");
-    throw new Error(
-      `No data was fount beteween ${start.toISOString()}, and ${end}`
-    );
+    throw new Error(`No data was fount beteween ${start}, and ${end}`);
   }
   //TODO: HANDLE TAGS
 
@@ -54,54 +66,75 @@ const queryPoints = async (
 
   //Data could change
   //Maybe add param for json path
-  const formatData = points[0].points.map((_, idx) => [
+  const formatData: PointData[] = points[0].points.map((_, idx) => [
     _[0],
-    dataPoints[idx].pose.pose,
+    dataPoints[idx].pose.pose.position,
   ]);
 
   return formatData;
 };
 
 const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
-  const { children, name, id, treePath, type, dataSource } = props;
-  const [points, setPoints] = useState([]);
-  const [active, setActive] = useState();
+  const { dataSource } = props;
+  const [points, setPoints] = useState<PointData[]>([]);
+  const [active, setActive] = useState<number>();
   const [dateInterval, setDateInterval] = useState<Interval>("day");
-
+  const [currentFlock, setCurrentFlock] = useState<IPeriod>();
   const layerData = useContext(LayerContext);
+
+  const handleSetActive = useCallback(
+    (_: number) => {
+      App.sendChannelData("localization-timestamp", _);
+      setActive(_);
+    },
+    [active]
+  );
 
   const pointsLayer = useMemo(() => {
     if (points.length === 0) return [];
 
     return points.map((_) => (
       <Point
-        setActive={() => setActive(_[0])}
+        key={_[0]}
+        setActive={() => handleSetActive(_[0])}
         active={active === _[0]}
-        position={new Vector3(_[1].position.x, _[1].position.y, 0)}
+        position={new Vector3(_[1].x, _[1].y, 0)}
       />
     ));
   }, [points, active]);
 
   useEffect(() => {
-    App.addChannelDataListener("active-date-interval", (e) => {});
+    App.addChannelDataListener("active-date-interval", (e) => {
+      setDateInterval(e.data);
+    });
   }, []);
 
   useEffect(() => {
-    App.addChannelDataListener("flock-dates", (e) => {});
+    App.addChannelDataListener("flock-dates", (e: { data: IFlockPeriod }) => {
+      if (e.data.currentFlock) {
+        setCurrentFlock(e.data.currentFlock);
+      }
+    });
   }, []);
 
   useEffect(() => {
-    if (
-      dataSource &&
-      dataSource.streamName &&
-      dateInterval !== "flock" &&
-      layerData
-    ) {
-      queryPoints(
-        dateInterval,
-        dataSource.streamName,
-        layerData?.deviceId
-      ).then((_) => setPoints(_));
+    if (dataSource && dataSource.streamName && layerData) {
+      let start, end;
+      const now = new Date();
+      if (dateInterval === "flock") {
+        if (!currentFlock) {
+          console.error("No flock dates in <PointOfInterestLayer/>");
+          return;
+        }
+        start = new Date(currentFlock.startDate).toISOString();
+        end = new Date(currentFlock.endDate).toISOString();
+      } else {
+        start = aggregateByDateFunctions[dateInterval].start(now);
+        end = new Date(Date.now()).toISOString();
+      }
+      queryPoints(start, end, dataSource.streamName, layerData?.deviceId).then(
+        (_) => setPoints([..._])
+      );
     }
   }, [layerData, dataSource, dateInterval]);
 
@@ -142,7 +175,7 @@ const Point: FC<Ipointprops> = ({ active, position, setActive }) => {
       onPointerOut={handleUnhover}
       onClick={setActive}
     >
-      <circleGeometry args={[0.09, 32]} /> {/* Radius of 1 and 32 segments */}
+      <circleGeometry args={[0.09, 32]} />
       <meshBasicMaterial color={active || hovered ? "#F89973" : "#18D2FF"} />
     </mesh>
   );
