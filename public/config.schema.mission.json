@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Scene",
+  "title": "3D Scene",
   "type": "object",
   "required": ["maps"],
   "properties": {
@@ -170,6 +170,13 @@
             "title": "Use color data",
             "type": "boolean",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
+          },
+          "pathOpacity": {
+            "title": "Path Opacity",
+            "type": "number",
+            "description": "Choose opacity between 0% ~ 100%",
+            "default": "50",
+            "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pathType": {
             "title": "Path Type",

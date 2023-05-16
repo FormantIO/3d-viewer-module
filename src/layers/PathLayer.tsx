@@ -16,12 +16,18 @@ extend({ PathGeometry });
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  pathOpacity?: number;
   pathType?: PathType;
   pathWidth?: number;
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
-  const { dataSource, pathWidth = 0.25, pathType = PathType.STATIC } = props;
+  const {
+    dataSource,
+    pathOpacity = 50,
+    pathWidth = 0.25,
+    pathType = PathType.STATIC,
+  } = props;
   const {
     state: { hasPath },
   } = useControlsContext();
@@ -75,7 +81,7 @@ export const PathLayer = (props: ILocalPathProps) => {
                 <pathGeometry args={[points, pathWidth, points.length]} />
                 <meshBasicMaterial
                   transparent
-                  opacity={0.5}
+                  opacity={pathOpacity / 100}
                   color={FormantColors.blue}
                 />
               </mesh>
@@ -86,7 +92,6 @@ export const PathLayer = (props: ILocalPathProps) => {
                 color={FormantColors.blue}
                 worldUnits={false}
                 renderOrder={1}
-                alphaTest={0.3}
               />
             )}
           </>

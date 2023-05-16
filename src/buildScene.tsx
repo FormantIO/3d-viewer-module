@@ -127,10 +127,11 @@ export function buildScene(
       }
     } else if (layer.visualizationType === "Path") {
       const dataSource = parseDataSource(layer);
-      const { pathType, pathWidth } = layer;
+      const { pathOpacity, pathType, pathWidth } = layer;
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
+          pathOpacity={pathOpacity}
           pathType={pathType}
           pathWidth={pathWidth}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
