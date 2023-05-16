@@ -29,7 +29,7 @@ export const Container = styled.div`
 export const PanelContainer = styled.div`
   position: absolute;
   bottom: 80px;
-  left: 10px;
+  right: 10px;
   width: 300px;
   height: calc(100% - 100px);
   overflow-y: auto;

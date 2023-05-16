@@ -11,9 +11,7 @@ import { upload } from "../../common/upload";
 import { PropertyPanel } from "./PropertyPanel";
 import { LoadingBar } from "./LoadingBar";
 
-const devMode = new URLSearchParams(window.location.search).get("module")
-  ? false
-  : true;
+const devMode = window.location.href.includes("module") ? false : true;
 
 interface Props {
   controlsStates: ControlsContextProps;
