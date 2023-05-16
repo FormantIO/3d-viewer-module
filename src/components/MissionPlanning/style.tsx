@@ -18,6 +18,12 @@ export const Container = styled.div`
   user-select: none;
 
   pointer-events: none;
+
+  & .missionBtn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
 `;
 
 export const PanelContainer = styled.div`
@@ -81,47 +87,8 @@ export const ControlButtonGroup = styled.div`
   justify-content: space-between;
   pointer-events: all;
 
-  & > button {
+  & > div {
     width: 48%;
-    border-radius: 20px;
-    color: black;
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: all !important;
-    }
-  }
-
-  & > button:nth-of-type(1) {
-    background-color: #bac4e2;
-    &:hover {
-      background-color: #d9e0f0;
-    }
-    ${({ disableBtn1 }: CBGProps) =>
-      disableBtn1 &&
-      css`
-        color: #8c909b;
-        background-color: ${FormantColors.steel02};
-        &:hover {
-          background-color: ${FormantColors.steel02};
-        }
-      `}
-  }
-  & > button:nth-of-type(2) {
-    background-color: #18d2ff;
-    white-space: nowrap;
-    &:hover {
-      background-color: #53d7f8;
-    }
-
-    ${({ disableBtn2 }: CBGProps) =>
-      disableBtn2 &&
-      css`
-        color: #8c909b;
-        background-color: ${FormantColors.steel02};
-        &:hover {
-          background-color: ${FormantColors.steel02};
-        }
-      `}
   }
 `;
 

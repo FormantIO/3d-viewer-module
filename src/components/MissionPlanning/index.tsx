@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Button } from "../Button";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
 import { ControlButtonGroup, Container } from "./style";
@@ -101,6 +101,21 @@ export const MissionPlanning: React.FC<Props> = ({
       />
       <ToggleIcon controlsStates={controlsStates} hasPathLayer={hasPathLayer} />
 
+      {!isWaypointPanelVisible && (
+        <Button
+          label="Mission Planning"
+          className="missionBtn"
+          onClick={() => {
+            updateState({
+              isWaypointPanelVisible: !isWaypointPanelVisible,
+              isWaypointEditing: !isWaypointPanelVisible,
+              hasPath: true,
+              hasWaypointsPath: true,
+            });
+          }}
+        />
+      )}
+
       {isWaypointPanelVisible && (
         <>
           {sending !== SENDING_STATUS.SUCCESS ? (
@@ -136,14 +151,14 @@ export const MissionPlanning: React.FC<Props> = ({
                 disableBtn2={disableSendBtn}
               >
                 <Button
-                  variant="contained"
+                  label="Cancel"
+                  theme="silver"
                   onClick={() => setShowCancel(true)}
                   disabled={disableCancelBtn}
-                >
-                  Cancel
-                </Button>
+                />
                 <Button
-                  variant="contained"
+                  label={"Send Path"}
+                  theme="blue"
                   onClick={() => {
                     if (
                       waypoints.length !== 0 &&
@@ -152,15 +167,13 @@ export const MissionPlanning: React.FC<Props> = ({
                       sendBtnHandler();
                   }}
                   disabled={disableSendBtn}
-                >
-                  Send Path
-                </Button>
+                />
               </ControlButtonGroup>
             </>
           ) : (
             <ControlButtonGroup large>
               <Button
-                variant="contained"
+                label="Edit"
                 onClick={() => {
                   updateState({
                     isWaypointEditing: true,
@@ -169,11 +182,10 @@ export const MissionPlanning: React.FC<Props> = ({
                   });
                   setSending(SENDING_STATUS.NONE);
                 }}
-              >
-                Edit
-              </Button>
+              />
+
               <Button
-                variant="contained"
+                label="Complete Planning"
                 onClick={() => {
                   updateState({
                     isWaypointPanelVisible: false,
@@ -183,9 +195,7 @@ export const MissionPlanning: React.FC<Props> = ({
                   setWaypoints([]);
                   store.waypoints = [];
                 }}
-              >
-                Complete Planning
-              </Button>
+              />
             </ControlButtonGroup>
           )}
         </>
