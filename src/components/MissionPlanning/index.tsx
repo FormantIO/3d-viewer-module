@@ -6,7 +6,7 @@ import { ControlButtonGroup, Container } from "./style";
 import { ToggleIcon } from "./ToggleIcon";
 import { Modal } from "./Modal";
 import { SENDING_STATUS } from "../../layers/types";
-import { Authentication, Device, Fleet } from "@formant/data-sdk";
+import { Authentication, Fleet } from "@formant/data-sdk";
 import { upload } from "../../common/upload";
 import { PropertyPanel } from "./PropertyPanel";
 import { LoadingBar } from "./LoadingBar";
