@@ -72,10 +72,13 @@ export function buildScene(
       );
     } else if (layer.mapType === "Occupancy") {
       const dataSource = parseDataSource(layer);
+      const { occupancyGridOpacity, occupancyGridColor } = layer;
       return (
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
+          opacity={occupancyGridOpacity}
+          color={occupancyGridColor}
           treePath={[MAP_TREEPATH, i]}
           name={layer.name || "Occupancy Grid"}
         />
@@ -140,13 +143,15 @@ export function buildScene(
       );
     } else if (layer.visualizationType === "Point cloud") {
       const dataSource = parseDataSource(layer);
-      const { pointCloudDecayTime, pointCloudUseColors } = layer;
+      const { pointCloudDecayTime, pointCloudColor, pointCloudUseColors } =
+        layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Point Cloud"}
+          color={pointCloudColor!}
           decayTime={pointCloudDecayTime || 1}
           useColors={pointCloudUseColors || false}
         />

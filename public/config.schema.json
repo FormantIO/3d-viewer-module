@@ -63,6 +63,19 @@
               ["mapType", "=", "Occupancy"]
             ]
           },
+          "occupancyGridColor": {
+            "title": "Color",
+            "type": "string",
+            "enum": ["Default", "Blue", "Data", "Formant", "Human", "Machine"],
+            "default": "Default",
+            "$formant.visible.when": ["mapType", "=", "Occupancy"]
+          },
+          "occupancyGridOpacity": {
+            "title": "Transparency",
+            "type": "number",
+            "default": "60",
+            "$formant.visible.when": ["mapType", "=", "Occupancy"]
+          },
           "telemetryLatestDataPoint": {
             "title": "Use historical data",
             "type": "boolean",
@@ -159,6 +172,13 @@
             "title": "Image height (meters)",
             "$formant.visible.when": ["visualizationType", "=", "Image"],
             "default": 1
+          },
+          "pointCloudColor": {
+            "title": "Color",
+            "type": "string",
+            "enum": ["Green", "Critical", "Formant", "Device Default"],
+            "default": "Formant",
+            "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "pointCloudDecayTime": {
             "title": "Decay time (s)",

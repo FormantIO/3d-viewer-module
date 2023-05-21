@@ -39,6 +39,7 @@ export type Viewer3DVisualization = {
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
+  pointCloudColor?: string;
   pointCloudUseColors?: boolean;
   pathOpacity?: number;
   pathType?: PathType;
@@ -54,6 +55,8 @@ export type Viewer3DVisualization = {
 export type Viewer3DMap = {
   name?: string;
   mapType?: "GPS" | "Occupancy";
+  occupancyGridOpacity?: number;
+  occupancyGridColor?: string;
   gpsMapType?: "Satellite" | "Street" | "Satellite street";
   gpsMapSize: string;
   gpsMapLongitude?: number;

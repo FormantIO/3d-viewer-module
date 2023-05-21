@@ -16,6 +16,7 @@ import {
   CustomBlending,
   MaxEquation,
   Points,
+  PointsMaterial,
   ShaderMaterial,
   TextureLoader,
 } from "three";
@@ -23,15 +24,22 @@ import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-
 import { Color } from "./utils/Color";
 import { useControlsContext } from "./common/ControlsContext";
 import { useLoader, useThree } from "@react-three/fiber";
+import { FormantColors } from "./utils/FormantColors";
 
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   decayTime: number;
+  color?: string;
   useColors?: boolean;
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, decayTime, useColors: fullColor } = props;
+  const {
+    dataSource,
+    decayTime,
+    color = "Formant",
+    useColors: fullColor,
+  } = props;
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const {
@@ -56,8 +64,10 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const { deviceId } = layerData;
     updateState({ hasPointCloud: true });
 
-    const color1 = defined(Color.fromString("#729fda"));
-    const color2 = defined(Color.fromString("#F89973"));
+    const c = (FormantColors as any)[color.toLowerCase()];
+    const isColor = color !== "Formant" && color !== "Device Default";
+    const color1 = defined(Color.fromString(isColor ? c : "#729fda"));
+    const color2 = defined(Color.fromString(isColor ? c : "#F89973"));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
@@ -143,8 +153,15 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     });
     pointMatRef.current = pointMat;
 
+    const deviceMat = new PointsMaterial({ vertexColors: true, size: 0.1 });
+
     const geometry = new BufferGeometry();
-    const points = new Points(geometry, pointMat);
+
+    const points = new Points(
+      geometry,
+      color === "Device Default" ? deviceMat : pointMat
+    );
+    console.log("ttt", color);
     points.frustumCulled = false;
     setObj(points);
 
@@ -232,7 +249,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         unsubscribe();
       };
     }
-  }, [layerData, universeData]);
+  }, [layerData, universeData, color]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">

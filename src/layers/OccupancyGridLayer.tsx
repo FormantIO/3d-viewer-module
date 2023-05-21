@@ -29,27 +29,49 @@ import { useBounds } from "./common/CustomBounds";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
+  opacity?: number;
+  color?: string;
 }
 
 const convertColor = (c: string) => {
   const col = new Color(c);
+  console.log(col.r);
   return [
     Math.floor(col.r * 255),
     Math.floor(col.g * 255),
     Math.floor(col.b * 255),
   ];
 };
-const mapColor = convertColor(FormantColors.mapColor);
-const occupiedColor = convertColor(FormantColors.occupiedColor);
+
+const colors: any = {
+  Default: [FormantColors.mapColor, FormantColors.occupiedColor],
+  Blue: ["#00ffff", "#998877"],
+  Data: ["#ff3700", "#301c08"],
+  Formant: ["#d0ff00", "#c2009f"],
+  Human: ["#00ffff", "#998877"],
+  Machine: ["#00ffff", "#998877"],
+};
+
+for (let key in colors) {
+  colors[key] = colors[key].map((e: string) => convertColor(e));
+}
 
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
-  const { dataSource } = props;
+  const { dataSource, opacity = 60, color = "Default" } = props;
   const [isReady, setIsReady] = useState(false);
   const universeData = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 
-  const gridMat = new MeshBasicMaterial({ transparent: true, opacity: 0.6 });
+  const mapColor = colors[color][0];
+  const occupiedColor = colors[color][1];
+
+  console.log("after", convertColor(FormantColors.mapColor));
+
+  const gridMat = new MeshBasicMaterial({
+    transparent: true,
+    opacity: opacity / 100,
+  });
   const mesh = new Mesh(new PlaneGeometry(), gridMat);
   mesh.visible = false;
 
@@ -118,7 +140,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         texture.needsUpdate = true;
         gridMat.map = texture;
         gridMat.needsUpdate = true;
-        gridMat.opacity = 0.5;
         gridMat.depthTest = false;
         mesh.up = new Vector3(0, 0, 1);
 
