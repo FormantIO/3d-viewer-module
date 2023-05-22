@@ -66,9 +66,9 @@ const LayerRow = styled.div<ILayerRow>`
   justify-content: space-between;
   align-items: center;
   border-radius: 2px;
-  background-color: ${(props: ILayerRow) =>
+  /* background-color: ${(props: ILayerRow) =>
     props.isSelectedMap ? "#3B4668" : "transparent"};
-  background-origin: padding-box;
+  background-origin: padding-box; */
 
   & svg,
   p,
@@ -271,18 +271,18 @@ const Sidebar = ({
     }
 
     // all other visible maps
-    const siblings = Object.values(layerMap).filter((sibling) => {
-      return (
-        sibling.id !== layer.id &&
-        sibling.id !== parentLayer.id &&
-        sibling.treePath &&
-        sibling.treePath[0] === layer.treePath![0] &&
-        sibling.visible
-      );
-    });
-    siblings.forEach((sibling) => {
-      toggleVisibility(sibling.id);
-    });
+    // const siblings = Object.values(layerMap).filter((sibling) => {
+    //   return (
+    //     sibling.id !== layer.id &&
+    //     sibling.id !== parentLayer.id &&
+    //     sibling.treePath &&
+    //     sibling.treePath[0] === layer.treePath![0] &&
+    //     sibling.visible
+    //   );
+    // });
+    // siblings.forEach((sibling) => {
+    //   toggleVisibility(sibling.id);
+    // });
   };
 
   const renderIcons = (layer: LayerData) => {
@@ -290,9 +290,9 @@ const Sidebar = ({
       return null;
     }
     // if its a map, show checkmark
-    if (isLayerMap(layer)) {
-      return layer.visible ? <CheckIcon /> : <></>;
-    }
+    // if (isLayerMap(layer)) {
+    //   return layer.visible ? <CheckIcon /> : <></>;
+    // }
     return (
       <VisibilityIcon
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
@@ -411,10 +411,10 @@ const Sidebar = ({
                   hasChildren={hasChildren(c)}
                   isChild={isChild(c)}
                   isLastChild={isLastChild(c)}
-                  onClick={() => onLayerClicked(c)}
+                  // onClick={() => onLayerClicked(c)}
                   onDoubleClick={() => onLayerDoubleClicked(c)}
                   layerVisible={c.visible}
-                  isSelectedMap={isLayerMap(c) && c.visible}
+                  isSelectedMap={(isLayerMap(c) && c.visible) || true}
                 >
                   <LayerTitle>
                     <Typography

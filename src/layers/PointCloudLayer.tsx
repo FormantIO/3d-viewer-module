@@ -26,6 +26,15 @@ import { useControlsContext } from "./common/ControlsContext";
 import { useLoader, useThree } from "@react-three/fiber";
 import { FormantColors } from "./utils/FormantColors";
 
+const pcdColors: any = {
+  "Device default": ["#FFFFFF", "#FFFFFF"],
+  Formant: ["#729fda", "#F89973"],
+  "Data blue": ["#00EFC1", "#18D2FF"],
+  "Cyber green": ["#FFC794", "#18D2FF"],
+  "Firewall red": ["#FFA3A1", "#18D2FF"],
+  "Formant blue": ["#18D2FF", "#18D2FF"],
+};
+
 interface IPointCloudProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
   decayTime: number;
@@ -64,10 +73,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const { deviceId } = layerData;
     updateState({ hasPointCloud: true });
 
-    const c = (FormantColors as any)[color.toLowerCase()];
-    const isColor = color !== "Formant" && color !== "Device Default";
-    const color1 = defined(Color.fromString(isColor ? c : "#729fda"));
-    const color2 = defined(Color.fromString(isColor ? c : "#F89973"));
+    const color1 = defined(Color.fromString(pcdColors[color][0]));
+    const color2 = defined(Color.fromString(pcdColors[color][1]));
     const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
     const vertexShader = `
@@ -161,7 +168,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       geometry,
       color === "Device Default" ? deviceMat : pointMat
     );
-    console.log("ttt", color);
     points.frustumCulled = false;
     setObj(points);
 

@@ -35,7 +35,6 @@ interface IPointOccupancyGridProps extends IUniverseLayerProps {
 
 const convertColor = (c: string) => {
   const col = new Color(c);
-  console.log(col.r);
   return [
     Math.floor(col.r * 255),
     Math.floor(col.g * 255),
@@ -65,8 +64,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
   const mapColor = colors[color][0];
   const occupiedColor = colors[color][1];
-
-  console.log("after", convertColor(FormantColors.mapColor));
 
   const gridMat = new MeshBasicMaterial({
     transparent: true,

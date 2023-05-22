@@ -176,7 +176,14 @@
           "pointCloudColor": {
             "title": "Color",
             "type": "string",
-            "enum": ["Green", "Critical", "Formant", "Device Default"],
+            "enum": [
+              "Device default",
+              "Formant",
+              "Data blue",
+              "Cyber green",
+              "Firewall red",
+              "Formant blue"
+            ],
             "default": "Formant",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
