@@ -112,8 +112,7 @@
               "Position indicator",
               "Marker array",
               "Point cloud",
-              "Path",
-              "Points of interest"
+              "Path"
             ]
           },
           "positionIndicatorUseURDF": {
@@ -217,8 +216,7 @@
                 "or",
                 ["visualizationType", "=", "Point cloud"],
                 ["visualizationType", "=", "Path"],
-                ["visualizationType", "=", "Marker array"],
-                ["visualizationType", "=", "Points of interest"]
+                ["visualizationType", "=", "Marker array"]
               ],
               ["telemetryStreamName", "!=", ""]
             ]
