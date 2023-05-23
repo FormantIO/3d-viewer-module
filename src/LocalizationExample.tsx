@@ -25,7 +25,6 @@ const newConfig: Viewer3DConfiguration = {
     {
       name: "device name",
       visualizationType: "Position indicator",
-
       transformLocalizationWorldToLocal: true,
       transformLocalizationStream: "Map", //replace with stream name
       transformType: "Odometry",

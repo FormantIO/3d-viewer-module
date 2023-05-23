@@ -34,7 +34,8 @@ export type Viewer3DVisualization = {
     | "Path"
     | "Mission Planning"
     | "Image"
-    | "GLTF";
+    | "GLTF"
+    | "Points of interest";
   positionIndicatorUseURDF?: boolean;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
