@@ -207,70 +207,6 @@
               ["visualizationType", "=", "Points of interest"]
             ]
           },
-          "jsonPath": {
-            "title": "JSON path",
-            "type": "string",
-            "description": "Path into the JSON message to access the 'pose' property.",
-            "$formant.placeholder": "Edit (e.g. a[0].b.c)",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
-          "start": {
-            "title": "Start date",
-            "type": "string",
-            "$formant.placeholder": "Edit (e.g. 12-12-1989 03:00)",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
-          "end": {
-            "title": "End date",
-            "type": "string",
-            "$formant.placeholder": "Edit (e.g. 08-02-1990 04:00)",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
-          "channelListener": {
-            "title": "Channel subscriber",
-            "type": "string",
-            "description": "Channel that actively listens for incoming messages. Expected message: {start: Date, end: Date}. See data-sdk to set up channels.",
-            "$formant.placeholder": "Edit",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
-          "channelPublisher": {
-            "title": "Channel publisher",
-            "type": "string",
-            "description": "It is responsible for pushing information or data to the channel, which can then be received or consumed by channel subscribers or listeners.",
-            "$formant.placeholder": "Edit",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
-          "messagePath": {
-            "title": "Message field location",
-            "type": "string",
-            "description": "The specific field or property within a JSON object that contains the message content you want to publish. It will utilize timestamps as the default value/content.",
-            "$formant.placeholder": "Edit (e.g. a[0].b.c)",
-            "$formant.visible.when": [
-              "visualizationType",
-              "=",
-              "Points of interest"
-            ]
-          },
           "telemetryLatestDataPoint": {
             "title": "Use historical data",
             "type": "boolean",
@@ -293,11 +229,7 @@
             "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene.",
             "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
             "enum": ["Cartesian", "GPS", "Odometry", "Transform tree"],
-            "$formant.visible.when": [
-              "and",
-              ["visualizationType", "!=", ""],
-              ["visualizationType", "!=", "Points of interest"]
-            ]
+            "$formant.visible.when": ["visualizationType", "!=", ""]
           },
           "transformX": {
             "title": "X offset (m)",
