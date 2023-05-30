@@ -24,7 +24,7 @@ import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { GLTFLayer } from "./layers/GLTFLayer";
-import PointOfInterstLayer from "./layers/PointOfInterestLayer";
+import { PointOfInterstLayer } from "./layers/PointOfInterestLayer";
 
 export function buildScene(
   config: Viewer3DConfiguration,

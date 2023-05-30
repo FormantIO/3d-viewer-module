@@ -1,7 +1,12 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
-import { Authentication, Fleet, App as FormantApp } from "@formant/data-sdk";
+import {
+  Authentication,
+  App as FormantApp,
+  aggregateByDateFunctions,
+  timeout,
+} from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
 import { TelemetryUniverseData } from "@formant/universe-connector";
@@ -42,12 +47,17 @@ export function Viewer() {
         }
         setConfiguration(parsedConfig);
       });
-      FormantApp.addModuleDataListener((event) => {
+      FormantApp.addModuleDataListener(async (event) => {
         const d = new Date(event.time);
         universeData.setTime(d);
       });
     })();
   }, []);
+
+  useEffect(() => {
+    if (configuration === undefined || configuration.useTimeline) return;
+    universeData.setTime("live");
+  }, [configuration?.useTimeline]);
 
   const checkConfiguration = (config: Viewer3DConfiguration) => {
     if (

@@ -140,7 +140,7 @@ const queryPoints = async (
 
   if (points.length === 0 || points[0].points.length === 0) {
     App.showMessage("No data in current time interval");
-    throw new Error(`No data was fount beteween ${start}, and ${end}`);
+    return [];
   }
   //TODO: HANDLE TAGS
   //DATA COULD CHANGE SHAPE, MAYBE INCLUDE JSON PATH
@@ -151,7 +151,7 @@ const queryPoints = async (
   return [...pointsFromAnalytics, ...fetchDataPoints];
 };
 
-const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
+export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
   const { dataSource } = props;
   const [points, setPoints] = useState<PointData[]>([]);
   const [active, setActive] = useState<number>();
@@ -288,5 +288,3 @@ const Point: FC<Ipointprops> = ({ active, position, setActive, radius }) => {
     </mesh>
   );
 };
-
-export default PointOfInterstLayer;
