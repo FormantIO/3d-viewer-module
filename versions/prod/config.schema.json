@@ -4,6 +4,12 @@
   "type": "object",
   "required": ["maps"],
   "properties": {
+    "useTimeline": {
+      "title": "Sync with time line",
+      "description": "If 'OFF', the 3D scene will default to using live data.",
+      "type": "boolean",
+      "default": true
+    },
     "maps": {
       "title": "Maps",
       "type": "array",
