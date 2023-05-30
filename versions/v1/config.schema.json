@@ -207,7 +207,11 @@
             "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene.",
             "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
             "enum": ["Cartesian", "GPS", "Odometry", "Transform tree"],
-            "$formant.visible.when": ["visualizationType", "!=", ""]
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "!=", ""],
+              ["visualizationType", "!=", "Points of interest"]
+            ]
           },
           "transformX": {
             "title": "X offset (m)",
@@ -287,6 +291,22 @@
           }
         },
         "required": ["visualizationType"]
+      }
+    },
+    "advanceOptions": {
+      "type": "object",
+      "properties": {
+        "useTimeline": {
+          "title": "Sync with time line",
+          "description": "If 'OFF', the 3D scene will default to using live data.",
+          "type": "boolean",
+          "default": true
+        },
+        "showGround": {
+          "title": "Display ground",
+          "type": "boolean",
+          "default": true
+        }
       }
     }
   }

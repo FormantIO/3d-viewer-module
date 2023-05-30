@@ -39,6 +39,9 @@ export function buildScene(
   const DEVICE_TREEPATH = 1;
   const SCENE_TREEPATH = 2;
 
+  const { advanceOptions } = config;
+  const showGround = advanceOptions?.showGround;
+
   // treePath is used to identify the layer in the scene graph
   // it is an array of numbers that represent the path to the layer
   // from the root of the scene graph
@@ -205,14 +208,16 @@ export function buildScene(
       throw new Error("Unknown visualization type");
     }
   });
-  sceneLayers.push(
-    <GroundLayer
-      key={"ground" + configHash}
-      treePath={[SCENE_TREEPATH, 255]}
-      name={"Ground Plane"}
-      type={LayerType.AXIS}
-    />
-  );
+  if (showGround === undefined || showGround) {
+    sceneLayers.push(
+      <GroundLayer
+        key={"ground" + configHash}
+        treePath={[SCENE_TREEPATH, 255]}
+        name={"Ground Plane"}
+        type={LayerType.AXIS}
+      />
+    );
+  }
 
   if (config.missionPlanning && config.missionPlanning!.length > 0) {
     const { pathWidth, pathType, commandName } = config.missionPlanning[0];

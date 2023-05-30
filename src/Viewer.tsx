@@ -47,17 +47,24 @@ export function Viewer() {
         }
         setConfiguration(parsedConfig);
       });
-      FormantApp.addModuleDataListener(async (event) => {
-        const d = new Date(event.time);
-        universeData.setTime(d);
-      });
     })();
   }, []);
 
   useEffect(() => {
-    if (configuration === undefined || configuration.useTimeline) return;
-    universeData.setTime("live");
-  }, [configuration?.useTimeline]);
+    if (!configuration) return;
+
+    const { advanceOptions } = configuration;
+    const useTimeline = advanceOptions?.useTimeline;
+
+    if (useTimeline || useTimeline === undefined) {
+      FormantApp.addModuleDataListener((event) => {
+        const d = new Date(event.time);
+        universeData.setTime(d);
+      });
+    } else {
+      universeData.setTime("live");
+    }
+  }, [configuration]);
 
   const checkConfiguration = (config: Viewer3DConfiguration) => {
     if (

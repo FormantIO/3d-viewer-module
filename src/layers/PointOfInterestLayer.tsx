@@ -228,10 +228,8 @@ export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
   useFrame(({ camera }) => {
     const pointsOfInterest = layerRef.current;
     if (!pointsOfInterest) return;
+    const distanceFromCamera = camera.position.z;
 
-    const distanceFromCamera = pointsOfInterest.position.distanceTo(
-      camera.position
-    );
     const scale =
       distanceFromCamera > 70
         ? 1
@@ -239,14 +237,18 @@ export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
         ? 0.8
         : distanceFromCamera > 40
         ? 0.5
-        : 0.3;
+        : distanceFromCamera > 25
+        ? 0.3
+        : distanceFromCamera > 15
+        ? 0.15
+        : 0.09;
     setRadius(scale);
   });
 
   return (
-    <DataVisualizationLayer {...props}>
-      <group ref={layerRef}>{pointsLayer}</group>
-    </DataVisualizationLayer>
+    // <DataVisualizationLayer {...props}>
+    <group ref={layerRef}>{pointsLayer}</group>
+    // </DataVisualizationLayer>
   );
 };
 
