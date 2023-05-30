@@ -82,7 +82,7 @@ export type Viewer3DMission = {
 };
 
 export type Viewer3DConfiguration = {
-  useTimeline: boolean;
+  useTimeline?: boolean;
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
   missionPlanning?: Viewer3DMission[];
