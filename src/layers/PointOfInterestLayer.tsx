@@ -121,34 +121,33 @@ const queryPoints = async (
   deviceId: string,
   type: Interval
 ): Promise<PointData[]> => {
-  let pointsFromAnalytics: PointData[] = [];
-  if (["week", "flock"].includes(type)) {
-    pointsFromAnalytics = await queryAnalytics(
-      start,
-      end,
-      streamName,
-      deviceId
-    );
-  }
-  const points = (await Fleet.queryTelemetry({
-    names: [streamName],
+  const pointsFromAnalytics: PointData[] = await queryAnalytics(
     start,
     end,
-    types: ["json"],
-    deviceIds: [deviceId],
-  })) as IStreamData<"json">[];
+    streamName,
+    deviceId
+  );
 
-  if (points.length === 0 || points[0].points.length === 0) {
-    App.showMessage("No data in current time interval");
-    return [];
-  }
+  // console.log(pointsFromAnalytics);
+  // const points = (await Fleet.queryTelemetry({
+  //   names: [streamName],
+  //   start,
+  //   end,
+  //   types: ["json"],
+  //   deviceIds: [deviceId],
+  // })) as IStreamData<"json">[];
+
+  // if (points.length === 0 || points[0].points.length === 0) {
+  //   App.showMessage("No data in current time interval");
+  //   return [];
+  // }
   //TODO: HANDLE TAGS
   //DATA COULD CHANGE SHAPE, MAYBE INCLUDE JSON PATH
 
-  const telemtryPoints = points[0].points.slice(0, MAX_POINTS_ALLOWED);
-  const fetchDataPoints = await handleFetchJsonDatapoint(telemtryPoints);
+  // const telemtryPoints = points[0].points.slice(0, MAX_POINTS_ALLOWED);
+  // const fetchDataPoints = await handleFetchJsonDatapoint(telemtryPoints);
 
-  return [...pointsFromAnalytics, ...fetchDataPoints];
+  return [...pointsFromAnalytics];
 };
 
 export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
