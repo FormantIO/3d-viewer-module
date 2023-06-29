@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Authentication,
   App as FormantApp,
-  aggregateByDateFunctions,
-  timeout,
 } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
