@@ -15,6 +15,7 @@ import { UniverseTelemetrySource } from "@formant/universe-core";
 import { Vector3, Mesh, BufferGeometry, Group } from "three";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { useFrame } from "@react-three/fiber";
+import { isValidURL } from "./utils/isValidURL";
 interface IPointOfInterstLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
 }
@@ -53,6 +54,7 @@ const MAX_POINTS_ALLOWED = 100;
 const handleFetchJsonDatapoint = async (
   points: [number, string][]
 ): Promise<PointData[]> => {
+  if (points.length === 0) return [];
   const partitionSize = points.length / 1000;
   const p = [];
 
@@ -83,6 +85,13 @@ const handleFetchJsonDatapoint = async (
   return p.flat();
 };
 
+type OdometryPoint = [number, string];
+
+interface DataObject {
+  urls: OdometryPoint[];
+  json: OdometryPoint[];
+}
+
 const queryAnalytics = async (
   start: string,
   end: string,
@@ -107,11 +116,29 @@ const queryAnalytics = async (
     return [];
   }
 
-  const points: [number, string][] = rows
+  const points: OdometryPoint[] = rows
     .slice(0, MAX_POINTS_ALLOWED)
     .map((_) => [new Date(_.POINTS_TIME).getTime(), _.POINTS_VALUE]);
 
-  return await handleFetchJsonDatapoint(points);
+  const p = points.reduce<DataObject>(
+    (p, c) => {
+      if (isValidURL(c[1])) {
+        p.urls.push(c);
+        return p;
+      }
+      p.json.push(c);
+      return p;
+    },
+    { urls: [], json: [] }
+  );
+
+  const fetchJSON = await handleFetchJsonDatapoint(p.urls);
+  const parsedJSON: PointData[] = p.json.map((_) => [
+    _[0],
+    JSON.parse(_[1]).pose.pose.position,
+  ]);
+
+  return [...fetchJSON, ...parsedJSON];
 };
 
 const queryPoints = async (
@@ -127,25 +154,6 @@ const queryPoints = async (
     streamName,
     deviceId
   );
-
-  // console.log(pointsFromAnalytics);
-  // const points = (await Fleet.queryTelemetry({
-  //   names: [streamName],
-  //   start,
-  //   end,
-  //   types: ["json"],
-  //   deviceIds: [deviceId],
-  // })) as IStreamData<"json">[];
-
-  // if (points.length === 0 || points[0].points.length === 0) {
-  //   App.showMessage("No data in current time interval");
-  //   return [];
-  // }
-  //TODO: HANDLE TAGS
-  //DATA COULD CHANGE SHAPE, MAYBE INCLUDE JSON PATH
-
-  // const telemtryPoints = points[0].points.slice(0, MAX_POINTS_ALLOWED);
-  // const fetchDataPoints = await handleFetchJsonDatapoint(telemtryPoints);
 
   return [...pointsFromAnalytics];
 };
