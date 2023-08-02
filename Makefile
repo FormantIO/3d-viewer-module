@@ -54,3 +54,12 @@ run:
 	npm run dev
 run-vr:
 	npm run dev-vr
+
+manual-deploy:
+	rm -r versions/v1/assets
+	cp -r dist/assets versions/v1
+	rm versions/v1/index.html
+	cp dist/index.html versions/v1
+	git add .
+	git commit -m "update v1"
+	git push
