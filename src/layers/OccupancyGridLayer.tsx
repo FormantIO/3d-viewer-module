@@ -79,6 +79,10 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           canvas,
         } = gridData as IUniverseGridMap;
 
+        //TODO: HANDLE MULTIPLE COLOR DEPTH 
+
+        const d = data.map((_) => (_ < 70 ? 0 : _));
+
         const mesh = obj.current;
         mesh.matrixAutoUpdate = false;
 
@@ -102,11 +106,11 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
         for (let i = 0; i < size; i++) {
           const stride = i * 4;
-          textureData[stride] = data[i] > 0 ? mapColor[0] : occupiedColor[0];
+          textureData[stride] = d[i] > 0 ? mapColor[0] : occupiedColor[0];
           textureData[stride + 1] =
-            data[i] > 0 ? mapColor[1] : occupiedColor[1];
+            d[i] > 0 ? mapColor[1] : occupiedColor[1];
           textureData[stride + 2] =
-            data[i] > 0 ? mapColor[2] : occupiedColor[2];
+            d[i] > 0 ? mapColor[2] : occupiedColor[2];
 
           textureData[stride + 3] = 255; // alpha
           if (pixelDataFromCanvas) {
