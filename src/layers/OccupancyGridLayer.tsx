@@ -13,34 +13,34 @@ import { transformMatrix } from "./utils/transformMatrix";
 import {
   IUniverseGridMap,
   UniverseTelemetrySource,
+  defined,
 } from "@formant/universe-core";
 
 import {
   Color,
+
   DataTexture,
+
   Matrix4,
   Mesh,
   MeshBasicMaterial,
+
   PlaneGeometry,
+
   Vector3,
+
 } from "three";
 import { FormantColors } from "./utils/FormantColors";
 import { useBounds } from "./common/CustomBounds";
+import { smoothstep } from "three/src/math/MathUtils";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
 
-const convertColor = (c: string) => {
-  const col = new Color(c);
-  return [
-    Math.floor(col.r * 255),
-    Math.floor(col.g * 255),
-    Math.floor(col.b * 255),
-  ];
-};
-const mapColor = convertColor(FormantColors.mapColor);
-const occupiedColor = convertColor(FormantColors.occupiedColor);
+
+const mapColor = defined(new Color(FormantColors.mapColor));
+const occupiedColor = defined(new Color(FormantColors.occupiedColor));
 
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
@@ -49,7 +49,11 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 
-  const gridMat = new MeshBasicMaterial({ transparent: true, opacity: 0.6 });
+
+  const gridMat = new MeshBasicMaterial({
+    transparent: true,
+    opacity: 0.6,
+  });
   const mesh = new Mesh(new PlaneGeometry(), gridMat);
   mesh.visible = false;
 
@@ -106,30 +110,42 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
 
         for (let i = 0; i < size; i++) {
           const stride = i * 4;
-          textureData[stride] = d[i] > 0 ? mapColor[0] : occupiedColor[0];
-          textureData[stride + 1] =
-            d[i] > 0 ? mapColor[1] : occupiedColor[1];
-          textureData[stride + 2] =
-            d[i] > 0 ? mapColor[2] : occupiedColor[2];
+          const grayValue = data[i] / 255.0; // Normalize data value to the range [0, 1]
+          const occupancy = smoothstep(grayValue, 0.01, 0.5); // Map the grayscale value to the range [0.01, 0.5]
 
-          textureData[stride + 3] = 255; // alpha
+          // Map the grayscale value to the formant colors
+          const color = new Color();
+          color.lerpColors(occupiedColor, mapColor, occupancy);
+
+          // Set the color channels in the textureData
+          textureData[stride] = Math.round(color.r * 255); // Red channel
+          textureData[stride + 1] = Math.round(color.g * 255); // Green channel
+          textureData[stride + 2] = Math.round(color.b * 255); // Blue channel
+          textureData[stride + 3] = 255; // Alpha channel (fully opaque)
+
           if (pixelDataFromCanvas) {
-            textureData[stride + 3] = pixelDataFromCanvas[stride + 3];
+            textureData[stride + 3] = pixelDataFromCanvas[3];
           }
         }
+
+        // Create a new DataTexture and set its properties
         const texture = new DataTexture(textureData, width, height);
         texture.flipY = true;
         texture.needsUpdate = true;
+
+        // Update the material with the new DataTexture and set other properties
         gridMat.map = texture;
         gridMat.needsUpdate = true;
         gridMat.opacity = 0.5;
         gridMat.depthTest = false;
+
         mesh.up = new Vector3(0, 0, 1);
 
         if (!mesh.visible && size) {
           setIsReady(true);
           obj.current.visible = true;
         }
+
       }
     );
 

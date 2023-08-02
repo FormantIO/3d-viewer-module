@@ -10,7 +10,7 @@ export const FormantColors = {
   green: "#2EC495",
   blue: "#20A0FF",
   gradient01: ["#FF72CC", "#00E4FF"],
-  mapColor: "#1b2541",
+  mapColor: "#0b1224",
   occupiedColor: "#4f5f96",
   primary: "#729fda",
   critical: "#FF72CC",
