@@ -134,8 +134,8 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
         // Update the material with the new DataTexture and set other properties
         gridMat.map = texture;
         gridMat.needsUpdate = true;
-        gridMat.opacity = 1;
-        gridMat.depthTest = false;
+        gridMat.opacity = 0.6;
+        gridMat.depthTest = true;
         gridMat.color = new Color(0xffffff);
 
         mesh.up = new Vector3(0, 0, 1);
