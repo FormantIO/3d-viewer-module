@@ -18,17 +18,13 @@ import {
 
 import {
   Color,
-
   DataTexture,
-
   Matrix4,
   Mesh,
   MeshBasicMaterial,
-
   PlaneGeometry,
-
+  RGBAFormat,
   Vector3,
-
 } from "three";
 import { FormantColors } from "./utils/FormantColors";
 import { useBounds } from "./common/CustomBounds";
@@ -38,9 +34,21 @@ interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
 }
 
-
 const mapColor = defined(new Color(FormantColors.mapColor));
 const occupiedColor = defined(new Color(FormantColors.occupiedColor));
+const createGridMaterial = () => {
+  return new MeshBasicMaterial({
+    transparent: true,
+    opacity: 0.6,
+    color: 0xffffff,
+  });
+};
+
+const createMesh = (material: MeshBasicMaterial) => {
+  const mesh = new Mesh(new PlaneGeometry(1, 1), material);
+  mesh.visible = false;
+  return mesh;
+};
 
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
@@ -49,15 +57,9 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 
-
-  const gridMat = new MeshBasicMaterial({
-    transparent: true,
-    opacity: 0.6,
-  });
-  const mesh = new Mesh(new PlaneGeometry(), gridMat);
-  mesh.visible = false;
-
-  const obj = useRef<Mesh>(mesh);
+  const gridMat = useRef(createGridMaterial()).current;
+  const mesh = useRef(createMesh(gridMat)).current;
+  const obj = useRef(mesh);
 
   useEffect(() => {
     if (!layerData || !dataSource) return;
@@ -82,11 +84,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           worldToLocal,
           canvas,
         } = gridData as IUniverseGridMap;
-
-        //TODO: HANDLE MULTIPLE COLOR DEPTH 
-
-        const d = data.map((_) => (_ < 70 ? 0 : _));
-
+        if (isReady) return;
         const mesh = obj.current;
         mesh.matrixAutoUpdate = false;
 
@@ -124,20 +122,21 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           textureData[stride + 3] = 255; // Alpha channel (fully opaque)
 
           if (pixelDataFromCanvas) {
-            textureData[stride + 3] = pixelDataFromCanvas[3];
+            textureData[stride + 3] = pixelDataFromCanvas[stride + 3];
           }
         }
 
         // Create a new DataTexture and set its properties
-        const texture = new DataTexture(textureData, width, height);
+        const texture = new DataTexture(textureData, width, height, RGBAFormat);
         texture.flipY = true;
         texture.needsUpdate = true;
 
         // Update the material with the new DataTexture and set other properties
         gridMat.map = texture;
         gridMat.needsUpdate = true;
-        gridMat.opacity = 0.5;
+        gridMat.opacity = 1;
         gridMat.depthTest = false;
+        gridMat.color = new Color(0xffffff);
 
         mesh.up = new Vector3(0, 0, 1);
 
@@ -145,7 +144,6 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           setIsReady(true);
           obj.current.visible = true;
         }
-
       }
     );
 
