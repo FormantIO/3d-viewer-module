@@ -22,7 +22,7 @@ interface IPointOfInterstLayer extends IUniverseLayerProps {
 
 type Interval = "day" | "week" | "flock";
 
-type PointData = [number, IPosition];
+type PointData = [string, IPosition];
 
 interface IPosition {
   x: number;
@@ -52,7 +52,7 @@ interface IRow {
 const MAX_POINTS_ALLOWED = 100;
 
 const handleFetchJsonDatapoint = async (
-  points: [number, string][]
+  points: [string, string][]
 ): Promise<PointData[]> => {
   if (points.length === 0) return [];
   const partitionSize = points.length / 1000;
@@ -85,7 +85,7 @@ const handleFetchJsonDatapoint = async (
   return p.flat();
 };
 
-type OdometryPoint = [number, string];
+type OdometryPoint = [string, string];
 
 interface DataObject {
   urls: OdometryPoint[];
@@ -116,9 +116,10 @@ const queryAnalytics = async (
     return [];
   }
 
-  const points: OdometryPoint[] = rows
-    .slice(0, MAX_POINTS_ALLOWED)
-    .map((_) => [new Date(_.POINTS_TIME).getTime(), _.POINTS_VALUE]);
+  const points: OdometryPoint[] = rows.map((_) => [
+    _.POINTS_TIME,
+    _.POINTS_VALUE,
+  ]);
 
   const p = points.reduce<DataObject>(
     (p, c) => {
@@ -145,8 +146,7 @@ const queryPoints = async (
   start: string,
   end: string,
   streamName: string,
-  deviceId: string,
-  type: Interval
+  deviceId: string
 ): Promise<PointData[]> => {
   const pointsFromAnalytics: PointData[] = await queryAnalytics(
     start,
@@ -161,14 +161,14 @@ const queryPoints = async (
 export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
   const { dataSource } = props;
   const [points, setPoints] = useState<PointData[]>([]);
-  const [active, setActive] = useState<number>();
+  const [active, setActive] = useState<string>();
   const [dateInterval, setDateInterval] = useState<Interval>("day");
   const [currentFlock, setCurrentFlock] = useState<IPeriod>();
   const layerData = useContext(LayerContext);
   const [radius, setRadius] = useState(0.09);
 
   const handleSetActive = useCallback(
-    (_: number) => {
+    (_: string) => {
       App.sendChannelData("localization-timestamp", _);
       setActive(_);
     },
@@ -182,7 +182,9 @@ export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
       <Point
         radius={radius}
         key={idx}
-        setActive={() => handleSetActive(_[0])}
+        setActive={() => {
+          handleSetActive(_[0]);
+        }}
         active={active === _[0]}
         position={new Vector3(_[1].x, _[1].y, 0)}
       />
@@ -219,15 +221,11 @@ export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
         end = new Date(Date.now()).toISOString();
       }
 
-      queryPoints(
-        start,
-        end,
-        dataSource.streamName,
-        layerData?.deviceId,
-        dateInterval
-      ).then((_) => {
-        setPoints([..._]);
-      });
+      queryPoints(start, end, dataSource.streamName, layerData?.deviceId).then(
+        (_) => {
+          setPoints([..._]);
+        }
+      );
     }
   }, [layerData, dataSource, dateInterval]);
 
