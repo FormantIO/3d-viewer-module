@@ -91,6 +91,9 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
           ref.current.up = new Vector3(0, 0, 1);
           ref.current.setMatrixAt(index, dummy.matrix);
           ref.current.setColorAt(index, new Color(color.r, color.g, color.b));
+          if (ref.current.instanceColor) {
+            ref.current.instanceColor.needsUpdate = true;
+          }
         }
       });
     }
