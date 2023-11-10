@@ -53,7 +53,7 @@ const createMesh = (material: MeshBasicMaterial) => {
 export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const { dataSource } = props;
   const [isReady, setIsReady] = useState(false);
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const bounds = useBounds();
 

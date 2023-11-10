@@ -7,7 +7,7 @@ import {
 } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
-import { TelemetryUniverseData } from "@formant/universe-connector";
+import { LiveUniverseData, TelemetryUniverseData } from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
@@ -22,6 +22,9 @@ export function Viewer() {
   >();
   const [universeData] = useState<IUniverseData>(
     () => new TelemetryUniverseData()
+  );
+  const [liveUniverseData] = useState<IUniverseData>(
+    () => new LiveUniverseData()
   );
   useEffect(() => {
     (async () => {
@@ -75,7 +78,7 @@ export function Viewer() {
 
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
-      <UniverseDataContext.Provider value={universeData}>
+      <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
         <Universe
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}
