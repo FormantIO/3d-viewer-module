@@ -127,6 +127,31 @@
               ["visualizationType", "=", "Position indicator"]
             ]
           },
+
+          "jointStateTelemetryStreamName": {
+            "title": "Telemetry Joint State Stream",
+            "type": "string",
+            "description": "The telemetry stream that joint state data is pulled from. This is only used when your looking at historical data. Otherwise, realtime data is used.",
+            "$formant.streams.byType": "json",
+            "$formant.placeholder": "Stream Name",
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "=", "Position indicator"],
+              ["positionIndicatorUseURDF", "=", true]
+            ]
+          },
+
+          "realtimeJointStateStream": {
+            "title": "Realtime Joint State Stream",
+            "description": "The realtime stream that is used to get joint state dat from.",
+            "type": "string",
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "=", "Position indicator"],
+              ["positionIndicatorUseURDF", "=", true]
+            ]
+          },
+
           "name": {
             "type": "string",
             "title": "Name",
