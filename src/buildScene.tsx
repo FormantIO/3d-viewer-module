@@ -118,7 +118,9 @@ export function buildScene(
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "URDF"}
             jointStatesDataSource={getTeletryJointStateDataSource(layer)}
-            realtimeJointStateDataSource={getRealtimeJointStateDataSource(layer)}
+            realtimeJointStateDataSource={getRealtimeJointStateDataSource(
+              layer
+            )}
           />
         );
       } else {
@@ -168,7 +170,7 @@ export function buildScene(
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Geometry"}
-            allowTransparency={layer.allowTransparency || false}
+            allowTransparency={layer.geometryAllowTransparency || false}
           />
         );
       }
