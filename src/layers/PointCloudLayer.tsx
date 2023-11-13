@@ -32,7 +32,7 @@ interface IPointCloudProps extends IUniverseLayerProps {
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
   const { dataSource, decayTime, useColors: fullColor } = props;
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const {
     state: { pointSize },

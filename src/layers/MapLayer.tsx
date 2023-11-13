@@ -58,7 +58,7 @@ extend({ ColorShiftMaterial });
 export function MapLayer(props: IMapLayer) {
   const { dataSource, size, latitude, longitude, mapType } = props;
   const { children } = props;
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
 
   const [currentLocation, setCurrentLocation] = useState<

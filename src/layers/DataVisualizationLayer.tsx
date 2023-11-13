@@ -86,7 +86,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     CloseSubscription | undefined
   >();
   const [thisLayer, setThisLayer] = useState<LayerData | undefined>(undefined);
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   let deviceId: string | undefined;
   if (layerData) {

@@ -31,7 +31,7 @@ export const PathLayer = (props: ILocalPathProps) => {
   const {
     state: { hasPath },
   } = useControlsContext();
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
   const groupRef = useRef<THREE.Group>(null!);

@@ -3,6 +3,8 @@ import {
   UniverseTelemetrySource,
 } from "@formant/universe-core";
 import {
+  getRealtimeJointStateDataSource,
+  getTeletryJointStateDataSource,
   parseDataSource,
   parsePositioning,
   Viewer3DConfiguration,
@@ -115,7 +117,8 @@ export function buildScene(
             positioning={positioning}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "URDF"}
-            jointStatesDataSource={parseDataSource(layer)}
+            jointStatesDataSource={getTeletryJointStateDataSource(layer)}
+            realtimeJointStateDataSource={getRealtimeJointStateDataSource(layer)}
           />
         );
       } else {

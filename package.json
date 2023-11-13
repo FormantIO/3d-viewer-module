@@ -1,7 +1,7 @@
 {
   "name": "@formant/3d-viewer-module",
   "private": true,
-  "version": "0.122.0",
+  "version": "0.126.0",
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules",
@@ -17,7 +17,7 @@
     "@formant/data-sdk": "^1.5.2",
     "@formant/realtime-sdk": "^0.0.20",
     "@formant/ui-sdk": "0.0.45",
-    "@formant/universe-connector": "0.0.33",
+    "@formant/universe-connector": "^0.0.34",
     "@formant/universe-core": "0.0.17",
     "@react-three/drei": "^9.57.3",
     "@react-three/fiber": "^8.12.0",
@@ -32,6 +32,7 @@
     "color-rgba": "^2.4.0",
     "cross-fetch": "^3.1.5",
     "geolib": "^3.3.3",
+    "google-protobuf": "^3.21.2",
     "jq-web": "^0.5.1",
     "jszip": "^3.9.1",
     "lodash.clamp": "^4.0.3",

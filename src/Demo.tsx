@@ -23,8 +23,13 @@ export function Demo() {
   const [universeData] = useState<IUniverseData>(
     () => new ExampleUniverseData()
   );
+  
+  const [liveUniverseData] = useState<IUniverseData>(
+    () => new ExampleUniverseData()
+  );
+
   return (
-    <UniverseDataContext.Provider value={universeData}>
+    <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
       <Universe
         configHash="fasd"
         config={{
