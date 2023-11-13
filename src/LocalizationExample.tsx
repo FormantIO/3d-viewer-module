@@ -37,10 +37,14 @@ export const Localization = () => {
     () => new TelemetryUniverseData()
   );
 
+  const [liveUniverseData] = useState<IUniverseData>(
+    () => new TelemetryUniverseData()
+  );
+
   const scene = useCallback(
     (config: Viewer3DConfiguration) => {
       return (
-        <UniverseDataContext.Provider value={universeData}>
+        <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
           <Universe
             configHash={getUuidByString(JSON.stringify(config))}
             config={config}
