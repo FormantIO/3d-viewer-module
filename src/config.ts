@@ -37,6 +37,8 @@ export type Viewer3DVisualization = {
     | "GLTF"
     | "Points of interest";
   positionIndicatorUseURDF?: boolean;
+  jointStateTelemetryStreamName?: string;
+  realtimeJointStateStream?: string;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
@@ -104,6 +106,30 @@ export function parseDataSource(
     );
   }
   return undefined;
+}
+
+export function getRealtimeJointStateDataSource(
+ vizLayer: Viewer3DVisualization
+): UniverseDataSource | undefined {
+  if(vizLayer.realtimeJointStateStream) {
+    return DataSourceBuilder.realtime(
+      vizLayer.realtimeJointStateStream, "json"
+    )
+  }
+
+  return undefined;
+}
+
+export function getTeletryJointStateDataSource(
+  vizLayer: Viewer3DVisualization
+  ): UniverseDataSource | undefined {
+    if(vizLayer.jointStateTelemetryStreamName) {
+      return DataSourceBuilder.telemetry(
+        vizLayer.jointStateTelemetryStreamName, "json"
+      )
+    }
+  
+    return undefined;
 }
 
 export function parsePositioning(

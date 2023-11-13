@@ -86,11 +86,12 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
 
 export type URDFLayerProps = IUniverseLayerProps & {
   jointStatesDataSource?: UniverseDataSource;
+  realtimeJointStateDataSource?: UniverseDataSource;
 };
 
 export function URDFLayer(props: URDFLayerProps) {
-  const { children, jointStatesDataSource } = props;
-  const universeData = useContext(UniverseDataContext);
+  const { children, jointStatesDataSource, realtimeJointStateDataSource } = props;
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [loaded, setLoaded] = useState(false);
   const [urdf, setUrdf] = useState<Urdf | undefined>(undefined);
@@ -100,7 +101,21 @@ export function URDFLayer(props: URDFLayerProps) {
     const { deviceId } = layerData;
     let unsubscribe: CloseSubscription | undefined;
 
-    if (jointStatesDataSource && urdf) {
+    if (realtimeJointStateDataSource && urdf) {
+      unsubscribe = liveUniverseData.subscribeToJointState(
+        deviceId,
+        realtimeJointStateDataSource,
+        (data) => {
+
+          if (typeof data === "symbol") return;
+
+          const jointStates = data as IJointState;
+          if (urdf) {
+            urdf.jointState = jointStates;
+          }
+        }
+      );
+    } else if(jointStatesDataSource && urdf) {
       unsubscribe = universeData.subscribeToJointState(
         deviceId,
         jointStatesDataSource,

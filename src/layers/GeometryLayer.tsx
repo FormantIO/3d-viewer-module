@@ -132,7 +132,7 @@ export function GeometryLayer(props: IGeometryLayer) {
   const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite>> = useRef(new Map());
 
   const root = new Object3D();
-  const universeData = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [cubesData, setCubesData] = useState<GeoInstanceData[]>([]);
   const [spheresData, setSpheresData] = useState<GeoInstanceData[]>([]);
