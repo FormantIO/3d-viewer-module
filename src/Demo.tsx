@@ -11,7 +11,7 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
 import { IUniverseData } from "@formant/universe-core";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { OccupancyGridLayer, PathLayer, PathType } from "./lib";
+import { GeometryLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
 import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
@@ -93,6 +93,12 @@ export function Demo() {
               treePath={[1, 2]}
             />
             <MissionPlanningLayer />
+            <GeometryLayer
+              name="3D Objects"
+              dataSource={DataSourceBuilder.telemetry("walter.markers", "json")}
+              allowTransparency={true}
+              treePath={[1, 2]}
+            />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
         </LayerContext.Provider>

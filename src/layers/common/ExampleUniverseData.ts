@@ -480,7 +480,12 @@ export class ExampleUniverseData implements IUniverseData {
         mesh_resource: "",
         frame_locked: false,
         mesh_use_embedded_materials: false,
-        color: { r: 1, g: 1, b: 1, a: 0.4 },
+        color: {
+          r: Math.random(),
+          g: Math.random(),
+          b: Math.random(),
+          a: Math.random(),
+        },
         colors: [],
         pose: {
           position: {

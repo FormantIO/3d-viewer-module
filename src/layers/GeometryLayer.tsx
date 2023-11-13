@@ -33,9 +33,11 @@ import { GeometryWorld } from "./objects/GeometryWorld";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
+import { Box, Sphere } from "@react-three/drei";
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
+  allowTransparency: boolean;
 }
 
 type GeoInstanceData = {
@@ -50,15 +52,20 @@ type GeoInstanceData = {
 
 type InstancedGeoProps = {
   instances: GeoInstanceData[];
+  allowTransparency?: boolean;
 };
 
-function InstancedGeometry({ instances }: InstancedGeoProps) {
+function InstancedGeometry({
+  instances,
+  allowTransparency,
+}: InstancedGeoProps) {
   const ref = useRef<THREE.InstancedMesh>(null);
   const boundingBox = useRef<Box3>(new Box3());
   const type = instances[0].type;
 
   const matrixCache = useRef<Map<string, Matrix4>>(new Map());
   const dummy = useMemo(() => new Object3D(), []);
+
   useLayoutEffect(() => {
     if (ref.current) {
       boundingBox.current.setFromCenterAndSize(
@@ -99,37 +106,83 @@ function InstancedGeometry({ instances }: InstancedGeoProps) {
     }
   }, [ref, instances]);
 
-  return (
-    <>
-      <instancedMesh
-        ref={ref}
-        args={[null as any, null as any, instances.length]}
-      >
-        {type === "sphere" ? (
-          <sphereBufferGeometry
-            attach="geometry"
-            args={[0.5, 32, 16]}
-          ></sphereBufferGeometry>
-        ) : null}
-        {type === "cube" ? (
-          <boxGeometry
-            attach="geometry"
-            args={[0.9, 0.9, 0.9]}
-          ></boxGeometry>
-        ) : null}
-        <meshBasicMaterial attach="material" />
-      </instancedMesh>
-      <box3Helper args={[boundingBox.current]} visible={false} />
-    </>
-  );
+  if (allowTransparency) {
+    // if we need transparency we can't used instanced mesh and should fallback
+    return (
+      <group>
+        {instances && type === "sphere"
+          ? instances.map((data) => {
+              return (
+                <Sphere
+                  key={data.id}
+                  args={[0.5, 32, 16]}
+                  scale={[data.scale.x, data.scale.y, data.scale.z]}
+                  position={[data.position.x, data.position.y, data.position.z]}
+                  rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={[data.color.r, data.color.g, data.color.b]}
+                    opacity={data.color.a}
+                    transparent={data.color.a < 1}
+                  />
+                </Sphere>
+              );
+            })
+          : null}
+        {instances && type === "cube"
+          ? instances.map((data) => {
+              return (
+                <Box
+                  key={data.id}
+                  args={[0.9, 0.9, 0.9]}
+                  scale={[data.scale.x, data.scale.y, data.scale.z]}
+                  position={[data.position.x, data.position.y, data.position.z]}
+                  rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
+                >
+                  <meshBasicMaterial
+                    attach="material"
+                    color={[data.color.r, data.color.g, data.color.b]}
+                    opacity={data.color.a}
+                    transparent={data.color.a < 1}
+                  />
+                </Box>
+              );
+            })
+          : null}
+      </group>
+    );
+  } else {
+    return (
+      <>
+        <instancedMesh
+          ref={ref}
+          args={[null as any, null as any, instances.length]}
+        >
+          {type === "sphere" ? (
+            <sphereBufferGeometry
+              attach="geometry"
+              args={[0.5, 32, 16]}
+            ></sphereBufferGeometry>
+          ) : null}
+          {type === "cube" ? (
+            <boxGeometry attach="geometry" args={[0.9, 0.9, 0.9]}></boxGeometry>
+          ) : null}
+          <meshBasicMaterial attach="material" />
+        </instancedMesh>
+        <box3Helper args={[boundingBox.current]} visible={false} />
+      </>
+    );
+  }
 }
 
 export function GeometryLayer(props: IGeometryLayer) {
-  const { children, dataSource } = props;
+  const { children, dataSource, allowTransparency } = props;
 
   const world = useRef(new GeometryWorld());
 
-  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite>> = useRef(new Map());
+  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite>> =
+    useRef(new Map());
 
   const root = new Object3D();
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
@@ -277,8 +330,8 @@ export function GeometryLayer(props: IGeometryLayer) {
         startTransition(() => {
           setCubesData(cubes);
           setSpheresData(spheres);
-          setGeoKey((k) => k + 1)
-        })
+          setGeoKey((k) => k + 1);
+        });
       }
     );
     return () => {
@@ -290,10 +343,16 @@ export function GeometryLayer(props: IGeometryLayer) {
       <group>
         <primitive object={root} />
         {cubesData.length > 0 ? (
-          <InstancedGeometry instances={cubesData} />
+          <InstancedGeometry
+            instances={cubesData}
+            allowTransparency={allowTransparency}
+          />
         ) : null}
         {spheresData.length > 0 ? (
-          <InstancedGeometry instances={spheresData} />
+          <InstancedGeometry
+            instances={spheresData}
+            allowTransparency={allowTransparency}
+          />
         ) : null}
       </group>
       {children}

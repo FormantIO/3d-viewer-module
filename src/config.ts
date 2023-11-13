@@ -38,6 +38,7 @@ export type Viewer3DVisualization = {
     | "Points of interest";
   positionIndicatorUseURDF?: boolean;
   jointStateTelemetryStreamName?: string;
+  geometryAllowTransparency?: boolean;
   realtimeJointStateStream?: string;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
@@ -109,12 +110,13 @@ export function parseDataSource(
 }
 
 export function getRealtimeJointStateDataSource(
- vizLayer: Viewer3DVisualization
+  vizLayer: Viewer3DVisualization
 ): UniverseDataSource | undefined {
-  if(vizLayer.realtimeJointStateStream) {
+  if (vizLayer.realtimeJointStateStream) {
     return DataSourceBuilder.realtime(
-      vizLayer.realtimeJointStateStream, "json"
-    )
+      vizLayer.realtimeJointStateStream,
+      "json"
+    );
   }
 
   return undefined;
@@ -122,14 +124,15 @@ export function getRealtimeJointStateDataSource(
 
 export function getTeletryJointStateDataSource(
   vizLayer: Viewer3DVisualization
-  ): UniverseDataSource | undefined {
-    if(vizLayer.jointStateTelemetryStreamName) {
-      return DataSourceBuilder.telemetry(
-        vizLayer.jointStateTelemetryStreamName, "json"
-      )
-    }
-  
-    return undefined;
+): UniverseDataSource | undefined {
+  if (vizLayer.jointStateTelemetryStreamName) {
+    return DataSourceBuilder.telemetry(
+      vizLayer.jointStateTelemetryStreamName,
+      "json"
+    );
+  }
+
+  return undefined;
 }
 
 export function parsePositioning(
