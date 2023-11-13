@@ -21,6 +21,7 @@ import { MissionPlanning } from "../../components/MissionPlanning";
 import { PointSizeSlider } from "../../components/PcdSizeSlider";
 import styled from "styled-components";
 import { Viewer3DConfiguration } from "../../config";
+import { Timeout } from "../../common/Timeout";
 
 const query = new URLSearchParams(window.location.search);
 const shouldUseVR = query.get("vr") === "true";
@@ -111,7 +112,7 @@ export function Universe(props: IUniverseProps) {
     }
   };
 
-  let intervalId: NodeJS.Timer;
+  let intervalId: Timeout;
   const zoomIn = () => {
     let zoomSpeed = 0.5;
     intervalId = setInterval(() => {
