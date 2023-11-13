@@ -49,6 +49,7 @@ export type Viewer3DVisualization = {
   imageHeight?: number;
   gltfFileId?: string;
   gltfScale?: number;
+  allowTransparency?: boolean;
 } & Viewer3DConfiguarationTransform &
   Viewer3DConfigurationDataSource;
 

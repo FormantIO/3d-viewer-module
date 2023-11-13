@@ -165,6 +165,7 @@ export function buildScene(
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Geometry"}
+            allowTransparency={layer.allowTransparency || false}
           />
         );
       }
