@@ -175,14 +175,15 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
-        if (p.stream) {
+        if (p.rtcStream) {
+          d = DataSourceBuilder.realtime(p.rtcStream, "json");
+
+        } else if (p.stream) {
           d = DataSourceBuilder.telemetry(
             p.stream,
             undefined,
             p.useLatestDataPoint || false
           );
-        } else if (p.rtcStream) {
-          d = DataSourceBuilder.realtime(p.rtcStream, "json");
         } else {
           throw new Error("invalid odometry positioning stream type");
         }
