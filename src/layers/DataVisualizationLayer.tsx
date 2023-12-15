@@ -175,19 +175,25 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
+        console.log(p);
+        let streamType;
         if (p.rtcStream) {
           d = DataSourceBuilder.realtime(p.rtcStream, "json");
+          streamType = "rtc";
+          console.log("odometry positioning with rtc stream", p.rtcStream)
 
         } else if (p.stream) {
+          console.log("not using rtc stream");
           d = DataSourceBuilder.telemetry(
             p.stream,
             undefined,
             p.useLatestDataPoint || false
           );
+          streamType = "telemetry";
         } else {
           throw new Error("invalid odometry positioning stream type");
         }
-        const unsubscribe = universeData.subscribeToOdometry(
+        const unsubscribe = (streamType === "rtc" ? liveUniverseData : universeData).subscribeToOdometry(
           defined(deviceId, "odometry positioning requires a device id"),
           d,
           (d) => {
