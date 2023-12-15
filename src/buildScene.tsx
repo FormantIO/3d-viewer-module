@@ -267,7 +267,7 @@ export function buildScene(
     </LayerContext.Provider>
   );
   devices.push(
-    <EmptyLayer name={"Scene"} treePath={[SCENE_TREEPATH]}>
+    <EmptyLayer name={"Scene"} treePath={[SCENE_TREEPATH]} key="sceneLayers">
       {sceneLayers}
     </EmptyLayer>
   );
