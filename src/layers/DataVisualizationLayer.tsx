@@ -175,15 +175,12 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
-        console.log(p);
         let streamType;
         if (p.rtcStream) {
           d = DataSourceBuilder.realtime(p.rtcStream, "json");
           streamType = "rtc";
-          console.log("odometry positioning with rtc stream", p.rtcStream)
 
         } else if (p.stream) {
-          console.log("not using rtc stream");
           d = DataSourceBuilder.telemetry(
             p.stream,
             undefined,
