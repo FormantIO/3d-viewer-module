@@ -8,12 +8,14 @@ export class PositioningBuilder {
 
   static odometry(
     stream: string,
+    rtcStream?: string,
     useLatestDataPoint?: boolean,
     localizationWorldToLocal?: boolean
   ): Positioning {
     return {
       type: "odometry",
       stream,
+      rtcStream,
       useLatestDataPoint,
       useWorldToLocalTransform: localizationWorldToLocal,
     };

@@ -153,6 +153,7 @@ export function parsePositioning(
     case "Odometry":
       return PositioningBuilder.odometry(
         positioning.transformLocalizationStream || "",
+        positioning.transformLocalizationRealtimeStream || "",
         positioning.transformLocalizationLatestDataPoint || false
       );
     case "Transform tree":

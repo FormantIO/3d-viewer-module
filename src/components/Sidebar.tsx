@@ -365,6 +365,7 @@ const Sidebar = ({
                 isSelectedMap={false}
                 layerVisible={true}
                 id="device-title"
+                key="device-title"
               >
                 <LayerTitle>
                   <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
@@ -380,6 +381,7 @@ const Sidebar = ({
                 isSelectedMap={false}
                 layerVisible={true}
                 id="device-name"
+                key="device-name"
               >
                 <LayerTitle>
                   <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>

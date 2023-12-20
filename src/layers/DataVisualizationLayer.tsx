@@ -175,18 +175,22 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "odometry") {
         let d;
-        if (p.stream) {
+        let streamType;
+        if (p.rtcStream) {
+          d = DataSourceBuilder.realtime(p.rtcStream, "json");
+          streamType = "rtc";
+
+        } else if (p.stream) {
           d = DataSourceBuilder.telemetry(
             p.stream,
             undefined,
             p.useLatestDataPoint || false
           );
-        } else if (p.rtcStream) {
-          d = DataSourceBuilder.realtime(p.rtcStream, "json");
+          streamType = "telemetry";
         } else {
           throw new Error("invalid odometry positioning stream type");
         }
-        const unsubscribe = universeData.subscribeToOdometry(
+        const unsubscribe = (streamType === "rtc" ? liveUniverseData : universeData).subscribeToOdometry(
           defined(deviceId, "odometry positioning requires a device id"),
           d,
           (d) => {
