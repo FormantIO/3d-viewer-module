@@ -24,6 +24,8 @@ import {
   LineBasicMaterial,
   Matrix4,
   Mesh,
+  MeshLambertMaterial,
+  MeshPhongMaterial,
   Object3D,
   Sprite,
   SpriteMaterial,
@@ -123,7 +125,7 @@ function InstancedGeometry({
                 position={[data.position.x, data.position.y, data.position.z]}
                 rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
               >
-                <meshBasicMaterial
+                <meshLambertMaterial
                   attach="material"
                   color={[data.color.r, data.color.g, data.color.b]}
                   opacity={data.color.a}
@@ -143,7 +145,7 @@ function InstancedGeometry({
                 position={[data.position.x, data.position.y, data.position.z]}
                 rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
               >
-                <meshBasicMaterial
+                <meshLambertMaterial
                   attach="material"
                   color={[data.color.r, data.color.g, data.color.b]}
                   opacity={data.color.a}
@@ -171,7 +173,7 @@ function InstancedGeometry({
           {type === "cube" ? (
             <boxGeometry attach="geometry" args={[0.9, 0.9, 0.9]}></boxGeometry>
           ) : null}
-          <meshBasicMaterial attach="material" />
+          <meshLambertMaterial attach="material" />
         </instancedMesh>
         <box3Helper args={[boundingBox.current]} visible={false} />
       </>
@@ -294,7 +296,7 @@ export function GeometryLayer(props: IGeometryLayer) {
               }
             } else if (g.type === "arrow") {
               if (!mesh) {
-                const material = new LineBasicMaterial({
+                const material = new MeshLambertMaterial({
                   color: new Color(g.color.r, g.color.g, g.color.b),
                   opacity: g.color.a,
                 });
@@ -357,6 +359,34 @@ export function GeometryLayer(props: IGeometryLayer) {
                     arrowDir
                   );
                 }
+              }
+            } else if (g.type === "cylinder") {
+              if (!mesh) {
+                const material = new MeshLambertMaterial({
+                  color: new Color(g.color.r, g.color.g, g.color.b),
+                  opacity: g.color.a,
+                });
+
+                const cylinderGeometry = new CylinderGeometry(
+                  0.1,
+                  0.1,
+                  g.scale.z,
+                  8,
+                  1,
+                  false
+                );
+                const cylinderMesh = new Mesh(cylinderGeometry, material);
+
+                cylinderMesh.position.set(g.position.x, g.position.y, g.position.z);
+                cylinderMesh.scale.set(g.scale.x, 1, g.scale.y);
+                cylinderMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+
+                root.add(cylinderMesh);
+                worldGeometry.current.set(g.id, cylinderMesh);
+              } else {
+                mesh.position.set(g.position.x, g.position.y, g.position.z);
+                mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
+                mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
               }
             }
             g.dirty = false;
