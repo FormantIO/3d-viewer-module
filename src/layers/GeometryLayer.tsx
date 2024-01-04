@@ -91,7 +91,7 @@ function InstancedGeometry({
         if (!instanceMatrix) {
           dummy.position.set(position.x, position.y, position.z);
           dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
-          dummy.scale.set(scale.x, scale.y, scale.z);
+          dummy.scale.set(scale.x, scale.z, scale.y);
           dummy.updateMatrix();
 
           instanceMatrix = dummy.matrix.clone();
@@ -121,7 +121,7 @@ function InstancedGeometry({
               <Sphere
                 key={data.id}
                 args={[0.5, 32, 16]}
-                scale={[data.scale.x, data.scale.y, data.scale.z]}
+                scale={[data.scale.x, data.scale.z, data.scale.y]}
                 position={[data.position.x, data.position.y, data.position.z]}
                 rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
               >
@@ -141,7 +141,7 @@ function InstancedGeometry({
               <Box
                 key={data.id}
                 args={[0.9, 0.9, 0.9]}
-                scale={[data.scale.x, data.scale.y, data.scale.z]}
+                scale={[data.scale.x, data.scale.z, data.scale.y]}
                 position={[data.position.x, data.position.y, data.position.z]}
                 rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
               >
@@ -322,7 +322,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
                 if (g.points.length < 2) {
                   arrowMesh.position.set(g.position.x, g.position.y, g.position.z);
-                  arrowMesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
+                  arrowMesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
                   arrowMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
                 } else {
                   const start = new Vector3(g.points[0].x, g.points[0].y, g.points[0].z);
@@ -344,7 +344,7 @@ export function GeometryLayer(props: IGeometryLayer) {
               } else {
                 if (g.points.length < 2) {
                   mesh.position.set(g.position.x, g.position.y, g.position.z);
-                  mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
+                  mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
                   mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
                 } else {
                   const start = new Vector3(g.points[0].x, g.points[0].y, g.points[0].z);
@@ -385,7 +385,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                 worldGeometry.current.set(g.id, cylinderMesh);
               } else {
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
-                mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
+                mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
                 mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
               }
             }
