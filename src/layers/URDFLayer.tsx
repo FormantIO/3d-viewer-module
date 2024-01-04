@@ -13,6 +13,7 @@ import { LayerContext } from "./common/LayerContext";
 import JSZip from "jszip";
 import { Urdf } from "./objects/Urdf";
 import { Group } from "three";
+import { Fleet } from "@formant/data-sdk";
 
 async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
   const data = await fetch(zipPath).then((_) => _.arrayBuffer());
@@ -132,14 +133,9 @@ export function URDFLayer(props: URDFLayerProps) {
       );
     }
     if (!urdf) {
-      universeData
-        .getUrdfs(deviceId)
-        .then((_) => {
-          if (_.length === 0) {
-            console.warn("No URDFs found for device");
-            return;
-          }
-          loadURDFIntoBlob(_[0])
+      if (props.customSource) {
+        Fleet.getFileUrl(props.customSource).then((blobUrl) => {
+          loadURDFIntoBlob(blobUrl)
             .then((blobUrl) => {
               if (blobUrl !== false) {
                 const urdf = new Urdf(
@@ -154,13 +150,38 @@ export function URDFLayer(props: URDFLayerProps) {
                 setUrdf(urdf);
               }
             })
-            .catch((e) => {
-              throw e;
-            });
-        })
-        .catch((e) => {
-          throw e;
         });
+      } else {
+        universeData
+          .getUrdfs(deviceId)
+          .then((_) => {
+            if (_.length === 0) {
+              console.warn("No URDFs found for device");
+              return;
+            }
+            loadURDFIntoBlob(_[0])
+              .then((blobUrl) => {
+                if (blobUrl !== false) {
+                  const urdf = new Urdf(
+                    blobUrl,
+                    {
+                      ghosted: false,
+                    },
+                    () => {
+                      setLoaded(true);
+                    }
+                  );
+                  setUrdf(urdf);
+                }
+              })
+              .catch((e) => {
+                throw e;
+              });
+          })
+          .catch((e) => {
+            throw e;
+          });
+      }
     }
 
     return () => {
