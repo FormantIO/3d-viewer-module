@@ -422,6 +422,35 @@ export function GeometryLayer(props: IGeometryLayer) {
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
                 mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
               }
+            } else if (g.type === "triangle_list") {
+              const serializedPoints = g.points.map((p) => {
+                return new Vector3(p.x, p.y, p.z);
+              }
+              );
+              if (!mesh) {
+                // TODO: make this support individual point colors using vertex colors
+                const material = new MeshLambertMaterial({
+                  color: new Color(g.color.r, g.color.g, g.color.b),
+                  opacity: g.color.a,
+                });
+
+                const trianglesGeometry = new BufferGeometry().setFromPoints(
+                  serializedPoints as Vector3[]
+                );
+                const trianglesMesh = new Mesh(trianglesGeometry, material);
+
+                trianglesMesh.position.set(g.position.x, g.position.y, g.position.z);
+                trianglesMesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
+                trianglesMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+
+                root.add(trianglesMesh);
+                worldGeometry.current.set(g.id, trianglesMesh);
+              } else {
+                mesh.geometry.setFromPoints(serializedPoints as Vector3[]);
+                mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
+                mesh.position.set(g.position.x, g.position.y, g.position.z);
+                mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+              }
             }
             g.dirty = false;
           }

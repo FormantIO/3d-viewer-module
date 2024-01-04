@@ -42,6 +42,11 @@ export type Points = BaseGeometry & {
   points: IVector3[];
 };
 
+export type TriangleList = BaseGeometry & {
+  type: "triangle_list";
+  points: IVector3[];
+};
+
 export type Geometry =
   | Arrow
   | Cube
@@ -49,7 +54,8 @@ export type Geometry =
   | Text
   | LineList
   | Cylinder
-  | Points;
+  | Points
+  | TriangleList;
 
 function reifyVector3(v: IVector3) {
   if (v.x === undefined) {
@@ -215,6 +221,21 @@ export class GeometryWorld {
             ns.set(marker.id, {
               id: `${marker.ns}_${marker.id}`,
               type: "points",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              dirty: true,
+              points: marker.points,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
+        } else if (type === 11) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "triangle_list",
               position: marker.pose.position,
               rotation: marker.pose.orientation,
               scale: marker.scale,
