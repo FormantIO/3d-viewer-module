@@ -87,6 +87,7 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
 export type URDFLayerProps = IUniverseLayerProps & {
   jointStatesDataSource?: UniverseDataSource;
   realtimeJointStateDataSource?: UniverseDataSource;
+  customSource?: string;
 };
 
 export function URDFLayer(props: URDFLayerProps) {
@@ -98,6 +99,7 @@ export function URDFLayer(props: URDFLayerProps) {
 
   useEffect(() => {
     if (!layerData) return;
+    console.log("customSource", props.customSource);
     const { deviceId } = layerData;
     let unsubscribe: CloseSubscription | undefined;
 
@@ -115,7 +117,7 @@ export function URDFLayer(props: URDFLayerProps) {
           }
         }
       );
-    } else if(jointStatesDataSource && urdf) {
+    } else if (jointStatesDataSource && urdf) {
       unsubscribe = universeData.subscribeToJointState(
         deviceId,
         jointStatesDataSource,

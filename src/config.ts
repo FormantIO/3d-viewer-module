@@ -37,6 +37,8 @@ export type Viewer3DVisualization = {
     | "GLTF"
     | "Points of interest";
   positionIndicatorUseURDF?: boolean;
+  positionIndicatorUseURDFSource?: "Device" | "Custom";
+  positionIndicatorURDFCustom?: string;
   jointStateTelemetryStreamName?: string;
   geometryAllowTransparency?: boolean;
   realtimeJointStateStream?: string;

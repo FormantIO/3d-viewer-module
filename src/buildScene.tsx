@@ -111,6 +111,7 @@ export function buildScene(
 
     if (layer.visualizationType === "Position indicator") {
       if (layer.positionIndicatorUseURDF) {
+        console.log(layer);
         deviceLayers.push(
           <URDFLayer
             key={"vis" + i + configHash}
@@ -118,6 +119,7 @@ export function buildScene(
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "URDF"}
             jointStatesDataSource={getTeletryJointStateDataSource(layer)}
+            customSource={layer.positionIndicatorUseURDFSource === "Custom" ? layer.positionIndicatorURDFCustom : undefined}
             realtimeJointStateDataSource={getRealtimeJointStateDataSource(
               layer
             )}

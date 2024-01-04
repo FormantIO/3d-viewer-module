@@ -128,6 +128,32 @@
             ]
           },
 
+          "positionIndicatorUseURDFSource": {
+            "type": "string",
+            "title": "URDF Source",
+            "description": "Select the URDF source.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/urdf",
+            "enum": ["Device", "Custom"],
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "=", "Position indicator"],
+              ["positionIndicatorUseURDF", "=", true]
+            ]
+          },
+
+          "positionIndicatorURDFCustom": {
+            "type": "string",
+            "title": "Custom URDF",
+            "description": "Input the URDF file ID.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/urdf",
+            "$formant.visible.when": [
+              "and",
+              ["visualizationType", "=", "Position indicator"],
+              ["positionIndicatorUseURDF", "=", true],
+              ["positionIndicatorUseURDFSource", "=", "Custom"]
+            ]
+          },
+
           "jointStateTelemetryStreamName": {
             "title": "Telemetry Joint State Stream",
             "type": "string",
@@ -468,6 +494,12 @@
           "title": "Display ground",
           "type": "boolean",
           "default": true
+        },
+        "filesTest": {
+          "title": "Files Test",
+          "type": "string",
+          "default": "",
+          "description": "This is a test"
         }
       }
     }
