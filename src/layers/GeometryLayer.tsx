@@ -225,6 +225,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                 const material = new LineBasicMaterial({
                   color: new Color(g.color.r, g.color.g, g.color.b),
                   opacity: g.color.a,
+                  linewidth: 1 // with webGL this is always 1, webGPU will fix this someday
                 });
 
                 const meshGeometry = new BufferGeometry().setFromPoints(
@@ -232,7 +233,6 @@ export function GeometryLayer(props: IGeometryLayer) {
                 );
                 const lines = new Line(meshGeometry, material);
                 lines.position.set(g.position.x, g.position.y, g.position.z);
-                lines.scale.set(g.scale.x, g.scale.y, g.scale.z);
                 lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
 
                 root.add(lines);
@@ -240,7 +240,6 @@ export function GeometryLayer(props: IGeometryLayer) {
               } else {
                 mesh.geometry.setFromPoints(g.points as Vector3[]);
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
-                mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
                 mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
                 mesh.material = new LineBasicMaterial({
                   color: new Color(g.color.r, g.color.g, g.color.b),
@@ -281,13 +280,18 @@ export function GeometryLayer(props: IGeometryLayer) {
 
               if (!mesh) {
                 const sprite = new Sprite(spriteMaterial);
-                // make things less blurrier
-                const pixelScale = 4;
+                const pixelScale = 1;
+
                 // scale sprite so it isn't stretched
                 sprite.scale.set(
                   1 / pixelScale,
                   textHeight / textWidth / pixelScale,
                   1.0 / pixelScale
+                );
+                sprite.position.set(
+                  g.position.x,
+                  g.position.y,
+                  g.position.z
                 );
                 root.add(sprite);
                 worldGeometry.current.set(g.id, sprite);
