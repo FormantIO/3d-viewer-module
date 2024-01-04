@@ -22,7 +22,7 @@ import {
   IUniverseGridMap,
   IUniverseOdometry,
 } from "@formant/universe-core";
-import { SplineCurve, Vector2 } from "three";
+import { SplineCurve, Vector2, Vector3 } from "three";
 import seedrandom from "seedrandom";
 import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
 import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
@@ -182,12 +182,21 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IUniverseOdometry) => void
   ): CloseSubscription {
-    setInterval(() => {
+    let time = 0;
+    const radius = 3; // Radius of the circular path
+    const frequency = 0.1; // Controls the speed of movement
+
+    const interval = setInterval(() => {
+      time += 0.1; // Increment time
+      // Calculate x and y coordinates in a circular path with some randomness
+      const x = radius * Math.cos(time * frequency);
+      const y = radius * Math.sin(time * frequency);
+
       callback({
         worldToLocal: {
           translation: {
-            x: 0,
-            y: 0,
+            x,
+            y,
             z: 0,
           },
           rotation: {
@@ -199,8 +208,8 @@ export class ExampleUniverseData implements IUniverseData {
         },
         pose: {
           translation: {
-            x: 3.3545788855933396,
-            y: -2.1870991935927204,
+            x: x + 3.3545788855933396, // Add an offset for initial position
+            y: y - 2.1870991935927204, // Add an offset for initial position
             z: 0.154354741654536,
           },
           rotation: {
@@ -212,8 +221,12 @@ export class ExampleUniverseData implements IUniverseData {
         },
         covariance: [],
       });
-    }, 1000);
-    return () => {};
+    }, 10); // Reduced interval for smoother movement
+
+    // Return function to clear interval when needed
+    return () => {
+      clearInterval(interval);
+    };
   }
 
   subscribeToPose(
@@ -467,45 +480,55 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IMarker3DArray | DataStatus) => void
   ): () => void {
+    const array = [];
+    for (let i = 0; i < 10; i += 1) {
+      for (let j = 0; j <= 10; j += 1) {
+        array.push({
+          id: Math.random(),
+          ns: `cube${Math.random()}`,
+          type: j,
+          action: 0,
+          lifetime: 100000,
+          frame_id: "base_link",
+          points: Array.from({ length: j > 0 ? 100 : 0 }, () => ({
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random(),
+          })),
+          text: Math.random().toString(), // random text
+          mesh_resource: "",
+          frame_locked: false,
+          mesh_use_embedded_materials: false,
+          color: {
+            r: Math.random(),
+            g: Math.random(),
+            b: Math.random(),
+            a: Math.random(),
+          },
+          colors: [],
+          pose: {
+            position: {
+              x: i - 10,
+              y: 5 - j,
+              z: 0,
+            },
+            orientation: {
+              x: Math.random(),
+              y: Math.random(),
+              z: Math.random(),
+              w: 1,
+            },
+          },
+          scale: {
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random(),
+          },
+        });
+      }
+    }
     callback({
-      markers: [...Array(100).keys()].map(() => ({
-        id: Math.random(),
-        ns: `cube${Math.random()}`,
-        type: 1,
-        action: 0,
-        lifetime: 100000,
-        frame_id: "base_link",
-        points: [],
-        text: "",
-        mesh_resource: "",
-        frame_locked: false,
-        mesh_use_embedded_materials: false,
-        color: {
-          r: Math.random(),
-          g: Math.random(),
-          b: Math.random(),
-          a: Math.random(),
-        },
-        colors: [],
-        pose: {
-          position: {
-            x: 20 * Math.random() - 10,
-            y: 20 * Math.random() - 10,
-            z: 0,
-          },
-          orientation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
-        },
-        scale: {
-          x: 0.1,
-          y: 0.1,
-          z: 0.1,
-        },
-      })),
+      markers: array,
     });
     return () => {};
   }
@@ -515,8 +538,9 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IJointState | DataStatus) => void
   ): () => void {
+    let interval: string | number | NodeJS.Timeout | null | undefined = null;
     if (_deviceId === SPOT_ID) {
-      window.setInterval(() => {
+      interval = window.setInterval(() => {
         callback({
           name: [
             "fl.hx",
@@ -552,7 +576,7 @@ export class ExampleUniverseData implements IUniverseData {
         });
       }, 60 / 12);
     } else if (_deviceId === ARM1_ID) {
-      window.setInterval(() => {
+      interval = window.setInterval(() => {
         callback({
           name: [
             "joint_1",
@@ -573,7 +597,7 @@ export class ExampleUniverseData implements IUniverseData {
         });
       }, 60 / 12);
     } else if (_deviceId === ARM2_ID) {
-      window.setInterval(() => {
+      interval = window.setInterval(() => {
         callback({
           name: [
             "joint_1",
@@ -594,7 +618,7 @@ export class ExampleUniverseData implements IUniverseData {
         });
       }, 60 / 12);
     } else if (_deviceId === ARM3_ID) {
-      window.setInterval(() => {
+      interval = window.setInterval(() => {
         callback({
           name: [
             "joint_1",
@@ -615,7 +639,9 @@ export class ExampleUniverseData implements IUniverseData {
         });
       }, 60 / 12);
     }
-    return () => {};
+    return () => {
+      clearInterval(interval);
+    };
   }
 
   subscribeToMap(
