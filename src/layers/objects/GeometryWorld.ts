@@ -37,7 +37,19 @@ export type Cylinder = BaseGeometry & {
   type: "cylinder";
 };
 
-export type Geometry = Arrow | Cube | Sphere | Text | LineList | Cylinder;
+export type Points = BaseGeometry & {
+  type: "points";
+  points: IVector3[];
+};
+
+export type Geometry =
+  | Arrow
+  | Cube
+  | Sphere
+  | Text
+  | LineList
+  | Cylinder
+  | Points;
 
 function reifyVector3(v: IVector3) {
   if (v.x === undefined) {
@@ -194,6 +206,21 @@ export class GeometryWorld {
               scale: marker.scale,
               color: marker.color,
               dirty: true,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
+        } else if (type === 8) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "points",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              dirty: true,
+              points: marker.points,
             });
           } else if (isDelete) {
             ns.delete(marker.id);

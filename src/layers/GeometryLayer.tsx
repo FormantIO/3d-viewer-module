@@ -27,6 +27,8 @@ import {
   MeshLambertMaterial,
   MeshPhongMaterial,
   Object3D,
+  Points,
+  PointsMaterial,
   Sprite,
   SpriteMaterial,
   Texture,
@@ -186,7 +188,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
   const world = useRef(new GeometryWorld());
 
-  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite>> =
+  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite | Points>> =
     useRef(new Map());
 
   const rootRef = useRef(new Object3D());
@@ -390,6 +392,34 @@ export function GeometryLayer(props: IGeometryLayer) {
               } else {
                 mesh.position.set(g.position.x, g.position.y, g.position.z);
                 mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
+                mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+              }
+            } else if (g.type === "points") {
+              const serializedPoints = g.points.map((p) => {
+                return new Vector3(p.x, p.y, p.z);
+              }
+              );
+              if (!mesh) {
+                // TODO: make this support individual point colors using vertex colors
+                const material = new PointsMaterial({
+                  color: new Color(g.color.r, g.color.g, g.color.b),
+                  opacity: g.color.a,
+                  size: g.scale.x,
+                });
+
+                const pointsGeometry = new BufferGeometry().setFromPoints(
+                  serializedPoints as Vector3[]
+                );
+                const pointsMesh = new Points(pointsGeometry, material);
+
+                pointsMesh.position.set(g.position.x, g.position.y, g.position.z);
+                pointsMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+
+                root.add(pointsMesh);
+                worldGeometry.current.set(g.id, pointsMesh);
+              } else {
+                mesh.geometry.setFromPoints(serializedPoints as Vector3[]);
+                mesh.position.set(g.position.x, g.position.y, g.position.z);
                 mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
               }
             }
