@@ -17,7 +17,7 @@
     "@formant/data-sdk": "^1.20.0",
     "@formant/realtime-sdk": "^1.2.0",
     "@formant/ui-sdk": "0.0.45",
-    "@formant/universe-connector": "^0.0.39",
+    "@formant/universe-connector": "^0.0.40",
     "@react-three/drei": "^9.57.3",
     "@react-three/fiber": "^8.12.0",
     "@react-three/postprocessing": "^2.7.0",
