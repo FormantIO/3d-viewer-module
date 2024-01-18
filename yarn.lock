@@ -512,10 +512,10 @@
     "@formant/realtime-sdk" "^0.0.19"
     date-fns "^2.29.3"
 
-"@formant/data-sdk@^1.21.0":
-  version "1.21.0"
-  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.21.0.tgz#17ac5bc6efd566044e1b048d2f50b0f67f51c44f"
-  integrity sha512-vRMt83XCm1tMmoNZPUqvF0UgsCCd2Qm3al6G6jVTZkiQ2XQu8MU/zr5u0aYZ3Wstjx0L7waK6jdg3kr5714Hdg==
+"@formant/data-sdk@^1.22.0":
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.22.0.tgz#7407a8e128da0a5b51a3b76a4d3513aca7b30196"
+  integrity sha512-k8U9wtdFJj5TBeV4lO8QRabq+MhZC3zBNqFIUCTaJStiGHLU+jXDwc5KcPV0JX16FT65AdEN14fHZAHbyE7UXg==
   dependencies:
     base-64 "^1.0.0"
     base64-js "^1.5.1"
@@ -531,14 +531,6 @@
     "@types/google-protobuf" "~3.7.0"
     env-var "^7.3.0"
     grpc-web "^1.2.1"
-
-"@formant/realtime-sdk@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@formant/realtime-sdk/-/realtime-sdk-1.2.0.tgz#6010bebe8a8d45b2105bde72c7aaa8cb5577937b"
-  integrity sha512-BOzD40kjGHyHLYhwna/FPTMItnrkIaLvALWh/iM6M7/22ZpDJWLqdtrC7GK80B04KvllQHrkCQGUgQmu2aDXfg==
-  dependencies:
-    "@types/google-protobuf" "~3.7.0"
-    env-var "^7.3.1"
 
 "@formant/ui-sdk-realtime-player-core-worker@^0.0.4":
   version "0.0.4"
@@ -581,10 +573,10 @@
     react-chartjs-2 "^5.2.0"
     react-device-detect "^2.2.2"
 
-"@formant/universe-connector@^0.0.42":
-  version "0.0.42"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.42.tgz#ac0c8487c7cffeaff490a17422b2ecd05cddfbbd"
-  integrity sha512-g09YhqEzX408YclcsfjZ8oGVboaaB31bTX1E5qZhkkiKRGa8LEeG9p3jW3ZYJ74o6UzlH15RpQNjOC57ABD/Vw==
+"@formant/universe-connector@^0.0.43":
+  version "0.0.43"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.43.tgz#48dce81b2c3dbf3bcaf3ba9ecac5abb0c604c97c"
+  integrity sha512-iGk0zFytPs7YjkBoLhw8supqec2HwG56PrPRIWBXfdYTrP079r8X+2bqiKYKalXaDEd80NXpbTkm7BvzF0GMdg==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
@@ -1904,7 +1896,7 @@ env-paths@^2.2.0:
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
 
-env-var@^7.3.0, env-var@^7.3.1:
+env-var@^7.3.0:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/env-var/-/env-var-7.4.1.tgz#88af75fe16cc11031000f88d4777802c6958a01c"
   integrity sha512-H8Ga2SbXTQwt6MKEawWSvmxoH1+J6bnAXkuyE7eDvbGmrhIL2i+XGjzGM3DFHcJu8GY1zY9/AnBJY8uGQYPHiw==
