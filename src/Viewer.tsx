@@ -1,13 +1,13 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
-import {
-  Authentication,
-  App as FormantApp,
-} from "@formant/data-sdk";
+import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
-import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
-import { LiveUniverseData, TelemetryUniverseData } from "@formant/universe-connector";
+import { definedAndNotNull, IUniverseData } from "@formant/universe-connector";
+import {
+  LiveUniverseData,
+  TelemetryUniverseData,
+} from "@formant/universe-connector";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";

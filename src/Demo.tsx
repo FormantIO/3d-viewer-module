@@ -9,7 +9,7 @@ import { ExampleUniverseData } from "./layers/common/ExampleUniverseData";
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useState } from "react";
-import { IUniverseData } from "@formant/universe-core";
+import { IUniverseData } from "@formant/universe-connector";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { GeometryLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
 import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
@@ -23,7 +23,7 @@ export function Demo() {
   const [universeData] = useState<IUniverseData>(
     () => new ExampleUniverseData()
   );
-  
+
   const [liveUniverseData] = useState<IUniverseData>(
     () => new ExampleUniverseData()
   );

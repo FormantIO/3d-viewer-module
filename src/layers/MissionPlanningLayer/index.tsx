@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
-import { IPose, UniverseTelemetrySource } from "@formant/universe-core";
+import { IPose, UniverseTelemetrySource } from "@formant/universe-connector";
 import { Euler, Mesh, Quaternion, Vector3 } from "three";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";

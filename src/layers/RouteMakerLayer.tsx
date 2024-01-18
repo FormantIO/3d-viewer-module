@@ -6,7 +6,7 @@ import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { UIDataContext } from "./common/UIDataContext";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
-import { IPose } from "@formant/universe-core";
+import { IPose } from "@formant/universe-connector";
 
 interface IMapLayer extends IUniverseLayerProps {
   size: number;

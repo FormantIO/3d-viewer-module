@@ -7,10 +7,8 @@ import { LayerContext } from "./common/LayerContext";
 import {
   CloseSubscription,
   defined,
-  ILocation,
-  ITransformNode,
   IUniverseOdometry,
-} from "@formant/universe-core";
+} from "@formant/universe-connector";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import {
   Box3,
@@ -26,8 +24,9 @@ import { LayerData, UIDataContext } from "./common/UIDataContext";
 import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
+import { ILocation, ITransformNode } from "@formant/data-sdk";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
 
 type TreePath = number[];
 
@@ -179,7 +178,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         if (p.rtcStream) {
           d = DataSourceBuilder.realtime(p.rtcStream, "json");
           streamType = "rtc";
-
         } else if (p.stream) {
           d = DataSourceBuilder.telemetry(
             p.stream,
@@ -190,7 +188,9 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         } else {
           throw new Error("invalid odometry positioning stream type");
         }
-        const unsubscribe = (streamType === "rtc" ? liveUniverseData : universeData).subscribeToOdometry(
+        const unsubscribe = (
+          streamType === "rtc" ? liveUniverseData : universeData
+        ).subscribeToOdometry(
           defined(deviceId, "odometry positioning requires a device id"),
           d,
           (d) => {
@@ -255,7 +255,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         positionUnsubscriber();
         setPositionUnsubscriber(undefined);
       }
-    }
+    };
   }, [groupRef, positioning, thisLayer]);
 
   return (

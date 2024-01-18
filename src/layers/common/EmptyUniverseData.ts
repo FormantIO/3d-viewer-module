@@ -1,4 +1,12 @@
 import {
+  IBitset,
+  IJointState,
+  ILocation,
+  IMarker3DArray,
+  INumericSetEntry,
+  ITransformNode,
+} from "@formant/data-sdk";
+import {
   CloseSubscription,
   DataSourceState,
   Interaction,
@@ -9,18 +17,12 @@ import {
   IUniverseData,
   IUniverseStatistics,
   UniverseDataSource,
-  IBitset,
-  ILocation,
-  IJointState,
-  IMarker3DArray,
-  INumericSetEntry,
-  ITransformNode,
   IPcd,
   IUniverseOdometry,
   IUniverseGridMap,
-} from "@formant/universe-core";
-import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
-import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
+} from "@formant/universe-connector";
+import { IUniversePath } from "@formant/universe-connector";
+import { IUniversePointCloud } from "@formant/universe-connector";
 
 export class EmptyUniverseData implements IUniverseData {
   subscribeToPath(

@@ -1,4 +1,4 @@
-import { StreamType } from "@formant/universe-core";
+import { StreamType } from "@formant/data-sdk";
 import { Positioning } from "../common/Positioning";
 
 export class PositioningBuilder {

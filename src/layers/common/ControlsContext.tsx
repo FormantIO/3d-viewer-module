@@ -1,4 +1,4 @@
-import { IPose } from "@formant/universe-core";
+import { IPose } from "@formant/universe-connector";
 import React from "react";
 import { WaypointData } from "../MissionPlanningLayer/Waypoint";
 

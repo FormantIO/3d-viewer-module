@@ -11,7 +11,7 @@ import {
 import { LayerContext } from "./common/LayerContext";
 import { Fleet, IDataPoint } from "@formant/data-sdk";
 import { App, aggregateByDateFunctions, IStreamData } from "@formant/data-sdk";
-import { UniverseTelemetrySource } from "@formant/universe-core";
+import { UniverseTelemetrySource } from "@formant/universe-connector";
 import { Vector3, Mesh, BufferGeometry, Group } from "three";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { useFrame } from "@react-three/fiber";

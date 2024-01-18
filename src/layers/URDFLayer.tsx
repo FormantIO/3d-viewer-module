@@ -4,15 +4,15 @@ import { LayerType } from "./common/LayerTypes";
 import {
   CloseSubscription,
   defined,
-  IJointState,
   UniverseDataSource,
-} from "@formant/universe-core";
+} from "@formant/universe-connector";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { useContext, useEffect, useState } from "react";
 import { LayerContext } from "./common/LayerContext";
 import JSZip from "jszip";
 import { Urdf } from "./objects/Urdf";
 import { Group } from "three";
+import { IJointState } from "@formant/data-sdk";
 
 async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
   const data = await fetch(zipPath).then((_) => _.arrayBuffer());
@@ -90,7 +90,8 @@ export type URDFLayerProps = IUniverseLayerProps & {
 };
 
 export function URDFLayer(props: URDFLayerProps) {
-  const { children, jointStatesDataSource, realtimeJointStateDataSource } = props;
+  const { children, jointStatesDataSource, realtimeJointStateDataSource } =
+    props;
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [loaded, setLoaded] = useState(false);
@@ -106,7 +107,6 @@ export function URDFLayer(props: URDFLayerProps) {
         deviceId,
         realtimeJointStateDataSource,
         (data) => {
-
           if (typeof data === "symbol") return;
 
           const jointStates = data as IJointState;
@@ -115,7 +115,7 @@ export function URDFLayer(props: URDFLayerProps) {
           }
         }
       );
-    } else if(jointStatesDataSource && urdf) {
+    } else if (jointStatesDataSource && urdf) {
       unsubscribe = universeData.subscribeToJointState(
         deviceId,
         jointStatesDataSource,

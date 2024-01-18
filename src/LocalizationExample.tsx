@@ -2,7 +2,7 @@ import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useState } from "react";
 import { Viewer3DConfiguration } from "./config";
-import { definedAndNotNull, IUniverseData } from "@formant/universe-core";
+import { definedAndNotNull, IUniverseData } from "@formant/universe-connector";
 import { TelemetryUniverseData } from "@formant/universe-connector";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";

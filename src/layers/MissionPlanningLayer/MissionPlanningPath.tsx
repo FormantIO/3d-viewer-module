@@ -1,5 +1,4 @@
 import React from "react";
-import { IVector3 } from "@formant/universe-core";
 import { useFrame } from "@react-three/fiber";
 import { Line2 } from "three-stdlib";
 import { Line } from "@react-three/drei";
@@ -9,6 +8,7 @@ import { ThreeEvent } from "@react-three/fiber";
 import { useControlsContext } from "../common/ControlsContext";
 import { Euler, Quaternion, Vector3 } from "three";
 import { StaticLine } from "./StaticLine";
+import { IVector3 } from "@formant/data-sdk";
 
 interface Props {
   pathType?: PathType;
