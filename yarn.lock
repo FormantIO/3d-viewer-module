@@ -512,10 +512,10 @@
     "@formant/realtime-sdk" "^0.0.19"
     date-fns "^2.29.3"
 
-"@formant/data-sdk@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.20.0.tgz#3caee6cc4d59a835e815581dc4e89211f2f20434"
-  integrity sha512-+Csw8tlZ4WsL/hrFzHyBxL1COLH4AY43cG02nMiKESakRbYIv+v8kLYbNjWAUf80xzBttHJEEj380eGXdt6pkQ==
+"@formant/data-sdk@^1.21.0":
+  version "1.21.0"
+  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.21.0.tgz#17ac5bc6efd566044e1b048d2f50b0f67f51c44f"
+  integrity sha512-vRMt83XCm1tMmoNZPUqvF0UgsCCd2Qm3al6G6jVTZkiQ2XQu8MU/zr5u0aYZ3Wstjx0L7waK6jdg3kr5714Hdg==
   dependencies:
     base-64 "^1.0.0"
     base64-js "^1.5.1"
@@ -581,10 +581,10 @@
     react-chartjs-2 "^5.2.0"
     react-device-detect "^2.2.2"
 
-"@formant/universe-connector@^0.0.39":
-  version "0.0.39"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.39.tgz#7d1debd0212f50be1e692d15426989cf0f32b164"
-  integrity sha512-P8rxYAIEhzYzheOHUeIa7Ds6Im4iarH8kd8bL+Im1XqHgugqcQUyIF5yC9rkxNltLAEIRvC1HAmCIbOdsuPgtA==
+"@formant/universe-connector@^0.0.42":
+  version "0.0.42"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.42.tgz#ac0c8487c7cffeaff490a17422b2ecd05cddfbbd"
+  integrity sha512-g09YhqEzX408YclcsfjZ8oGVboaaB31bTX1E5qZhkkiKRGa8LEeG9p3jW3ZYJ74o6UzlH15RpQNjOC57ABD/Vw==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"

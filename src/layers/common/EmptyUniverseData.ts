@@ -25,6 +25,13 @@ import { IUniversePath } from "@formant/universe-connector";
 import { IUniversePointCloud } from "@formant/universe-connector";
 
 export class EmptyUniverseData implements IUniverseData {
+  subscribeToBitset(
+    deviceId: string,
+    source: UniverseDataSource,
+    callback: (data: Symbol | IBitset) => void
+  ): CloseSubscription {
+    throw new Error("Method not implemented.");
+  }
   subscribeToPath(
     deviceId: string,
     source: UniverseDataSource,

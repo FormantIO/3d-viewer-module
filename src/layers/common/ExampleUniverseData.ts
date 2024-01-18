@@ -37,6 +37,13 @@ export const ARM2_ID = "124fasd";
 export const ARM3_ID = "77hrtesgdafdsh";
 
 export class ExampleUniverseData implements IUniverseData {
+  subscribeToBitset(
+    _deviceId: string,
+    _source: UniverseDataSource,
+    _callback: (data: Symbol | IBitset) => void
+  ): CloseSubscription {
+    throw new Error("Method not implemented.");
+  }
   construtor() {
     /* // create rapier3d world
     const world = new World({ x: 0, y: -9.81, z: 0 });
