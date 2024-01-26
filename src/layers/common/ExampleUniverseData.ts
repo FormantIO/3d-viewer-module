@@ -483,6 +483,10 @@ export class ExampleUniverseData implements IUniverseData {
     const array = [];
     for (let i = 0; i < 10; i += 1) {
       for (let j = 0; j <= 11; j += 1) {
+        if (j === 6 || j === 7) {
+          // let's skip the lists
+          continue;
+        }
         array.push({
           id: Math.random(),
           ns: `cube${Math.random()}`,
@@ -505,7 +509,12 @@ export class ExampleUniverseData implements IUniverseData {
             b: Math.random(),
             a: Math.random(),
           },
-          colors: [],
+          colors: Array.from({ length: j > 0 ? 100 : 0 }, () => ({
+            r: Math.random(),
+            g: Math.random(),
+            b: Math.random(),
+            a: 1.0,
+          })),
           pose: {
             position: {
               x: i - 10,
@@ -527,6 +536,103 @@ export class ExampleUniverseData implements IUniverseData {
         });
       }
     }
+
+    array.push({
+      id: 113377,
+      ns: `cube_list${Math.random()}`,
+      type: 6, // CUBE_LIST
+      action: 0,
+      lifetime: 100000,
+      frame_id: "base_link",
+      points: Array.from({ length: 1000 }, () => ({
+        x: Math.random() * 10,
+        y: Math.random() * 10,
+        z: Math.random() * 10,
+      })),
+      text: Math.random().toString(),
+      mesh_resource: "",
+      frame_locked: false,
+      mesh_use_embedded_materials: false,
+      color: {
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        a: Math.random(),
+      },
+      colors: Array.from({ length: 1000 }, () => ({
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        a: 1.0,
+      })),
+      pose: {
+        position: {
+          x: -16,
+          y: 13,
+          z: 0,
+        },
+        orientation: {
+          x: Math.random(),
+          y: Math.random(),
+          z: Math.random(),
+          w: 1,
+        },
+      },
+      scale: {
+        x: 1.0,
+        y: 1.0,
+        z: 1.0,
+      },
+    });
+
+    array.push({
+      id: 1337,
+      ns: `sphereo_list${Math.random()}`,
+      type: 7, // SPHERE_LIST
+      action: 0,
+      lifetime: 100000,
+      frame_id: "base_link",
+      points: Array.from({ length: 1000 }, () => ({
+        x: Math.random() * 10,
+        y: Math.random() * 10,
+        z: Math.random() * 10,
+      })),
+      text: Math.random().toString(),
+      mesh_resource: "",
+      frame_locked: false,
+      mesh_use_embedded_materials: false,
+      color: {
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        a: Math.random(),
+      },
+      colors: Array.from({ length: 1000 }, () => ({
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+        a: 1.0,
+      })),
+      pose: {
+        position: {
+          x: 3,
+          y: 13,
+          z: 0,
+        },
+        orientation: {
+          x: Math.random(),
+          y: Math.random(),
+          z: Math.random(),
+          w: 1,
+        },
+      },
+      scale: {
+        x: 1.0,
+        y: 1.0,
+        z: 1.0,
+      },
+    });
+
     callback({
       markers: array,
     });

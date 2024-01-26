@@ -49,7 +49,7 @@ export function Demo() {
         }}
       >
         <group>
-          <pointLight
+          {/* <pointLight
             position={[1000, 1000, 1000]}
             color={"#18d2ff"}
             intensity={0.3 * 2.8}
@@ -62,11 +62,15 @@ export function Demo() {
             intensity={0.7 * 2.8}
             decay={0}
             distance={0}
-          />
+          /> */}
           <hemisphereLight
             intensity={0.2 * 2.8}
             color={"#f8f9fc"}
             groundColor={"#282f45"}
+          />
+          <ambientLight
+            intensity={3}
+            color={"#f8f9fc"}
           />
         </group>
 
@@ -137,8 +141,8 @@ export function Demo() {
             <primitive object={new Label("CYLINDER", false)} position={[-12, 2, 0]} />
             <primitive object={new Label("LINE_STRIP", false)} position={[-12, 1, 0]} />
             <primitive object={new Label("LINE_LIST", false)} position={[-12, 0, 0]} />
-            <primitive object={new Label("CUBE_LIST", false)} position={[-12, -1, 0]} />
-            <primitive object={new Label("SPHERE_LIST", false)} position={[-12, -2, 0]} />
+            <primitive object={new Label("CUBE_LIST", false)} position={[-15, 10, 0]} />
+            <primitive object={new Label("SPHERE_LIST", false)} position={[5, 10, 0]} />
             <primitive object={new Label("POINTS", false)} position={[-12, -3, 0]} />
             <primitive object={new Label("TEXT_VIEW_FACING", false)} position={[-12, -4, 0]} />
             <primitive object={new Label("MESH_RESOURCE", false)} position={[-12, -5, 0]} />

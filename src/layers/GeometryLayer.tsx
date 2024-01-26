@@ -24,6 +24,7 @@ import {
   LineBasicMaterial,
   Matrix4,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   MeshPhongMaterial,
   Object3D,
@@ -54,13 +55,19 @@ type GeoInstanceData = {
   rotation: { w: number; x: number; y: number; z: number };
   scale: { x: number; y: number; z: number };
   color: { r: number; g: number; b: number; a: number };
+  colors?: { r: number; g: number; b: number }[];
   dirty: boolean;
+  points?: { x: number; y: number; z: number }[];
 };
 
 type InstancedGeoProps = {
   instances: GeoInstanceData[];
   allowTransparency?: boolean;
 };
+
+type InstanceGeoListProps = {
+  instances: GeoInstanceData;
+}
 
 function InstancedGeometry({
   instances,
@@ -183,6 +190,90 @@ function InstancedGeometry({
   }
 }
 
+function InstancedGeometryFromList(
+  { instances }: InstanceGeoListProps) {
+  if (!instances.points) {
+    return;
+  }
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const boundingBox = useRef<Box3>(new Box3());
+  const type = instances.type;
+  console.log(type);
+
+  const matrixCache = useRef<Map<string, Matrix4>>(new Map());
+  const dummy = useMemo(() => new Object3D(), []);
+
+  useLayoutEffect(() => {
+    if (instances.points === undefined) {
+      return;
+    }
+    if (ref.current) {
+      boundingBox.current.setFromCenterAndSize(
+        new Vector3(
+          instances.position.x,
+          instances.position.y,
+          instances.position.z
+        ),
+        new Vector3(0.1, 0.1, 0.1)
+      );
+      // every three numbers in points is a position vector3
+      const totalInstances = instances.points.length;
+      const positions = instances.points;
+      const rootPosition = instances.position;
+      const colors = instances.colors;
+      const scale = instances.scale;
+
+      positions.map((pos, index) => {
+        const transformKey = `${index}`;
+        let instanceMatrix = matrixCache.current.get(transformKey);
+        if (!instanceMatrix) {
+          dummy.position.set(rootPosition.x + pos.x, rootPosition.y + pos.y, rootPosition.z + pos.z);
+          dummy.scale.set(scale.x, scale.y, scale.z);
+          dummy.updateMatrix();
+
+          instanceMatrix = dummy.matrix.clone();
+          matrixCache.current.set(transformKey, instanceMatrix);
+        }
+        boundingBox.current.expandByPoint(dummy.position);
+        if (ref.current) {
+
+          ref.current.up = new Vector3(0, 0, 1);
+          ref.current.setMatrixAt(index, dummy.matrix);
+
+          // for lists, per object colors are optional
+          if (colors && colors[index]) {
+            ref.current.setColorAt(index, new Color(colors[index].r, colors[index].g, colors[index].b));
+          } else {
+            ref.current.setColorAt(index, new Color(instances.color.r, instances.color.g, instances.color.b));
+          }
+        }
+      });
+    }
+  }, [ref, instances]);
+
+  return (
+    <>
+      <instancedMesh
+        ref={ref}
+        args={[null as any, null as any, instances.points.length]}
+      >
+        {type === "sphere_list" ? (
+          <sphereGeometry
+            attach="geometry"
+            args={[0.5, 32, 16]}
+          ></sphereGeometry>
+        ) : null}
+        {type === "cube_list" ? (
+          <boxGeometry attach="geometry" args={[0.9, 0.9, 0.9]}></boxGeometry>
+        ) : null}
+        <meshLambertMaterial attach="material" />
+      </instancedMesh>
+      <box3Helper args={[boundingBox.current]} visible={false} />
+    </>
+  );
+}
+
+
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource, allowTransparency } = props;
 
@@ -197,6 +288,8 @@ export function GeometryLayer(props: IGeometryLayer) {
   const [cubesData, setCubesData] = useState<GeoInstanceData[]>([]);
   const [spheresData, setSpheresData] = useState<GeoInstanceData[]>([]);
   const [geoKey, setGeoKey] = useState(0);
+  const [cubeList, setCubeList] = useState<GeoInstanceData>();
+  const [sphereList, setSphereList] = useState<GeoInstanceData>();
 
   useEffect(() => {
     const unsubscribe = universeData.subscribeToGeometry(
@@ -214,6 +307,12 @@ export function GeometryLayer(props: IGeometryLayer) {
         const cubes = geometry.filter(
           (g) => g.type === "cube"
         ) as GeoInstanceData[];
+        const cubeList = geometry.find(
+          (g) => g.type === "cube_list"
+        ) as GeoInstanceData;
+        const sphereList = geometry.find(
+          (g) => g.type === "sphere_list"
+        ) as GeoInstanceData;
         const spheres = geometry.filter(
           (g) => g.type === "sphere"
         ) as GeoInstanceData[];
@@ -404,7 +503,7 @@ export function GeometryLayer(props: IGeometryLayer) {
                 const material = new PointsMaterial({
                   color: new Color(g.color.r, g.color.g, g.color.b),
                   opacity: g.color.a,
-                  size: g.scale.x,
+                  size: g.scale.x / 10,
                 });
 
                 const pointsGeometry = new BufferGeometry().setFromPoints(
@@ -429,7 +528,7 @@ export function GeometryLayer(props: IGeometryLayer) {
               );
               if (!mesh) {
                 // TODO: make this support individual point colors using vertex colors
-                const material = new MeshLambertMaterial({
+                const material = new MeshBasicMaterial({
                   color: new Color(g.color.r, g.color.g, g.color.b),
                   opacity: g.color.a,
                 });
@@ -467,6 +566,8 @@ export function GeometryLayer(props: IGeometryLayer) {
         startTransition(() => {
           setCubesData(cubes);
           setSpheresData(spheres);
+          setCubeList(cubeList);
+          setSphereList(sphereList);
           setGeoKey((k) => k + 1);
         });
       }
@@ -492,6 +593,16 @@ export function GeometryLayer(props: IGeometryLayer) {
             allowTransparency={allowTransparency}
           />
         ) : null}
+        {cubeList && (
+          <InstancedGeometryFromList
+            instances={cubeList}
+          />
+        )}
+        {sphereList && (
+          <InstancedGeometryFromList
+            instances={sphereList}
+          />
+        )}
       </group>
       {children}
     </DataVisualizationLayer>

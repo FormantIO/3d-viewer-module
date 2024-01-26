@@ -47,6 +47,18 @@ export type TriangleList = BaseGeometry & {
   points: IVector3[];
 };
 
+export type CubeList = BaseGeometry & {
+  type: "cube_list";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type SphereList = BaseGeometry & {
+  type: "sphere_list";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
 export type Geometry =
   | Arrow
   | Cube
@@ -55,7 +67,9 @@ export type Geometry =
   | LineList
   | Cylinder
   | Points
-  | TriangleList;
+  | TriangleList
+  | CubeList
+  | SphereList;
 
 function reifyVector3(v: IVector3) {
   if (v.x === undefined) {
@@ -158,6 +172,22 @@ export class GeometryWorld {
           } else if (isDelete) {
             ns.delete(marker.id);
           }
+        } else if (type === 6) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "cube_list",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              colors: marker.colors || [],
+              points: marker.points,
+              dirty: true,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
         } else if (type === 2) {
           if (isAddOrModify) {
             ns.set(marker.id, {
@@ -167,6 +197,22 @@ export class GeometryWorld {
               rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
+              dirty: true,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
+        } else if (type === 7) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "sphere_list",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              colors: marker.colors || [],
+              points: marker.points,
               dirty: true,
             });
           } else if (isDelete) {
