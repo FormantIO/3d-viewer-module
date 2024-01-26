@@ -13,6 +13,7 @@ export type BaseGeometry = {
 export type LineList = BaseGeometry & {
   type: "line_list";
   points: IVector3[];
+  colors?: IColorRGBA[];
 };
 
 export type Arrow = BaseGeometry & {
@@ -40,11 +41,13 @@ export type Cylinder = BaseGeometry & {
 export type Points = BaseGeometry & {
   type: "points";
   points: IVector3[];
+  colors?: IColorRGBA[];
 };
 
 export type TriangleList = BaseGeometry & {
   type: "triangle_list";
   points: IVector3[];
+  colors?: IColorRGBA[];
 };
 
 export type CubeList = BaseGeometry & {
@@ -59,6 +62,12 @@ export type SphereList = BaseGeometry & {
   colors?: IColorRGBA[];
 };
 
+export type LineStrip = BaseGeometry & {
+  type: "line_strip";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
 export type Geometry =
   | Arrow
   | Cube
@@ -69,7 +78,8 @@ export type Geometry =
   | Points
   | TriangleList
   | CubeList
-  | SphereList;
+  | SphereList
+  | LineStrip;
 
 function reifyVector3(v: IVector3) {
   if (v.x === undefined) {
@@ -152,8 +162,25 @@ export class GeometryWorld {
               rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
+              colors: marker.colors || [],
               points: marker.points,
               dirty: true,
+            });
+          } else if (isDelete) {
+            ns.delete(marker.id);
+          }
+        } else if (type === 4) {
+          if (isAddOrModify) {
+            ns.set(marker.id, {
+              id: `${marker.ns}_${marker.id}`,
+              type: "line_strip",
+              position: marker.pose.position,
+              rotation: marker.pose.orientation,
+              scale: marker.scale,
+              color: marker.color,
+              colors: marker.colors || [],
+              dirty: true,
+              points: marker.points,
             });
           } else if (isDelete) {
             ns.delete(marker.id);
@@ -271,6 +298,7 @@ export class GeometryWorld {
               rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
+              colors: marker.colors || [],
               dirty: true,
               points: marker.points,
             });
@@ -286,6 +314,7 @@ export class GeometryWorld {
               rotation: marker.pose.orientation,
               scale: marker.scale,
               color: marker.color,
+              colors: marker.colors || [],
               dirty: true,
               points: marker.points,
             });

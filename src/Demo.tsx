@@ -139,14 +139,14 @@ export function Demo() {
             <primitive object={new Label("CUBE", false)} position={[-12, 4, 0]} />
             <primitive object={new Label("SPHERE", false)} position={[-12, 3, 0]} />
             <primitive object={new Label("CYLINDER", false)} position={[-12, 2, 0]} />
-            <primitive object={new Label("LINE_STRIP", false)} position={[-12, 1, 0]} />
-            <primitive object={new Label("LINE_LIST", false)} position={[-12, 0, 0]} />
+            <primitive object={new Label("LINE_STRIP", false)} position={[-29, -35, 0]} />
+            <primitive object={new Label("LINE_LIST", false)} position={[-5, -35, 0]} />
             <primitive object={new Label("CUBE_LIST", false)} position={[-15, 10, 0]} />
             <primitive object={new Label("SPHERE_LIST", false)} position={[5, 10, 0]} />
-            <primitive object={new Label("POINTS", false)} position={[-12, -3, 0]} />
+            <primitive object={new Label("POINTS", false)} position={[-30, -15, 0]} />
             <primitive object={new Label("TEXT_VIEW_FACING", false)} position={[-12, -4, 0]} />
             <primitive object={new Label("MESH_RESOURCE", false)} position={[-12, -5, 0]} />
-            <primitive object={new Label("TRIANGLE_LIST", false)} position={[-12, -6, 0]} />
+            <primitive object={new Label("TRIANGLE_LIST", false)} position={[25, -35, 0]} />
             <URDFLayer
               name="URDF"
               //positioning={PositioningBuilder.fixed(3, -3, 0)}

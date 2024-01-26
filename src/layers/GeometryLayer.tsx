@@ -20,8 +20,10 @@ import {
   Color,
   ConeGeometry,
   CylinderGeometry,
+  Float32BufferAttribute,
   Line,
   LineBasicMaterial,
+  LineSegments,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -288,8 +290,8 @@ export function GeometryLayer(props: IGeometryLayer) {
   const [cubesData, setCubesData] = useState<GeoInstanceData[]>([]);
   const [spheresData, setSpheresData] = useState<GeoInstanceData[]>([]);
   const [geoKey, setGeoKey] = useState(0);
-  const [cubeList, setCubeList] = useState<GeoInstanceData>();
-  const [sphereList, setSphereList] = useState<GeoInstanceData>();
+  const [cubeList, setCubeList] = useState<GeoInstanceData[]>([]);
+  const [sphereList, setSphereList] = useState<GeoInstanceData[]>([]);
 
   useEffect(() => {
     const unsubscribe = universeData.subscribeToGeometry(
@@ -307,12 +309,12 @@ export function GeometryLayer(props: IGeometryLayer) {
         const cubes = geometry.filter(
           (g) => g.type === "cube"
         ) as GeoInstanceData[];
-        const cubeList = geometry.find(
+        const cubeList = geometry.filter(
           (g) => g.type === "cube_list"
-        ) as GeoInstanceData;
-        const sphereList = geometry.find(
+        ) as GeoInstanceData[];
+        const sphereList = geometry.filter(
           (g) => g.type === "sphere_list"
-        ) as GeoInstanceData;
+        ) as GeoInstanceData[];
         const spheres = geometry.filter(
           (g) => g.type === "sphere"
         ) as GeoInstanceData[];
@@ -332,7 +334,47 @@ export function GeometryLayer(props: IGeometryLayer) {
                 const meshGeometry = new BufferGeometry().setFromPoints(
                   g.points as Vector3[]
                 );
+                const lines = new LineSegments(meshGeometry, material);
+                if (g.colors) {
+                  lines.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
+                    (c) => [c.r, c.g, c.b]
+                  ).flat(), 3));
+                  lines.material.vertexColors = true;
+                }
+
+                lines.position.set(g.position.x, g.position.y, g.position.z);
+                lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+
+                root.add(lines);
+                worldGeometry.current.set(g.id, lines);
+              } else {
+                mesh.geometry.setFromPoints(g.points as Vector3[]);
+                mesh.position.set(g.position.x, g.position.y, g.position.z);
+                mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+                mesh.material = new LineBasicMaterial({
+                  color: new Color(g.color.r, g.color.g, g.color.b),
+                  opacity: g.color.a,
+                });
+              }
+            } else if (g.type === "line_strip") {
+              if (!mesh) {
+                const material = new LineBasicMaterial({
+                  color: new Color(g.color.r, g.color.g, g.color.b),
+                  opacity: g.color.a,
+                  linewidth: 1 // with webGL this is always 1, webGPU will fix this someday
+                });
+
+                const meshGeometry = new BufferGeometry().setFromPoints(
+                  g.points as Vector3[]
+                );
                 const lines = new Line(meshGeometry, material);
+                if (g.colors) {
+                  lines.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
+                    (c) => [c.r, c.g, c.b]
+                  ).flat(), 3));
+                  lines.material.vertexColors = true;
+                }
+
                 lines.position.set(g.position.x, g.position.y, g.position.z);
                 lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
 
@@ -510,6 +552,12 @@ export function GeometryLayer(props: IGeometryLayer) {
                   serializedPoints as Vector3[]
                 );
                 const pointsMesh = new Points(pointsGeometry, material);
+                if (g.colors) {
+                  pointsMesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
+                    (c) => [c.r, c.g, c.b]
+                  ).flat(), 3));
+                  pointsMesh.material.vertexColors = true;
+                }
 
                 pointsMesh.position.set(g.position.x, g.position.y, g.position.z);
                 pointsMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
@@ -537,6 +585,13 @@ export function GeometryLayer(props: IGeometryLayer) {
                   serializedPoints as Vector3[]
                 );
                 const trianglesMesh = new Mesh(trianglesGeometry, material);
+
+                if (g.colors) {
+                  trianglesMesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
+                    (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
+                  ).flat(), 3));
+                  trianglesMesh.material.vertexColors = true;
+                }
 
                 trianglesMesh.position.set(g.position.x, g.position.y, g.position.z);
                 trianglesMesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
@@ -593,16 +648,18 @@ export function GeometryLayer(props: IGeometryLayer) {
             allowTransparency={allowTransparency}
           />
         ) : null}
-        {cubeList && (
+        {cubeList.map(cL => (
           <InstancedGeometryFromList
-            instances={cubeList}
+            key={cL.id}
+            instances={cL}
           />
-        )}
-        {sphereList && (
+        ))}
+        {sphereList.map(sL => (
           <InstancedGeometryFromList
-            instances={sphereList}
+            key={sL.id}
+            instances={sL}
           />
-        )}
+        ))}
       </group>
       {children}
     </DataVisualizationLayer>
