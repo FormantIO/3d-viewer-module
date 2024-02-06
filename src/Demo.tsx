@@ -174,9 +174,9 @@ export function Demo() {
           value={{
             deviceId: ARM3_ID,
           }}>
-          <EmptyLayer name="ARM2" treePath={[2]}>
+          <EmptyLayer name="ARM3" treePath={[2]}>
             <URDFLayer
-              name="URDF2"
+              name="URDF3"
               positioning={PositioningBuilder.fixed(2.5, -2.5, 0)}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[2, 3]}
