@@ -198,7 +198,6 @@ function InstancedGeometryFromList(
   const ref = useRef<THREE.InstancedMesh>(null);
   const boundingBox = useRef<Box3>(new Box3());
   const type = instances.type;
-  console.log(type);
 
   const matrixCache = useRef<Map<string, Matrix4>>(new Map());
   const dummy = useMemo(() => new Object3D(), []);
@@ -590,7 +589,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       dataSource,
       (d) => {
         if (typeof d === "symbol") {
-          //console.warn("geometry received error from universe data");
+          console.warn("geometry received error from universe data");
           return;
         }
         const markerArray = d as IMarker3DArray;
