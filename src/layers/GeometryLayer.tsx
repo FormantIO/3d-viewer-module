@@ -418,7 +418,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       );
       const arrowHead = new ConeGeometry(headDiameter, headLength, 8, 1, false);
       arrowHead.translate(0, 0.25, 0);
-      const arrowGeometry = BufferGeometryUtils.mergeBufferGeometries(
+      const arrowGeometry = BufferGeometryUtils.mergeGeometries(
         [arrowShaft, arrowHead]
       );
       const arrowMesh = new Mesh(arrowGeometry, material);
