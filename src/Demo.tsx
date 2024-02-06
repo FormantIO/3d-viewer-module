@@ -128,7 +128,7 @@ export function Demo() {
               decayTime={1}
               treePath={[1, 2]}
             />
-            <MissionPlanningLayer />
+            <MissionPlanningLayer name="MissionPlanning" />
             <GeometryLayer
               name="3D Objects"
               dataSource={DataSourceBuilder.telemetry("walter.markers", "json")}

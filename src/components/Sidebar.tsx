@@ -346,7 +346,6 @@ const Sidebar = ({
     }
     return FormantColors.steel03;
   };
-
   return (
     <>
       <ToggleButton onClick={onToggleSidebarClicked} sidebarVisible={visible}>
@@ -406,9 +405,8 @@ const Sidebar = ({
           {sortedLayers.map((c, i) => {
             if (!hasChildren(c) && c.treePath && c.treePath.length === 1) return null;
             return (
-              <>
+              <React.Fragment key={c.id + c.name}>
                 <LayerRow
-                  key={c.id + c.name}
                   hasChildren={hasChildren(c)}
                   isChild={isChild(c)}
                   isLastChild={isLastChild(c)}
@@ -424,7 +422,7 @@ const Sidebar = ({
                   </LayerTitle>
                   {renderIcons(c)}
                 </LayerRow>
-              </>
+              </React.Fragment>
             );
           })}
         </SidebarContent>
