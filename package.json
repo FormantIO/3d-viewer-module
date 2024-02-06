@@ -14,10 +14,9 @@
   },
   "dependencies": {
     "@dimforge/rapier3d": "^0.11.1",
-    "@formant/data-sdk": "^1.16.0",
-    "@formant/realtime-sdk": "^1.2.0",
+    "@formant/data-sdk": "^1.22.0",
     "@formant/ui-sdk": "0.0.45",
-    "@formant/universe-connector": "^0.0.35",
+    "@formant/universe-connector": "^0.0.43",
     "@formant/universe-core": "0.0.17",
     "@react-three/drei": "^9.92.7",
     "@react-three/fiber": "^8.15.13",

@@ -512,10 +512,10 @@
     "@formant/realtime-sdk" "^0.0.19"
     date-fns "^2.29.3"
 
-"@formant/data-sdk@^1.16.0":
-  version "1.18.0"
-  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.18.0.tgz#0517bfa28deb55a6cbde7842ba7023f355614772"
-  integrity sha512-lVlu1R5YVr/ufJWE1H5t697M2d96GHHG6ijlvCUTJ0KXfvotJqiY8/5dRlYC6bSINYfATnpfJM3fkwlboIVKoQ==
+"@formant/data-sdk@^1.22.0":
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.22.0.tgz#7407a8e128da0a5b51a3b76a4d3513aca7b30196"
+  integrity sha512-k8U9wtdFJj5TBeV4lO8QRabq+MhZC3zBNqFIUCTaJStiGHLU+jXDwc5KcPV0JX16FT65AdEN14fHZAHbyE7UXg==
   dependencies:
     base-64 "^1.0.0"
     base64-js "^1.5.1"
@@ -531,14 +531,6 @@
     "@types/google-protobuf" "~3.7.0"
     env-var "^7.3.0"
     grpc-web "^1.2.1"
-
-"@formant/realtime-sdk@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@formant/realtime-sdk/-/realtime-sdk-1.2.0.tgz#6010bebe8a8d45b2105bde72c7aaa8cb5577937b"
-  integrity sha512-BOzD40kjGHyHLYhwna/FPTMItnrkIaLvALWh/iM6M7/22ZpDJWLqdtrC7GK80B04KvllQHrkCQGUgQmu2aDXfg==
-  dependencies:
-    "@types/google-protobuf" "~3.7.0"
-    env-var "^7.3.1"
 
 "@formant/ui-sdk-realtime-player-core-worker@^0.0.4":
   version "0.0.4"
@@ -581,22 +573,17 @@
     react-chartjs-2 "^5.2.0"
     react-device-detect "^2.2.2"
 
-"@formant/universe-connector@^0.0.35":
-  version "0.0.35"
-  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.35.tgz#e0e6683d61436581eeb54ae3ac6b9bde7264aa72"
-  integrity sha512-cy3AvIACICN6lcCSgFuCITcndNYi921O+D6WHpnrZIlYlSR7oupfldek0JJOE6EriIgTEpRTGJYU3ik5DEiiww==
+
+"@formant/universe-connector@^0.0.43":
+  version "0.0.43"
+  resolved "https://registry.yarnpkg.com/@formant/universe-connector/-/universe-connector-0.0.43.tgz#48dce81b2c3dbf3bcaf3ba9ecac5abb0c604c97c"
+  integrity sha512-iGk0zFytPs7YjkBoLhw8supqec2HwG56PrPRIWBXfdYTrP079r8X+2bqiKYKalXaDEd80NXpbTkm7BvzF0GMdg==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
-    "@formant/universe-core" "0.0.17"
     date-fns "^2.30.0"
     lzfjs "^1.0.1"
     validator "^13.7.0"
-
-"@formant/universe-core@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@formant/universe-core/-/universe-core-0.0.17.tgz#9ec5aae8b34faca7aff9b13522e5f4bfc60072f6"
-  integrity sha512-7f+WeyvCnTRYbCPFKnpniA42bFIfyWV9XY8D5mPz3B1qNrmvx6ChrDbLA8R4Bn0Xyzq3rpfgpnyEvqySfQAD6A==
 
 "@gar/promisify@^1.1.3":
   version "1.1.3"

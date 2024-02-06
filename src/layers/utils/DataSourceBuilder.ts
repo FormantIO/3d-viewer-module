@@ -3,7 +3,7 @@ import {
   UniverseDataSource,
   UniverseRosDataSource,
   UniverseTelemetrySource,
-} from "@formant/universe-core";
+} from "@formant/universe-connector";
 import * as uuid from "uuid";
 
 export class DataSourceBuilder {

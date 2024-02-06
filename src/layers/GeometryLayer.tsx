@@ -1,8 +1,7 @@
 import {
   definedAndNotNull,
-  IMarker3DArray,
   UniverseTelemetrySource,
-} from "@formant/universe-core";
+} from "@formant/universe-connector";
 import {
   MutableRefObject,
   startTransition,
@@ -41,7 +40,8 @@ import { Arrow, Geometry, GeometryWorld, Text } from "./objects/GeometryWorld";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
-import { Box, Cone, Html, Sphere } from "@react-three/drei";
+import { Box, Sphere } from "@react-three/drei";
+import { IMarker3DArray } from "@formant/data-sdk";
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;

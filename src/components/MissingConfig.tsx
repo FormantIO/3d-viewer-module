@@ -1,5 +1,5 @@
 import { Typography } from "@formant/ui-sdk";
-import { definedAndNotNull } from "@formant/universe-core";
+import { definedAndNotNull } from "@formant/universe-connector";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import styled from "styled-components";
@@ -54,12 +54,12 @@ export const MissingConfig = () => {
       <Warning />
       <Typography variant="h5">MODULE CONFIGURATION</Typography>
       <Typography variant="body1">
-        “This module has yet to be configured. Select ‘configure‘ from the meatball
-        menu in the upper right corner”
+        “This module has yet to be configured. Select ‘configure‘ from the
+        meatball menu in the upper right corner”
       </Typography>
       <ArrowWrapper>
         <ConfigArrow />
       </ArrowWrapper>
-    </Wrapper >
+    </Wrapper>
   );
-}
+};

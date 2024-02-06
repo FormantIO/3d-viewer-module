@@ -1,4 +1,4 @@
-import { ITransform, IVector3, IQuaternion } from "@formant/universe-core";
+import { IQuaternion, ITransform, IVector3 } from "@formant/data-sdk";
 import { Matrix4, Vector3, Quaternion } from "three";
 
 export function transformMatrix({

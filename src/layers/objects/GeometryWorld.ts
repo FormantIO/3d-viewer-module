@@ -1,5 +1,9 @@
-import { IQuaternion, IVector3, IColorRGBA } from "@formant/data-sdk";
-import { IMarker3DArray } from "@formant/universe-core";
+import {
+  IQuaternion,
+  IVector3,
+  IColorRGBA,
+  IMarker3DArray,
+} from "@formant/data-sdk";
 
 export type BaseGeometry = {
   id: string;

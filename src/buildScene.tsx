@@ -1,7 +1,5 @@
-import {
-  definedAndNotNull,
-  UniverseTelemetrySource,
-} from "@formant/universe-core";
+import { UniverseTelemetrySource } from "@formant/universe-connector";
+
 import {
   getRealtimeJointStateDataSource,
   getTeletryJointStateDataSource,
@@ -27,6 +25,7 @@ import { URDFLayer } from "./layers/URDFLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { GLTFLayer } from "./layers/GLTFLayer";
 import { PointOfInterstLayer } from "./layers/PointOfInterestLayer";
+import { definedAndNotNull } from "./common/defined";
 
 export function buildScene(
   config: Viewer3DConfiguration,

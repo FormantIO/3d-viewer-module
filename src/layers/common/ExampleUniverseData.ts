@@ -8,27 +8,28 @@ import {
   IUniverseStatistics,
   UniverseDataSource,
   DataStatus,
-  IMarker3DArray,
-  IMap,
-  IPcd,
   IPose,
   IUniverseData,
-  INumericSetEntry,
-  ITransform,
-  IBitset,
-  ITransformNode,
-  ILocation,
-  IJointState,
   IUniverseGridMap,
   IUniverseOdometry,
-} from "@formant/universe-core";
+} from "@formant/universe-connector";
 import { SplineCurve, Vector2, Vector3 } from "three";
 import seedrandom from "seedrandom";
-import { IUniversePointCloud } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePointCloud";
-import { IUniversePath } from "@formant/universe-core/dist/types/universe-core/src/model/IUniversePath";
+import { IUniversePointCloud } from "@formant/universe-connector";
+import { IUniversePath } from "@formant/universe-connector";
 import { RigidBodyDesc, World } from "@dimforge/rapier3d";
 import { pointCloud, occupancyMap } from "./exampleData";
 import { clone } from "../../common/clone";
+import {
+  IBitset,
+  IJointState,
+  ILocation,
+  IMap,
+  IMarker3DArray,
+  INumericSetEntry,
+  ITransform,
+  ITransformNode,
+} from "@formant/data-sdk";
 
 export const SPOT_ID = "abc";
 export const ARM1_ID = "asdfadsfas";
@@ -36,6 +37,13 @@ export const ARM2_ID = "124fasd";
 export const ARM3_ID = "77hrtesgdafdsh";
 
 export class ExampleUniverseData implements IUniverseData {
+  subscribeToBitset(
+    _deviceId: string,
+    _source: UniverseDataSource,
+    _callback: (data: Symbol | IBitset) => void
+  ): CloseSubscription {
+    throw new Error("Method not implemented.");
+  }
   construtor() {
     /* // create rapier3d world
     const world = new World({ x: 0, y: -9.81, z: 0 });

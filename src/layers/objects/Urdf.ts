@@ -3,8 +3,8 @@ import * as THREE from "three";
 import URDFLoader, { URDFLink, URDFRobot } from "urdf-loader";
 import { Group, LoadingManager, Mesh, Scene } from "three";
 import { ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
-import { IJointState, ITransform } from "@formant/universe-core";
 import { transformMatrix } from "../utils/transformMatrix";
+import { IJointState, ITransform } from "@formant/data-sdk";
 
 export interface ILoadedUrdf {
   url: string;
