@@ -608,21 +608,20 @@ export function GeometryLayer(props: IGeometryLayer) {
         const spheres = geometry.filter(
           (g) => g.type === "sphere"
         ) as GeoInstanceData[];
-        console.log("geometry", geometry)
-
-        // let's avoid reprocessing cubes and spheres
-        processGeometry(geometry.filter(
-          (g) => g.type !== "cube" && g.type !== "cube_list" && g.type !== "sphere" && g.type !== "sphere_list"
-        ) as Geometry[]);
-
-
-        const oldGeoIds = [...worldGeometry.current.keys()];
-        const newGeoIds = new Set(geometry.map((g) => g.id));
-        const toRemove = oldGeoIds.filter((id) => !newGeoIds.has(id));
-
-        removeObsoleteGeometry(toRemove);
-
         startTransition(() => {
+
+          // let's avoid reprocessing cubes and spheres
+          processGeometry(geometry.filter(
+            (g) => g.type !== "cube" && g.type !== "cube_list" && g.type !== "sphere" && g.type !== "sphere_list"
+          ) as Geometry[]);
+
+
+          const oldGeoIds = [...worldGeometry.current.keys()];
+          const newGeoIds = new Set(geometry.map((g) => g.id));
+          const toRemove = oldGeoIds.filter((id) => !newGeoIds.has(id));
+
+          removeObsoleteGeometry(toRemove);
+
           setCubesData(cubes);
           setSpheresData(spheres);
           setCubeList(cubeList);
