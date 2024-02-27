@@ -34,7 +34,7 @@ import {
   Texture,
   Vector3,
 } from "three";
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import { LayerContext } from "./common/LayerContext";
 import { Arrow, Geometry, GeometryWorld, Text } from "./objects/GeometryWorld";
 import { UniverseDataContext } from "./common/UniverseDataContext";
