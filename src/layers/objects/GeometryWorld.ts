@@ -17,6 +17,7 @@ export type BaseGeometry = {
 export type LineList = BaseGeometry & {
   type: "line_list";
   points: IVector3[];
+  colors?: IColorRGBA[];
 };
 
 export type Arrow = BaseGeometry & {
@@ -37,7 +38,52 @@ export type Text = BaseGeometry & {
   text: string;
 };
 
-export type Geometry = Arrow | Cube | Sphere | Text | LineList;
+export type Cylinder = BaseGeometry & {
+  type: "cylinder";
+};
+
+export type Points = BaseGeometry & {
+  type: "points";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type TriangleList = BaseGeometry & {
+  type: "triangle_list";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type CubeList = BaseGeometry & {
+  type: "cube_list";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type SphereList = BaseGeometry & {
+  type: "sphere_list";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type LineStrip = BaseGeometry & {
+  type: "line_strip";
+  points: IVector3[];
+  colors?: IColorRGBA[];
+};
+
+export type Geometry =
+  | Arrow
+  | Cube
+  | Sphere
+  | Text
+  | LineList
+  | Cylinder
+  | Points
+  | TriangleList
+  | CubeList
+  | SphereList
+  | LineStrip;
 
 function reifyVector3(v: IVector3) {
   if (v.x === undefined) {
@@ -111,77 +157,48 @@ export class GeometryWorld {
           });
         }
 
-        if (type === 5) {
-          if (isAddOrModify) {
-            ns.set(marker.id, {
-              id: `${marker.ns}_${marker.id}`,
-              type: "line_list",
-              position: marker.pose.position,
-              rotation: marker.pose.orientation,
-              scale: marker.scale,
-              color: marker.color,
-              points: marker.points,
-              dirty: true,
-            });
-          } else if (isDelete) {
-            ns.delete(marker.id);
+        const typeIdMap = {
+          0: "arrow",
+          1: "cube",
+          2: "sphere",
+          3: "cylinder",
+          4: "line_strip",
+          5: "line_list",
+          6: "cube_list",
+          7: "sphere_list",
+          8: "points",
+          9: "text",
+          10: "mesh_resource",
+          11: "triangle_list",
+        };
+
+        const typeName = typeIdMap[type as keyof typeof typeIdMap];
+        if (typeName === "mesh_resource") {
+          console.warn("Mesh resource markers are not supported");
+          return;
+        }
+        if (typeName && !isDeleteAll) {
+          const geometry: Geometry = {
+            id: `${marker.ns}_${marker.id}`,
+            type: typeName as any,
+            position: marker.pose.position,
+            rotation: marker.pose.orientation,
+            scale: marker.scale,
+            color: marker.color,
+            dirty: true,
+          };
+          if (marker.points) {
+            (geometry as any).points = marker.points;
           }
-        } else if (type === 1) {
-          if (isAddOrModify) {
-            ns.set(marker.id, {
-              id: `${marker.ns}_${marker.id}`,
-              type: "cube",
-              position: marker.pose.position,
-              rotation: marker.pose.orientation,
-              scale: marker.scale,
-              color: marker.color,
-              dirty: true,
-            });
-          } else if (isDelete) {
-            ns.delete(marker.id);
+          if (marker.text) {
+            (geometry as any).text = marker.text;
           }
-        } else if (type === 2) {
-          if (isAddOrModify) {
-            ns.set(marker.id, {
-              id: `${marker.ns}_${marker.id}`,
-              type: "sphere",
-              position: marker.pose.position,
-              rotation: marker.pose.orientation,
-              scale: marker.scale,
-              color: marker.color,
-              dirty: true,
-            });
-          } else if (isDelete) {
-            ns.delete(marker.id);
+          if (marker.colors) {
+            (geometry as any).colors = marker.colors;
           }
-        } else if (type === 0) {
-          if (isAddOrModify) {
-            ns.set(marker.id, {
-              id: `${marker.ns}_${marker.id}`,
-              type: "arrow",
-              position: marker.pose.position,
-              rotation: marker.pose.orientation,
-              scale: marker.scale,
-              color: marker.color,
-              points: marker.points,
-              dirty: true,
-            });
-          } else if (isDelete) {
-            ns.delete(marker.id);
-          }
-        } else if (type === 9) {
-          if (isAddOrModify) {
-            ns.set(marker.id, {
-              id: `${marker.ns}_${marker.id}`,
-              type: "text",
-              position: marker.pose.position,
-              rotation: marker.pose.orientation,
-              scale: marker.scale,
-              color: marker.color,
-              text: marker.text || "",
-              dirty: true,
-            });
-          } else if (isDelete) {
+          ns.set(marker.id, geometry);
+
+          if (isDelete) {
             ns.delete(marker.id);
           }
         }
