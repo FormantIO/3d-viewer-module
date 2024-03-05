@@ -86,6 +86,7 @@ export function Universe(props: IUniverseProps) {
 
   const lookAtTargetId = (targetId: string, isDevice = false) => {
     scene?.dispatchEvent({
+      // @ts-ignore - it works but we need to create a separate object to send and receive events
       type: "lookAtTargetId",
       message: targetId,
       isDevice,
@@ -102,6 +103,7 @@ export function Universe(props: IUniverseProps) {
   }, [layers, lookAtTargetId]);
 
   const recenter = () => {
+    // @ts-ignore - it works but we need to create a separate object to send and receive events
     scene?.dispatchEvent({ type: "recenter" });
   };
 

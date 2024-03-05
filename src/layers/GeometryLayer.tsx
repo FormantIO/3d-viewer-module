@@ -193,7 +193,7 @@ function InstancedGeometry({
 function InstancedGeometryFromList(
   { instances }: InstanceGeoListProps) {
   if (!instances.points) {
-    return;
+    return null;
   }
   const ref = useRef<THREE.InstancedMesh>(null);
   const boundingBox = useRef<Box3>(new Box3());

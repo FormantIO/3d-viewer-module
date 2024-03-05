@@ -202,6 +202,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
               isReady = true;
               setReady(true);
               geometry.computeBoundingBox();
+              // @ts-ignore
               scene.dispatchEvent({ type: "updateBounds" });
             }
 

@@ -1083,7 +1083,9 @@ export class ExampleUniverseData implements IUniverseData {
       }, 60 / 12);
     }
     return () => {
-      clearInterval(interval);
+      if (interval) {
+        clearInterval(interval);
+      }
     };
   }
 
