@@ -53,6 +53,8 @@ export function Viewer() {
 
   useEffect(() => {
     if (!configuration) return;
+    liveUniverseData.clearWorkerPool();
+    universeData.clearWorkerPool();
 
     const { advanceOptions } = configuration;
     const useTimeline = advanceOptions?.useTimeline;
