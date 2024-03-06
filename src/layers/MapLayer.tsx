@@ -1,4 +1,4 @@
-import { defined, UniverseTelemetrySource } from "@formant/universe-connector";
+import { defined, UniverseTelemetrySource } from "@formant/data-sdk";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Color,
@@ -121,9 +121,8 @@ export function MapLayer(props: IMapLayer) {
             coord ? [coord[0], coord[1]] : undefined
           );
 
-        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${
-          doubleRes ? "@2x" : ""
-        }?logo=false&access_token=${accessToken}`;
+        return `https://api.mapbox.com/styles/v1/${username}/${styleId}/static/[${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}]/${imgRes}x${imgRes}${doubleRes ? "@2x" : ""
+          }?logo=false&access_token=${accessToken}`;
       };
 
       // load multiple low res textures in order

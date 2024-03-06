@@ -1,4 +1,4 @@
-import { UniverseTelemetrySource } from "@formant/universe-connector";
+import { UniverseTelemetrySource } from "@formant/data-sdk";
 
 import {
   getRealtimeJointStateDataSource,

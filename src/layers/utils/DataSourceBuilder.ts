@@ -1,9 +1,9 @@
-import { StreamType } from "@formant/data-sdk";
 import {
+  StreamType,
   UniverseDataSource,
   UniverseRosDataSource,
   UniverseTelemetrySource,
-} from "@formant/universe-connector";
+} from "@formant/data-sdk";
 import * as uuid from "uuid";
 
 export class DataSourceBuilder {

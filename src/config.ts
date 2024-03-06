@@ -1,4 +1,4 @@
-import { UniverseDataSource } from "@formant/universe-connector";
+import { UniverseDataSource } from "@formant/data-sdk";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";

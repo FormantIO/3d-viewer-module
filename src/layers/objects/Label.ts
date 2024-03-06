@@ -1,4 +1,4 @@
-import { definedAndNotNull } from "@formant/universe-connector";
+import { definedAndNotNull } from "@formant/data-sdk";
 import { Group, Sprite, SpriteMaterial, Texture } from "three";
 
 function roundRect(

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { getDistance } from "geolib";
 import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
@@ -8,15 +8,11 @@ import {
   CloseSubscription,
   defined,
   IUniverseOdometry,
-} from "@formant/universe-connector";
+} from "@formant/data-sdk";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import {
-  Box3,
-  BoxGeometry,
   Euler,
   Matrix4,
-  Mesh,
-  MeshBasicMaterial,
   Quaternion,
   Vector3,
 } from "three";
@@ -26,7 +22,7 @@ import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
 import { ILocation, ITransformNode } from "@formant/data-sdk";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps {}
+interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
 type TreePath = number[];
 

@@ -1,4 +1,4 @@
-import { IUniverseData } from "@formant/universe-connector";
+import { IUniverseData } from "@formant/data-sdk";
 import React from "react";
 import { EmptyUniverseData } from "./EmptyUniverseData";
 

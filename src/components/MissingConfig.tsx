@@ -1,7 +1,4 @@
 import { Typography } from "@formant/ui-sdk";
-import { definedAndNotNull } from "@formant/universe-connector";
-import * as React from "react";
-import { createRoot } from "react-dom/client";
 import styled from "styled-components";
 import { ConfigArrow, Warning } from "./icons";
 

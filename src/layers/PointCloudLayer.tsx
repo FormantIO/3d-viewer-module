@@ -3,7 +3,7 @@ import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { defined, UniverseTelemetrySource } from "@formant/universe-connector";
+import { defined, UniverseTelemetrySource, IUniversePointCloud } from "@formant/data-sdk";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
   Box3,
@@ -15,7 +15,6 @@ import {
   ShaderMaterial,
   TextureLoader,
 } from "three";
-import { IUniversePointCloud } from "@formant/universe-connector";
 import { Color } from "./utils/Color";
 import { useControlsContext } from "./common/ControlsContext";
 import { useLoader, useThree } from "@react-three/fiber";

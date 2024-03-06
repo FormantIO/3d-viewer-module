@@ -9,7 +9,7 @@ import { ARM1_ID, ARM2_ID, ARM3_ID, ExampleUniverseData } from "./layers/common/
 import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
-import { IUniverseData } from "@formant/universe-connector";
+import { IUniverseData } from "@formant/data-sdk";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
 import { GeometryLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
 import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
@@ -125,6 +125,16 @@ export function Demo() {
                 "localization"
               )}
               name="Point Cloud"
+              decayTime={1}
+              treePath={[1, 2]}
+            />
+            <PointCloudLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              positioning={PositioningBuilder.fixed(3, 0, 0)}
+              name="Point Cloud 2"
               decayTime={1}
               treePath={[1, 2]}
             />
