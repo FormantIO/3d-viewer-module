@@ -9,11 +9,8 @@ import {
   useCallback,
 } from "react";
 import { LayerContext } from "./common/LayerContext";
-import { Fleet, IDataPoint } from "@formant/data-sdk";
-import { App, aggregateByDateFunctions, IStreamData } from "@formant/data-sdk";
-import { UniverseTelemetrySource } from "@formant/universe-connector";
+import { App, Fleet, aggregateByDateFunctions, UniverseTelemetrySource } from "@formant/data-sdk";
 import { Vector3, Mesh, BufferGeometry, Group } from "three";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { useFrame } from "@react-three/fiber";
 import { isValidURL } from "./utils/isValidURL";
 interface IPointOfInterstLayer extends IUniverseLayerProps {
@@ -239,14 +236,14 @@ export const PointOfInterstLayer = (props: IPointOfInterstLayer) => {
       distanceFromCamera > 70
         ? 1
         : distanceFromCamera > 50
-        ? 0.8
-        : distanceFromCamera > 40
-        ? 0.5
-        : distanceFromCamera > 25
-        ? 0.3
-        : distanceFromCamera > 15
-        ? 0.15
-        : 0.09;
+          ? 0.8
+          : distanceFromCamera > 40
+            ? 0.5
+            : distanceFromCamera > 25
+              ? 0.3
+              : distanceFromCamera > 15
+                ? 0.15
+                : 0.09;
     setRadius(scale);
   });
 

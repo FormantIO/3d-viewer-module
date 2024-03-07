@@ -5,14 +5,14 @@ import {
   CloseSubscription,
   defined,
   UniverseDataSource,
-} from "@formant/universe-connector";
+  IJointState
+} from "@formant/data-sdk";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { useContext, useEffect, useState } from "react";
 import { LayerContext } from "./common/LayerContext";
 import JSZip from "jszip";
 import { Urdf } from "./objects/Urdf";
 import { Group } from "three";
-import { IJointState } from "@formant/data-sdk";
 
 async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
   const data = await fetch(zipPath).then((_) => _.arrayBuffer());

@@ -12,12 +12,11 @@ import {
   IUniverseData,
   IUniverseGridMap,
   IUniverseOdometry,
-} from "@formant/universe-connector";
+  IUniversePointCloud,
+  IUniversePath,
+} from "@formant/data-sdk";
 import { SplineCurve, Vector2, Vector3 } from "three";
 import seedrandom from "seedrandom";
-import { IUniversePointCloud } from "@formant/universe-connector";
-import { IUniversePath } from "@formant/universe-connector";
-import { RigidBodyDesc, World } from "@dimforge/rapier3d";
 import { pointCloud, occupancyMap } from "./exampleData";
 import { clone } from "../../common/clone";
 import {
@@ -65,6 +64,8 @@ export class ExampleUniverseData implements IUniverseData {
     */
   }
 
+  clearWorkerPool(): void {}
+
   subscribeToPath(
     deviceId: string,
     source: UniverseDataSource,
@@ -90,7 +91,7 @@ export class ExampleUniverseData implements IUniverseData {
             translation: {
               x: 3.3545788855933396,
               y: -2.1870991935927204,
-              z: 0.154354741654536,
+              z: -2.154354741654536,
             },
             rotation: {
               x: -0.0007247281610034406,

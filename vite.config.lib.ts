@@ -22,7 +22,6 @@ export default defineConfig({
         "@dimforge/rapier3d",
         "@formant/data-sdk",
         "@formant/ui-sdk",
-        "@formant/universe-connector",
         "@react-three/drei",
         "@react-three/fiber",
         "@react-three/postprocessing",

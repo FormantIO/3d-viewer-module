@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { IUniverseLayerProps } from "../types";
 import { DataVisualizationLayer } from "../DataVisualizationLayer";
-import { IPose, UniverseTelemetrySource } from "@formant/universe-connector";
+import { IPose, UniverseTelemetrySource } from "@formant/data-sdk";
 import { Euler, Mesh, Quaternion, Vector3 } from "three";
 import { FormantColors } from "../utils/FormantColors";
 import { ThreeEvent } from "@react-three/fiber";
@@ -52,11 +52,11 @@ export const MissionPlanningLayer = (props: IWaypointsProps) => {
         waypoints.length > 0
           ? waypoints[waypoints.length - 1].rotation
           : {
-              x: 0,
-              y: 0,
-              z: 0,
-              w: 1,
-            },
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
     };
 
     // Snap orientation of previous waypoint

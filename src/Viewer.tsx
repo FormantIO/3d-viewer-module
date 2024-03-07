@@ -3,11 +3,11 @@ import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
-import { definedAndNotNull, IUniverseData } from "@formant/universe-connector";
+import { definedAndNotNull, IUniverseData } from "@formant/data-sdk";
 import {
   LiveUniverseData,
   TelemetryUniverseData,
-} from "@formant/universe-connector";
+} from "@formant/data-sdk";
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
@@ -53,6 +53,8 @@ export function Viewer() {
 
   useEffect(() => {
     if (!configuration) return;
+    liveUniverseData.clearWorkerPool();
+    universeData.clearWorkerPool();
 
     const { advanceOptions } = configuration;
     const useTimeline = advanceOptions?.useTimeline;

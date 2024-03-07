@@ -3,7 +3,7 @@ import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { defined, UniverseTelemetrySource } from "@formant/universe-connector";
+import { defined, UniverseTelemetrySource, IUniversePointCloud } from "@formant/data-sdk";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
   Box3,
@@ -15,7 +15,6 @@ import {
   ShaderMaterial,
   TextureLoader,
 } from "three";
-import { IUniversePointCloud } from "@formant/universe-connector";
 import { Color } from "./utils/Color";
 import { useControlsContext } from "./common/ControlsContext";
 import { useLoader, useThree } from "@react-three/fiber";
@@ -36,8 +35,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     updateState,
   } = useControlsContext();
 
+
   const circleMap = useLoader(TextureLoader, "./point-circle.png");
-  const [obj, setObj] = useState<Points>(new Points());
+  const objRef = useRef<Points>(new Points());
   const pointMatRef = useRef<ShaderMaterial>();
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const geometry = new BufferGeometry();
     const points = new Points(geometry, pointMat);
     points.frustumCulled = false;
-    setObj(points);
+    objRef.current = points;
 
     let timer: number = 0;
     let isReady = false;
@@ -222,6 +222,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
             points.matrixAutoUpdate = false;
             points.matrix.copy(transformMatrix(worldToLocal));
+            objRef.current = points;
           }
         }
       );
@@ -234,7 +235,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      {ready && <primitive object={obj} />}
+      {ready && <primitive object={objRef.current} />}
     </DataVisualizationLayer>
   );
 };

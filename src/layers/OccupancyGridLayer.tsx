@@ -14,7 +14,7 @@ import {
   IUniverseGridMap,
   UniverseTelemetrySource,
   defined,
-} from "@formant/universe-connector";
+} from "@formant/data-sdk";
 
 import {
   Color,

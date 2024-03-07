@@ -1,4 +1,4 @@
-import { IPose } from "@formant/universe-connector";
+import { IPose } from "@formant/data-sdk";
 import { MeshProps } from "@react-three/fiber";
 import React, { useMemo } from "react";
 import { ColorRepresentation, DoubleSide, PlaneGeometry, Vector3 } from "three";

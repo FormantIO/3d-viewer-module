@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef } from "react";
-import { IPose } from "@formant/universe-connector";
+import { IPose } from "@formant/data-sdk";
 import * as THREE from "three";
 import { extend, ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { PivotControls } from "../objects/PivotControls";

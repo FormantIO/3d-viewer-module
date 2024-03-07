@@ -1,7 +1,7 @@
 import {
   definedAndNotNull,
   UniverseTelemetrySource,
-} from "@formant/universe-connector";
+} from "@formant/data-sdk";
 import {
   MutableRefObject,
   startTransition,

@@ -5,8 +5,6 @@ import {
   IMarker3DArray,
   INumericSetEntry,
   ITransformNode,
-} from "@formant/data-sdk";
-import {
   CloseSubscription,
   DataSourceState,
   Interaction,
@@ -20,10 +18,9 @@ import {
   IPcd,
   IUniverseOdometry,
   IUniverseGridMap,
-} from "@formant/universe-connector";
-import { IUniversePath } from "@formant/universe-connector";
-import { IUniversePointCloud } from "@formant/universe-connector";
-
+  IUniversePath,
+  IUniversePointCloud,
+} from "@formant/data-sdk";
 export class EmptyUniverseData implements IUniverseData {
   subscribeToBitset(
     deviceId: string,
@@ -45,6 +42,10 @@ export class EmptyUniverseData implements IUniverseData {
   }
 
   removeInteraction(id: string) {
+    throw new Error("Method not implemented.");
+  }
+
+  clearWorkerPool(): void {
     throw new Error("Method not implemented.");
   }
 
