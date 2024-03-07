@@ -1,6 +1,6 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Authentication, App as FormantApp } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/data-sdk";
@@ -26,6 +26,9 @@ export function Viewer() {
   const [liveUniverseData] = useState<IUniverseData>(
     () => new LiveUniverseData()
   );
+  const timeRef = useRef<number>(0);
+  const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     (async () => {
       await Authentication.waitTilAuthenticated();
@@ -53,19 +56,37 @@ export function Viewer() {
 
   useEffect(() => {
     if (!configuration) return;
-    liveUniverseData.clearWorkerPool();
-    universeData.clearWorkerPool();
-
     const { advanceOptions } = configuration;
     const useTimeline = advanceOptions?.useTimeline;
+
 
     if (useTimeline || useTimeline === undefined) {
       FormantApp.addModuleDataListener((event) => {
         const d = new Date(event.time);
+        // if the time is the same (paused), keep the heartbeat
+        if (timeRef.current === d.getTime()) {
+          if (!heartbeatRef.current) {
+            heartbeatRef.current = setInterval(() => {
+              universeData.setTime(d);
+            }, 2000);
+          }
+          return;
+        }
+        // if the time is different, clear the interval and set the new time
+        if (heartbeatRef.current) {
+          clearInterval(heartbeatRef.current);
+          heartbeatRef.current = null;
+        }
+
+        timeRef.current = d.getTime();
         universeData.setTime(d);
       });
     } else {
       universeData.setTime("live");
+    }
+    return () => {
+      liveUniverseData.clearWorkerPool();
+      universeData.clearWorkerPool();
     }
   }, [configuration]);
 
