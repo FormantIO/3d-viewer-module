@@ -174,10 +174,10 @@ function InstancedGeometry({
           args={[null as any, null as any, instances.length]}
         >
           {type === "sphere" ? (
-            <sphereBufferGeometry
+            <sphereGeometry
               attach="geometry"
               args={[0.5, 32, 16]}
-            ></sphereBufferGeometry>
+            ></sphereGeometry>
           ) : null}
           {type === "cube" ? (
             <boxGeometry attach="geometry" args={[0.9, 0.9, 0.9]}></boxGeometry>
@@ -590,6 +590,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       (d) => {
         if (typeof d === "symbol") {
           console.warn("geometry received error from universe data");
+          console.log(d);
           return;
         }
         const markerArray = d as IMarker3DArray;
