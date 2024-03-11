@@ -399,10 +399,10 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.1.6.tgz"
   integrity sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==
 
-"@formant/data-sdk@^1.32.0":
-  version "1.32.0"
-  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-1.32.0.tgz"
-  integrity sha512-x6H2UgZUhbnl/MzPSNCEDweL3IpisBdNfHYqun+iYsp9zHpLGpp6KhjHLypLxMBJPiqdrcqQOTLSbNZbggTFpA==
+"@formant/data-sdk@^1.33.0":
+  version "1.33.0"
+  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-1.33.0.tgz"
+  integrity sha512-wBaOfyNCsioF4Hu82upqA/yIbmezEwj2+Mof7shU6DeqQYKrm6szjXyIJUzzieaz+VMNIrOPTKcqLtjxKqY4Yw==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
