@@ -107,6 +107,7 @@ export function Viewer() {
           key={getUuidByString(JSON.stringify(config))}
           config={config}
         >
+          {buildScene(config, definedAndNotNull(currentDeviceId))}
           <group>
             <pointLight
               position={[1000, 1000, 1000]}
@@ -128,7 +129,6 @@ export function Viewer() {
               groundColor={"#282f45"}
             />
           </group>
-          {buildScene(config, definedAndNotNull(currentDeviceId))};
         </Universe>
       </UniverseDataContext.Provider>
     ),

@@ -29,6 +29,5 @@ export function GroundLayer(props: IGroundLayer) {
         {children}
       </DataVisualizationLayer>
     </group>
-
   );
 }
