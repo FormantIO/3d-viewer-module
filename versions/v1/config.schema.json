@@ -140,6 +140,7 @@
               ["positionIndicatorUseURDF", "=", true]
             ]
           },
+
           "realtimeJointStateStream": {
             "title": "Realtime Joint State Stream",
             "description": "The realtime stream that is used to get joint state dat from.",
@@ -218,6 +219,12 @@
             "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
+          "geometryAllowTransparency": {
+            "title": "Allow Transparency",
+            "type": "boolean",
+            "description": "Allowing transparency can help with visualization but come at the price of performance.",
+            "$formant.visible.when": ["visualizationType", "=", "Marker array"]
+          },
           "telemetryStreamName": {
             "title": "Telemetry stream",
             "type": "string",
@@ -246,12 +253,6 @@
               ],
               ["telemetryStreamName", "!=", ""]
             ]
-          },
-          "geometryAllowTransparency": {
-            "title": "Allow Transparency",
-            "type": "boolean",
-            "description": "Allowing transparency can help with visualization but come at the price of performance.",
-            "$formant.visible.when": ["visualizationType", "=", "Marker array"]
           },
           "transformType": {
             "title": "Transform type",
