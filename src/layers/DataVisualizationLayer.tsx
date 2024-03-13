@@ -123,7 +123,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
           DataSourceBuilder.telemetry(p.stream, "location"),
           (d: ILocation | Symbol) => {
             if (typeof d === "symbol") {
-              console.warn("unhandled empty gps location");
               return;
             }
             const location = d as ILocation;
@@ -191,7 +190,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
           d,
           (d) => {
             if (typeof d === "symbol") {
-              console.warn("unhandled empty odometry");
               return;
             }
             const odom = d as IUniverseOdometry;
@@ -214,7 +212,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
           DataSourceBuilder.telemetry(p.stream, "transform tree"),
           (d: ITransformNode | Symbol) => {
             if (typeof d === "symbol") {
-              console.warn("unhandled empty transform tree");
               return;
             }
             const transformTree = d as ITransformNode;
