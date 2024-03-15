@@ -8,7 +8,7 @@ import {
 export type BaseGeometry = {
   id: string;
   position: IVector3;
-  rotation: IVector3;
+  rotation: IQuaternion;
   scale: IVector3;
   color: IColorRGBA;
   dirty: boolean;
