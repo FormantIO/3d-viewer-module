@@ -100,7 +100,7 @@ function InstancedGeometry({
         if (!instanceMatrix) {
           dummy.position.set(position.x, position.y, position.z);
           dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
-          dummy.scale.set(scale.x, scale.z, scale.y);
+          dummy.scale.set(scale.x, scale.y, scale.z);
           dummy.updateMatrix();
 
           instanceMatrix = dummy.matrix.clone();
@@ -130,9 +130,10 @@ function InstancedGeometry({
               <Sphere
                 key={data.id}
                 args={[0.5, 32, 16]}
-                scale={[data.scale.x, data.scale.z, data.scale.y]}
+                scale={[data.scale.x, data.scale.y, data.scale.z]}
                 position={[data.position.x, data.position.y, data.position.z]}
-                rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
+                quaternion={[data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w]}
+
               >
                 <meshLambertMaterial
                   attach="material"
@@ -150,9 +151,9 @@ function InstancedGeometry({
               <Box
                 key={data.id}
                 args={[0.9, 0.9, 0.9]}
-                scale={[data.scale.x, data.scale.z, data.scale.y]}
+                scale={[data.scale.x, data.scale.y, data.scale.z]}
                 position={[data.position.x, data.position.y, data.position.z]}
-                rotation={[data.rotation.x, data.rotation.y, data.rotation.z]}
+                quaternion={[data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w]}
               >
                 <meshLambertMaterial
                   attach="material"
@@ -172,6 +173,7 @@ function InstancedGeometry({
         <instancedMesh
           ref={ref}
           args={[null as any, null as any, instances.length]}
+          up={new Vector3(0, 0, 1)}
         >
           {type === "sphere" ? (
             <sphereGeometry
@@ -255,6 +257,7 @@ function InstancedGeometryFromList(
       <instancedMesh
         ref={ref}
         args={[null as any, null as any, instances.points.length]}
+        up={new Vector3(0, 0, 1)}
       >
         {type === "sphere_list" ? (
           <sphereGeometry
@@ -338,7 +341,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     if (g.points.length < 2) {
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
     } else { // two points means we are drawing based on start and end points
       const start = new Vector3(g.points[0].x, g.points[0].y, g.points[0].z);
       const end = new Vector3(g.points[1].x, g.points[1].y, g.points[1].z);
@@ -376,7 +379,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       }
 
       lines.position.set(g.position.x, g.position.y, g.position.z);
-      lines.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      lines.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
 
       rootRef.current.add(lines);
       worldGeometry.current.set(g.id, lines);
@@ -446,7 +449,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
       cylinderMesh.position.set(g.position.x, g.position.y, g.position.z);
       cylinderMesh.scale.set(g.scale.x, 1, g.scale.y);
-      cylinderMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      cylinderMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
 
       rootRef.current.add(cylinderMesh);
       worldGeometry.current.set(g.id, cylinderMesh);
@@ -473,7 +476,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       }
 
       pointsMesh.position.set(g.position.x, g.position.y, g.position.z);
-      pointsMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      pointsMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
 
       rootRef.current.add(pointsMesh);
       worldGeometry.current.set(g.id, pointsMesh);
@@ -501,7 +504,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
       trianglesMesh.position.set(g.position.x, g.position.y, g.position.z);
       trianglesMesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      trianglesMesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      trianglesMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
 
       rootRef.current.add(trianglesMesh);
       worldGeometry.current.set(g.id, trianglesMesh);
@@ -512,7 +515,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     if (g.type === "line_list" || g.type === "line_strip") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
       mesh.material = new LineBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -529,7 +532,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     } else if (g.type === "cylinder") {
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
       mesh.material = new MeshLambertMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -537,7 +540,7 @@ export function GeometryLayer(props: IGeometryLayer) {
     } else if (g.type === "points") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
       mesh.material = new PointsMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -551,9 +554,9 @@ export function GeometryLayer(props: IGeometryLayer) {
       }
     } else if (g.type === "triangle_list") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
-      mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
+      mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.rotation.set(g.rotation.x, g.rotation.y, g.rotation.z);
+      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
       mesh.material = new MeshBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
