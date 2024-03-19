@@ -92,26 +92,29 @@ function InstancedGeometry({
       );
 
       instances.forEach((data, index) => {
-        const { position, rotation, scale, color } = data;
 
+        const { position, rotation, scale, color } = data;
+        // TODO this is wronggggggg
         const transformKey = `${data.id}-${index}`;
+
         let instanceMatrix = matrixCache.current.get(transformKey);
 
-        if (!instanceMatrix) {
-          dummy.position.set(position.x, position.y, position.z);
-          dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
-          dummy.scale.set(scale.x, scale.y, scale.z);
-          dummy.updateMatrix();
+        dummy.position.set(position.x, position.y, position.z);
+        dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+        dummy.scale.set(scale.x, scale.y, scale.z);
+        dummy.updateMatrix();
+        const _matrix = dummy.matrix.clone();
 
-          instanceMatrix = dummy.matrix.clone();
-          matrixCache.current.set(transformKey, instanceMatrix);
+        if (!instanceMatrix || !_matrix.equals(instanceMatrix)) {
+          matrixCache.current.set(transformKey, _matrix);
         }
         boundingBox.current.expandByPoint(dummy.position);
 
         if (ref.current) {
           ref.current.up = new Vector3(0, 0, 1);
-          ref.current.setMatrixAt(index, dummy.matrix);
+          ref.current.setMatrixAt(index, _matrix);
           ref.current.setColorAt(index, new Color(color.r, color.g, color.b));
+          ref.current.instanceMatrix.needsUpdate = true;
           if (ref.current.instanceColor) {
             ref.current.instanceColor.needsUpdate = true;
           }
