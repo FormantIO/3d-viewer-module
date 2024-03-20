@@ -142,7 +142,7 @@ export function Demo() {
             <GeometryLayer
               name="3D Objects"
               dataSource={DataSourceBuilder.telemetry("walter.markers", "json")}
-              allowTransparency={true}
+              allowTransparency={false}
               treePath={[1, 2]}
             />
             <primitive object={new Label("ARROW", false)} position={[-12, 5, 0]} />

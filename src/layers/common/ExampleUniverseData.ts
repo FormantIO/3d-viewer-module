@@ -489,6 +489,270 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IMarker3DArray | DataStatus) => void
   ): () => void {
+    // let's make a cube that moves and rotates in a circle
+    const intervalHandle = setInterval(() => {
+      const time = Date.now();
+      const even = time % 2000 < 1000;
+
+      const marker: IMarker3DArray = even
+        ? {
+            markers: [
+              {
+                id: "RAMP 1",
+                pose: {
+                  position: {
+                    x: -4.072116489834933,
+                    y: 0.13865530487734912,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.9986725717035153,
+                    w: 0.051508198639508125,
+                  },
+                },
+                scale: {
+                  x: 3.049999952316284,
+                  y: 2.059999942779541,
+                  z: 0.01,
+                },
+                color: {
+                  r: 0,
+                  g: 1,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+              {
+                id: "TRUCK 1",
+                pose: {
+                  position: {
+                    x: -13.2606936254316,
+                    y: 1.0116824342654098,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.9989299675700302,
+                    w: 0.04624845825039361,
+                  },
+                },
+                scale: {
+                  x: 16.149999618530273,
+                  y: 2.4785549640655518,
+                  z: 0.01,
+                },
+                color: {
+                  r: 1,
+                  g: 1,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+              {
+                id: "WAREHOUSE ZONE 1003",
+                pose: {
+                  position: {
+                    x: 8.122609673944254,
+                    y: 3.0937462652311716,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -0.05150819863950817,
+                    w: 0.9986725717035153,
+                  },
+                },
+                scale: {
+                  x: 12.001999855041504,
+                  y: 5.925999641418457,
+                  z: 0.01,
+                },
+                color: {
+                  r: 1,
+                  g: 0,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+            ],
+          }
+        : {
+            markers: [
+              {
+                id: "RAMP 1",
+                pose: {
+                  position: {
+                    x: -4.861487815906358,
+                    y: 0.9377523737382916,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.9881616722028079,
+                    w: 0.15341613210269112,
+                  },
+                },
+                scale: {
+                  x: 3.049999952316284,
+                  y: 2.059999942779541,
+                  z: 0.01,
+                },
+                color: {
+                  r: 0,
+                  g: 1,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+              {
+                id: "TRUCK 1",
+                pose: {
+                  position: {
+                    x: -13.675897168570032,
+                    y: 3.676170479413315,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.9889318919160466,
+                    w: 0.14837018956430825,
+                  },
+                },
+                scale: {
+                  x: 16.149999618530273,
+                  y: 2.4883108139038086,
+                  z: 0.01,
+                },
+                color: {
+                  r: 1,
+                  g: 1,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+              {
+                id: "WAREHOUSE ZONE 1003",
+                pose: {
+                  position: {
+                    x: 7.679447072937535,
+                    y: 1.348686070364181,
+                    z: 0,
+                  },
+                  orientation: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -0.1534161321026911,
+                    w: 0.9881616722028079,
+                  },
+                },
+                scale: {
+                  x: 12.001999855041504,
+                  y: 5.925999641418457,
+                  z: 0.01,
+                },
+                color: {
+                  r: 1,
+                  g: 0,
+                  b: 0,
+                  a: 0.5,
+                },
+                text: "",
+                type: 1,
+                action: 0,
+                colors: [],
+                frame_locked: false,
+                header: {
+                  frame_id: "map",
+                },
+                lifetime: {
+                  secs: 0,
+                  nsecs: 0,
+                },
+                mesh_resource: "",
+                mesh_use_embedded_materials: false,
+              },
+            ],
+          };
+      callback(marker);
+    }, 100);
+    return () => clearInterval(intervalHandle);
+
     const array = [];
     for (let i = 0; i < 10; i += 1) {
       for (let j = 0; j <= 11; j += 1) {
