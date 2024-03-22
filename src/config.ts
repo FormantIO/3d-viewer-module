@@ -47,6 +47,7 @@ export type Viewer3DVisualization = {
   pathOpacity?: number;
   pathType?: PathType;
   pathWidth?: number;
+  pathFlatten?: boolean;
   imageFileId?: string;
   imageWidth?: number;
   imageHeight?: number;
