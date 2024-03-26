@@ -219,6 +219,13 @@
             "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
+          "pathFlatten": {
+            "title": "Flatten Path",
+            "description": "Flatten the path z-values to 0.",
+            "type": "boolean",
+            "default": false,
+            "$formant.visible.when": ["visualizationType", "=", "Path"]
+          },
           "geometryAllowTransparency": {
             "title": "Allow Transparency",
             "type": "boolean",

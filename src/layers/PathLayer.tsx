@@ -18,6 +18,7 @@ interface ILocalPathProps extends IUniverseLayerProps {
   pathOpacity?: number;
   pathType?: PathType;
   pathWidth?: number;
+  flatten?: boolean;
 }
 
 export const PathLayer = (props: ILocalPathProps) => {
@@ -26,6 +27,7 @@ export const PathLayer = (props: ILocalPathProps) => {
     pathOpacity = 50,
     pathWidth = 0.25,
     pathType = PathType.STATIC,
+    flatten = false,
   } = props;
   const {
     state: { hasPath },
@@ -56,7 +58,7 @@ export const PathLayer = (props: ILocalPathProps) => {
         const worldToLocalMatrix = transformMatrix(worldToLocal);
 
         setPoints(
-          positions.map((pos) => new THREE.Vector3(pos.x, pos.y, pos.z))
+          positions.map((pos) => new THREE.Vector3(pos.x, pos.y, flatten ? 0 : pos.z))
         );
 
         const group = groupRef.current;
