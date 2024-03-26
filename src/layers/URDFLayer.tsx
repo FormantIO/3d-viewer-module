@@ -21,6 +21,7 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
   const urdfRoot = Object.keys(zipFile.files).find((_) =>
     _.toLowerCase().endsWith("urdf")
   );
+  const rootFolder = urdfRoot?.split("/")[0] + "/";
   if (urdfRoot) {
     // load the urdf as a string
     let urdf = await zipFile.files[urdfRoot].async("string");
@@ -45,7 +46,7 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
 
     // for all other files ( should just be models )
     const nonImages = Object.keys(zipFile.files).filter(
-      (_) => !_.endsWith(".png") && _ !== urdfRoot
+      (_) => !_.endsWith(".png") && _ !== urdfRoot && !_.startsWith("__MACOSX")
     );
     await Promise.all(
       nonImages.map(async (f) => {
@@ -68,9 +69,11 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
             })
           ).replace(`blob:${window.location.origin}/`, "");
           // replace the reference to the model in the root urdf
+
           urdf = urdf.replace(new RegExp(`package://${f}`, "g"), modelUrl);
 
           urdf = urdf.replace(new RegExp(f, "g"), modelUrl);
+          urdf = urdf.replace(new RegExp(f.replace(rootFolder, ""), "g"), modelUrl);
         }
       })
     );
