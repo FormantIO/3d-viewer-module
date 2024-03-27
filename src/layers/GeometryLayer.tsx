@@ -42,6 +42,7 @@ import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { Box, Sphere } from "@react-three/drei";
 import { IMarker3DArray } from "@formant/data-sdk";
+import getUuidByString from "uuid-by-string";
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
@@ -90,36 +91,35 @@ function InstancedGeometry({
         ),
         new Vector3(0.1, 0.1, 0.1)
       );
+      if (ref.current) {
+        instances.forEach((data, index) => {
 
-      instances.forEach((data, index) => {
+          const { position, rotation, scale, color } = data;
 
-        const { position, rotation, scale, color } = data;
-        // TODO this is wronggggggg
-        const transformKey = `${data.id}-${index}`;
+          const transformKey = getUuidByString(`${data.id}-${position.x}${position.y}${position.z}${rotation.x}${rotation.y}${rotation.z}${rotation.w}${scale.x}${scale.y}${scale.z}`);
 
-        let instanceMatrix = matrixCache.current.get(transformKey);
+          let instanceMatrix = matrixCache.current.get(transformKey);
+          if (!instanceMatrix) {
+            dummy.position.set(position.x, position.y, position.z);
+            dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+            dummy.scale.set(scale.x, scale.y, scale.z);
+            boundingBox.current.expandByPoint(dummy.position);
 
-        dummy.position.set(position.x, position.y, position.z);
-        dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
-        dummy.scale.set(scale.x, scale.y, scale.z);
-        dummy.updateMatrix();
-        const _matrix = dummy.matrix.clone();
-
-        if (!instanceMatrix || !_matrix.equals(instanceMatrix)) {
-          matrixCache.current.set(transformKey, _matrix);
-        }
-        boundingBox.current.expandByPoint(dummy.position);
-
-        if (ref.current) {
-          ref.current.up = new Vector3(0, 0, 1);
-          ref.current.setMatrixAt(index, _matrix);
-          ref.current.setColorAt(index, new Color(color.r, color.g, color.b));
-          ref.current.instanceMatrix.needsUpdate = true;
-          if (ref.current.instanceColor) {
-            ref.current.instanceColor.needsUpdate = true;
+            dummy.updateMatrix();
+            matrixCache.current.set(transformKey, dummy.matrix);
+            instanceMatrix = dummy.matrix;
           }
+
+          ref.current!.setMatrixAt(index, instanceMatrix);
+          ref.current!.setColorAt(index, new Color(color.r, color.g, color.b));
+
+        });
+        ref.current.up = new Vector3(0, 0, 1);
+        ref.current.instanceMatrix.needsUpdate = true;
+        if (ref.current.instanceColor) {
+          ref.current.instanceColor.needsUpdate = true;
         }
-      });
+      }
     }
   }, [ref, instances]);
 
@@ -221,14 +221,13 @@ function InstancedGeometryFromList(
         new Vector3(0.1, 0.1, 0.1)
       );
       // every three numbers in points is a position vector3
-      const totalInstances = instances.points.length;
       const positions = instances.points;
       const rootPosition = instances.position;
       const colors = instances.colors;
       const scale = instances.scale;
 
       positions.map((pos, index) => {
-        const transformKey = `${index}`;
+        const transformKey = getUuidByString(`${index}-${pos.x}${pos.y}${pos.z}`);
         let instanceMatrix = matrixCache.current.get(transformKey);
         if (!instanceMatrix) {
           dummy.position.set(rootPosition.x + pos.x, rootPosition.y + pos.y, rootPosition.z + pos.z);
@@ -242,7 +241,7 @@ function InstancedGeometryFromList(
         if (ref.current) {
 
           ref.current.up = new Vector3(0, 0, 1);
-          ref.current.setMatrixAt(index, dummy.matrix);
+          ref.current.setMatrixAt(index, instanceMatrix);
 
           // for lists, per object colors are optional
           if (colors && colors[index]) {
@@ -252,6 +251,13 @@ function InstancedGeometryFromList(
           }
         }
       });
+      // update the instanceMatrix and instanceColor once
+      if (ref.current) {
+        ref.current.instanceMatrix.needsUpdate = true;
+        if (ref.current.instanceColor) {
+          ref.current.instanceColor.needsUpdate = true;
+        }
+      }
     }
   }, [ref, instances]);
 
