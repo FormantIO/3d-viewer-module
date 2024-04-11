@@ -134,7 +134,7 @@ export function buildScene(
       }
     } else if (layer.visualizationType === "Path") {
       const dataSource = parseDataSource(layer);
-      const { pathOpacity, pathType, pathWidth } = layer;
+      const { pathOpacity, pathType, pathWidth, pathFlatten } = layer;
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
@@ -144,6 +144,7 @@ export function buildScene(
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Local Path "}
+          flatten={pathFlatten}
         />
       );
     } else if (layer.visualizationType === "Point cloud") {
