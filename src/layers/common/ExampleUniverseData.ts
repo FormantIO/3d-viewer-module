@@ -500,7 +500,7 @@ export class ExampleUniverseData implements IUniverseData {
       const array = [];
 
       array.push({
-        id: "1",
+        id: 1,
         ns: `cube1`,
         type: 1,
         action: 0,
@@ -538,7 +538,7 @@ export class ExampleUniverseData implements IUniverseData {
         },
       });
       array.push({
-        id: "2",
+        id: 2,
         ns: `sphere`,
         type: 2,
         action: 0,
@@ -577,7 +577,7 @@ export class ExampleUniverseData implements IUniverseData {
       });
 
       array.push({
-        id: "3",
+        id: 3,
         ns: `arrow`,
         type: 0,
         action: 0,
@@ -616,7 +616,7 @@ export class ExampleUniverseData implements IUniverseData {
       });
 
       array.push({
-        id: "4",
+        id: 4,
         ns: `cubelist`,
         type: 6,
         action: 0,
