@@ -489,7 +489,185 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IMarker3DArray | DataStatus) => void
   ): () => void {
+    const timer = setInterval(() => {
+      const time = Date.now();
+      const circlePoint1 = Math.sin(time / 1000);
+      const circlePoint2 = Math.cos(time / 1000);
+      const circlePoint3 = Math.sin(time / 1000) + 0.5;
+      const circlePoint4 = Math.cos(time / 1000) + 0.5;
+      const circlePoint5 = Math.sin(time + 200 / 1000);
+      const circlePoint6 = Math.cos(time + 200 / 1000);
+      const array = [];
+
+      array.push({
+        id: "1",
+        ns: `cube1`,
+        type: 1,
+        action: 0,
+        lifetime: 100000,
+        frame_id: "base_link",
+        points: [],
+        text: Math.random().toString(), // random text
+        mesh_resource: "",
+        frame_locked: false,
+        mesh_use_embedded_materials: false,
+        color: {
+          r: circlePoint3,
+          g: circlePoint4,
+          b: circlePoint3 + 0.5,
+          a: 1,
+        },
+        colors: [],
+        pose: {
+          position: {
+            x: 10,
+            y: 5,
+            z: 1 + circlePoint1,
+          },
+          orientation: {
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
+        },
+        scale: {
+          x: circlePoint1,
+          y: circlePoint2,
+          z: 1,
+        },
+      });
+      array.push({
+        id: "2",
+        ns: `sphere`,
+        type: 2,
+        action: 0,
+        lifetime: 100000,
+        frame_id: "base_link",
+        points: [],
+        text: Math.random().toString(), // random text
+        mesh_resource: "",
+        frame_locked: false,
+        mesh_use_embedded_materials: false,
+        color: {
+          r: circlePoint2,
+          g: circlePoint1,
+          b: circlePoint2 + 0.5,
+          a: 1,
+        },
+        colors: [],
+        pose: {
+          position: {
+            x: 12,
+            y: 5,
+            z: 1 + circlePoint1,
+          },
+          orientation: {
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
+        },
+        scale: {
+          x: circlePoint2,
+          y: circlePoint1,
+          z: 1,
+        },
+      });
+
+      array.push({
+        id: "3",
+        ns: `arrow`,
+        type: 0,
+        action: 0,
+        lifetime: 100000,
+        frame_id: "base_link",
+        points: [],
+        text: Math.random().toString(), // random text
+        mesh_resource: "",
+        frame_locked: false,
+        mesh_use_embedded_materials: false,
+        color: {
+          r: circlePoint1,
+          g: circlePoint2,
+          b: circlePoint1 + 0.5,
+          a: 1,
+        },
+        colors: [],
+        pose: {
+          position: {
+            x: 11,
+            y: 6,
+            z: 1,
+          },
+          orientation: {
+            x: 0,
+            y: 0,
+            z: circlePoint1,
+            w: 1,
+          },
+        },
+        scale: {
+          x: circlePoint1,
+          y: circlePoint2,
+          z: circlePoint1 + 0.5,
+        },
+      });
+
+      array.push({
+        id: "4",
+        ns: `cubelist`,
+        type: 6,
+        action: 0,
+        lifetime: 100000,
+        frame_id: "base_link",
+        // place 100 cubes along a circle of radius 10, and move them in a circle using circleTime1
+        points: Array.from({ length: 20 }, (_, i) => ({
+          x: Math.sin(((i + time / 1000) / 20) * Math.PI * 2) * 2 + 1,
+          y: Math.cos(((i + time / 1000) / 20) * Math.PI * 2) * 2 - 1,
+          z: 0,
+        })),
+        text: Math.random().toString(), // random text
+        mesh_resource: "",
+        frame_locked: false,
+        mesh_use_embedded_materials: false,
+        color: {
+          r: Math.cos(circlePoint1),
+          g: Math.sin(circlePoint2),
+          b: 0,
+          a: 1,
+        },
+        colors: [],
+        pose: {
+          position: {
+            x: 10,
+            y: 6,
+            z: 1,
+          },
+          orientation: {
+            x: 0,
+            y: 0,
+            z: 0,
+            w: 1,
+          },
+        },
+        scale: {
+          x: 0.25,
+          y: 0.25,
+          z: 0.25,
+        },
+      });
+
+      callback({ markers: array });
+    }, 100);
+
+    return () => {
+      clearInterval(timer);
+    };
+
     const array = [];
+
     for (let i = 0; i < 10; i += 1) {
       for (let j = 0; j <= 11; j += 1) {
         if (j === 6 || j === 7 || j === 8 || j === 4 || j === 5 || j === 11) {
