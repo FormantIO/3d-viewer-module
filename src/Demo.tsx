@@ -107,6 +107,15 @@ export function Demo() {
                 "walter.localization",
                 "localization"
               )}
+              name="Path"
+            />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Flattened path"
+              flatten={true}
             />
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
