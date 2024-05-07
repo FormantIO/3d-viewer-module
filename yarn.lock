@@ -399,10 +399,10 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.1.6.tgz"
   integrity sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==
 
-"@formant/data-sdk@^1.33.0":
-  version "1.33.0"
-  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-1.33.0.tgz"
-  integrity sha512-wBaOfyNCsioF4Hu82upqA/yIbmezEwj2+Mof7shU6DeqQYKrm6szjXyIJUzzieaz+VMNIrOPTKcqLtjxKqY4Yw==
+"@formant/data-sdk@^1.33.1":
+  version "1.38.0"
+  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-1.38.0.tgz"
+  integrity sha512-S3b+RPt0g5Jz21OhLFPGKGnkM1ynTwcR7h58JEQmdVBEDoauzeoDzwPolKihzHDw3G+hX/JbVx6jhuoO1TVc9g==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
@@ -475,6 +475,8 @@
 
 "@formant/universe-core@0.0.17":
   version "0.0.17"
+  resolved "https://registry.npmjs.org/@formant/universe-core/-/universe-core-0.0.17.tgz"
+  integrity sha512-7f+WeyvCnTRYbCPFKnpniA42bFIfyWV9XY8D5mPz3B1qNrmvx6ChrDbLA8R4Bn0Xyzq3rpfgpnyEvqySfQAD6A==
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -3568,7 +3570,7 @@ three-stdlib@^2.21.1, three-stdlib@^2.23.4, three-stdlib@^2.28.0:
     fflate "^0.6.9"
     potpack "^1.0.1"
 
-"three@>= 0.138.0", "three@>= 0.138.0 < 0.162.0", "three@>= 0.151.0", three@>=0.105.0, three@>=0.125.0, three@>=0.126, three@>=0.126.1, three@>=0.128.0, three@>=0.133, three@>=0.137, three@>=0.141, three@>=0.144.0, three@0.161.0:
+"three@>= 0.138.0", "three@>= 0.138.0 < 0.162.0", "three@>= 0.151.0", three@>=0.125.0, three@>=0.126, three@>=0.126.1, three@>=0.128.0, three@>=0.133, three@>=0.137, three@>=0.141, three@>=0.144.0, three@>=0.152.0, three@0.161.0:
   version "0.161.0"
   resolved "https://registry.npmjs.org/three/-/three-0.161.0.tgz"
   integrity sha512-LC28VFtjbOyEu5b93K0bNRLw1rQlMJ85lilKsYj6dgTu+7i17W+JCCEbvrpmNHF1F3NAUqDSWq50UD7w9H2xQw==
@@ -3659,10 +3661,10 @@ update-browserslist-db@^1.0.13:
     escalade "^3.1.1"
     picocolors "^1.0.0"
 
-urdf-loader@^0.10.3:
-  version "0.10.5"
-  resolved "https://registry.npmjs.org/urdf-loader/-/urdf-loader-0.10.5.tgz"
-  integrity sha512-FUraBxRdbn1kuZ7vIoLC03V0dwISOQfbSxaLVXWl34tFC7zHnaP4nvqR1trHaqVL/wf0N+zOTYnNo2MEJVYPlg==
+urdf-loader@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.npmjs.org/urdf-loader/-/urdf-loader-0.12.1.tgz"
+  integrity sha512-Sae8dmekFD4ERZYDtpei8mxmuMxqy+YnjN2PfI1TsDz+9QIXL4PyPrvYbXcJj2h9MfL4aS6oUc2j3ap5jRFWfA==
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2:
   version "1.0.2"
