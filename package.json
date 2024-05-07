@@ -41,7 +41,7 @@
     "seedrandom": "^3.0.5",
     "styled-components": "^5.3.9",
     "three": "0.161.0",
-    "urdf-loader": "^0.10.3",
+    "urdf-loader": "^0.12.1",
     "uuid": "^9.0.0",
     "uuid-by-string": "^4.0.0",
     "vite-plugin-top-level-await": "^1.2.4",
