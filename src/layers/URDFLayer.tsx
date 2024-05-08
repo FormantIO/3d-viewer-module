@@ -17,6 +17,8 @@ import { Group } from "three";
 async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
   const data = await fetch(zipPath).then((_) => _.arrayBuffer());
   const zipFile = await JSZip.loadAsync(data);
+  zipFile.remove("__MACOSX");
+  zipFile.remove(".DS_Store");
   // find a root urdf file
   const urdfRoot = Object.keys(zipFile.files).find((_) =>
     _.toLowerCase().endsWith("urdf")
@@ -46,7 +48,7 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
 
     // for all other files ( should just be models )
     const nonImages = Object.keys(zipFile.files).filter(
-      (_) => !_.endsWith(".png") && _ !== urdfRoot && !_.startsWith("__MACOSX")
+      (_) => !_.endsWith(".png") && _ !== urdfRoot && !_.startsWith("__MACOSX") && !_.endsWith(".DS_Store")
     );
     await Promise.all(
       nonImages.map(async (f) => {
