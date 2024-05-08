@@ -2,7 +2,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { ThreeEvent, useThree } from "@react-three/fiber";
 import { Line, Html } from "@react-three/drei";
-import clamp from "lodash.clamp";
+import { clamp } from "../../../common/clamp";
 import { context } from "./context";
 
 const clickDir = new THREE.Vector3();
