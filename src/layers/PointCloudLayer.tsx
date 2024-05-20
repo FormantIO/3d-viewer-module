@@ -148,7 +148,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     let timer: number = 0;
     let isReady = false;
     if (dataSource) {
-      const unsubscribe = universeData.subscribeToPointCloud(
+
+      const unsubscribe = (dataSource.sourceType === "realtime" ? liveUniverseData : universeData).subscribeToPointCloud(
         deviceId,
         dataSource,
         (data: IUniversePointCloud | Symbol) => {
