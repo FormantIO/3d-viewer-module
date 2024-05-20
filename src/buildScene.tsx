@@ -29,7 +29,8 @@ import { definedAndNotNull } from "./common/defined";
 
 export function buildScene(
   config: Viewer3DConfiguration,
-  currentDeviceId: string
+  currentDeviceId: string,
+  deviceConfig: any
 ): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
@@ -149,6 +150,10 @@ export function buildScene(
       );
     } else if (layer.visualizationType === "Point cloud") {
       const dataSource = parseDataSource(layer);
+      const streamType = deviceConfig.telemetry.streams.find(s => s.name === layer.telemetryStreamName)?.configuration.type === "ros-localization" ? "localization" : "point cloud";
+      dataSource.streamType = streamType;
+      // NEED A REALTIME DATA SOURCE
+      // const rtcDataSource = layer.pointCloudRealtimeStream;
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer

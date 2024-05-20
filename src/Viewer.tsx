@@ -1,7 +1,7 @@
 import { Universe } from "./layers/common/Universe";
 import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Authentication, App as FormantApp } from "@formant/data-sdk";
+import { Authentication, App as FormantApp, Fleet } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
 import { definedAndNotNull, IUniverseData } from "@formant/data-sdk";
 import {
@@ -20,6 +20,7 @@ export function Viewer() {
   const [configuration, setConfiguration] = useState<
     Viewer3DConfiguration | undefined
   >();
+  const [deviceConfig, setDeviceConfig] = useState<any>();
   const [universeData] = useState<IUniverseData>(
     () => new TelemetryUniverseData()
   );
@@ -33,10 +34,13 @@ export function Viewer() {
     (async () => {
       await Authentication.waitTilAuthenticated();
       const currentConfig = await FormantApp.getCurrentModuleConfiguration();
-      if (currentConfig) {
+      const device = await Fleet.getDevice(currentDeviceId);
+      const deviceConfig = await device.getConfiguration();
+      if (currentConfig && deviceConfig) {
         const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
         if (checkConfiguration(parsedConfig)) {
           setConfiguration(parsedConfig);
+          setDeviceConfig(deviceConfig);
         }
       }
       setAuthenticated(true);
@@ -107,7 +111,7 @@ export function Viewer() {
           key={getUuidByString(JSON.stringify(config))}
           config={config}
         >
-          {buildScene(config, definedAndNotNull(currentDeviceId))}
+          {buildScene(config, definedAndNotNull(currentDeviceId), deviceConfig)}
           <group>
             <pointLight
               position={[1000, 1000, 1000]}
