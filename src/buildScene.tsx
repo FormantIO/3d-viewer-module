@@ -159,7 +159,6 @@ export function buildScene(
         const streamType = deviceConfig.telemetry.streams.find(s => s.name === layer.telemetryStreamName)?.configuration.type === "ros-localization" ? "localization" : "point cloud";
         dataSource.streamType = streamType;
       }
-      console.log("dataSource", dataSource);
 
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
