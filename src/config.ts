@@ -40,6 +40,7 @@ export type Viewer3DVisualization = {
   jointStateTelemetryStreamName?: string;
   geometryAllowTransparency?: boolean;
   realtimeJointStateStream?: string;
+  pointCloudRealtimeStream?: string;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
@@ -107,6 +108,19 @@ export function parseDataSource(
       dataSource.telemetryLatestDataPoint
     );
   }
+  return undefined;
+}
+
+export function getRealtimePointCloudDataSource(
+  vizLayer: Viewer3DVisualization
+): UniverseDataSource | undefined {
+  if (vizLayer.pointCloudRealtimeStream) {
+    return DataSourceBuilder.realtime(
+      vizLayer.pointCloudRealtimeStream,
+      "point cloud"
+    );
+  }
+
   return undefined;
 }
 
