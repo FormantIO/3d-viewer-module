@@ -2,6 +2,7 @@ import { UniverseTelemetrySource } from "@formant/data-sdk";
 
 import {
   getRealtimeJointStateDataSource,
+  getRealtimePointCloudDataSource,
   getTeletryJointStateDataSource,
   parseDataSource,
   parsePositioning,
@@ -29,7 +30,8 @@ import { definedAndNotNull } from "./common/defined";
 
 export function buildScene(
   config: Viewer3DConfiguration,
-  currentDeviceId: string
+  currentDeviceId: string,
+  deviceConfig: any
 ): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
@@ -148,7 +150,16 @@ export function buildScene(
         />
       );
     } else if (layer.visualizationType === "Point cloud") {
-      const dataSource = parseDataSource(layer);
+      const rtcDataSource = layer.pointCloudRealtimeStream;
+      let dataSource;
+      if (rtcDataSource) {
+        dataSource = getRealtimePointCloudDataSource(layer);
+      } else {
+        dataSource = parseDataSource(layer);
+        const streamType = deviceConfig.telemetry.streams.find(s => s.name === layer.telemetryStreamName)?.configuration.type === "ros-localization" ? "localization" : "point cloud";
+        dataSource.streamType = streamType;
+      }
+
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer
