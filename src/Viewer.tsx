@@ -38,7 +38,7 @@ export function Viewer() {
       await device.getConfiguration().then((config) => {
         setDeviceConfig(config);
       });
-      if (currentConfig && deviceConfig) {
+      if (currentConfig) {
         const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
         if (checkConfiguration(parsedConfig)) {
 
