@@ -1,4 +1,4 @@
-import { UniverseDataSource } from "@formant/data-sdk";
+import { IStreamTypeMap, UniverseDataSource } from "@formant/data-sdk";
 import { DataSourceBuilder } from "./layers/utils/DataSourceBuilder";
 import { Positioning } from "./layers/common/Positioning";
 import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
@@ -99,12 +99,13 @@ export type Viewer3DConfiguration = {
 };
 
 export function parseDataSource(
-  dataSource: Viewer3DConfigurationDataSource
+  dataSource: Viewer3DConfigurationDataSource,
+  streamType?: keyof IStreamTypeMap
 ): UniverseDataSource | undefined {
   if (dataSource.telemetryStreamName) {
     return DataSourceBuilder.telemetry(
       dataSource.telemetryStreamName,
-      undefined,
+      streamType,
       dataSource.telemetryLatestDataPoint
     );
   }

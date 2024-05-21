@@ -3,7 +3,7 @@ import { IUniverseLayerProps } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { defined, UniverseTelemetrySource, IUniversePointCloud } from "@formant/data-sdk";
+import { defined, UniverseTelemetrySource, IUniversePointCloud, UniverseHardwareDataSource, UniverseDataSource } from "@formant/data-sdk";
 import { transformMatrix } from "./utils/transformMatrix";
 import {
   Box3,
@@ -21,7 +21,7 @@ import { useLoader, useThree } from "@react-three/fiber";
 import { ITransform } from "@formant/data-sdk";
 
 interface IPointCloudProps extends IUniverseLayerProps {
-  dataSource?: UniverseTelemetrySource;
+  dataSource?: UniverseDataSource
   decayTime: number;
   useColors?: boolean;
 }

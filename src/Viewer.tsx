@@ -13,7 +13,7 @@ import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
 
 const query = new URLSearchParams(window.location.search);
-const currentDeviceId = query.get("device");
+const currentDeviceId = query.get("device") || "";
 
 export function Viewer() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);

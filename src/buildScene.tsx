@@ -1,4 +1,4 @@
-import { UniverseTelemetrySource } from "@formant/data-sdk";
+import { ConfigurationDocument, UniverseDataSource, UniverseHardwareDataSource, UniverseTelemetrySource } from "@formant/data-sdk";
 
 import {
   getRealtimeJointStateDataSource,
@@ -31,7 +31,7 @@ import { definedAndNotNull } from "./common/defined";
 export function buildScene(
   config: Viewer3DConfiguration,
   currentDeviceId: string,
-  deviceConfig: any
+  deviceConfig?: ConfigurationDocument
 ): React.ReactNode {
   const devices: React.ReactNode[] = [];
   let deviceLayers: React.ReactNode[] = [];
@@ -151,20 +151,28 @@ export function buildScene(
       );
     } else if (layer.visualizationType === "Point cloud") {
       const rtcDataSource = layer.pointCloudRealtimeStream;
-      let dataSource;
+      let dataSource: UniverseDataSource | undefined;
       if (rtcDataSource) {
         dataSource = getRealtimePointCloudDataSource(layer);
       } else {
-        dataSource = parseDataSource(layer);
-        const streamType = deviceConfig.telemetry.streams.find(s => s.name === layer.telemetryStreamName)?.configuration.type === "ros-localization" ? "localization" : "point cloud";
-        dataSource.streamType = streamType;
+        const stream = deviceConfig?.telemetry?.streams?.find(
+          s => s.name === layer.telemetryStreamName
+        ) as { configuration: { type: string } } | undefined; // seems like the type might be missing
+        console.log(stream);
+
+        const streamType = stream
+          ? stream.configuration.type === "ros-localization"
+            ? "localization"
+            : "point cloud"
+          : undefined;
+        dataSource = parseDataSource(layer, streamType);
       }
 
       const { pointCloudDecayTime, pointCloudUseColors } = layer;
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
-          dataSource={dataSource as UniverseTelemetrySource | undefined}
+          dataSource={dataSource as UniverseDataSource | undefined}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Point Cloud"}
           decayTime={pointCloudDecayTime || 1}
