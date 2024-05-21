@@ -35,12 +35,14 @@ export function Viewer() {
       await Authentication.waitTilAuthenticated();
       const currentConfig = await FormantApp.getCurrentModuleConfiguration();
       const device = await Fleet.getDevice(currentDeviceId);
-      const deviceConfig = await device.getConfiguration();
+      await device.getConfiguration().then((config) => {
+        setDeviceConfig(config);
+      });
       if (currentConfig && deviceConfig) {
         const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
         if (checkConfiguration(parsedConfig)) {
+
           setConfiguration(parsedConfig);
-          setDeviceConfig(deviceConfig);
         }
       }
       setAuthenticated(true);
