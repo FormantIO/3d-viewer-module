@@ -123,7 +123,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const pointMat = new ShaderMaterial({
       blendEquation: MaxEquation,
       blending: CustomBlending,
-      depthTest: false,
+      depthTest: true,
       vertexShader,
       fragmentShader,
       uniforms: {

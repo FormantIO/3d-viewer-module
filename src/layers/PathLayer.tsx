@@ -78,12 +78,13 @@ export const PathLayer = (props: ILocalPathProps) => {
         {points.length > 0 && (
           <>
             {pathType === PathType.STATIC ? (
-              <mesh>
+              <mesh renderOrder={8}>
                 <pathGeometry args={[points, pathWidth, points.length]} />
                 <meshBasicMaterial
                   transparent
                   opacity={pathOpacity / 100}
                   color={FormantColors.blue}
+                  side={THREE.DoubleSide}
                 />
               </mesh>
             ) : (

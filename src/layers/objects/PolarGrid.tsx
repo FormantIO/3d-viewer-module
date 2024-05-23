@@ -22,7 +22,7 @@ export function PolarGrid({ majorCircleColor = new Color(0x2e3854), minorCircleC
                     lineWidth={major ? 0.7 : 0.5}
                     opacity={0.5}
                     dashed={false}
-                    depthTest={false}
+                    depthTest={true}
                 />
             );
         });

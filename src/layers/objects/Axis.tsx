@@ -14,7 +14,7 @@ export function Axis() {
         opacity={opacity}
         lineWidth={lineWidth}
         transparent={true}
-        depthTest={false}
+        depthTest={true}
         fog={true}
       />
       <Line
@@ -22,7 +22,7 @@ export function Axis() {
         color={FormantColors.green}
         opacity={opacity}
         lineWidth={lineWidth}
-        depthTest={false}
+        depthTest={true}
         fog={true}
         transparent={true}
 
@@ -32,7 +32,7 @@ export function Axis() {
         color={FormantColors.blue}
         opacity={opacity}
         lineWidth={lineWidth}
-        depthTest={false}
+        depthTest={true}
         fog={true}
         transparent={true}
       />

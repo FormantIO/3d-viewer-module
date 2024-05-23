@@ -39,7 +39,6 @@ const occupiedColor = defined(new Color(FormantColors.steel03));
 const createGridMaterial = () => {
   return new MeshBasicMaterial({
     transparent: true,
-    opacity: 0.6,
     color: 0xffffff,
   });
 };
@@ -125,7 +124,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
           textureData[stride] = Math.round(color.r * 255); // Red channel
           textureData[stride + 1] = Math.round(color.g * 255); // Green channel
           textureData[stride + 2] = Math.round(color.b * 255); // Blue channel
-          textureData[stride + 3] = alpha[i]; // Alpha channel (fully opaque)
+          textureData[stride + 3] = alpha ? alpha[i] : 255; // Alpha channel (fully opaque)
         }
 
         // Create a new DataTexture and set its properties
@@ -167,7 +166,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       {isReady && (
         <>
-          <primitive object={obj.current} />
+          <primitive object={obj.current} renderOrder={7} />
         </>
       )}
     </DataVisualizationLayer>
