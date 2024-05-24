@@ -49,7 +49,7 @@ export function Demo() {
         }}
       >
         <group>
-          {/* <pointLight
+          <pointLight
             position={[1000, 1000, 1000]}
             color={"#18d2ff"}
             intensity={0.3 * 2.8}
@@ -62,15 +62,11 @@ export function Demo() {
             intensity={0.7 * 2.8}
             decay={0}
             distance={0}
-          /> */}
+          />
           <hemisphereLight
             intensity={0.2 * 2.8}
             color={"#f8f9fc"}
             groundColor={"#282f45"}
-          />
-          <ambientLight
-            intensity={3}
-            color={"#f8f9fc"}
           />
         </group>
 
