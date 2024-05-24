@@ -245,6 +245,12 @@
               ["visualizationType", "=", "Points of interest"]
             ]
           },
+          "pointCloudRealtimeStream": {
+            "title": "Realtime stream",
+            "type": "string",
+            "description": "Optional, will override the telemetry stream if set.",
+            "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
+          },
           "telemetryLatestDataPoint": {
             "title": "Use historical data",
             "type": "boolean",
