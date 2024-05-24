@@ -83,7 +83,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         float cameraDistance = length(projectedPosition.xyz);
         float q = pow(pointScale, 3.0) / (cameraDistance * density);
         float redShift = (radius - cameraDistance) / radius / 2.0;
-        //float q = pow(pointScale, 3.0) / (distance(position, cameraPosition) * density);
         float intensity = ((color.r * 65025.0) + (color.g * 255.0) + color.b) / 65025.0;
         float minLuminocity = 0.5;
         float maxLuminocity = 2.0;
