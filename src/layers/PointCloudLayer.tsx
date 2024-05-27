@@ -14,6 +14,7 @@ import {
   Points,
   ShaderMaterial,
   TextureLoader,
+  Vector3,
 } from "three";
 import { Color } from "./utils/Color";
 import { useControlsContext } from "./common/ControlsContext";
@@ -78,10 +79,10 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     }
     
     void main() {
-        
-        float cameraDistance = distance(position, cameraPosition);
+        vec4 projectedPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        float cameraDistance = length(projectedPosition.xyz);
+        float q = pow(pointScale, 3.0) / (cameraDistance * density);
         float redShift = (radius - cameraDistance) / radius / 2.0;
-        float q = pow(pointScale, 3.0) / (distance(position, cameraPosition) * density);
         float intensity = ((color.r * 65025.0) + (color.g * 255.0) + color.b) / 65025.0;
         float minLuminocity = 0.5;
         float maxLuminocity = 2.0;
@@ -142,6 +143,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
     const geometry = new BufferGeometry();
     const points = new Points(geometry, pointMat);
+    points.up = new Vector3(0, 0, 1);
     points.frustumCulled = false;
     objRef.current = points;
 
@@ -174,6 +176,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             : identityTransform;
 
           if (positions && positions.length > 0) {
+
             geometry.setAttribute(
               "position",
               new BufferAttribute(new Float32Array(positions), 3)
@@ -214,6 +217,9 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             const clampedRadius = radius > 50 ? 50 : radius;
             const volume = (4 / 3) * Math.PI * Math.pow(clampedRadius, 3);
             const density = Math.pow(numPoints / (volume || 1), 0.3333);
+            points.matrixAutoUpdate = false;
+            points.matrix.copy(transformMatrix(worldToLocal));
+
 
             pointMat.uniforms.intensityMin.value = intensityMin;
             pointMat.uniforms.intensityMax.value = intensityMax;
@@ -221,8 +227,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
             pointMat.uniforms.density.value = density;
             pointMat.needsUpdate = true;
 
-            points.matrixAutoUpdate = false;
-            points.matrix.copy(transformMatrix(worldToLocal));
+
             objRef.current = points;
           }
         }

@@ -192,7 +192,7 @@ export class ExampleUniverseData implements IUniverseData {
     callback: (data: IUniverseOdometry) => void
   ): CloseSubscription {
     let time = 0;
-    const radius = 3; // Radius of the circular path
+    const radius = 1; // Radius of the circular path
     const frequency = 0.1; // Controls the speed of movement
 
     const interval = setInterval(() => {

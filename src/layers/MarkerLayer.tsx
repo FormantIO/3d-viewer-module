@@ -30,8 +30,9 @@ export function MarkerLayer(props: IUniverseLayerProps) {
     if (!circle || !arrow) return;
 
     const scaleFactor = 35;
-    const distanceFromCamera = circle.position.distanceTo(camera.position);
-    const scale = distanceFromCamera / scaleFactor;
+    const circlePosition = circle.getWorldPosition(new THREE.Vector3());
+    const distanceFromCamera = camera.position.distanceTo(circlePosition);
+    const scale = Math.max(distanceFromCamera, 3.0) / scaleFactor;
     circle.scale.setScalar(scale);
     arrow.scale.setScalar(scale);
 
@@ -45,19 +46,18 @@ export function MarkerLayer(props: IUniverseLayerProps) {
       type={LayerType.TRACKABLE}
       iconUrl="icons/3d_object.svg"
     >
-      <group renderOrder={2}>
-        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]} up={new THREE.Vector3(0, 0, 1)}>
+      <group >
+        <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]} up={new THREE.Vector3(0, 0, 1)} renderOrder={9}>
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial
             color="white"
             emissive="white"
             emissiveIntensity={2}
             toneMapped={false}
-            depthTest={false}
-            depthWrite={false}
+            depthTest={true}
           />
         </mesh>
-        <mesh name="circle" ref={circleRef}>
+        <mesh name="circle" ref={circleRef} renderOrder={8}>
           <circleGeometry args={[0.8, 20]} />
           <markerMaterial
             transparent={true}
