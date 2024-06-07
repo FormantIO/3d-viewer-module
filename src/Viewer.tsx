@@ -3,11 +3,9 @@ import { UniverseDataContext } from "./layers/common/UniverseDataContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Authentication, App as FormantApp, Fleet } from "@formant/data-sdk";
 import { Viewer3DConfiguration } from "./config";
-import { definedAndNotNull, IUniverseData } from "@formant/data-sdk";
-import {
-  LiveUniverseData,
-  TelemetryUniverseData,
-} from "@formant/data-sdk";
+import { definedAndNotNull, IUniverseData, TelemetryUniverseData, LiveUniverseData } from "@formant/data-sdk";
+
+
 import { MissingConfig } from "./components/MissingConfig";
 import { buildScene } from "./buildScene";
 import getUuidByString from "uuid-by-string";
@@ -21,12 +19,9 @@ export function Viewer() {
     Viewer3DConfiguration | undefined
   >();
   const [deviceConfig, setDeviceConfig] = useState<any>();
-  const [universeData] = useState<IUniverseData>(
-    () => new TelemetryUniverseData()
-  );
-  const [liveUniverseData] = useState<IUniverseData>(
-    () => new LiveUniverseData()
-  );
+  const universeData = useRef<IUniverseData>(new TelemetryUniverseData());
+  const liveUniverseData = useRef<IUniverseData>(new LiveUniverseData());
+
   const timeRef = useRef<number>(0);
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -64,6 +59,9 @@ export function Viewer() {
     if (!configuration) return;
     const { advanceOptions } = configuration;
     const useTimeline = advanceOptions?.useTimeline;
+    // clear the worker pool every time the configuration changes
+    liveUniverseData.current.clearWorkerPool();
+    universeData.current.clearWorkerPool();
 
 
     if (useTimeline || useTimeline === undefined) {
@@ -73,7 +71,7 @@ export function Viewer() {
         if (timeRef.current === d.getTime()) {
           if (!heartbeatRef.current) {
             heartbeatRef.current = setInterval(() => {
-              universeData.setTime(d);
+              universeData.current.setTime(d);
             }, 2000);
           }
           return;
@@ -85,14 +83,14 @@ export function Viewer() {
         }
 
         timeRef.current = d.getTime();
-        universeData.setTime(d);
+        universeData.current.setTime(d);
       });
     } else {
-      universeData.setTime("live");
+      universeData.current.setTime("live");
     }
     return () => {
-      liveUniverseData.clearWorkerPool();
-      universeData.clearWorkerPool();
+      liveUniverseData.current.clearWorkerPool();
+      universeData.current.clearWorkerPool();
     }
   }, [configuration]);
 
@@ -107,7 +105,7 @@ export function Viewer() {
 
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
-      <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
+      <UniverseDataContext.Provider value={[universeData.current, liveUniverseData.current]}>
         <Universe
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}
