@@ -28,7 +28,7 @@ interface IPointCloudProps extends IUniverseLayerProps {
 }
 
 export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, decayTime, useColors: fullColor } = props;
+  const { dataSource, useColors: fullColor } = props;
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const {
@@ -81,7 +81,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     void main() {
         vec4 projectedPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         float cameraDistance = length(projectedPosition.xyz);
-        float q = pow(pointScale, 3.0) / (cameraDistance * density);
+        float q = pow(pointScale,3.0) / (cameraDistance * density);
         float redShift = (radius - cameraDistance) / radius / 2.0;
         float intensity = ((color.r * 65025.0) + (color.g * 255.0) + color.b) / 65025.0;
         float minLuminocity = 0.5;
@@ -125,6 +125,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       blendEquation: MaxEquation,
       blending: CustomBlending,
       depthTest: true,
+      depthWrite: false,
       vertexShader,
       fragmentShader,
       uniforms: {
@@ -159,14 +160,8 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
 
           points.visible = true;
 
-          if (timer) clearTimeout(timer);
-
-          timer = window.setTimeout(() => {
-            points.visible = false;
-          }, decayTime * 1000);
-
           const pc = data as IUniversePointCloud;
-          const { header, positions, colors } = defined(pc.pcd);
+          const { positions, colors } = defined(pc.pcd);
           const identityTransform: ITransform = {
             translation: { x: 0, y: 0, z: 0 },
             rotation: { x: 0, y: 0, z: 0, w: 1 },
@@ -237,7 +232,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         unsubscribe();
       };
     }
-  }, [layerData, universeData]);
+  }, [layerData, universeData, liveUniverseData, dataSource]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
