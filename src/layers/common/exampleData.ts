@@ -6,6 +6,40 @@ function convertObjectToArray(obj: any) {
   return arr;
 }
 
+export const occupancyMap2 = {
+  url: "https://upload.formant.io/80c51650-936c-4033-8ecf-3143b3840138/c8c02e3f-f125-44e8-b866-d2ba98091fc2/2024/06/6/579e2257-4b4a-446a-a335-b63c71a3adb9",
+  size: 0,
+  resolution: 0.10000000149011612,
+  width: 3712,
+  height: 4160,
+  origin: {
+    translation: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    rotation: {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: 1,
+    },
+  },
+  worldToLocal: {
+    translation: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    rotation: {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: 1,
+    },
+  },
+};
+
 export const occupancyMap = {
   width: 128,
   height: 128,
@@ -25,8 +59,8 @@ export const occupancyMap = {
   resolution: 0.029999999329447746,
   origin: {
     translation: {
-      x: 1.4346793554925856,
-      y: -4.1074234668828025,
+      x: 0,
+      y: 0,
       z: 0,
     },
     rotation: {
@@ -7745,7 +7779,7 @@ export const pointCloud = {
       width: 1660,
     },
     positions: convertObjectToArray({
-      "0": 4.348087310791016,
+      "0": 1.348087310791019,
       "1": -3.5110840797424316,
       "2": -0.6145260334014893,
       "3": 4.365370750427246,
