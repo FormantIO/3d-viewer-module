@@ -158,7 +158,6 @@ export function buildScene(
         const stream = deviceConfig?.telemetry?.streams?.find(
           s => s.name === layer.telemetryStreamName
         ) as { configuration: { type: string } } | undefined; // seems like the type might be missing
-        console.log(stream);
 
         const streamType = stream
           ? stream.configuration.type === "ros-localization"
