@@ -61,6 +61,7 @@ export const PathLayer = (props: ILocalPathProps) => {
           positions.map((pos) => new THREE.Vector3(pos.x, pos.y, flatten ? 0 : pos.z))
         );
 
+        if (!groupRef.current) return;
         const group = groupRef.current;
         group.matrixAutoUpdate = false;
         group.matrix.copy(worldToLocalMatrix);
