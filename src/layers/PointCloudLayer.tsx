@@ -27,38 +27,11 @@ interface IPointCloudProps extends IUniverseLayerProps {
   useColors?: boolean;
 }
 
-export const PointCloudLayer = (props: IPointCloudProps) => {
-  const { dataSource, useColors: fullColor } = props;
-  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
-  const layerData = useContext(LayerContext);
-  const {
-    state: { pointSize },
-    updateState,
-  } = useControlsContext();
+const color1 = defined(Color.fromString("#729fda"));
+const color2 = defined(Color.fromString("#F89973"));
+const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
 
-
-  const circleMap = useLoader(TextureLoader, "./point-circle.png");
-  const objRef = useRef<Points>(new Points());
-  const pointMatRef = useRef<ShaderMaterial>();
-
-  useEffect(() => {
-    if (!pointMatRef.current) return;
-    pointMatRef.current.uniforms.pointScale.value = pointSize;
-  }, [pointSize]);
-  const [ready, setReady] = useState(false);
-
-  const { scene } = useThree();
-
-  useEffect(() => {
-    if (!layerData) return;
-    const { deviceId } = layerData;
-    updateState({ hasPointCloud: true });
-
-    const color1 = defined(Color.fromString("#729fda"));
-    const color2 = defined(Color.fromString("#F89973"));
-    const glColor = (c: Color) => `vec3(${c.h}, ${c.s}, ${c.l})`;
-
-    const vertexShader = `
+const vertexShader = `
     varying vec3 vColor;
     uniform float pointScale;
     uniform float radius;
@@ -113,7 +86,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
     }`;
 
-    const fragmentShader = `
+const fragmentShader = `
     uniform sampler2D pointCloudTexture;
     varying vec3 vColor;
     
@@ -121,7 +94,19 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
         gl_FragColor = vec4(vColor, 1) * texture2D(pointCloudTexture, gl_PointCoord);
     }`;
 
-    const pointMat = new ShaderMaterial({
+export const PointCloudLayer = (props: IPointCloudProps) => {
+  const { dataSource, useColors: fullColor } = props;
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
+  const layerData = useContext(LayerContext);
+  const {
+    state: { pointSize },
+    updateState,
+  } = useControlsContext();
+  const [pointCloudData, setPointCloudData] = useState<IUniversePointCloud | null>(null);
+
+  const circleMap = useLoader(TextureLoader, "./point-circle.png");
+  const pointMatRef = useRef<ShaderMaterial>(
+    new ShaderMaterial({
       blendEquation: MaxEquation,
       blending: CustomBlending,
       depthTest: true,
@@ -139,92 +124,37 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
       },
       transparent: true,
       vertexColors: true,
-    });
-    pointMatRef.current = pointMat;
+    })
+  );
+  const objRef = useRef<Points>(new Points(
+    new BufferGeometry(),
+    pointMatRef.current
+  ));
 
-    const geometry = new BufferGeometry();
-    const points = new Points(geometry, pointMat);
+  useEffect(() => {
+    if (!pointMatRef.current) return;
+    pointMatRef.current.uniforms.pointScale.value = pointSize;
+  }, [pointSize]);
+
+  const { scene } = useThree();
+
+  useEffect(() => {
+    if (!layerData) return;
+    const { deviceId } = layerData;
+    updateState({ hasPointCloud: true });
+
+    const points = objRef.current;
     points.up = new Vector3(0, 0, 1);
     points.frustumCulled = false;
-    objRef.current = points;
 
-    let timer: number = 0;
-    let isReady = false;
     if (dataSource) {
-
       const unsubscribe = (dataSource.sourceType === "realtime" ? liveUniverseData : universeData).subscribeToPointCloud(
         deviceId,
         dataSource,
         (data: IUniversePointCloud | Symbol) => {
           if (typeof data === "symbol") return;
 
-          points.visible = true;
-
-          const pc = data as IUniversePointCloud;
-          const { positions, colors } = defined(pc.pcd);
-          const identityTransform: ITransform = {
-            translation: { x: 0, y: 0, z: 0 },
-            rotation: { x: 0, y: 0, z: 0, w: 1 },
-          };
-          const worldToLocal = pc.worldToLocal
-            ? pc.worldToLocal
-            : identityTransform;
-
-          if (positions && positions.length > 0) {
-
-            geometry.setAttribute(
-              "position",
-              new BufferAttribute(new Float32Array(positions), 3)
-            );
-
-            geometry.setAttribute(
-              "color",
-              new BufferAttribute(new Float32Array(colors!), 4)
-            );
-
-            let intensityMin = 0;
-            let intensityMax = 0;
-
-            if (colors !== undefined && colors.length > 0) {
-              for (let i = 0; i < colors.length; i += 4) {
-                const value =
-                  (colors[i] * 65025 + colors[i + 1] * 255 + colors[i + 2]) /
-                  65025;
-                intensityMin = Math.min(value, intensityMin);
-                intensityMax = Math.max(value, intensityMax);
-              }
-            }
-
-            geometry.computeBoundingSphere();
-
-            if (!isReady) {
-              isReady = true;
-              setReady(true);
-              geometry.computeBoundingBox();
-              // @ts-ignore
-              scene.dispatchEvent({ type: "updateBounds" });
-            }
-
-            const numPoints = positions?.length || 0;
-            const radius = geometry.boundingSphere
-              ? geometry.boundingSphere.radius
-              : 0;
-            const clampedRadius = radius > 50 ? 50 : radius;
-            const volume = (4 / 3) * Math.PI * Math.pow(clampedRadius, 3);
-            const density = Math.pow(numPoints / (volume || 1), 0.3333);
-            points.matrixAutoUpdate = false;
-            points.matrix.copy(transformMatrix(worldToLocal));
-
-
-            pointMat.uniforms.intensityMin.value = intensityMin;
-            pointMat.uniforms.intensityMax.value = intensityMax;
-            pointMat.uniforms.radius.value = radius;
-            pointMat.uniforms.density.value = density;
-            pointMat.needsUpdate = true;
-
-
-            objRef.current = points;
-          }
+          setPointCloudData(data as IUniversePointCloud);
         }
       );
 
@@ -234,9 +164,93 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     }
   }, [layerData, universeData, liveUniverseData, dataSource]);
 
+  const hashPointCloudData = () => {
+    const hash = (pointCloudData?.pcd?.positions as number[])?.reduce((_hash, num) => {
+      _hash = ((_hash << 5) - _hash) + num;
+      return _hash | 0; // Convert to 32bit integer
+    });
+    const hash2 = (pointCloudData?.pcd?.colors as number[])?.reduce((_hash, num) => {
+      _hash = ((_hash << 5) - _hash) + num;
+      return _hash | 0; // Convert to 32bit integer
+    }
+    );
+    return hash + hash2;
+  }
+
+  const processPointCloudData = (hash: number) => {
+    // process the data on render
+    if (pointCloudData && objRef.current.userData.hash !== hash) {
+      console.log("Processing point cloud data")
+      const { positions, colors } = defined(pointCloudData.pcd);
+      const identityTransform: ITransform = {
+        translation: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0, w: 1 },
+      };
+      const worldToLocal = pointCloudData.worldToLocal
+        ? pointCloudData.worldToLocal
+        : identityTransform;
+      const points = objRef.current;
+      const geometry = points.geometry as BufferGeometry;
+
+      points.userData = { hash };
+
+      if (positions && positions.length > 0) {
+        geometry.setAttribute(
+          "position",
+          new BufferAttribute(new Float32Array(positions), 3)
+        );
+
+        geometry.setAttribute(
+          "color",
+          new BufferAttribute(new Float32Array(colors!), 4)
+        );
+
+        let intensityMin = 0;
+        let intensityMax = 0;
+
+        if (colors !== undefined && colors.length > 0) {
+          for (let i = 0; i < colors.length; i += 4) {
+            const value =
+              (colors[i] * 65025 + colors[i + 1] * 255 + colors[i + 2]) /
+              65025;
+            intensityMin = Math.min(value, intensityMin);
+            intensityMax = Math.max(value, intensityMax);
+          }
+        }
+
+        geometry.computeBoundingSphere();
+        geometry.computeBoundingBox();
+        // @ts-ignore
+        //scene.dispatchEvent({ type: "updateBounds" });
+
+        const numPoints = positions?.length || 0;
+        const radius = geometry.boundingSphere
+          ? geometry.boundingSphere.radius
+          : 0;
+        const clampedRadius = radius > 50 ? 50 : radius;
+        const volume = (4 / 3) * Math.PI * Math.pow(clampedRadius, 3);
+        const density = Math.pow(numPoints / (volume || 1), 0.3333);
+        points.matrixAutoUpdate = false;
+        points.matrix.copy(transformMatrix(worldToLocal));
+
+        const pointMat = points.material as ShaderMaterial;
+        pointMat.uniforms.intensityMin.value = intensityMin;
+        pointMat.uniforms.intensityMax.value = intensityMax;
+        pointMat.uniforms.radius.value = radius;
+        pointMat.uniforms.density.value = density;
+        pointMat.needsUpdate = true;
+      }
+    }
+  }
+  if (pointCloudData) {
+    const hash = hashPointCloudData();
+
+    processPointCloudData(hash);
+  }
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      {ready && <primitive object={objRef.current} />}
+      {<primitive object={objRef.current} />}
     </DataVisualizationLayer>
   );
 };
