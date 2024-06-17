@@ -232,8 +232,8 @@ export function MapLayer(props: IMapLayer) {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      <group visible={highResLoaded}>{meshesArrayRef.current}</group>
-      <mesh ref={lowResMapRef} visible={!highResLoaded}>
+      <group visible={highResLoaded} position={[0, 0, -0.01]}>{meshesArrayRef.current}</group>
+      <mesh ref={lowResMapRef} visible={!highResLoaded} position={[0, 0, -0.01]}>
         <planeGeometry attach="geometry" args={[size, size]} />
         {lowMapTextures.length > 0 ? (
           <meshStandardMaterial

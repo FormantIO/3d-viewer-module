@@ -42,8 +42,8 @@ export function buildScene(
   const DEVICE_TREEPATH = 1;
   const SCENE_TREEPATH = 2;
 
-  const { advanceOptions } = config;
-  const showGround = advanceOptions?.showGround;
+  const { advancedOptions } = config;
+  const showGround = advancedOptions?.showGround;
 
   // treePath is used to identify the layer in the scene graph
   // it is an array of numbers that represent the path to the layer
