@@ -85,7 +85,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     CloseSubscription | undefined
   >();
   const [thisLayer, setThisLayer] = useState<LayerData | undefined>(undefined);
-  const [universeData, liveUniverseData, debug] = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
+  const { register, layers, debug } = useContext(UIDataContext);
   const layerData = useContext(LayerContext);
   let deviceId: string | undefined;
   if (layerData) {
@@ -100,7 +101,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const colorRef = useRef("yellow");
   useHelper(boxRef, Box3Helper, colorRef.current);
 
-  const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
     const autoId = id || getUuid(JSON.stringify({ name, type, treePath }));
     const registeredLayer = register(
@@ -268,7 +268,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
       box.setFromObject(g);
     }
   });
-
 
 
   return (

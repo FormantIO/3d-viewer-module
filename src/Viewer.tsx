@@ -105,11 +105,12 @@ export function Viewer() {
 
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
-      <UniverseDataContext.Provider value={[universeData.current, liveUniverseData.current, config.advancedOptions?.debug]}>
+      <UniverseDataContext.Provider value={[universeData.current, liveUniverseData.current]}>
         <Universe
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}
           config={config}
+          debug={!!config.advancedOptions?.debug}
         >
           {buildScene(config, definedAndNotNull(currentDeviceId), deviceConfig)}
           <group>

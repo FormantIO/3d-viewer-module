@@ -15,11 +15,11 @@ import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { URDFLayer } from "./layers/URDFLayer";
-import { Label } from "./layers/objects/Label";
-import { Stats } from "@react-three/drei";
+
 
 const query = new URLSearchParams(window.location.search);
 const experimentalMode = query.get("experimental") === "true";
+const debugMode = query.get("debug") === "true";
 
 export function Demo() {
   const [universeData] = useState<IUniverseData>(
@@ -39,6 +39,7 @@ export function Demo() {
   });
 
 
+
   return (
     <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
       <Universe
@@ -47,10 +48,8 @@ export function Demo() {
           maps: [],
           visualizations: [],
         }}
+        debug={debugMode}
       >
-
-        <Stats />
-
         <group>
           <pointLight
             position={[1000, 1000, 1000]}
@@ -84,6 +83,7 @@ export function Demo() {
               name="Ground"
               treePath={[2, 0]}
               type={LayerType.AXIS}
+              id="ground"
             />
             <MapLayer
               name="Map"
@@ -93,6 +93,7 @@ export function Demo() {
               size={400}
               treePath={[0, 0]}
               visible={false}
+              id="map0"
             />
             <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
@@ -101,22 +102,9 @@ export function Demo() {
               )}
               name="Occupancy Grid"
               treePath={[0, 1]}
+              id="occupancyGrid"
             />
-            <PathLayer
-              dataSource={DataSourceBuilder.telemetry(
-                "walter.localization",
-                "localization"
-              )}
-              name="Path"
-            />
-            <PathLayer
-              dataSource={DataSourceBuilder.telemetry(
-                "walter.localization",
-                "localization"
-              )}
-              name="Flattened path"
-              flatten={true}
-            />
+
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
             {experimentalMode && (
@@ -161,6 +149,25 @@ export function Demo() {
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[1, 3]}
             />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Path"
+              treePath={[1, 4]}
+              id="path1"
+            />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Flattened path"
+              flatten={true}
+              treePath={[1, 5]}
+              id="path2"
+            />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
         </LayerContext.Provider>
@@ -174,6 +181,7 @@ export function Demo() {
               positioning={PositioningBuilder.fixed(3, -3, 0)}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[2, 3]}
+              id="urdf2"
             />
           </EmptyLayer>
         </LayerContext.Provider>
@@ -187,6 +195,7 @@ export function Demo() {
               positioning={PositioningBuilder.fixed(2.5, -2.5, 0)}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[2, 3]}
+              id="urdf3"
             />
           </EmptyLayer>
         </LayerContext.Provider>
