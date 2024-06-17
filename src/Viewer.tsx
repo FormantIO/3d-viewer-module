@@ -57,8 +57,8 @@ export function Viewer() {
 
   useEffect(() => {
     if (!configuration) return;
-    const { advanceOptions } = configuration;
-    const useTimeline = advanceOptions?.useTimeline;
+    const { advancedOptions } = configuration;
+    const useTimeline = advancedOptions?.useTimeline;
     // clear the worker pool every time the configuration changes
     liveUniverseData.current.clearWorkerPool();
     universeData.current.clearWorkerPool();
@@ -105,7 +105,7 @@ export function Viewer() {
 
   const scene = useCallback(
     (config: Viewer3DConfiguration) => (
-      <UniverseDataContext.Provider value={[universeData.current, liveUniverseData.current]}>
+      <UniverseDataContext.Provider value={[universeData.current, liveUniverseData.current, config.advancedOptions?.debug]}>
         <Universe
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}

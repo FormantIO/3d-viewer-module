@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
-import { CameraControlsProps } from '@react-three/drei'
+import { CameraControlsProps, useHelper } from '@react-three/drei'
 
 export type SizeProps = {
   box: THREE.Box3
@@ -26,6 +26,7 @@ export type BoundsProps = JSX.IntrinsicElements['group'] & {
   margin?: number
   eps?: number
   onFit?: (data: SizeProps) => void
+  debug?: boolean
 }
 
 const isOrthographic = (def: THREE.Camera): def is THREE.OrthographicCamera =>
@@ -47,7 +48,7 @@ const getAbsoluteAngle = (targetAngle: number, sourceAngle: number): number => {
 }
 
 const context = React.createContext<BoundsApi>(null!)
-export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit }: BoundsProps) {
+export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit, debug = false }: BoundsProps) {
   const ref = React.useRef<THREE.Group>(null!)
   const { camera, invalidate, size, scene, get } = useThree()
 
@@ -74,6 +75,11 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
   const [box] = React.useState(() => new THREE.Box3())
 
+  // @ts-ignore
+  const boxRef = React.useRef<THREE.Object3D<THREE.Object3DEventMap>>(debug ? box : null)
+  useHelper(boxRef, THREE.Box3Helper, 'cyan');
+
+
   const [distance, setDistance] = React.useState(10)
 
   const api: BoundsApi = React.useMemo(() => {
@@ -95,8 +101,8 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         const oldBox = box.clone();
         if (ref.current && ref.current.children.length > 0) {
           const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
-          const mapGroup = targetGroup.children[1] || new THREE.Group();
-          const visualizationsGroup = targetGroup.children[2] || new THREE.Group();
+          const mapGroup = targetGroup.children[0] || new THREE.Group();
+          const visualizationsGroup = targetGroup.children[1] || new THREE.Group();
           mapGroup.updateWorldMatrix(true, true);
           visualizationsGroup.updateWorldMatrix(true, true);
           const tempBox = new THREE.Box3();
@@ -122,14 +128,14 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         return this
       },
       clip() {
-        const { distance } = getSize();
+        const currentSize = getSize();
         const controls = get().controls as CameraControlsProps;
-        setDistance(distance);
+        setDistance(currentSize.distance);
         if (controls) {
-          controls.maxDistance = distance * 10;
+          controls.maxDistance = currentSize.distance * 10;
           controls.minDistance = 0.5;
         }
-        camera.far = Math.max(distance * 100, 100);
+        camera.far = Math.max(currentSize.distance * 100, 100);
         camera.updateProjectionMatrix()
         invalidate()
         return this

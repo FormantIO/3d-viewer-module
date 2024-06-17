@@ -11,6 +11,8 @@ import {
 } from "@formant/data-sdk";
 import { DataSourceBuilder } from "./utils/DataSourceBuilder";
 import {
+  Box3,
+  Box3Helper,
   Euler,
   Matrix4,
   Quaternion,
@@ -21,6 +23,8 @@ import { LayerType } from "./common/LayerTypes";
 import getUuid from "uuid-by-string";
 import { transformMatrix } from "./utils/transformMatrix";
 import { ILocation, ITransformNode } from "@formant/data-sdk";
+import { useHelper } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 
 interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
 
@@ -81,7 +85,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     CloseSubscription | undefined
   >();
   const [thisLayer, setThisLayer] = useState<LayerData | undefined>(undefined);
-  const [universeData, liveUniverseData] = useContext(UniverseDataContext);
+  const [universeData, liveUniverseData, debug] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   let deviceId: string | undefined;
   if (layerData) {
@@ -91,6 +95,10 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     props;
 
   const groupRef = useRef<THREE.Group>(null!);
+  // @ts-ignore
+  const boxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>(debug ? new Box3() : null);
+  const colorRef = useRef("yellow");
+  useHelper(boxRef, Box3Helper, colorRef.current);
 
   const { register, layers } = useContext(UIDataContext);
   useEffect(() => {
@@ -243,6 +251,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
         setPositionUnsubscriber(() => unsubscribe);
       }
     }
+
     return () => {
       if (positionUnsubscriber) {
         positionUnsubscriber();
@@ -251,6 +260,17 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     };
   }, [groupRef, positioning, thisLayer]);
 
+  useFrame(() => {
+    if (groupRef.current && debug) {
+      // @ts-ignore
+      const box = boxRef.current as Box3;
+      const g = groupRef.current;
+      box.setFromObject(g);
+    }
+  });
+
+
+
   return (
     <group
       visible={thisLayer ? thisLayer.visible : true}
@@ -258,6 +278,6 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
       name={thisLayer ? thisLayer.id : ""}
     >
       {children}
-    </group>
+    </group >
   );
 }
