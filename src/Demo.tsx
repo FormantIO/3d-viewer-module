@@ -39,7 +39,7 @@ export function Demo() {
   });
 
 
-
+  // TODO: this should follow the buildScene pattern from Viewer.tsx
   return (
     <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
       <Universe
@@ -50,27 +50,7 @@ export function Demo() {
         }}
         debug={debugMode}
       >
-        <group>
-          <pointLight
-            position={[1000, 1000, 1000]}
-            color={"#18d2ff"}
-            intensity={0.3 * 2.8}
-            decay={0}
-            distance={0}
-          />
-          <pointLight
-            position={[-1000, -1000, 1000]}
-            color={"#ea719d"}
-            intensity={0.7 * 2.8}
-            decay={0}
-            distance={0}
-          />
-          <hemisphereLight
-            intensity={0.2 * 2.8}
-            color={"#f8f9fc"}
-            groundColor={"#282f45"}
-          />
-        </group>
+
 
         <LayerContext.Provider
           value={{
@@ -199,6 +179,27 @@ export function Demo() {
             />
           </EmptyLayer>
         </LayerContext.Provider>
+        <group>
+          <pointLight
+            position={[1000, 1000, 1000]}
+            color={"#18d2ff"}
+            intensity={0.3 * 2.8}
+            decay={0}
+            distance={0}
+          />
+          <pointLight
+            position={[-1000, -1000, 1000]}
+            color={"#ea719d"}
+            intensity={0.7 * 2.8}
+            decay={0}
+            distance={0}
+          />
+          <hemisphereLight
+            intensity={0.2 * 2.8}
+            color={"#f8f9fc"}
+            groundColor={"#282f45"}
+          />
+        </group>
       </Universe>
     </UniverseDataContext.Provider>
   );

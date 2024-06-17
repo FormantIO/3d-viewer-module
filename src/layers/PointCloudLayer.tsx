@@ -136,7 +136,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     pointMatRef.current.uniforms.pointScale.value = pointSize;
   }, [pointSize]);
 
-  const { scene } = useThree();
 
   useEffect(() => {
     if (!layerData) return;
@@ -171,7 +170,7 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     });
     const hash2 = (pointCloudData?.pcd?.colors as number[])?.reduce((_hash, num) => {
       _hash = ((_hash << 5) - _hash) + num;
-      return _hash | 0; // Convert to 32bit integer
+      return _hash | 0;
     }
     );
     return hash + hash2;
@@ -180,7 +179,6 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
   const processPointCloudData = (hash: number) => {
     // process the data on render
     if (pointCloudData && objRef.current.userData.hash !== hash) {
-      console.log("Processing point cloud data")
       const { positions, colors } = defined(pointCloudData.pcd);
       const identityTransform: ITransform = {
         translation: { x: 0, y: 0, z: 0 },

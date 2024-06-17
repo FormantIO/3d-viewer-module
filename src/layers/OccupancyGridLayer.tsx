@@ -13,7 +13,7 @@ import { transformMatrix } from "./utils/transformMatrix";
 import {
   IUniverseGridMap,
   UniverseTelemetrySource,
-  defined,
+  defined
 } from "@formant/data-sdk";
 
 
@@ -36,6 +36,7 @@ import {
 } from "three";
 import { FormantColors } from "./utils/FormantColors";
 import { useBounds } from "./common/CustomBounds";
+import { UIDataContext } from "./common/UIDataContext";
 
 interface IPointOccupancyGridProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -110,6 +111,7 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
   const gridMat = useRef(createGridMaterial()).current;
   const mesh = useRef(createMesh(gridMat)).current;
   const obj = useRef(mesh);
+  const visible = useRef(true);
 
   useEffect(() => {
     if (url) {
@@ -242,12 +244,14 @@ export const OccupancyGridLayer = (props: IPointOccupancyGridProps) => {
     };
   }, [layerData, universeData]);
 
-  useLayoutEffect(() => {
-    if (isReady && bounds) {
-      // send event to update bounds
-      window.dispatchEvent(new Event("updateBounds"));
-    }
-  }, [isReady]);
+  const { layers } = useContext(UIDataContext);
+  const thisLayer = layers.find((l) => l.id === props.id);
+  visible.current = thisLayer?.visible ?? true;
+
+  useEffect(() => {
+    bounds.refresh();
+  }, [visible.current, isReady]);
+
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">

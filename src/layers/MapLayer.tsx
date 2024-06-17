@@ -23,6 +23,7 @@ import {
 } from "./utils/MapUtils";
 import { shaderMaterial } from "@react-three/drei";
 import { ILocation } from "@formant/data-sdk";
+import { UIDataContext } from "./common/UIDataContext";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -85,6 +86,7 @@ export function MapLayer(props: IMapLayer) {
   const [unsubscribeToLocation, setUnsubscribeToLocation] = useState<
     (() => void) | null
   >(null);
+  const visible = useRef(true);
 
   useEffect(() => {
     (async () => {
@@ -219,6 +221,14 @@ export function MapLayer(props: IMapLayer) {
       material.uniforms.time.value = clock.elapsedTime;
     }
   });
+
+  const { layers } = useContext(UIDataContext);
+  const thisLayer = layers.find((l) => l.id === props.id);
+  visible.current = thisLayer?.visible ?? true;
+
+  useEffect(() => {
+    bounds.refresh();
+  }, [visible.current]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">

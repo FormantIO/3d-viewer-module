@@ -17,7 +17,7 @@ import {
 } from "@formant/data-sdk";
 import { SplineCurve, Vector2, Vector3 } from "three";
 import seedrandom from "seedrandom";
-import { pointCloud, occupancyMap, occupancyMap2 } from "./exampleData";
+import { pointCloud, occupancyMap } from "./exampleData";
 import { clone } from "../../common/clone";
 import {
   IBitset,

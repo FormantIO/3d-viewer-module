@@ -153,7 +153,10 @@ export function Universe(props: IUniverseProps) {
     });
   }, [layers, scene]);
 
-  const sidebarOpenCallback = () => {
+  const sidebarOpenCallback = (changedMap: boolean) => {
+    if (sidebarOpen && changedMap) {
+      centerOnDevice();
+    }
     setSidebarOpen(!sidebarOpen);
   };
   const { debug } = props;
@@ -221,7 +224,7 @@ export function Universe(props: IUniverseProps) {
                 />
 
                 <WaitForControls>
-                  <Bounds observe margin={1.5} damping={2}>
+                  <Bounds observe margin={1.5} damping={2} debug={debug}>
                     <group>{props.children}</group>
                   </Bounds>
                 </WaitForControls>
