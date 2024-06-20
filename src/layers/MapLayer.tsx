@@ -7,7 +7,7 @@ import {
   NearestFilter,
   PlaneGeometry,
   ShaderMaterial,
-  sRGBEncoding,
+  SRGBColorSpace,
   Texture,
 } from "three";
 import { LayerContext } from "./common/LayerContext";
@@ -145,7 +145,7 @@ export function MapLayer(props: IMapLayer) {
       await Promise.all(
         gridCoordinates.map(async (coord, i) => {
           const texture = await loadTexture(buildMapUrl(1280, true, coord));
-          texture.encoding = sRGBEncoding;
+          texture.colorSpace = SRGBColorSpace;
           texture.magFilter = NearestFilter;
           texture.minFilter = NearestFilter;
           materialRef.current[i].map = texture;
