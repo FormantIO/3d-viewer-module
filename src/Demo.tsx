@@ -6,20 +6,20 @@ import { PositioningBuilder } from "./layers/utils/PositioningBuilder";
 import { GroundLayer } from "./layers/GroundLayer";
 import { LayerContext } from "./layers/common/LayerContext";
 import { ARM1_ID, ARM2_ID, ARM3_ID, ExampleUniverseData } from "./layers/common/ExampleUniverseData";
-import { MapLayer } from "./layers/MapLayer";
 import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
 import { IUniverseData } from "@formant/data-sdk";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { GeometryLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
+import { GeometryLayer, MapLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
 import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { URDFLayer } from "./layers/URDFLayer";
-import { Label } from "./layers/objects/Label";
+
 
 const query = new URLSearchParams(window.location.search);
 const experimentalMode = query.get("experimental") === "true";
+const debugMode = query.get("debug") === "true";
 
 export function Demo() {
   const [universeData] = useState<IUniverseData>(
@@ -39,6 +39,7 @@ export function Demo() {
   });
 
 
+  // TODO: this should follow the buildScene pattern from Viewer.tsx
   return (
     <UniverseDataContext.Provider value={[universeData, liveUniverseData]}>
       <Universe
@@ -47,28 +48,9 @@ export function Demo() {
           maps: [],
           visualizations: [],
         }}
+        debug={debugMode}
       >
-        <group>
-          <pointLight
-            position={[1000, 1000, 1000]}
-            color={"#18d2ff"}
-            intensity={0.3 * 2.8}
-            decay={0}
-            distance={0}
-          />
-          <pointLight
-            position={[-1000, -1000, 1000]}
-            color={"#ea719d"}
-            intensity={0.7 * 2.8}
-            decay={0}
-            distance={0}
-          />
-          <hemisphereLight
-            intensity={0.2 * 2.8}
-            color={"#f8f9fc"}
-            groundColor={"#282f45"}
-          />
-        </group>
+
 
         <LayerContext.Provider
           value={{
@@ -77,19 +59,22 @@ export function Demo() {
         >
           <EmptyLayer name="Maps" treePath={[0]}>
             <GroundLayer
-              positioning={PositioningBuilder.fixed(0, 0.1, 0)}
+              positioning={PositioningBuilder.fixed(0, 0, 0)}
               name="Ground"
-              treePath={[0, 0]}
+              treePath={[2, 0]}
               type={LayerType.AXIS}
+              id="ground"
             />
-            {/* <MapLayer
+            <MapLayer
               name="Map"
               latitude={37.6713541}
               longitude={-97.20016869}
               mapType="Satellite"
               size={400}
-              treePath={[0, 2]}
-            /> */}
+              treePath={[0, 0]}
+              visible={false}
+              id="map0"
+            />
             <OccupancyGridLayer
               dataSource={DataSourceBuilder.telemetry(
                 "walter.localization",
@@ -97,22 +82,9 @@ export function Demo() {
               )}
               name="Occupancy Grid"
               treePath={[0, 1]}
+              id="occupancyGrid"
             />
-            <PathLayer
-              dataSource={DataSourceBuilder.telemetry(
-                "walter.localization",
-                "localization"
-              )}
-              name="Path"
-            />
-            <PathLayer
-              dataSource={DataSourceBuilder.telemetry(
-                "walter.localization",
-                "localization"
-              )}
-              name="Flattened path"
-              flatten={true}
-            />
+
           </EmptyLayer>
           <EmptyLayer name="Device Layers" treePath={[1]}>
             {experimentalMode && (
@@ -150,24 +122,31 @@ export function Demo() {
               allowTransparency={true}
               treePath={[1, 2]}
             />
-            <primitive object={new Label("ARROW", false)} position={[-12, 5, 0]} />
-            <primitive object={new Label("CUBE", false)} position={[-12, 4, 0]} />
-            <primitive object={new Label("SPHERE", false)} position={[-12, 3, 0]} />
-            <primitive object={new Label("CYLINDER", false)} position={[-12, 2, 0]} />
-            <primitive object={new Label("LINE_STRIP", false)} position={[-29, -35, 0]} />
-            <primitive object={new Label("LINE_LIST", false)} position={[-5, -35, 0]} />
-            <primitive object={new Label("CUBE_LIST", false)} position={[-15, 10, 0]} />
-            <primitive object={new Label("SPHERE_LIST", false)} position={[5, 10, 0]} />
-            <primitive object={new Label("POINTS", false)} position={[-30, -15, 0]} />
-            <primitive object={new Label("TEXT_VIEW_FACING", false)} position={[-12, -4, 0]} />
-            <primitive object={new Label("MESH_RESOURCE", false)} position={[-12, -5, 0]} />
-            <primitive object={new Label("TRIANGLE_LIST", false)} position={[25, -35, 0]} />
             <URDFLayer
               name="URDF"
               //positioning={PositioningBuilder.fixed(3, -3, 0)}
               positioning={PositioningBuilder.odometry("walter.localization")}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[1, 3]}
+            />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Path"
+              treePath={[1, 4]}
+              id="path1"
+            />
+            <PathLayer
+              dataSource={DataSourceBuilder.telemetry(
+                "walter.localization",
+                "localization"
+              )}
+              name="Flattened path"
+              flatten={true}
+              treePath={[1, 5]}
+              id="path2"
             />
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
@@ -182,6 +161,7 @@ export function Demo() {
               positioning={PositioningBuilder.fixed(3, -3, 0)}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[2, 3]}
+              id="urdf2"
             />
           </EmptyLayer>
         </LayerContext.Provider>
@@ -195,9 +175,31 @@ export function Demo() {
               positioning={PositioningBuilder.fixed(2.5, -2.5, 0)}
               jointStatesDataSource={DataSourceBuilder.telemetry("")}
               treePath={[2, 3]}
+              id="urdf3"
             />
           </EmptyLayer>
         </LayerContext.Provider>
+        <group>
+          <pointLight
+            position={[1000, 1000, 1000]}
+            color={"#18d2ff"}
+            intensity={0.3 * 2.8}
+            decay={0}
+            distance={0}
+          />
+          <pointLight
+            position={[-1000, -1000, 1000]}
+            color={"#ea719d"}
+            intensity={0.7 * 2.8}
+            decay={0}
+            distance={0}
+          />
+          <hemisphereLight
+            intensity={0.2 * 2.8}
+            color={"#f8f9fc"}
+            groundColor={"#282f45"}
+          />
+        </group>
       </Universe>
     </UniverseDataContext.Provider>
   );

@@ -86,13 +86,14 @@ export type Viewer3DMission = {
   waypointProperties: WaypointPropertyType[];
 };
 
-export interface IAdvanceOptions {
+export interface IAdvancedOptions {
   useTimeline?: boolean;
   showGround?: boolean;
+  debug?: boolean;
 }
 
 export type Viewer3DConfiguration = {
-  advanceOptions?: IAdvanceOptions;
+  advancedOptions?: IAdvancedOptions;
   maps: Viewer3DMap[];
   visualizations: Viewer3DVisualization[];
   missionPlanning?: Viewer3DMission[];

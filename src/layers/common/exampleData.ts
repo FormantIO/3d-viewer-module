@@ -25,8 +25,8 @@ export const occupancyMap = {
   resolution: 0.029999999329447746,
   origin: {
     translation: {
-      x: 1.4346793554925856,
-      y: -4.1074234668828025,
+      x: 0,
+      y: 0,
       z: 0,
     },
     rotation: {
@@ -7745,7 +7745,7 @@ export const pointCloud = {
       width: 1660,
     },
     positions: convertObjectToArray({
-      "0": 4.348087310791016,
+      "0": 1.348087310791019,
       "1": -3.5110840797424316,
       "2": -0.6145260334014893,
       "3": 4.365370750427246,

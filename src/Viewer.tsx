@@ -57,8 +57,8 @@ export function Viewer() {
 
   useEffect(() => {
     if (!configuration) return;
-    const { advanceOptions } = configuration;
-    const useTimeline = advanceOptions?.useTimeline;
+    const { advancedOptions } = configuration;
+    const useTimeline = advancedOptions?.useTimeline;
     // clear the worker pool every time the configuration changes
     liveUniverseData.current.clearWorkerPool();
     universeData.current.clearWorkerPool();
@@ -110,6 +110,7 @@ export function Viewer() {
           configHash={getUuidByString(JSON.stringify(config))}
           key={getUuidByString(JSON.stringify(config))}
           config={config}
+          debug={!!config.advancedOptions?.debug}
         >
           {buildScene(config, definedAndNotNull(currentDeviceId), deviceConfig)}
           <group>

@@ -156,7 +156,7 @@ const Sidebar = ({
   toggleSidebarCallback
 }: {
   lookAtTargetId: (targetId: string) => void;
-  toggleSidebarCallback: () => void;
+  toggleSidebarCallback: (changedMap: boolean) => void;
 }) => {
   const { layers, toggleVisibility } = React.useContext(UIDataContext);
   const [visible, setVisible] = React.useState(false);
@@ -165,9 +165,11 @@ const Sidebar = ({
     {}
   );
   const [deviceName, setDeviceName] = React.useState<string>("Current device");
+  const [changedMap, setChangedMap] = React.useState<boolean>(false);
 
   const onToggleSidebarClicked = () => {
-    toggleSidebarCallback();
+    toggleSidebarCallback(changedMap);
+    setChangedMap(false);
     setVisible(!visible);
   };
 
@@ -178,6 +180,7 @@ const Sidebar = ({
   const onLayerClicked = (layer: LayerData) => {
     if (isLayerMap(layer)) {
       onToggleLayerClicked(layer);
+      setChangedMap(true);
     }
     return;
   }

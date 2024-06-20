@@ -1,6 +1,6 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { CameraControls, PerspectiveCamera } from "@react-three/drei";
-import React, { ReactNode, useEffect } from "react";
+import { CameraControls, PerspectiveCamera, Stats } from "@react-three/drei";
+import React, { ReactNode, useContext, useEffect } from "react";
 import { FormantColors } from "../utils/FormantColors";
 import {
   EffectComposer,
@@ -31,6 +31,7 @@ type IUniverseProps = {
   children?: React.ReactNode;
   configHash: string;
   config: Viewer3DConfiguration;
+  debug: boolean;
 };
 
 const WaitForControls = ({ children }: { children: ReactNode }) => {
@@ -152,9 +153,13 @@ export function Universe(props: IUniverseProps) {
     });
   }, [layers, scene]);
 
-  const sidebarOpenCallback = () => {
+  const sidebarOpenCallback = (changedMap: boolean) => {
+    if (sidebarOpen && changedMap) {
+      centerOnDevice();
+    }
     setSidebarOpen(!sidebarOpen);
   };
+  const { debug } = props;
 
   return (
     <>
@@ -168,6 +173,7 @@ export function Universe(props: IUniverseProps) {
           reset,
           isEditing,
           toggleEditMode,
+          debug
         }}
       >
         {!isWaypointPanelVisible && (
@@ -185,6 +191,7 @@ export function Universe(props: IUniverseProps) {
             dpr={1}
             flat
           >
+            {debug && <Stats className="stats" />}
             <XR>
               <color attach="background" args={[FormantColors.steel01]} />
               <ControlsContext.Provider value={controlsStates}>
@@ -202,7 +209,8 @@ export function Universe(props: IUniverseProps) {
                   maxPolarAngle={Math.PI / 2 - 0.1}
                   attach={"controls"}
                   verticalDragToForward={true}
-                  //dollyToCursor={true}
+                  draggingSmoothTime={0.07}
+                  smoothTime={0.07}
                   infinityDolly={false}
                   minDistance={2}
                   mouseButtons={{
@@ -214,7 +222,7 @@ export function Universe(props: IUniverseProps) {
                 />
 
                 <WaitForControls>
-                  <Bounds observe margin={1.5} damping={6}>
+                  <Bounds observe margin={1.5} damping={2} debug={debug}>
                     <group>{props.children}</group>
                   </Bounds>
                 </WaitForControls>

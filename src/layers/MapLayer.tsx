@@ -7,7 +7,7 @@ import {
   NearestFilter,
   PlaneGeometry,
   ShaderMaterial,
-  sRGBEncoding,
+  SRGBColorSpace,
   Texture,
 } from "three";
 import { LayerContext } from "./common/LayerContext";
@@ -23,6 +23,7 @@ import {
 } from "./utils/MapUtils";
 import { shaderMaterial } from "@react-three/drei";
 import { ILocation } from "@formant/data-sdk";
+import { UIDataContext } from "./common/UIDataContext";
 
 const URL_SCOPED_TOKEN =
   "pk.eyJ1IjoiYWJyYWhhbS1mb3JtYW50IiwiYSI6ImNrOWVuazlhbTAwdDYza203b2tybGZmNDMifQ.Ro6iNGYgvpDO4i6dcxeDGg";
@@ -85,6 +86,7 @@ export function MapLayer(props: IMapLayer) {
   const [unsubscribeToLocation, setUnsubscribeToLocation] = useState<
     (() => void) | null
   >(null);
+  const visible = useRef(true);
 
   useEffect(() => {
     (async () => {
@@ -143,7 +145,7 @@ export function MapLayer(props: IMapLayer) {
       await Promise.all(
         gridCoordinates.map(async (coord, i) => {
           const texture = await loadTexture(buildMapUrl(1280, true, coord));
-          texture.encoding = sRGBEncoding;
+          texture.colorSpace = SRGBColorSpace;
           texture.magFilter = NearestFilter;
           texture.minFilter = NearestFilter;
           materialRef.current[i].map = texture;
@@ -220,10 +222,18 @@ export function MapLayer(props: IMapLayer) {
     }
   });
 
+  const { layers } = useContext(UIDataContext);
+  const thisLayer = layers.find((l) => l.id === props.id);
+  visible.current = thisLayer?.visible ?? true;
+
+  useEffect(() => {
+    bounds.refresh();
+  }, [visible.current]);
+
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      <group visible={highResLoaded}>{meshesArrayRef.current}</group>
-      <mesh ref={lowResMapRef} visible={!highResLoaded}>
+      <group visible={highResLoaded} position={[0, 0, -0.01]}>{meshesArrayRef.current}</group>
+      <mesh ref={lowResMapRef} visible={!highResLoaded} position={[0, 0, -0.01]}>
         <planeGeometry attach="geometry" args={[size, size]} />
         {lowMapTextures.length > 0 ? (
           <meshStandardMaterial

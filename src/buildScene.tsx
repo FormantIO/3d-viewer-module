@@ -42,8 +42,8 @@ export function buildScene(
   const DEVICE_TREEPATH = 1;
   const SCENE_TREEPATH = 2;
 
-  const { advanceOptions } = config;
-  const showGround = advanceOptions?.showGround;
+  const { advancedOptions } = config;
+  const showGround = advancedOptions?.showGround;
 
   // treePath is used to identify the layer in the scene graph
   // it is an array of numbers that represent the path to the layer
@@ -67,6 +67,7 @@ export function buildScene(
       return (
         <MapLayer
           key={"map" + i + configHash}
+          id={"map" + i + configHash}
           positioning={positioning}
           mapType={layer.gpsMapType || "Satellite"}
           size={distanceNum}
@@ -82,6 +83,7 @@ export function buildScene(
       return (
         <OccupancyGridLayer
           key={"occupancy_grid" + i + configHash}
+          id={"occupancy_grid" + i + configHash}
           dataSource={dataSource as UniverseTelemetrySource | undefined}
           treePath={[MAP_TREEPATH, i]}
           name={layer.name || "Occupancy Grid"}
@@ -115,6 +117,7 @@ export function buildScene(
         deviceLayers.push(
           <URDFLayer
             key={"vis" + i + configHash}
+            id={"vis" + i + configHash}
             positioning={positioning}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "URDF"}
@@ -128,6 +131,7 @@ export function buildScene(
         deviceLayers.push(
           <MarkerLayer
             key={"vis" + i + configHash}
+            id={"vis" + i + configHash}
             positioning={positioning}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Marker"}
@@ -140,6 +144,7 @@ export function buildScene(
       deviceLayers.push(
         <PathLayer
           key={"local_path_layer" + i + configHash}
+          id={"local_path_layer" + i + configHash}
           pathOpacity={pathOpacity}
           pathType={pathType}
           pathWidth={pathWidth}
@@ -171,6 +176,7 @@ export function buildScene(
       deviceLayers.push(
         <PointCloudLayer
           key={"pointcloud" + i + configHash}
+          id={"pointcloud" + i + configHash}
           dataSource={dataSource as UniverseDataSource | undefined}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Point Cloud"}
@@ -184,6 +190,7 @@ export function buildScene(
         deviceLayers.push(
           <GeometryLayer
             key={"geo" + i + configHash}
+            id={"geo" + i + configHash}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={[DEVICE_TREEPATH, i]}
@@ -196,6 +203,7 @@ export function buildScene(
       deviceLayers.push(
         <ImageLayer
           key={"vis" + i + configHash}
+          id={"vis" + i + configHash}
           positioning={positioning}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "Image"}
@@ -208,6 +216,7 @@ export function buildScene(
       deviceLayers.push(
         <GLTFLayer
           key={"vis" + i + configHash}
+          id={"vis" + i + configHash}
           positioning={positioning}
           treePath={[DEVICE_TREEPATH, i]}
           name={layer.name || "GLTF"}
@@ -221,6 +230,7 @@ export function buildScene(
         deviceLayers.push(
           <PointOfInterstLayer
             key={"geo" + i + configHash}
+            id={"geo" + i + configHash}
             positioning={positioning}
             dataSource={dataSource as UniverseTelemetrySource}
             treePath={[DEVICE_TREEPATH, i]}
@@ -236,6 +246,7 @@ export function buildScene(
     sceneLayers.push(
       <GroundLayer
         key={"ground" + configHash}
+        id={"ground" + configHash}
         treePath={[SCENE_TREEPATH, 255]}
         name={"Ground Plane"}
         type={LayerType.AXIS}
@@ -248,6 +259,7 @@ export function buildScene(
     deviceLayers.push(
       <MissionPlanningLayer
         key="missionPlanningLayer"
+        id="missionPlanningLayer"
         pathType={pathType}
         pathWidth={pathWidth}
         commandName={commandName}

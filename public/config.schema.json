@@ -468,7 +468,7 @@
         }
       }
     },
-    "advanceOptions": {
+    "advancedOptions": {
       "type": "object",
       "properties": {
         "useTimeline": {
@@ -481,6 +481,11 @@
           "title": "Display ground",
           "type": "boolean",
           "default": true
+        },
+        "debug": {
+          "title": "enable debug mode",
+          "type": "boolean",
+          "default": false
         }
       }
     }

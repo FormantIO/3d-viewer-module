@@ -478,10 +478,10 @@ export class ExampleUniverseData implements IUniverseData {
     source: UniverseDataSource,
     callback: (data: IUniversePointCloud | DataStatus) => void
   ): () => void {
-    const intervaluHandle = setInterval(() => {
+    const intervalHandle = setInterval(() => {
       callback(clone(pointCloud as unknown as IUniversePointCloud));
     }, 1000);
-    return () => clearInterval(intervaluHandle);
+    return () => clearInterval(intervalHandle);
   }
 
   subscribeToGeometry(

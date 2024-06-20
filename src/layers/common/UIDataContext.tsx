@@ -26,6 +26,7 @@ interface UIContextData {
   reset: () => void;
   toggleEditMode: () => void;
   isEditing: boolean;
+  debug: boolean;
 }
 
 export const UIDataContext = React.createContext<UIContextData>({
@@ -46,6 +47,7 @@ export const UIDataContext = React.createContext<UIContextData>({
   reset: () => { },
   toggleEditMode: () => { },
   isEditing: false,
+  debug: false
 });
 
 export function useUI(): UIContextData {
@@ -127,5 +129,6 @@ export function useUI(): UIContextData {
     reset,
     toggleEditMode,
     isEditing,
+    debug: false
   };
 }
