@@ -15,7 +15,7 @@ import {
   IUniversePointCloud,
   IUniversePath,
 } from "@formant/data-sdk";
-import { SplineCurve, Vector2, Vector3 } from "three";
+import { Quaternion, SplineCurve, Vector2, Vector3 } from "three";
 import seedrandom from "seedrandom";
 import { pointCloud, occupancyMap } from "./exampleData";
 import { clone } from "../../common/clone";
@@ -201,6 +201,11 @@ export class ExampleUniverseData implements IUniverseData {
       const x = radius * Math.cos(time * frequency);
       const y = radius * Math.sin(time * frequency);
 
+      const quaternion = new Quaternion().setFromAxisAngle(
+        new Vector3(0, 0, 1),
+        time * frequency + Math.PI / 2
+      );
+
       callback({
         worldToLocal: {
           translation: {
@@ -222,10 +227,10 @@ export class ExampleUniverseData implements IUniverseData {
             z: 0.154354741654536,
           },
           rotation: {
-            x: -0.0007247281610034406,
-            y: 0.006989157758653164,
-            z: 0.9746800661087036,
-            w: 0.2234935611486435,
+            x: quaternion.x,
+            y: quaternion.y,
+            z: quaternion.z,
+            w: quaternion.w,
           },
         },
         covariance: [],
