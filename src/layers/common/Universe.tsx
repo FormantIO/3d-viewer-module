@@ -161,6 +161,15 @@ export function Universe(props: IUniverseProps) {
   };
   const { debug } = props;
 
+  useEffect(() => {
+    if (mapControlsRef.current) {
+      mapControlsRef.current.addEventListener('controlstart', () => {
+        // @ts-ignore 
+        scene?.dispatchEvent({ type: "stopTracking" });
+      })
+    }
+  }, [mapControlsRef.current]);
+
   return (
     <>
       <UIDataContext.Provider

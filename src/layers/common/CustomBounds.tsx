@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as THREE from 'three'
-import { useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { CameraControlsProps, useHelper } from '@react-three/drei'
 
 export type SizeProps = {
@@ -51,6 +51,7 @@ const context = React.createContext<BoundsApi>(null!)
 export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2, eps = 0.01, onFit, debug = false }: BoundsProps) {
   const ref = React.useRef<THREE.Group>(null!)
   const { camera, invalidate, size, scene, get } = useThree()
+  const trackedObject = React.useRef<number | null>(null);
 
   const onFitRef = React.useRef<((data: SizeProps) => void) | undefined>(onFit)
   onFitRef.current = onFit
@@ -200,15 +201,31 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
   const fitToBox = (elementId: string, isDevice = false) => {
     const group = ref.current;
     const target = group.getObjectByName(elementId);
+
     const boundingBox = new THREE.Box3();
     if (target) {
       boundingBox.expandByObject(target);
       if (isDevice) {
+        trackedObject.current = target?.id;
         boundingBox.setFromCenterAndSize(boundingBox.getCenter(new THREE.Vector3()), new THREE.Vector3(5, 5, 0));
       }
       api.fit(boundingBox);
     }
   }
+
+  useFrame(({ controls }) => {
+    if (trackedObject.current) {
+      const group = ref.current;
+      const target = group.getObjectById(trackedObject.current);
+      if (target && controls as CameraControlsProps) {
+        const _controls = controls as CameraControlsProps;
+        const targetRotation = target.rotation.z;
+        _controls.azimuthAngle = 3 * Math.PI / 2 + targetRotation;
+        _controls.moveTo?.(target.position.x, target.position.y, 0, true);
+      }
+    }
+  }
+  );
 
   // Scale pointer on window resize
   const count = React.useRef(0)
@@ -234,9 +251,19 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       // @ts-ignore
       fitToBox(e.message, e.isDevice)
     })
+    scene.addEventListener("stopTracking", () => {
+      if (trackedObject.current) {
+        trackedObject.current = null;
+      }
+    });
     return () => {
       scene.removeEventListener("updateBounds", api.refresh());
       scene.removeEventListener("recenter", () => { api.fit() });
+      scene.removeEventListener("stopTracking", () => {
+        if (trackedObject.current) {
+          trackedObject.current = null;
+        }
+      });
       scene.removeEventListener("lookAtTargetId", (e) => {
         // @ts-ignore
         fitToBox(e.message);
