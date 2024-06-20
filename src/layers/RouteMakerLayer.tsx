@@ -5,7 +5,7 @@ import { FormantColors } from "./utils/FormantColors";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps } from "./types";
 import { UIDataContext } from "./common/UIDataContext";
-import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+import { Euler, Group, Matrix4, Quaternion, Vector3 } from "three";
 import { IPose } from "@formant/data-sdk";
 
 interface IMapLayer extends IUniverseLayerProps {
@@ -28,9 +28,9 @@ function Marker(props: {
   const pq = new Quaternion();
   pq.set(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w);
   rotation.setFromQuaternion(pq);
-  const targetRef = useRef<THREE.Group>(null!);
-  const pivotRef = useRef<THREE.Group>(null!);
-  const groupRef = useRef<THREE.Group>(null!);
+  const targetRef = useRef<Group>(null!);
+  const pivotRef = useRef<Group>(null!);
+  const groupRef = useRef<Group>(null!);
   const matrix = new Matrix4();
   return (
     <group ref={groupRef} position={position} rotation={rotation}>

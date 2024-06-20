@@ -14,7 +14,10 @@ import {
   Box3,
   Box3Helper,
   Euler,
+  Group,
   Matrix4,
+  Object3D,
+  Object3DEventMap,
   Quaternion,
   Vector3,
 } from "three";
@@ -95,9 +98,9 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   const { children, positioning, visible, name, id, treePath, type, iconUrl } =
     props;
 
-  const groupRef = useRef<THREE.Group>(null!);
+  const groupRef = useRef<Group>(null!);
   // @ts-ignore
-  const boxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>(debug ? new Box3() : null);
+  const boxRef = useRef<Object3D<Object3DEventMap>>(debug ? new Box3() : null);
   const colorRef = useRef("yellow");
   useHelper(boxRef, Box3Helper, colorRef.current);
 

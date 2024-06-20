@@ -47,6 +47,7 @@ export const Localization = () => {
           <Universe
             configHash={getUuidByString(JSON.stringify(config))}
             config={config}
+            debug={false}
           >
             <ambientLight />
             {buildScene(config, definedAndNotNull(currentDeviceId))};

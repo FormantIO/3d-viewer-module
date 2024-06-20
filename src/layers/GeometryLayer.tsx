@@ -19,6 +19,7 @@ import {
   ConeGeometry,
   CylinderGeometry,
   Float32BufferAttribute,
+  InstancedMesh,
   Line,
   LineBasicMaterial,
   LineSegments,
@@ -75,7 +76,7 @@ function InstancedGeometry({
   instances,
   allowTransparency,
 }: InstancedGeoProps) {
-  const ref = useRef<THREE.InstancedMesh>(null);
+  const ref = useRef<InstancedMesh>(null);
   const boundingBox = useRef<Box3>(new Box3());
   const type = instances[0].type;
 
@@ -202,7 +203,7 @@ function InstancedGeometryFromList(
   if (!instances.points) {
     return null;
   }
-  const ref = useRef<THREE.InstancedMesh>(null);
+  const ref = useRef<InstancedMesh>(null);
   const boundingBox = useRef<Box3>(new Box3());
   const type = instances.type;
 
