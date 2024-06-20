@@ -43,6 +43,7 @@ import { IUniverseLayerProps } from "./types";
 import { Box, Sphere } from "@react-three/drei";
 import { IMarker3DArray } from "@formant/data-sdk";
 import getUuidByString from "uuid-by-string";
+import { useBounds } from "./common/CustomBounds";
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
@@ -94,6 +95,7 @@ function InstancedGeometry({
       if (ref.current) {
         instances.forEach((data, index) => {
 
+
           const { position, rotation, scale, color } = data;
 
           const transformKey = getUuidByString(`${data.id}-${position.x}${position.y}${position.z}${rotation.x}${rotation.y}${rotation.z}${rotation.w}${scale.x}${scale.y}${scale.z}`);
@@ -106,8 +108,8 @@ function InstancedGeometry({
             boundingBox.current.expandByPoint(dummy.position);
 
             dummy.updateMatrix();
-            matrixCache.current.set(transformKey, dummy.matrix);
-            instanceMatrix = dummy.matrix;
+            instanceMatrix = dummy.matrix.clone();
+            matrixCache.current.set(transformKey, dummy.matrix.clone());
           }
 
           ref.current!.setMatrixAt(index, instanceMatrix);
@@ -235,7 +237,7 @@ function InstancedGeometryFromList(
           dummy.updateMatrix();
 
           instanceMatrix = dummy.matrix.clone();
-          matrixCache.current.set(transformKey, instanceMatrix);
+          matrixCache.current.set(transformKey, dummy.matrix.clone());
         }
         boundingBox.current.expandByPoint(dummy.position);
         if (ref.current) {
@@ -289,6 +291,9 @@ export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource, allowTransparency } = props;
 
   const world = useRef(new GeometryWorld());
+  const isReady = useRef(false);
+  const bounds = useBounds();
+
 
   const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite | Points>> =
     useRef(new Map());
@@ -603,6 +608,9 @@ export function GeometryLayer(props: IGeometryLayer) {
         if (typeof d === "symbol") {
           return;
         }
+        if (!isReady.current) {
+          isReady.current = true;
+        }
         const markerArray = d as IMarker3DArray;
         world.current.processMarkers(markerArray);
         const geometry = world.current.getAllGeometry();
@@ -643,6 +651,10 @@ export function GeometryLayer(props: IGeometryLayer) {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    bounds.refresh();
+  }, [isReady.current]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg" >
