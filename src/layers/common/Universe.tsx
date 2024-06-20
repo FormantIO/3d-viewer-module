@@ -209,8 +209,6 @@ export function Universe(props: IUniverseProps) {
                   maxPolarAngle={Math.PI / 2 - 0.1}
                   attach={"controls"}
                   verticalDragToForward={true}
-                  dampingFactor={0}
-                  draggingDampingFactor={0}
                   draggingSmoothTime={0.07}
                   smoothTime={0.07}
                   infinityDolly={false}
