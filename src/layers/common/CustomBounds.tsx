@@ -207,7 +207,7 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
       boundingBox.expandByObject(target);
       if (isDevice) {
         trackedObject.current = target?.id;
-        boundingBox.setFromCenterAndSize(boundingBox.getCenter(new THREE.Vector3()), new THREE.Vector3(5, 5, 0));
+        boundingBox.setFromCenterAndSize(boundingBox.getCenter(new THREE.Vector3()), new THREE.Vector3(10, 10, 0));
       }
       api.fit(boundingBox);
     }
@@ -273,7 +273,9 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
 
   // manually refresh after 5 seconds
   React.useEffect(() => {
-    const timeout = setTimeout(reset, 5000)
+    const timeout = setTimeout(() => {
+      reset()
+    }, 5000)
     return () => clearTimeout(timeout)
   }, [api])
 

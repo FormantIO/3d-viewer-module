@@ -119,8 +119,8 @@ export const PointSizeSlider: React.FC<Props> = ({ controlsStates }) => {
             <div>
               <input
                 type="range"
-                min="0.4"
-                max="2.2"
+                min="0.8"
+                max="2.5"
                 step="0.05"
                 value={pointSize}
                 onChange={(e) => {

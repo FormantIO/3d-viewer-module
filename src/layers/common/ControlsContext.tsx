@@ -44,7 +44,7 @@ export function useControlsContextStates() {
     hasPath: true,
     hasWaypointsPath: true,
     hasPointCloud: false,
-    pointSize: 1,
+    pointSize: 1.4,
   });
   const storeRef = React.useRef<StoreProps>({
     waypoints: [],

@@ -156,6 +156,8 @@ export function Universe(props: IUniverseProps) {
   const sidebarOpenCallback = (changedMap: boolean) => {
     if (sidebarOpen && changedMap) {
       centerOnDevice();
+      // @ts-ignore 
+      scene?.dispatchEvent({ type: "stopTracking" });
     }
     setSidebarOpen(!sidebarOpen);
   };
