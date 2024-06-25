@@ -167,12 +167,11 @@ export const PointCloudLayer = (props: IPointCloudProps) => {
     const hash = (pointCloudData?.pcd?.positions as number[])?.reduce((_hash, num) => {
       _hash = ((_hash << 5) - _hash) + num;
       return _hash | 0; // Convert to 32bit integer
-    });
+    }, 0);
     const hash2 = (pointCloudData?.pcd?.colors as number[])?.reduce((_hash, num) => {
       _hash = ((_hash << 5) - _hash) + num;
       return _hash | 0;
-    }
-    );
+    }, 0);
     return hash + hash2;
   }
 
