@@ -199,7 +199,7 @@ export function Universe(props: IUniverseProps) {
             onCreated={(state) => {
               setScene(state.scene);
             }}
-            dpr={1}
+            dpr={[1, 2]}
             flat
           >
             {debug && <Stats className="stats" />}
@@ -211,7 +211,7 @@ export function Universe(props: IUniverseProps) {
                   position={[0, 0, 10]}
                   up={[0, 0, 1]}
                   far={5000}
-                  near={0.1}
+                  near={0.6}
                 />
                 <CameraControls
                   makeDefault
