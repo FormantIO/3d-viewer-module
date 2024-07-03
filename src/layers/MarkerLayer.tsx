@@ -2,12 +2,21 @@ import * as THREE from "three";
 import { useMemo, useRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { IUniverseLayerProps } from "./types";
+import { IUniverseLayerProps, PathType } from "./types";
 import { MarkerMaterial } from "./utils/MarkerMaterial";
 import { LayerType } from "./common/LayerTypes";
 extend({ MarkerMaterial });
 
-export function MarkerLayer(props: IUniverseLayerProps) {
+interface IMarkerLayerProps extends IUniverseLayerProps {
+  trailEnabled?: boolean;
+  trailSeconds?: number;
+  trailOpacity?: number;
+  trailWidth?: number;
+  trailType?: PathType;
+  trailFlatten?: boolean;
+}
+
+export function MarkerLayer(props: IMarkerLayerProps) {
   const { children } = props;
 
   const circleRef = useRef<THREE.Mesh>(null!);
@@ -45,6 +54,12 @@ export function MarkerLayer(props: IUniverseLayerProps) {
       {...props}
       type={LayerType.TRACKABLE}
       iconUrl="icons/3d_object.svg"
+      trailEnabled={props.trailEnabled}
+      trailSeconds={props.trailSeconds}
+      trailOpacity={props.trailOpacity}
+      trailWidth={props.trailWidth}
+      trailType={props.trailType}
+      trailFlatten={props.trailFlatten}
     >
       <group >
         <mesh ref={arrowRef} name="arrow" rotation={[0, 0, -Math.PI / 2]} up={new THREE.Vector3(0, 0, 1)} renderOrder={9}>

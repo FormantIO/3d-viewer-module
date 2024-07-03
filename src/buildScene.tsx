@@ -125,6 +125,12 @@ export function buildScene(
             realtimeJointStateDataSource={getRealtimeJointStateDataSource(
               layer
             )}
+            trailEnabled={layer.trailEnabled}
+            trailOpacity={layer.trailOpacity}
+            trailType={layer.trailType}
+            trailWidth={layer.trailWidth}
+            trailSeconds={layer.trailSeconds}
+            trailFlatten={layer.trailFlatten}
           />
         );
       } else {
@@ -135,6 +141,12 @@ export function buildScene(
             positioning={positioning}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Marker"}
+            trailEnabled={layer.trailEnabled}
+            trailOpacity={layer.trailOpacity}
+            trailType={layer.trailType}
+            trailWidth={layer.trailWidth}
+            trailSeconds={layer.trailSeconds}
+            trailFlatten={layer.trailFlatten}
           />
         );
       }

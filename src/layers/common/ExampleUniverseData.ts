@@ -192,19 +192,24 @@ export class ExampleUniverseData implements IUniverseData {
     callback: (data: IUniverseOdometry) => void
   ): CloseSubscription {
     let time = 0;
-    const radius = 1; // Radius of the circular path
-    const frequency = 0.1; // Controls the speed of movement
+    const radius = 2; // Radius of the circular path
+    const frequency = 0.5; // Controls the speed of movement
 
     const interval = setInterval(() => {
-      time += 0.1; // Increment time
+      const _time = time;
+      time += 0.2; // Increment time
       // Calculate x and y coordinates in a circular path with some randomness
-      const x = radius * Math.cos(time * frequency);
-      const y = radius * Math.sin(time * frequency);
+      const x = (radius + Math.cos(time * frequency)) * Math.cos(time);
+      const y = (radius + Math.sin(time * frequency)) * Math.sin(time);
 
-      const quaternion = new Quaternion().setFromAxisAngle(
-        new Vector3(0, 0, 1),
-        time * frequency + Math.PI / 2
-      );
+      const _x = (radius + Math.cos(_time * frequency)) * Math.cos(_time);
+      const _y = (radius + Math.sin(_time * frequency)) * Math.sin(_time);
+
+      const quaternion = new Quaternion();
+      // calculate from _x, _y to x, y
+      const direction = new Vector2(x - _x, y - _y);
+      const angle = Math.atan2(direction.y, direction.x);
+      quaternion.setFromAxisAngle(new Vector3(0, 0, 1), angle);
 
       callback({
         worldToLocal: {
@@ -235,7 +240,7 @@ export class ExampleUniverseData implements IUniverseData {
         },
         covariance: [],
       });
-    }, 10); // Reduced interval for smoother movement
+    }, 1200); // Reduced interval for smoother movement
 
     // Return function to clear interval when needed
     return () => {
@@ -406,6 +411,14 @@ export class ExampleUniverseData implements IUniverseData {
     } else {
       this.time = time.getTime();
     }
+  }
+
+  getTime(): Date | "live" {
+    return new Date(this.time);
+  }
+
+  getTimeMs(): number {
+    return this.time;
   }
 
   async getLatestTransformTrees(

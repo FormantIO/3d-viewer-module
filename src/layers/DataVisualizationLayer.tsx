@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { getDistance } from "geolib";
-import { IUniverseLayerProps } from "./types";
+import { IUniverseLayerProps, PathType } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { PositioningBuilder } from "./utils/PositioningBuilder";
 import { LayerContext } from "./common/LayerContext";
@@ -28,8 +28,17 @@ import { transformMatrix } from "./utils/transformMatrix";
 import { ILocation, ITransformNode } from "@formant/data-sdk";
 import { useHelper } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import Path from "./common/Path";
+import { FormantColors } from "./utils/FormantColors";
 
-interface IDataVisualizationLayerProps extends IUniverseLayerProps { }
+interface IDataVisualizationLayerProps extends IUniverseLayerProps {
+  trailEnabled?: boolean;
+  trailSeconds?: number;
+  trailOpacity?: number;
+  trailWidth?: number;
+  trailType?: PathType;
+  trailFlatten?: boolean;
+}
 
 type TreePath = number[];
 
@@ -95,8 +104,24 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   if (layerData) {
     deviceId = layerData.deviceId;
   }
-  const { children, positioning, visible, name, id, treePath, type, iconUrl } =
-    props;
+  const {
+    children,
+    positioning,
+    visible,
+    name,
+    id,
+    treePath,
+    type,
+    iconUrl,
+    trailEnabled,
+    trailFlatten,
+    trailOpacity,
+    trailSeconds = 15,
+    trailType,
+    trailWidth
+  } = props;
+
+  const [trailPositions, setTrailPositions] = useState<[number, Vector3][]>([]);
 
   const groupRef = useRef<Group>(null!);
   // @ts-ignore
@@ -206,6 +231,13 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
             const odom = d as IUniverseOdometry;
             const pos = odom.pose.translation;
             const rot = odom.pose.rotation;
+            if (d.trail && trailEnabled) {
+              const _trailPositions = d.trail.map((p) => [p[0], new Vector3(p[1].translation.x, p[1].translation.y, p[1].translation.z)]);
+              setTrailPositions(_trailPositions);
+            } else if (trailEnabled) {
+              const _trailPosition = [universeData.getTimeMs(), new Vector3(pos.x, pos.y, pos.z)] as [number, Vector3];
+              setTrailPositions((prev) => [...prev.filter((p) => universeData.getTimeMs() - p[0] < trailSeconds * 1000), _trailPosition]);
+            }
             g.position.set(pos.x, pos.y, pos.z);
             g.setRotationFromQuaternion(
               new Quaternion(rot.x, rot.y, rot.z, rot.w)
@@ -214,7 +246,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
               const worldToLocalMatrix = transformMatrix(odom.worldToLocal);
               g.matrix.copy(worldToLocalMatrix);
             }
-          }
+          },
+          trailSeconds
         );
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "transform tree") {
@@ -263,6 +296,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     };
   }, [groupRef, positioning, thisLayer]);
 
+
   useFrame(() => {
     if (groupRef.current && debug) {
       // @ts-ignore
@@ -273,13 +307,26 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
   });
 
 
+
+
   return (
-    <group
-      visible={thisLayer ? thisLayer.visible : true}
-      ref={groupRef}
-      name={thisLayer ? thisLayer.id : ""}
-    >
-      {children}
-    </group >
+    <>
+      <group
+        visible={thisLayer ? thisLayer.visible : true}
+        ref={groupRef}
+        name={thisLayer ? thisLayer.id : ""}
+      >
+        {children}
+      </group >
+      <Path
+        points={trailPositions.map((p) => p[1])}
+        color={FormantColors.mithril}
+        pathOpacity={trailOpacity}
+        pathWidth={trailWidth}
+        pathType={trailType}
+        pathFlatten={trailFlatten}
+        renderOrder={1}
+      />
+    </>
   );
 }
