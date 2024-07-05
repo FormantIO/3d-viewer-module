@@ -72,7 +72,7 @@ export const PathLayer = (props: ILocalPathProps) => {
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <Path
         points={points}
-        color={FormantColors.blue}
+        color={FormantColors.mithril}
         pathOpacity={pathOpacity}
         pathWidth={pathWidth}
         pathType={pathType}

@@ -306,27 +306,37 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
     }
   });
 
+  useEffect(() => {
+    if (thisLayer && groupRef.current) {
+      setThisLayer({ ...thisLayer, visible: groupRef.current.visible });
+    }
+  }, [groupRef.current?.visible])
+
 
 
 
   return (
     <>
       <group
-        visible={thisLayer ? thisLayer.visible : true}
         ref={groupRef}
+        visible={thisLayer ? thisLayer.visible : true}
         name={thisLayer ? thisLayer.id : ""}
+        userData={{ name: thisLayer?.name }}
       >
         {children}
       </group >
-      <Path
-        points={trailPositions.map((p) => p[1])}
-        color={FormantColors.mithril}
-        pathOpacity={trailOpacity}
-        pathWidth={trailWidth}
-        pathType={trailType}
-        pathFlatten={trailFlatten}
-        renderOrder={1}
-      />
+      {thisLayer && thisLayer.visible && (
+        <Path
+          points={trailPositions.map((p) => p[1])}
+          color={FormantColors.blue}
+          pathOpacity={trailOpacity}
+          pathWidth={trailWidth}
+          pathType={trailType}
+          pathFlatten={trailFlatten}
+          renderOrder={2}
+        />
+      )}
+
     </>
   );
 }
