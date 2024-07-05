@@ -30,6 +30,7 @@ import { useHelper } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import Path from "./common/Path";
 import { FormantColors } from "./utils/FormantColors";
+import { duration } from "../common/duration";
 
 interface IDataVisualizationLayerProps extends IUniverseLayerProps {
   trailEnabled?: boolean;
@@ -236,7 +237,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
               setTrailPositions(_trailPositions);
             } else if (trailEnabled) {
               const _trailPosition = [universeData.getTimeMs(), new Vector3(pos.x, pos.y, pos.z)] as [number, Vector3];
-              setTrailPositions((prev) => [...prev.filter((p) => universeData.getTimeMs() - p[0] < trailSeconds * 1000), _trailPosition]);
+              setTrailPositions((prev) => [...prev.filter((p) => universeData.getTimeMs() - p[0] < trailSeconds * duration.second), _trailPosition]);
             }
             g.position.set(pos.x, pos.y, pos.z);
             g.setRotationFromQuaternion(
