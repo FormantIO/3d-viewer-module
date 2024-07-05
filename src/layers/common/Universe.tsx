@@ -24,6 +24,7 @@ import { Viewer3DConfiguration } from "../../config";
 import { Timeout } from "../../common/Timeout";
 
 const query = new URLSearchParams(window.location.search);
+// TODO: VR is broken, camera up angle and near values are wrong (or maybe entire world is flipped on it's side) and there is no movement
 const shouldUseVR = query.get("vr") === "true";
 const fancy = query.get("fancy") === "true";
 
