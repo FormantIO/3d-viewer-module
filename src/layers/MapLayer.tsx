@@ -148,6 +148,7 @@ export function MapLayer(props: IMapLayer) {
           materialRef.current[i].map = texture;
           materialRef.current[i].color = new Color("#FFFFFF");
           materialRef.current[i].needsUpdate = true;
+          materialRef.current[i].depthWrite = false;
           return texture;
         })
       ).then(() => {
@@ -230,12 +231,13 @@ export function MapLayer(props: IMapLayer) {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/map.svg">
-      <group visible={highResLoaded} position={[0, 0, -0.01]}>{meshesArrayRef.current}</group>
-      <mesh ref={lowResMapRef} visible={!highResLoaded} position={[0, 0, -0.01]}>
+      <group visible={highResLoaded} position={[0, 0, -0.015]}>{meshesArrayRef.current}</group>
+      <mesh ref={lowResMapRef} visible={!highResLoaded} position={[0, 0, -0.015]}>
         <planeGeometry attach="geometry" args={[size, size]} />
         {lowMapTextures.length > 0 ? (
           <meshStandardMaterial
             map={lowMapTextures[lowMapTextures.length - 1]}
+            depthWrite={false}
           />
         ) : (
           /* @ts-ignore -- extend() extends JSX but keeps giving TS warning */

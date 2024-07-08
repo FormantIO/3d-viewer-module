@@ -201,6 +201,9 @@ export function Universe(props: IUniverseProps) {
             }}
             dpr={[1, 2]}
             flat
+            gl={{
+              logarithmicDepthBuffer: true,
+            }}
           >
             {debug && <Stats className="stats" />}
             <XR>
@@ -210,7 +213,7 @@ export function Universe(props: IUniverseProps) {
                   makeDefault
                   position={[0, 0, 10]}
                   up={[0, 0, 1]}
-                  far={5000}
+                  far={2500}
                   near={0.6}
                 />
                 <CameraControls
