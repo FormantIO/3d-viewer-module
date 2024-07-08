@@ -69,6 +69,14 @@ export class EmptyUniverseData implements IUniverseData {
     throw new Error("Method not implemented.");
   }
 
+  getTime(): Date | "live" {
+    throw new Error("Method not implemented.");
+  }
+
+  getTimeMs(): number {
+    throw new Error("Method not implemented.");
+  }
+
   getLatestTransformTrees(
     deviceId: string
   ): Promise<{ streamName: string; transformTree: ITransformNode }[]> {

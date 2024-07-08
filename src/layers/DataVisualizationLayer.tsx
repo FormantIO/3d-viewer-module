@@ -232,8 +232,8 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
             const odom = d as IUniverseOdometry;
             const pos = odom.pose.translation;
             const rot = odom.pose.rotation;
-            if (d.trail && trailEnabled) {
-              const _trailPositions = d.trail.map((p) => [p[0], new Vector3(p[1].translation.x, p[1].translation.y, p[1].translation.z)]);
+            if (odom.trail && trailEnabled) {
+              const _trailPositions = odom.trail.map((p) => [p[0], new Vector3(p[1].translation.x, p[1].translation.y, p[1].translation.z)]) as [number, Vector3][];
               setTrailPositions(_trailPositions);
             } else if (trailEnabled) {
               const _trailPosition = [universeData.getTimeMs(), new Vector3(pos.x, pos.y, pos.z)] as [number, Vector3];
