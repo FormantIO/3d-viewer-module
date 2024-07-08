@@ -45,6 +45,12 @@ export type Viewer3DVisualization = {
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
   pointCloudUseColors?: boolean;
+  trailEnabled?: boolean;
+  trailSeconds?: number;
+  trailOpacity?: number;
+  trailType?: PathType;
+  trailWidth?: number;
+  trailFlatten?: boolean;
   pathOpacity?: number;
   pathType?: PathType;
   pathWidth?: number;

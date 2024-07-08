@@ -512,10 +512,10 @@
     "@formant/realtime-sdk" "^0.0.19"
     date-fns "^2.29.3"
 
-"@formant/data-sdk@1.47.0":
-  version "1.47.0"
-  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.47.0.tgz#c63a217c0cd623e7eb0f4d93c014f9ed8a1714cd"
-  integrity sha512-3sv2PLUKJZzrajcn/96wJ9CPrw7i3NP3clqRjbHJac7nDPEb2bf1PqQlK/XkKw+BkYG6R2zIp6y/HFa5d6iwcQ==
+"@formant/data-sdk@1.48.0":
+  version "1.48.0"
+  resolved "https://registry.yarnpkg.com/@formant/data-sdk/-/data-sdk-1.48.0.tgz#2b3b3f8c14ead7c11c1703415918f12c2c2fb22d"
+  integrity sha512-KerIk6NQNiQfREQVPJg7MYg/uimULmzMItV+rIzPDB5ONa/kYX22Yf/64vQ653Me4bt4YrniuxFgS+hJirEAiA==
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"

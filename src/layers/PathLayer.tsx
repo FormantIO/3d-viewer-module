@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IUniverseLayerProps, PathType } from "./types";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { LayerContext } from "./common/LayerContext";
@@ -7,11 +7,8 @@ import { UniverseTelemetrySource, IUniversePath } from "@formant/data-sdk";
 import * as THREE from "three";
 import { transformMatrix } from "./utils/transformMatrix";
 import { FormantColors } from "./utils/FormantColors";
-import { Line } from "@react-three/drei";
 import { useControlsContext } from "./common/ControlsContext";
-import { PathGeometry } from "./utils/PathGeometry";
-import { extend } from "@react-three/fiber";
-extend({ PathGeometry });
+import Path from "./common/Path";
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -20,6 +17,7 @@ interface ILocalPathProps extends IUniverseLayerProps {
   pathWidth?: number;
   flatten?: boolean;
 }
+
 
 export const PathLayer = (props: ILocalPathProps) => {
   const {
@@ -36,6 +34,7 @@ export const PathLayer = (props: ILocalPathProps) => {
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
   const groupRef = useRef<THREE.Group>(null!);
+
   useEffect(() => {
     if (!layerData) return;
 
@@ -53,18 +52,14 @@ export const PathLayer = (props: ILocalPathProps) => {
 
         const { poses, worldToLocal } = data as IUniversePath;
 
-        const positions = poses.map((pose) => pose.translation);
-
-        const worldToLocalMatrix = transformMatrix(worldToLocal);
-
         setPoints(
-          positions.map((pos) => new THREE.Vector3(pos.x, pos.y, flatten ? 0 : pos.z))
+          poses.map((pos) => new THREE.Vector3(pos.translation.x, pos.translation.y, pos.translation.z))
         );
 
         if (!groupRef.current) return;
         const group = groupRef.current;
         group.matrixAutoUpdate = false;
-        group.matrix.copy(worldToLocalMatrix);
+        group.matrix.copy(transformMatrix(worldToLocal));
       }
     );
 
@@ -75,31 +70,15 @@ export const PathLayer = (props: ILocalPathProps) => {
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <group ref={groupRef} visible={hasPath}>
-        {points.length > 0 && (
-          <>
-            {pathType === PathType.STATIC ? (
-              <mesh renderOrder={8}>
-                <pathGeometry args={[points, pathWidth, points.length]} />
-                <meshBasicMaterial
-                  transparent
-                  opacity={pathOpacity / 100}
-                  color={FormantColors.blue}
-                  side={THREE.DoubleSide}
-                />
-              </mesh>
-            ) : (
-              <Line
-                points={points}
-                lineWidth={18}
-                color={FormantColors.blue}
-                worldUnits={false}
-                renderOrder={1}
-              />
-            )}
-          </>
-        )}
-      </group>
+      <Path
+        points={points}
+        color={FormantColors.mithril}
+        pathOpacity={pathOpacity}
+        pathWidth={pathWidth}
+        pathType={pathType}
+        pathFlatten={flatten}
+        renderOrder={0}
+      />
     </DataVisualizationLayer>
   );
 };

@@ -1,5 +1,5 @@
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { IUniverseLayerProps } from "./types";
+import { IUniverseLayerProps, PathType } from "./types";
 import { LayerType } from "./common/LayerTypes";
 import {
   CloseSubscription,
@@ -92,6 +92,12 @@ async function loadURDFIntoBlob(zipPath: string): Promise<string | false> {
 export type URDFLayerProps = IUniverseLayerProps & {
   jointStatesDataSource?: UniverseDataSource;
   realtimeJointStateDataSource?: UniverseDataSource;
+  trailEnabled?: boolean;
+  trailSeconds?: number;
+  trailOpacity?: number;
+  trailWidth?: number;
+  trailType?: PathType;
+  trailFlatten?: boolean;
 };
 
 export function URDFLayer(props: URDFLayerProps) {
@@ -178,6 +184,12 @@ export function URDFLayer(props: URDFLayerProps) {
       {...props}
       type={LayerType.TRACKABLE}
       iconUrl="icons/3d_object.svg"
+      trailEnabled={props.trailEnabled}
+      trailSeconds={props.trailSeconds}
+      trailOpacity={props.trailOpacity}
+      trailWidth={props.trailWidth}
+      trailType={props.trailType}
+      trailFlatten={props.trailFlatten}
     >
       {urdf && loaded && <primitive object={urdf as Group} />}
       {children}

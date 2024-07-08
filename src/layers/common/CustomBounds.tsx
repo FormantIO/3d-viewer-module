@@ -102,8 +102,8 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         const oldBox = box.clone();
         if (ref.current && ref.current.children.length > 0) {
           const targetGroup = ref.current.children[0]; // target is a group containing everything, target.children[0] is the actual target
-          const mapGroup = targetGroup.children[0] || new THREE.Group();
-          const visualizationsGroup = targetGroup.children[1] || new THREE.Group();
+          const mapGroup = targetGroup.children.find(c => c.userData.name?.startsWith("Maps")) || new THREE.Group();
+          const visualizationsGroup = targetGroup.children.find(c => c.userData.name?.startsWith("Device")) || new THREE.Group();
           mapGroup.updateWorldMatrix(true, true);
           visualizationsGroup.updateWorldMatrix(true, true);
           const tempBox = new THREE.Box3();

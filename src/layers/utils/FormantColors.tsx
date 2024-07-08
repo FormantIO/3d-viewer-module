@@ -29,4 +29,6 @@ export const FormantColors = {
   orangedark: "#94645f",
   yellow: "#f9c36e",
   yellowdark: "#9a8261",
+  rhenium: "#797DDB",
+  mithril: "#76A7DC"
 };

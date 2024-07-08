@@ -10,11 +10,12 @@ import { RouteMakerLayer } from "./layers/RouteMakerLayer";
 import { useEffect, useState } from "react";
 import { IUniverseData } from "@formant/data-sdk";
 import { PointCloudLayer } from "./layers/PointCloudLayer";
-import { GeometryLayer, MapLayer, OccupancyGridLayer, PathLayer, PathType } from "./lib";
+import { GeometryLayer, MapLayer, OccupancyGridLayer, PathLayer } from "./lib";
 import { MissionPlanningLayer } from "./layers/MissionPlanningLayer";
 import EmptyLayer from "./layers/EmptyLayer";
 import { LayerType } from "./layers/common/LayerTypes";
 import { URDFLayer } from "./layers/URDFLayer";
+
 
 
 const query = new URLSearchParams(window.location.search);
@@ -94,6 +95,7 @@ export function Demo() {
               positioning={PositioningBuilder.odometry("walter.localization")}
               name="Marker"
               treePath={[1, 1]}
+              trailEnabled={true}
             />
 
             <PointCloudLayer
@@ -148,6 +150,7 @@ export function Demo() {
               treePath={[1, 5]}
               id="path2"
             />
+
             {/* <RouteMakerLayer size={200} name="Route Builder" /> */}
           </EmptyLayer>
         </LayerContext.Provider>
