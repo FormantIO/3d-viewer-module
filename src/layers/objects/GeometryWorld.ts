@@ -130,6 +130,10 @@ function reifyColor(v: IColorRGBA) {
 export class GeometryWorld {
   geometry: Map<string, Map<number, Geometry>> = new Map();
 
+  deleteAll() {
+    this.geometry = new Map();
+  }
+
   processMarkers(markers: IMarker3DArray) {
     markers.markers.forEach((marker) => {
       let ns = this.geometry.get(marker.ns);

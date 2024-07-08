@@ -45,6 +45,10 @@ import { Box, Sphere } from "@react-three/drei";
 import { IMarker3DArray } from "@formant/data-sdk";
 import getUuidByString from "uuid-by-string";
 import { useBounds } from "./common/CustomBounds";
+import { duration } from "../common/duration";
+
+// minimum time difference between two updates to consider them separate
+const MINIMUM_TIME_DIFFERENCE = 12 * duration.hour;
 
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseTelemetrySource;
@@ -301,6 +305,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
   const rootRef = useRef(new Object3D());
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
+  const lastTimeRef = useRef(universeData.getTimeMs());
   const layerData = useContext(LayerContext);
   const [cubesData, setCubesData] = useState<GeoInstanceData[]>([]);
   const [spheresData, setSpheresData] = useState<GeoInstanceData[]>([]);
@@ -613,6 +618,13 @@ export function GeometryLayer(props: IGeometryLayer) {
           isReady.current = true;
         }
         const markerArray = d as IMarker3DArray;
+        const currentTime = universeData.getTimeMs();
+        if (Math.abs(currentTime - lastTimeRef.current) > MINIMUM_TIME_DIFFERENCE) {
+          world.current.deleteAll();
+          removeObsoleteGeometry([...worldGeometry.current.keys()]);
+        }
+        lastTimeRef.current = currentTime;
+
         world.current.processMarkers(markerArray);
         const geometry = world.current.getAllGeometry();
         const cubes = geometry.filter(
