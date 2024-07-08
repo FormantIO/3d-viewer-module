@@ -2,7 +2,6 @@ import { defined, UniverseTelemetrySource } from "@formant/data-sdk";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Color,
-  Mesh,
   MeshBasicMaterial,
   NearestFilter,
   PlaneGeometry,
@@ -93,8 +92,6 @@ export function MapLayer(props: IMapLayer) {
       if (currentLocation === undefined) {
         return;
       }
-      unsubscribeToLocation && unsubscribeToLocation();
-
       if (bounds) {
         bounds.refresh().clip().fit();
       }
@@ -183,6 +180,7 @@ export function MapLayer(props: IMapLayer) {
                 ) {
                   return a;
                 }
+                setHighResLoaded(false);
                 return [loc.longitude, loc.latitude];
               });
             }
