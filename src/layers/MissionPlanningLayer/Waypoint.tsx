@@ -138,7 +138,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
         }}
       >
         <group ref={targetRef}>
-          <mesh name="circle" onPointerDown={onPointerDown} renderOrder={2}>
+          <mesh name="circle" onPointerDown={onPointerDown} renderOrder={9}>
             <circleGeometry args={[0.38, 36]} />
             <circleMaterial
               args={[

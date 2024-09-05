@@ -104,7 +104,7 @@ export const MissionPlanningPath: React.FC<Props> = ({
             z + 0.005,
           ])}
           lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth! * 2}
-          renderOrder={1}
+          renderOrder={8}
           color={FormantColors.blue}
           onPointerDown={addMiddleWaypoint}
           visible={false}
@@ -116,6 +116,7 @@ export const MissionPlanningPath: React.FC<Props> = ({
           color={FormantColors.blue}
           onPointerDown={addMiddleWaypoint}
           visible={false}
+          renderOrder={8}
         />
       )}
       <Line
@@ -128,7 +129,7 @@ export const MissionPlanningPath: React.FC<Props> = ({
         lineWidth={pathType === PathType.DYNAMIC ? 18 : pathWidth}
         depthTest={false}
         worldUnits={pathType === PathType.STATIC}
-        renderOrder={1}
+        renderOrder={8}
         color={"white"}
         dashed={true}
         dashScale={4}
