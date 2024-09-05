@@ -157,7 +157,7 @@ export const Waypoint = forwardRef<THREE.Group, Props>((props, ref) => {
           name="arrow"
           rotation={[0, 0, -Math.PI / 2]}
           scale={1.2}
-          renderOrder={2}
+          renderOrder={9}
         >
           <shapeGeometry args={[arrowShape]} />
           <meshStandardMaterial color={"white"} depthTest={false} />
