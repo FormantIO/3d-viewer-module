@@ -32,6 +32,9 @@ export function Viewer() {
       const device = await Fleet.getDevice(currentDeviceId);
       await device.getConfiguration().then((config) => {
         setDeviceConfig(config);
+      }).catch((e) => {
+        setDeviceConfig(undefined);
+        console.debug("Failed to get device configuration", e);
       });
       if (currentConfig) {
         const parsedConfig = JSON.parse(currentConfig) as Viewer3DConfiguration;
