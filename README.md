@@ -50,11 +50,11 @@ At a very high level there's 3 important things you need to do:
 
 # Where are versions
 
-| Env   | Url                                                          |
-| ----- | ------------------------------------------------------------ |
-| Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  |
-| Stage | https://formantio.github.io/3d-viewer-module/versions/stage/ |
-| Dev   | https://formantio.github.io/3d-viewer-module/versions/dist/  |
+| Env   | Url                                                          | Version |
+| ----- | ------------------------------------------------------------ | ------- |
+| Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  | 0.170.3 |
+| Stage | https://formantio.github.io/3d-viewer-module/versions/stage/ | 0.170.3 |
+| Dev   | https://formantio.github.io/3d-viewer-module/versions/dist/  | 0.170.3 |
 
 # How do I run 3D viewer when i'm developing on it?
 

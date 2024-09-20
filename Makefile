@@ -56,10 +56,11 @@ run-vr:
 	npm run dev-vr
 
 manual-deploy:
-	rm -r versions/v1/assets
-	cp -r dist/assets versions/v1
-	rm versions/v1/index.html
-	cp dist/index.html versions/v1
+	rm -rf versions/v1/*
+	cp -r dist/* versions/v1
+	rm -rf versions/prod/*
+	cp -r dist/* versions/prod
 	git add .
-	git commit -m "update v1"
-	git push
+	git commit -m "update prod"
+	git tag -f prod
+	git push --tags
