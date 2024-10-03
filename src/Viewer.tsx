@@ -63,8 +63,6 @@ export function Viewer() {
     const { advancedOptions } = configuration;
     const useTimeline = advancedOptions?.useTimeline;
     // clear the worker pool every time the configuration changes
-    liveUniverseData.current.clearWorkerPool();
-    universeData.current.clearWorkerPool();
 
 
     if (useTimeline || useTimeline === undefined) {
@@ -92,8 +90,6 @@ export function Viewer() {
       universeData.current.setTime("live");
     }
     return () => {
-      liveUniverseData.current.clearWorkerPool();
-      universeData.current.clearWorkerPool();
     }
   }, [configuration]);
 

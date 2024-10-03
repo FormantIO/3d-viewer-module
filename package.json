@@ -1,7 +1,7 @@
 {
   "name": "@formant/3d-viewer-module",
   "private": true,
-  "version": "0.170.4",
+  "version": "0.170.5",
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@dimforge/rapier3d": "^0.11.1",
-    "@formant/data-sdk": "1.59.0",
+    "@formant/data-sdk": "^1.60.0",
     "@formant/ui-sdk": "0.0.45",
     "@formant/universe-core": "0.0.17",
     "@react-three/drei": "^9.107.0",
