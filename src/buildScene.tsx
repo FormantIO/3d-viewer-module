@@ -129,7 +129,7 @@ export function buildScene(
             trailOpacity={layer.trailOpacity}
             trailType={layer.trailType}
             trailWidth={layer.trailWidth}
-            trailSeconds={layer.trailSeconds}
+            trailSeconds={layer.trailSeconds || 0}
             trailFlatten={layer.trailFlatten}
           />
         );
@@ -145,7 +145,7 @@ export function buildScene(
             trailOpacity={layer.trailOpacity}
             trailType={layer.trailType}
             trailWidth={layer.trailWidth}
-            trailSeconds={layer.trailSeconds}
+            trailSeconds={layer.trailSeconds || 0}
             trailFlatten={layer.trailFlatten}
           />
         );
