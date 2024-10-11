@@ -1,3 +1,8 @@
+## [0.170.7] - 2024-10-10
+
+- bump data-sdk version, fixing odometry flickering issues.
+- default odometry trail seconds to 0 when not set.
+
 ## [0.170.6] - 2024-10-3
 
 - bump data-sdk version, fixing workers performance.
