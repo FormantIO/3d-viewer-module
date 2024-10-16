@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button, Typography } from "@mui/material";
 import * as THREE from "three";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { getTaregt, TextInput } from "./TextInput";
@@ -253,7 +252,8 @@ export const PropertyPanel: React.FC<Props> = ({
       <PanelContainer>
         {waypoints.length > 0 ? (
           <>
-            <Typography>HEADING</Typography>
+            {/* <Typography>HEADING</Typography> */}
+            <h1>HEADING</h1>
 
             <TextInput
               ref={angleRef}
@@ -284,7 +284,8 @@ export const PropertyPanel: React.FC<Props> = ({
               }}
             />
 
-            <Typography marginTop={"20px"}>POSITION</Typography>
+            {/* <Typography marginTop={"20px"}>POSITION</Typography> */}
+            <h1>POSITION</h1>
             <TextInput
               ref={xPosRef}
               label="X-axis"
@@ -299,20 +300,21 @@ export const PropertyPanel: React.FC<Props> = ({
             />
 
             {waypointProperties.length > 0 && (
-              <Typography marginTop={"20px"}>PROPERTIES</Typography>
+              // <Typography marginTop={"20px"}>PROPERTIES</Typography>
+              <h1>PROPERTIES</h1>
             )}
 
             {createPropertyFields()}
 
-            <Button
-              variant="contained"
+            <button
+              //variant="contained"
               onClick={() => {
                 if (waypoints.length === 0) return;
                 setShowDelete(true);
               }}
             >
               Delete
-            </Button>
+            </button>
           </>
         ) : (
           <p className="description">

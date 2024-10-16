@@ -106,16 +106,7 @@ export function Demo() {
               name="Point Cloud"
               decayTime={1}
               treePath={[1, 2]}
-            />
-            <PointCloudLayer
-              dataSource={DataSourceBuilder.telemetry(
-                "walter.localization",
-                "localization"
-              )}
-              positioning={PositioningBuilder.fixed(3, 0, 0)}
-              name="Point Cloud 2"
-              decayTime={1}
-              treePath={[1, 2]}
+              positioning={PositioningBuilder.odometry("walter.localization")}
             />
             <MissionPlanningLayer name="MissionPlanning" />
             <GeometryLayer

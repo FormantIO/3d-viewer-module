@@ -6,8 +6,6 @@ import {
   IListResponse,
 } from "./types";
 import { FormantBaseClient } from "./FormantBaseClient";
-// @ts-ignore
-import * as qs from "qs";
 
 export abstract class BaseModelClient<
   Model extends IBaseEntity,
@@ -39,7 +37,7 @@ export abstract class BaseModelClient<
     query?: Query
   ): Promise<(Model & { id: Uuid })[]> {
     const result = await this.fetch<IListResponse<Model & { id: Uuid }>>(
-      query === undefined ? this.path : `${this.path}?${qs.stringify(query)}`,
+      query === undefined ? this.path : `${this.path}?${query && Object.entries(query).map(([key, value]) => `${key}=${value}`).join("&")}`,
       { token }
     );
     return result.items;

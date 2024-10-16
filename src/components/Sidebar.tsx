@@ -1,4 +1,3 @@
-import { Typography } from "@formant/ui-sdk";
 import React, { useEffect } from "react";
 import { LayerData, UIDataContext } from "../layers/common/UIDataContext";
 import styled from "styled-components";
@@ -370,9 +369,11 @@ const Sidebar = ({
                 key="device-title"
               >
                 <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}>
+                  {/* <Typography variant="body1" sx={typographyStyle} color={FormantColors.white}> */}
+                  <p>
                     Device
-                  </Typography>
+                  {/* </Typography> */}
+                  </p>
                 </LayerTitle>
 
               </LayerRow>
@@ -386,9 +387,11 @@ const Sidebar = ({
                 key="device-name"
               >
                 <LayerTitle>
-                  <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}>
+                  {/* <Typography variant="body1" sx={typographyStyle} color={FormantColors.silver}> */}
+                  <p>
                     {deviceName}
-                  </Typography>
+                  {/* </Typography> */}
+                  </p>
                 </LayerTitle>
                 <VisibilityIcon
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => {
@@ -419,9 +422,11 @@ const Sidebar = ({
                   isSelectedMap={isLayerMap(c) && c.visible}
                 >
                   <LayerTitle>
-                    <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}>
+                    {/* <Typography variant="body1" sx={typographyStyle} color={() => getLayerTextColor(c)}> */}
+                    <p>
                       {c.name}
-                    </Typography>
+                    {/* </Typography> */}
+                    </p>
                   </LayerTitle>
                   {renderIcons(c)}
                 </LayerRow>

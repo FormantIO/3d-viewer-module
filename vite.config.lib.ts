@@ -19,16 +19,12 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        "@dimforge/rapier3d",
         "@formant/data-sdk",
-        "@formant/ui-sdk",
         "@react-three/drei",
         "@react-three/fiber",
         "@react-three/postprocessing",
         "@react-three/xr",
-        "color-rgba",
         "geolib",
-        "jq-web",
         "postprocessing",
         "react",
         "react-dom",

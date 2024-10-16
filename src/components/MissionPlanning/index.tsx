@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "@mui/material";
 import { ControlsContextProps } from "../../layers/common/ControlsContext";
 import { Viewer3DConfiguration, WaypointPropertyType } from "../../config";
 import { ControlButtonGroup, Container } from "./style";
@@ -133,15 +132,15 @@ export const MissionPlanning: React.FC<Props> = ({
                 disableBtn1={disableCancelBtn}
                 disableBtn2={disableSendBtn}
               >
-                <Button
-                  variant="contained"
+                <button
+                  //variant="contained"
                   onClick={() => setShowCancel(true)}
                   disabled={disableCancelBtn}
                 >
                   Cancel
-                </Button>
-                <Button
-                  variant="contained"
+                </button>
+                <button
+                  //variant="contained"
                   onClick={() => {
                     if (
                       waypoints.length !== 0 &&
@@ -152,13 +151,13 @@ export const MissionPlanning: React.FC<Props> = ({
                   disabled={disableSendBtn}
                 >
                   Send Path
-                </Button>
+                </button>
               </ControlButtonGroup>
             </>
           ) : (
             <ControlButtonGroup large>
-              <Button
-                variant="contained"
+              <button
+                //variant="contained"
                 onClick={() => {
                   updateState({
                     isWaypointEditing: true,
@@ -169,9 +168,9 @@ export const MissionPlanning: React.FC<Props> = ({
                 }}
               >
                 Edit
-              </Button>
-              <Button
-                variant="contained"
+              </button>
+              <button
+                //variant="contained"
                 onClick={() => {
                   updateState({
                     isWaypointPanelVisible: false,
@@ -183,7 +182,7 @@ export const MissionPlanning: React.FC<Props> = ({
                 }}
               >
                 Complete Planning
-              </Button>
+              </button>
             </ControlButtonGroup>
           )}
         </>

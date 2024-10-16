@@ -1,4 +1,3 @@
-import { Typography } from "@formant/ui-sdk";
 import styled from "styled-components";
 import { ConfigArrow, Warning } from "./icons";
 
@@ -49,11 +48,16 @@ export const MissingConfig = () => {
   return (
     <Wrapper>
       <Warning />
-      <Typography variant="h5">MODULE CONFIGURATION</Typography>
+      {/* <Typography variant="h5">MODULE CONFIGURATION</Typography>
       <Typography variant="body1">
         “This module has yet to be configured. Select ‘configure‘ from the
         meatball menu in the upper right corner”
-      </Typography>
+      </Typography> */}
+      <h5>MODULE CONFIGURATION</h5>
+      <p>
+        “This module has yet to be configured. Select ‘configure‘ from the
+        meatball menu in the upper right corner”
+      </p>
       <ArrowWrapper>
         <ConfigArrow />
       </ArrowWrapper>

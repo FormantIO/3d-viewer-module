@@ -1,6 +1,5 @@
 import React from "react";
 import { ModalContainer } from "./style";
-import { Button } from "@mui/material";
 
 interface Props {
   content: string[];
@@ -24,11 +23,13 @@ export const Modal: React.FC<Props> = ({
       </div>
       {subContent && <p>{subContent}</p>}
       <div>
-        <Button variant="contained" onClick={() => handler1 && handler1()}>
+        <button 
+        //variant="contained" 
+        onClick={() => handler1 && handler1()}>
           {buttons[0]}
-        </Button>
+        </button>
 
-        <Button onClick={() => handler2 && handler2()}>{buttons[1]}</Button>
+        <button onClick={() => handler2 && handler2()}>{buttons[1]}</button>
       </div>
     </ModalContainer>
   );

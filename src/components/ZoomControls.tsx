@@ -1,4 +1,3 @@
-import { Icon } from "@formant/ui-sdk";
 import styled from "styled-components";
 import { FormantColors } from "../layers/utils/FormantColors";
 
@@ -69,24 +68,28 @@ const ZoomControls = (props: IZoomControls) => {
     <Controls>
       <ControlGroup>
         <button type="button" onMouseDown={zoomIn} onMouseUp={stopZoom}>
-          <Icon name="plus" />
+          {/* <Icon name="plus" /> */}
+          plus
         </button>
         <button type="button" onMouseDown={zoomOut} onMouseUp={stopZoom}>
-          <Icon name="minus" />
+          {/* <Icon name="minus" /> */}
+          minus
         </button>
       </ControlGroup>
       <ControlGroup onClick={recenter}>
         <button type="button">
-          <Icon name="recenter" />
+          {/* <Icon name="recenter" /> */}
+          recenter
         </button>
       </ControlGroup>
       {enableEditMode && (
         <ControlGroup onClick={toggleEditMode}>
           <button type="button">
-            <Icon
+            {/* <Icon
               name="edit"
               sx={props.isEditing ? { stroke: FormantColors.primary } : {}}
-            />
+            /> */}
+            {props.isEditing ? "editing" : "edit"}
           </button>
         </ControlGroup>
       )}
