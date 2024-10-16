@@ -1,3 +1,7 @@
+## [0.170.8] - 2024-10-16
+
+- bump data-sdk version: Prevent repeated and out of order requests in subscribeToOdometry and subscribeToPath 
+
 ## [0.170.7] - 2024-10-10
 
 - bump data-sdk version, fixing odometry flickering issues.

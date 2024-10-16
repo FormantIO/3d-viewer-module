@@ -367,10 +367,17 @@
   resolved "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.18.20.tgz"
   integrity sha512-bxRHW5kHU38zS2lPTPOyuyTm+S+eobPUnTNkdJEfAddYgEcll4xkT8DB9d2008DtTbl7uJag2HuE5NZAZgnNEA==
 
-"@formant/data-sdk@^1.62.0":
+"@formant/data-sdk@0.0.134":
+  version "0.0.134"
+  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-0.0.134.tgz"
+  integrity sha512-REZkMj+0roe318N7THyNye551Ez5+AxiDkU6IpybmR7X/we4z8W2ZPbEGfINxvBWNZJp/JsyEVTggVNu3HoLew==
+  dependencies:
+    "@formant/realtime-sdk" "^0.0.19"
+    date-fns "^2.29.3"
+
+"@formant/data-sdk@file:../toolkit/packages/data-sdk":
   version "1.62.0"
-  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-1.62.0.tgz"
-  integrity sha512-XRrhZqpIQHwXNJcwOkLDbTvupGJraO3MLlQumDmGrpPf89a3bhdZPKp5cIRc8uQ1qFrRkFRICw/QWNKqq7W4xA==
+  resolved "file:../toolkit/packages/data-sdk"
   dependencies:
     "@formant/ui-sdk-realtime-player-core" "^0.0.2"
     "@formant/ui-sdk-realtime-player-core-worker" "^0.0.4"
@@ -383,14 +390,6 @@
     lzfjs "^1.0.1"
     pako "^2.1.0"
     validator "^13.11.0"
-
-"@formant/data-sdk@0.0.134":
-  version "0.0.134"
-  resolved "https://registry.npmjs.org/@formant/data-sdk/-/data-sdk-0.0.134.tgz"
-  integrity sha512-REZkMj+0roe318N7THyNye551Ez5+AxiDkU6IpybmR7X/we4z8W2ZPbEGfINxvBWNZJp/JsyEVTggVNu3HoLew==
-  dependencies:
-    "@formant/realtime-sdk" "^0.0.19"
-    date-fns "^2.29.3"
 
 "@formant/realtime-sdk@^0.0.19":
   version "0.0.19"
@@ -1104,11 +1103,6 @@
   resolved "https://registry.npmjs.org/@types/uuid/-/uuid-9.0.7.tgz"
   integrity sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==
 
-"@types/validator@^13.11.8":
-  version "13.12.2"
-  resolved "https://registry.npmjs.org/@types/validator/-/validator-13.12.2.tgz"
-  integrity sha512-6SlHBzUW8Jhf3liqrGGXyTJSIFe4nqlJ5A5KaMZ2l/vbM3Wh3KSybots/wfWVzNLK4D1NZluDlSQIbIEPx6oyA==
-
 "@types/webxr@*", "@types/webxr@^0.5.2":
   version "0.5.8"
   resolved "https://registry.npmjs.org/@types/webxr/-/webxr-0.5.8.tgz"
@@ -1226,11 +1220,6 @@ balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
-
-base-64@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/base-64/-/base-64-1.0.0.tgz"
-  integrity sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==
 
 base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
@@ -1546,7 +1535,7 @@ csstype@^3.0.2, csstype@^3.1.3:
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
 
-date-fns@^2.29.3, date-fns@^2.30.0:
+date-fns@^2.29.3:
   version "2.30.0"
   resolved "https://registry.npmjs.org/date-fns/-/date-fns-2.30.0.tgz"
   integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
@@ -1707,11 +1696,6 @@ escape-string-regexp@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
-
-eventemitter3@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.npmjs.org/eventemitter3/-/eventemitter3-5.0.1.tgz"
-  integrity sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==
 
 exponential-backoff@^3.1.1:
   version "3.1.1"
@@ -2248,11 +2232,6 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-lzfjs@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/lzfjs/-/lzfjs-1.0.1.tgz"
-  integrity sha512-P1x9feLT9xHg9OpfgWcDlWtndf7wYTJk5LgIeVE9tGo6CptVnDi34/mcT8REskWNdQCSiPGhSLQ80L7zTQXUVg==
-
 maath@^0.10.7:
   version "0.10.7"
   resolved "https://registry.npmjs.org/maath/-/maath-0.10.7.tgz"
@@ -2667,11 +2646,6 @@ pacote@^19.0.0:
     sigstore "^2.2.0"
     ssri "^12.0.0"
     tar "^6.1.11"
-
-pako@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/pako/-/pako-2.1.0.tgz"
-  integrity sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==
 
 pako@~1.0.2:
   version "1.0.11"
@@ -3475,11 +3449,6 @@ validate-npm-package-license@^3.0.4:
 
 validate-npm-package-name@^6.0.0:
   version "6.0.0"
-
-validator@^13.11.0:
-  version "13.12.0"
-  resolved "https://registry.npmjs.org/validator/-/validator-13.12.0.tgz"
-  integrity sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==
 
 vite-plugin-top-level-await@^1.2.4:
   version "1.3.1"
