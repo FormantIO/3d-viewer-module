@@ -248,7 +248,7 @@ export function DataVisualizationLayer(props: IDataVisualizationLayerProps) {
               g.matrix.copy(worldToLocalMatrix);
             }
           },
-          trailSeconds
+          trailEnabled ? trailSeconds : 0
         );
         setPositionUnsubscriber(() => unsubscribe);
       } else if (p.type === "transform tree") {

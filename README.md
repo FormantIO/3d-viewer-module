@@ -52,7 +52,7 @@ At a very high level there's 3 important things you need to do:
 
 | Env   | Url                                                          | Version |
 | ----- | ------------------------------------------------------------ | ------- |
-| Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  | 0.170.6 |
+| Prod  | https://formantio.github.io/3d-viewer-module/versions/prod/  | 0.170.7 |
 | Stage | https://formantio.github.io/3d-viewer-module/versions/stage/ | 0.170.7 |
 | Dev   | https://formantio.github.io/3d-viewer-module/versions/dist/  | 0.170.7 |
 
