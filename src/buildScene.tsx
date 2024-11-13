@@ -53,9 +53,8 @@ export function buildScene(
   const configHash = getUuidByString(JSON.stringify(config));
 
   mapLayers = (config.maps || []).map((layer, i) => {
-    const positioning = layer.transformType
-      ? parsePositioning(layer)
-      : PositioningBuilder.fixed(0, 0, 0);
+    // maps only use Cartesian positioning
+    const positioning = parsePositioning({...layer, transformType:"Cartesian"})
 
     if (layer.mapType === "GPS") {
       const defaultLong = -122.6765;
