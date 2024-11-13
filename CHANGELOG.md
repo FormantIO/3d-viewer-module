@@ -1,3 +1,6 @@
+## [0.170.9] - 2024-11-13
+- Map offset now works as intended.
+
 ## [0.170.8] - 2024-10-16
 
 - bump data-sdk version: Prevent repeated and out of order requests in subscribeToOdometry and subscribeToPath 
