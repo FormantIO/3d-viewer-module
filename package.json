@@ -1,7 +1,7 @@
 {
   "name": "@formant/3d-viewer-module",
   "private": true,
-  "version": "0.170.8",
+  "version": "0.170.9",
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules",
@@ -40,7 +40,7 @@
     "react-dom": "^18.2.0",
     "seedrandom": "^3.0.5",
     "styled-components": "^5.3.9",
-    "three": "0.165.0",
+    "three": "0.170.0",
     "urdf-loader": "^0.12.1",
     "uuid": "^9.0.0",
     "uuid-by-string": "^4.0.0",
