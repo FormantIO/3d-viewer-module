@@ -55,6 +55,14 @@ run:
 run-vr:
 	npm run dev-vr
 
+deploy-stage:
+	rm -rf versions/stage/*
+	cp -r dist/* versions/stage
+	git add .
+	git commit -m "update stage"
+	git tag -f stage
+	git push --follow-tags
+
 manual-deploy:
 	rm -rf versions/v1/*
 	cp -r dist/* versions/v1
@@ -63,4 +71,4 @@ manual-deploy:
 	git add .
 	git commit -m "update prod"
 	git tag -f prod
-	git push --tags
+	git push --follow-tags

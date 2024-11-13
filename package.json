@@ -40,7 +40,7 @@
     "react-dom": "^18.2.0",
     "seedrandom": "^3.0.5",
     "styled-components": "^5.3.9",
-    "three": "0.165.0",
+    "three": "0.170.0",
     "urdf-loader": "^0.12.1",
     "uuid": "^9.0.0",
     "uuid-by-string": "^4.0.0",
