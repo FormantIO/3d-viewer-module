@@ -399,6 +399,7 @@
           "transformLocalizationWorldToLocal": {
             "title": "Localization world to local?",
             "type": "boolean",
+            "description": "If ON, Formant will use the localization stream's world to local matrix to position the layer.",
             "default": true,
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
