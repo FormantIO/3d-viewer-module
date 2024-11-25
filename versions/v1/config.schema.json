@@ -41,20 +41,21 @@
           "gpsMapLatitude": {
             "title": "Default latitude",
             "type": "number",
-            "description": "Manual entry of the default latitude of your GPS map. N and E are positive values, S and W are negative values.",
+            "description": "Manual entry of the default latitude of your GPS map. N and E are positive values, S and W are negative values. Will override telemetry stream.",
             "$formant.placeholder": "Edit (e.g. 37.7749)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLongitude": {
             "title": "Default longitude",
             "type": "number",
-            "description": "Manual entry of the default longitude of your GPS map. N and E are positive values, S and W are negative values.",
+            "description": "Manual entry of the default longitude of your GPS map. N and E are positive values, S and W are negative values. Will override telemetry stream.",
             "$formant.placeholder": "Edit (e.g. 122.4194)",
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "telemetryStreamName": {
             "title": "Telemetry stream",
             "type": "string",
+            "description": "Specify a GPS stream whose position will be used as the center of the map. Overridden by default latitude and longitude.",
             "$formant.streams.byType": "json,location,localization",
             "$formant.placeholder": "Select",
             "$formant.visible.when": [
@@ -67,7 +68,7 @@
             "title": "Use historical data",
             "type": "boolean",
             "default": false,
-            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
+            "description": "Enable this if your data stream does not have live data. Formant will use the most recent historical data available.",
             "$formant.visible.when": [
               "and",
               ["or", ["mapType", "=", "GPS"], ["mapType", "=", "Occupancy"]],
@@ -106,8 +107,8 @@
           "visualizationType": {
             "title": "Type",
             "type": "string",
-            "description": "Select the type of visualization you want to add.",
-            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#layers",
+            "description": "Select the type of visualization you want to add. Click this icon for docs.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-scene-configuration#layers",
             "enum": [
               "Position indicator",
               "Marker array",
@@ -120,7 +121,7 @@
             "type": "boolean",
             "title": "Use URDF",
             "default": false,
-            "description": "URDF is set in Device Configuration. To add a URDF file, click on the three dots (meatball menu) and go to Configure device >> Add URDF.",
+            "description": "Use your device's URDF as a position indicator. Must have URDF file uploaded for this device. Click this icon for docs.",
             "$formant.documentationUrl": "https://docs.formant.io/docs/urdf",
             "$formant.visible.when": [
               "and",
@@ -129,9 +130,9 @@
           },
 
           "jointStateTelemetryStreamName": {
-            "title": "Telemetry Joint State Stream",
+            "title": "Telemetry joint state stream",
             "type": "string",
-            "description": "The telemetry stream that joint state data is pulled from. This is only used when your looking at historical data. Otherwise, realtime data is used.",
+            "description": "Telemetry stream containing joint state data. If realtime stream is also provided, it will override the telemetry stream and disconnect joint state data from the timeline.",
             "$formant.streams.byType": "json",
             "$formant.placeholder": "Stream Name",
             "$formant.visible.when": [
@@ -142,8 +143,8 @@
           },
 
           "realtimeJointStateStream": {
-            "title": "Realtime Joint State Stream",
-            "description": "The realtime stream that is used to get joint state dat from.",
+            "title": "Realtime joint state stream",
+            "description": "Realtime stream containing joint state data. If specified, joint state will always reflect realtime position and will disconnect from the timeline.",
             "type": "string",
             "$formant.visible.when": [
               "and",
@@ -193,35 +194,36 @@
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "pointCloudUseColors": {
-            "title": "Use color data",
+            "title": "Use color data?",
             "type": "boolean",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "pathOpacity": {
-            "title": "Path Opacity",
+            "title": "Path Opacity %",
             "type": "number",
-            "description": "Choose opacity between 0% ~ 100%",
+            "description": "Choose opacity between 0% - 100%",
             "default": "50",
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pathType": {
-            "title": "Path Type",
+            "title": "Path type",
             "type": "string",
-            "description": "Select the type of path width",
+            "description": "Static path stays the same size regardless of zoom. Dynamic path resizes with zoom for consistent display size.",
             "enum": ["Static", "Dynamic"],
             "default": "Static",
             "$formant.visible.when": ["visualizationType", "=", "Path"]
           },
           "pathWidth": {
             "type": "number",
-            "title": "Path Width",
+            "title": "Path width",
             "description": "Input a number between 0 to 10.",
             "default": 0.5,
             "$formant.visible.when": ["pathType", "=", "Static"]
           },
           "trailEnabled": {
-            "title": "Enable Trail",
+            "title": "Enable trail",
             "type": "boolean",
+            "description": "If ON, a trail will be displayed behind the position indicator.",
             "default": false,
             "$formant.visible.when": [
               "visualizationType",
@@ -230,7 +232,7 @@
             ]
           },
           "trailSeconds": {
-            "title": "Trail Duration (seconds)",
+            "title": "Trail duration (s)",
             "type": "number",
             "description": "Input a number between 0 to 60.",
             "default": 15,
@@ -241,9 +243,9 @@
             ]
           },
           "trailOpacity": {
-            "title": "Trail Opacity",
+            "title": "Trail opacity %",
             "type": "number",
-            "description": "Choose opacity between 0% ~ 100%",
+            "description": "Choose opacity % between 0 - 100.",
             "default": "50",
             "$formant.visible.when": [
               "and",
@@ -252,9 +254,9 @@
             ]
           },
           "trailType": {
-            "title": "trail Type",
+            "title": "Trail type",
             "type": "string",
-            "description": "Select the type of path width",
+            "description": "Static path stays the same size regardless of zoom. Dynamic path resizes with zoom for consistent display size.",
             "enum": ["Static", "Dynamic"],
             "default": "Static",
             "$formant.visible.when": [
@@ -265,7 +267,7 @@
           },
           "trailWidth": {
             "type": "number",
-            "title": "trail Width",
+            "title": "Trail width",
             "description": "Input a number between 0 to 10.",
             "default": 0.5,
             "$formant.visible.when": [
@@ -276,8 +278,8 @@
             ]
           },
           "trailFlatten": {
-            "title": "Flatten Trail",
-            "description": "Flatten the trail z-values to 0.",
+            "title": "Flatten trail?",
+            "description": "If ON, the trail will appear on the ground (z=0), regardless of robot's Z-position.",
             "type": "boolean",
             "default": false,
             "$formant.visible.when": [
@@ -287,9 +289,9 @@
             ]
           },
           "geometryAllowTransparency": {
-            "title": "Allow Transparency",
+            "title": "Allow transparency?",
             "type": "boolean",
-            "description": "Allowing transparency can help with visualization but come at the price of performance.",
+            "description": "If ON, Formant will read transparency values from marker array stream. If OFF, markers will render as opaque. Transparency requires additional computation time.",
             "$formant.visible.when": ["visualizationType", "=", "Marker array"]
           },
           "telemetryStreamName": {
@@ -308,14 +310,14 @@
           "pointCloudRealtimeStream": {
             "title": "Realtime stream",
             "type": "string",
-            "description": "Optional, will override the telemetry stream if set.",
+            "description": "Realtime stream containing point cloud data. If specified, point cloud will always reflect realtime state and will disconnect from the timeline.",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
           "telemetryLatestDataPoint": {
-            "title": "Use historical data",
+            "title": "Use historical data?",
             "type": "boolean",
             "default": false,
-            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available. ",
+            "description": "Telemetry stream containing point cloud data. If realtime stream is also provided, it will override the telemetry stream and disconnect point cloud data from the timeline.",
             "$formant.visible.when": [
               "and",
               [
@@ -330,8 +332,8 @@
           "transformType": {
             "title": "Transform type",
             "type": "string",
-            "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene.",
-            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
+            "description": "Use transforms to set the position of a layer relative to the origin of your 3D scene. Click this icon for docs.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-scene-configuration#transforms",
             "enum": ["Cartesian", "GPS", "Odometry", "Transform tree"],
             "$formant.visible.when": [
               "and",
@@ -384,10 +386,10 @@
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
           "transformLocalizationLatestDataPoint": {
-            "title": "Use historical data",
+            "title": "Use historical data?",
             "type": "boolean",
             "default": false,
-            "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
+            "description": "If ON, Formant will use the most recent historical data available, within the past year.",
             "$formant.visible.when": [
               "and",
               ["transformType", "=", "Odometry"],
@@ -395,8 +397,9 @@
             ]
           },
           "transformLocalizationWorldToLocal": {
-            "title": "Localization world to local",
+            "title": "Localization world to local?",
             "type": "boolean",
+            "description": "If ON, Formant will use the localization stream's world to local matrix to position the layer.",
             "default": true,
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
@@ -434,7 +437,7 @@
           "pathType": {
             "title": "Path Type",
             "type": "string",
-            "description": "Select the type of path width",
+            "description": "Static path stays the same size regardless of zoom. Dynamic path resizes with zoom for consistent display size.",
             "enum": ["Static", "Dynamic"],
             "default": "Static"
           },
@@ -532,8 +535,8 @@
       "type": "object",
       "properties": {
         "useTimeline": {
-          "title": "Sync with time line",
-          "description": "If 'OFF', the 3D scene will default to using live data.",
+          "title": "Sync with timeline",
+          "description": "Set this to OFF if using during teleoperation. If ON, data will be shown at timeline point. If OFF, the 3D scene will ignore the timeline and always show live data.",
           "type": "boolean",
           "default": true
         },
