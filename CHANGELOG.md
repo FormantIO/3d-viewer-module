@@ -1,4 +1,9 @@
+## [0.170.10] - 2024-12-09
+
+- Bump data-sdk version: fix realtime subscriptions for pointclouds. 
+
 ## [0.170.9] - 2024-11-13
+
 - Map offset now works as intended.
 
 ## [0.170.8] - 2024-10-16
