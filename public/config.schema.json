@@ -378,13 +378,15 @@
           },
           "transformLocalizationStream": {
             "title": "Localization stream",
+            "description": "Telemetry localization stream. You can override odometry with realtime data below.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
             "type": "string",
             "$formant.streams.byType": "localization",
             "$formant.placeholder": "Select",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
           "transformLocalizationLatestDataPoint": {
-            "title": "Use historical data",
+            "title": "Use historical data?",
             "type": "boolean",
             "default": false,
             "description": "Enable if a live data stream is not available. Formant will use the most recent historical data available.",
@@ -395,13 +397,15 @@
             ]
           },
           "transformLocalizationWorldToLocal": {
-            "title": "Localization world to local",
+            "title": "Localization world to local?",
             "type": "boolean",
             "default": true,
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
           "transformLocalizationRealtimeStream": {
-            "title": "Localization realtime stream",
+            "title": "Realtime odometry stream",
+            "description": "If set, will override odometry topic in telemetry localization stream.",
+            "$formant.documentationUrl": "https://docs.formant.io/docs/3d-viewer-module-reference#transforms",
             "type": "string",
             "$formant.visible.when": ["transformType", "=", "Odometry"]
           },
