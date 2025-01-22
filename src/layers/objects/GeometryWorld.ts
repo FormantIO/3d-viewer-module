@@ -164,23 +164,29 @@ export class GeometryWorld {
             reifyVector3(p);
           });
         }
+        let type = "";
+        if (typeof type === "number") {
+          // if typeis a number, map it to a string
+          const typeIdMap = {
+            0: "arrow",
+            1: "cube",
+            2: "sphere",
+            3: "cylinder",
+            4: "line_strip",
+            5: "line_list",
+            6: "cube_list",
+            7: "sphere_list",
+            8: "points",
+            9: "text",
+            10: "mesh_resource",
+            11: "triangle_list",
+          };
+          type = typeIdMap[type as keyof typeof typeIdMap];
+        } else {
+          type = marker.type.toString();
+        }
 
-        const typeIdMap = {
-          0: "arrow",
-          1: "cube",
-          2: "sphere",
-          3: "cylinder",
-          4: "line_strip",
-          5: "line_list",
-          6: "cube_list",
-          7: "sphere_list",
-          8: "points",
-          9: "text",
-          10: "mesh_resource",
-          11: "triangle_list",
-        };
-
-        const typeName = typeIdMap[type as keyof typeof typeIdMap];
+        const typeName = type;
         if (typeName === "mesh_resource") {
           console.warn("Mesh resource markers are not supported");
           return;
