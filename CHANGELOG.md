@@ -1,6 +1,10 @@
+## [0.171.0] - 2025-01-22
+
+- Add support for realtime marker arrays.
+
 ## [0.170.10] - 2024-12-09
 
-- Bump data-sdk version: fix realtime subscriptions for pointclouds. 
+- Bump data-sdk version: fix realtime subscriptions for pointclouds.
 
 ## [0.170.9] - 2024-11-13
 
@@ -8,7 +12,7 @@
 
 ## [0.170.8] - 2024-10-16
 
-- bump data-sdk version: Prevent repeated and out of order requests in subscribeToOdometry and subscribeToPath 
+- bump data-sdk version: Prevent repeated and out of order requests in subscribeToOdometry and subscribeToPath
 
 ## [0.170.7] - 2024-10-10
 
