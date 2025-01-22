@@ -313,6 +313,12 @@
             "description": "Realtime stream containing point cloud data. If specified, point cloud will always reflect realtime state and will disconnect from the timeline.",
             "$formant.visible.when": ["visualizationType", "=", "Point cloud"]
           },
+          "markerArrayRealtimeStream": {
+            "title": "Realtime stream",
+            "type": "string",
+            "description": "Realtime stream containing marker array data. If specified, marker array will always reflect realtime state and will disconnect from the timeline.",
+            "$formant.visible.when": ["visualizationType", "=", "Marker array"]
+          },
           "telemetryLatestDataPoint": {
             "title": "Use historical data?",
             "type": "boolean",

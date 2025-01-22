@@ -1,5 +1,6 @@
 import {
   definedAndNotNull,
+  UniverseDataSource,
   UniverseTelemetrySource,
 } from "@formant/data-sdk";
 import {
@@ -51,7 +52,7 @@ import { duration } from "../common/duration";
 const MINIMUM_TIME_DIFFERENCE = 12 * duration.hour;
 
 interface IGeometryLayer extends IUniverseLayerProps {
-  dataSource: UniverseTelemetrySource;
+  dataSource: UniverseDataSource;
   allowTransparency: boolean;
 }
 
@@ -74,7 +75,7 @@ type InstancedGeoProps = {
 
 type InstanceGeoListProps = {
   instances: GeoInstanceData;
-}
+};
 
 function InstancedGeometry({
   instances,
@@ -99,16 +100,21 @@ function InstancedGeometry({
       );
       if (ref.current) {
         instances.forEach((data, index) => {
-
-
           const { position, rotation, scale, color } = data;
 
-          const transformKey = getUuidByString(`${data.id}-${position.x}${position.y}${position.z}${rotation.x}${rotation.y}${rotation.z}${rotation.w}${scale.x}${scale.y}${scale.z}`);
+          const transformKey = getUuidByString(
+            `${data.id}-${position.x}${position.y}${position.z}${rotation.x}${rotation.y}${rotation.z}${rotation.w}${scale.x}${scale.y}${scale.z}`
+          );
 
           let instanceMatrix = matrixCache.current.get(transformKey);
           if (!instanceMatrix) {
             dummy.position.set(position.x, position.y, position.z);
-            dummy.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+            dummy.quaternion.set(
+              rotation.x,
+              rotation.y,
+              rotation.z,
+              rotation.w
+            );
             dummy.scale.set(scale.x, scale.y, scale.z);
             boundingBox.current.expandByPoint(dummy.position);
 
@@ -119,7 +125,6 @@ function InstancedGeometry({
 
           ref.current!.setMatrixAt(index, instanceMatrix);
           ref.current!.setColorAt(index, new Color(color.r, color.g, color.b));
-
         });
         ref.current.up = new Vector3(0, 0, 1);
         ref.current.instanceMatrix.needsUpdate = true;
@@ -136,44 +141,53 @@ function InstancedGeometry({
       <group>
         {instances && type === "sphere"
           ? instances.map((data) => {
-            return (
-              <Sphere
-                key={data.id}
-                args={[0.5, 32, 16]}
-                scale={[data.scale.x, data.scale.y, data.scale.z]}
-                position={[data.position.x, data.position.y, data.position.z]}
-                quaternion={[data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w]}
-
-              >
-                <meshLambertMaterial
-                  attach="material"
-                  color={[data.color.r, data.color.g, data.color.b]}
-                  opacity={data.color.a}
-                  transparent={data.color.a < 1}
-                />
-              </Sphere>
-            );
-          })
+              return (
+                <Sphere
+                  key={data.id}
+                  args={[0.5, 32, 16]}
+                  scale={[data.scale.x, data.scale.y, data.scale.z]}
+                  position={[data.position.x, data.position.y, data.position.z]}
+                  quaternion={[
+                    data.rotation.x,
+                    data.rotation.y,
+                    data.rotation.z,
+                    data.rotation.w,
+                  ]}
+                >
+                  <meshLambertMaterial
+                    attach="material"
+                    color={[data.color.r, data.color.g, data.color.b]}
+                    opacity={data.color.a}
+                    transparent={data.color.a < 1}
+                  />
+                </Sphere>
+              );
+            })
           : null}
         {instances && type === "cube"
           ? instances.map((data) => {
-            return (
-              <Box
-                key={data.id}
-                args={[0.9, 0.9, 0.9]}
-                scale={[data.scale.x, data.scale.y, data.scale.z]}
-                position={[data.position.x, data.position.y, data.position.z]}
-                quaternion={[data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w]}
-              >
-                <meshLambertMaterial
-                  attach="material"
-                  color={[data.color.r, data.color.g, data.color.b]}
-                  opacity={data.color.a}
-                  transparent={data.color.a < 1}
-                />
-              </Box>
-            );
-          })
+              return (
+                <Box
+                  key={data.id}
+                  args={[0.9, 0.9, 0.9]}
+                  scale={[data.scale.x, data.scale.y, data.scale.z]}
+                  position={[data.position.x, data.position.y, data.position.z]}
+                  quaternion={[
+                    data.rotation.x,
+                    data.rotation.y,
+                    data.rotation.z,
+                    data.rotation.w,
+                  ]}
+                >
+                  <meshLambertMaterial
+                    attach="material"
+                    color={[data.color.r, data.color.g, data.color.b]}
+                    opacity={data.color.a}
+                    transparent={data.color.a < 1}
+                  />
+                </Box>
+              );
+            })
           : null}
       </group>
     );
@@ -202,8 +216,7 @@ function InstancedGeometry({
   }
 }
 
-function InstancedGeometryFromList(
-  { instances }: InstanceGeoListProps) {
+function InstancedGeometryFromList({ instances }: InstanceGeoListProps) {
   if (!instances.points) {
     return null;
   }
@@ -234,10 +247,16 @@ function InstancedGeometryFromList(
       const scale = instances.scale;
 
       positions.map((pos, index) => {
-        const transformKey = getUuidByString(`${index}-${pos.x}${pos.y}${pos.z}`);
+        const transformKey = getUuidByString(
+          `${index}-${pos.x}${pos.y}${pos.z}`
+        );
         let instanceMatrix = matrixCache.current.get(transformKey);
         if (!instanceMatrix) {
-          dummy.position.set(rootPosition.x + pos.x, rootPosition.y + pos.y, rootPosition.z + pos.z);
+          dummy.position.set(
+            rootPosition.x + pos.x,
+            rootPosition.y + pos.y,
+            rootPosition.z + pos.z
+          );
           dummy.scale.set(scale.x, scale.y, scale.z);
           dummy.updateMatrix();
 
@@ -246,15 +265,20 @@ function InstancedGeometryFromList(
         }
         boundingBox.current.expandByPoint(dummy.position);
         if (ref.current) {
-
           ref.current.up = new Vector3(0, 0, 1);
           ref.current.setMatrixAt(index, instanceMatrix);
 
           // for lists, per object colors are optional
           if (colors && colors[index]) {
-            ref.current.setColorAt(index, new Color(colors[index].r, colors[index].g, colors[index].b));
+            ref.current.setColorAt(
+              index,
+              new Color(colors[index].r, colors[index].g, colors[index].b)
+            );
           } else {
-            ref.current.setColorAt(index, new Color(instances.color.r, instances.color.g, instances.color.b));
+            ref.current.setColorAt(
+              index,
+              new Color(instances.color.r, instances.color.g, instances.color.b)
+            );
           }
         }
       });
@@ -291,7 +315,6 @@ function InstancedGeometryFromList(
   );
 }
 
-
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource, allowTransparency } = props;
 
@@ -299,9 +322,9 @@ export function GeometryLayer(props: IGeometryLayer) {
   const isReady = useRef(false);
   const bounds = useBounds();
 
-
-  const worldGeometry: MutableRefObject<Map<string, Mesh | Line | Sprite | Points>> =
-    useRef(new Map());
+  const worldGeometry: MutableRefObject<
+    Map<string, Mesh | Line | Sprite | Points>
+  > = useRef(new Map());
 
   const rootRef = useRef(new Object3D());
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
@@ -320,7 +343,7 @@ export function GeometryLayer(props: IGeometryLayer) {
         worldGeometry.current.delete(id);
       }
     });
-  }
+  };
 
   const createTextMaterial = (geometry: Text) => {
     const fontface = "Arial";
@@ -354,15 +377,21 @@ export function GeometryLayer(props: IGeometryLayer) {
       map: texture,
     });
     return { spriteMaterial, textHeight, textWidth };
-  }
+  };
 
   const processArrowMarker = (g: Arrow, mesh: Mesh) => {
     // less than two points means we are drawing based on position, scale, and rotation
     if (g.points.length < 2) {
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
-    } else { // two points means we are drawing based on start and end points
+      mesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
+    } else {
+      // two points means we are drawing based on start and end points
       const start = new Vector3(g.points[0].x, g.points[0].y, g.points[0].z);
       const end = new Vector3(g.points[1].x, g.points[1].y, g.points[1].z);
       const dir = new Vector3().subVectors(end, start);
@@ -370,36 +399,43 @@ export function GeometryLayer(props: IGeometryLayer) {
       const arrowDir = dir.normalize();
       mesh.position.set(start.x, start.y, start.z);
       mesh.scale.set(1, length, 1);
-      mesh.quaternion.setFromUnitVectors(
-        new Vector3(0, 1, 0),
-        arrowDir
-      );
+      mesh.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), arrowDir);
     }
-
-  }
+  };
 
   const createGeometryMesh = (g: Geometry) => {
-
     if (g.type === "line_list" || g.type === "line_strip") {
       const material = new LineBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
-        linewidth: 1 // with webGL this is always 1, webGPU will fix this someday
+        linewidth: 1, // with webGL this is always 1, webGPU will fix this someday
       });
 
       const meshGeometry = new BufferGeometry().setFromPoints(
         g.points as Vector3[]
       );
-      const lines = g.type === "line_list" ? new LineSegments(meshGeometry, material) : new Line(meshGeometry, material);
+      const lines =
+        g.type === "line_list"
+          ? new LineSegments(meshGeometry, material)
+          : new Line(meshGeometry, material);
       if (g.colors) {
-        lines.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
-          (c) => [c.r, c.g, c.b]
-        ).flat(), 3));
+        lines.geometry.setAttribute(
+          "color",
+          new Float32BufferAttribute(
+            g.colors.map((c) => [c.r, c.g, c.b]).flat(),
+            3
+          )
+        );
         lines.material.vertexColors = true;
       }
 
       lines.position.set(g.position.x, g.position.y, g.position.z);
-      lines.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      lines.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
 
       rootRef.current.add(lines);
       worldGeometry.current.set(g.id, lines);
@@ -415,11 +451,7 @@ export function GeometryLayer(props: IGeometryLayer) {
         textHeight / textWidth / pixelScale,
         1.0 / pixelScale
       );
-      sprite.position.set(
-        g.position.x,
-        g.position.y,
-        g.position.z
-      );
+      sprite.position.set(g.position.x, g.position.y, g.position.z);
       rootRef.current.add(sprite);
       worldGeometry.current.set(g.id, sprite);
     } else if (g.type === "arrow") {
@@ -430,7 +462,7 @@ export function GeometryLayer(props: IGeometryLayer) {
 
       const shaftDiameter = g.points.length < 2 ? 0.01 : g.scale.x;
       const headDiameter = g.points.length < 2 ? 0.05 : g.scale.y;
-      const headLength = (g.points.length < 2 && g.scale.z) ? 0.1 : g.scale.z;
+      const headLength = g.points.length < 2 && g.scale.z ? 0.1 : g.scale.z;
       const arrowShaft = new CylinderGeometry(
         shaftDiameter,
         shaftDiameter,
@@ -441,16 +473,16 @@ export function GeometryLayer(props: IGeometryLayer) {
       );
       const arrowHead = new ConeGeometry(headDiameter, headLength, 8, 1, false);
       arrowHead.translate(0, 0.25, 0);
-      const arrowGeometry = BufferGeometryUtils.mergeGeometries(
-        [arrowShaft, arrowHead]
-      );
+      const arrowGeometry = BufferGeometryUtils.mergeGeometries([
+        arrowShaft,
+        arrowHead,
+      ]);
       const arrowMesh = new Mesh(arrowGeometry, material);
 
       processArrowMarker(g, arrowMesh);
 
       rootRef.current.add(arrowMesh);
       worldGeometry.current.set(g.id, arrowMesh);
-
     } else if (g.type === "cylinder") {
       const material = new MeshLambertMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
@@ -469,15 +501,19 @@ export function GeometryLayer(props: IGeometryLayer) {
 
       cylinderMesh.position.set(g.position.x, g.position.y, g.position.z);
       cylinderMesh.scale.set(g.scale.x, 1, g.scale.y);
-      cylinderMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      cylinderMesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
 
       rootRef.current.add(cylinderMesh);
       worldGeometry.current.set(g.id, cylinderMesh);
     } else if (g.type === "points") {
       const serializedPoints = g.points.map((p) => {
         return new Vector3(p.x, p.y, p.z);
-      }
-      );
+      });
       const material = new PointsMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -489,22 +525,30 @@ export function GeometryLayer(props: IGeometryLayer) {
       );
       const pointsMesh = new Points(pointsGeometry, material);
       if (g.colors) {
-        pointsMesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
-          (c) => [c.r, c.g, c.b]
-        ).flat(), 3));
+        pointsMesh.geometry.setAttribute(
+          "color",
+          new Float32BufferAttribute(
+            g.colors.map((c) => [c.r, c.g, c.b]).flat(),
+            3
+          )
+        );
         pointsMesh.material.vertexColors = true;
       }
 
       pointsMesh.position.set(g.position.x, g.position.y, g.position.z);
-      pointsMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      pointsMesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
 
       rootRef.current.add(pointsMesh);
       worldGeometry.current.set(g.id, pointsMesh);
     } else if (g.type === "triangle_list") {
       const serializedPoints = g.points.map((p) => {
         return new Vector3(p.x, p.y, p.z);
-      }
-      );
+      });
       const material = new MeshBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -516,26 +560,47 @@ export function GeometryLayer(props: IGeometryLayer) {
       const trianglesMesh = new Mesh(trianglesGeometry, material);
 
       if (g.colors) {
-        trianglesMesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
-          (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
-        ).flat(), 3));
+        trianglesMesh.geometry.setAttribute(
+          "color",
+          new Float32BufferAttribute(
+            g.colors
+              .map(
+                (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
+              )
+              .flat(),
+            3
+          )
+        );
         trianglesMesh.material.vertexColors = true;
       }
 
       trianglesMesh.position.set(g.position.x, g.position.y, g.position.z);
       trianglesMesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      trianglesMesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      trianglesMesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
 
       rootRef.current.add(trianglesMesh);
       worldGeometry.current.set(g.id, trianglesMesh);
     }
-  }
+  };
 
-  const updateGeometryMesh = (g: Geometry, mesh: Mesh | Line | Sprite | Points) => {
+  const updateGeometryMesh = (
+    g: Geometry,
+    mesh: Mesh | Line | Sprite | Points
+  ) => {
     if (g.type === "line_list" || g.type === "line_strip") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      mesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
       mesh.material = new LineBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -552,7 +617,12 @@ export function GeometryLayer(props: IGeometryLayer) {
     } else if (g.type === "cylinder") {
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.scale.set(g.scale.x, g.scale.z, g.scale.y);
-      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      mesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
       mesh.material = new MeshLambertMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
@@ -560,35 +630,57 @@ export function GeometryLayer(props: IGeometryLayer) {
     } else if (g.type === "points") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      mesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
       mesh.material = new PointsMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
         size: g.scale.x / 10,
       });
       if (g.colors) {
-        mesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
-          (c) => [c.r, c.g, c.b]
-        ).flat(), 3));
+        mesh.geometry.setAttribute(
+          "color",
+          new Float32BufferAttribute(
+            g.colors.map((c) => [c.r, c.g, c.b]).flat(),
+            3
+          )
+        );
         mesh.material.vertexColors = true;
       }
     } else if (g.type === "triangle_list") {
       mesh.geometry.setFromPoints(g.points as Vector3[]);
       mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
-      mesh.quaternion.set(g.rotation.x, g.rotation.y, g.rotation.z, g.rotation.w);
+      mesh.quaternion.set(
+        g.rotation.x,
+        g.rotation.y,
+        g.rotation.z,
+        g.rotation.w
+      );
       mesh.material = new MeshBasicMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
       });
       if (g.colors) {
-        mesh.geometry.setAttribute('color', new Float32BufferAttribute(g.colors.map(
-          (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
-        ).flat(), 3));
+        mesh.geometry.setAttribute(
+          "color",
+          new Float32BufferAttribute(
+            g.colors
+              .map(
+                (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
+              )
+              .flat(),
+            3
+          )
+        );
         mesh.material.vertexColors = true;
       }
     }
-  }
+  };
 
   const processGeometry = (geometry: Geometry[]) => {
     geometry.forEach((g) => {
@@ -602,15 +694,17 @@ export function GeometryLayer(props: IGeometryLayer) {
         g.dirty = false;
       }
     });
-  }
-
+  };
 
   useEffect(() => {
-    const unsubscribe = universeData.subscribeToGeometry(
+    const unsubscribe = (
+      dataSource.sourceType === "realtime" ? liveUniverseData : universeData
+    ).subscribeToGeometry(
       definedAndNotNull(layerData, "geometry layer requires device context")
         .deviceId,
       dataSource,
       (d) => {
+        console.log("d", d);
         if (typeof d === "symbol") {
           return;
         }
@@ -619,7 +713,9 @@ export function GeometryLayer(props: IGeometryLayer) {
         }
         const markerArray = d as IMarker3DArray;
         const currentTime = universeData.getTimeMs();
-        if (Math.abs(currentTime - lastTimeRef.current) > MINIMUM_TIME_DIFFERENCE) {
+        if (
+          Math.abs(currentTime - lastTimeRef.current) > MINIMUM_TIME_DIFFERENCE
+        ) {
           world.current.deleteAll();
           removeObsoleteGeometry([...worldGeometry.current.keys()]);
         }
@@ -640,12 +736,16 @@ export function GeometryLayer(props: IGeometryLayer) {
           (g) => g.type === "sphere"
         ) as GeoInstanceData[];
         startTransition(() => {
-
           // let's avoid reprocessing cubes and spheres
-          processGeometry(geometry.filter(
-            (g) => g.type !== "cube" && g.type !== "cube_list" && g.type !== "sphere" && g.type !== "sphere_list"
-          ) as Geometry[]);
-
+          processGeometry(
+            geometry.filter(
+              (g) =>
+                g.type !== "cube" &&
+                g.type !== "cube_list" &&
+                g.type !== "sphere" &&
+                g.type !== "sphere_list"
+            ) as Geometry[]
+          );
 
           const oldGeoIds = [...worldGeometry.current.keys()];
           const newGeoIds = new Set(geometry.map((g) => g.id));
@@ -670,7 +770,7 @@ export function GeometryLayer(props: IGeometryLayer) {
   }, [isReady.current]);
 
   return (
-    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg" >
+    <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
       <group>
         <primitive object={rootRef.current} />
         {cubesData.length > 0 ? (
@@ -685,22 +785,14 @@ export function GeometryLayer(props: IGeometryLayer) {
             allowTransparency={allowTransparency}
           />
         ) : null}
-        {cubeList.map(cL => (
-          <InstancedGeometryFromList
-            key={cL.id}
-            instances={cL}
-          />
+        {cubeList.map((cL) => (
+          <InstancedGeometryFromList key={cL.id} instances={cL} />
         ))}
-        {sphereList.map(sL => (
-          <InstancedGeometryFromList
-            key={sL.id}
-            instances={sL}
-          />
+        {sphereList.map((sL) => (
+          <InstancedGeometryFromList key={sL.id} instances={sL} />
         ))}
       </group>
       {children}
-    </DataVisualizationLayer >
+    </DataVisualizationLayer>
   );
-
-
 }

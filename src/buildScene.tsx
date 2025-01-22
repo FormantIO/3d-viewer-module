@@ -1,7 +1,13 @@
-import { ConfigurationDocument, UniverseDataSource, UniverseHardwareDataSource, UniverseTelemetrySource } from "@formant/data-sdk";
+import {
+  ConfigurationDocument,
+  UniverseDataSource,
+  UniverseHardwareDataSource,
+  UniverseTelemetrySource,
+} from "@formant/data-sdk";
 
 import {
   getRealtimeJointStateDataSource,
+  getRealtimeMarkerArrayDataSource,
   getRealtimePointCloudDataSource,
   getTeletryJointStateDataSource,
   parseDataSource,
@@ -54,7 +60,10 @@ export function buildScene(
 
   mapLayers = (config.maps || []).map((layer, i) => {
     // maps only use Cartesian positioning
-    const positioning = parsePositioning({...layer, transformType:"Cartesian"})
+    const positioning = parsePositioning({
+      ...layer,
+      transformType: "Cartesian",
+    });
 
     if (layer.mapType === "GPS") {
       const defaultLong = -122.6765;
@@ -172,7 +181,7 @@ export function buildScene(
         dataSource = getRealtimePointCloudDataSource(layer);
       } else {
         const stream = deviceConfig?.telemetry?.streams?.find(
-          s => s.name === layer.telemetryStreamName
+          (s) => s.name === layer.telemetryStreamName
         ) as { configuration: { type: string } } | undefined; // seems like the type might be missing
 
         const streamType = stream
@@ -196,14 +205,22 @@ export function buildScene(
         />
       );
     } else if (layer.visualizationType === "Marker array") {
-      const dataSource = parseDataSource(layer);
+      const rtcDataSource = layer.markerArrayRealtimeStream;
+      let dataSource: UniverseDataSource | undefined;
+      console.log("rtcDataSource", rtcDataSource);
+      console.log("layer", layer);
+      if (rtcDataSource) {
+        dataSource = getRealtimeMarkerArrayDataSource(layer);
+      } else {
+        dataSource = parseDataSource(layer, "json");
+      }
       if (dataSource) {
         deviceLayers.push(
           <GeometryLayer
             key={"geo" + i + configHash}
             id={"geo" + i + configHash}
             positioning={positioning}
-            dataSource={dataSource as UniverseTelemetrySource}
+            dataSource={dataSource as UniverseDataSource}
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Geometry"}
             allowTransparency={layer.geometryAllowTransparency || false}
