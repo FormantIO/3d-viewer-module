@@ -41,6 +41,7 @@ export type Viewer3DVisualization = {
   geometryAllowTransparency?: boolean;
   realtimeJointStateStream?: string;
   pointCloudRealtimeStream?: string;
+  markerArrayRealtimeStream?: string;
   markerSize?: number;
   markerSizeType?: "dynamic" | "static";
   pointCloudDecayTime?: number;
@@ -126,6 +127,19 @@ export function getRealtimePointCloudDataSource(
     return DataSourceBuilder.realtime(
       vizLayer.pointCloudRealtimeStream,
       "point cloud"
+    );
+  }
+
+  return undefined;
+}
+
+export function getRealtimeMarkerArrayDataSource(
+  vizLayer: Viewer3DVisualization
+): UniverseDataSource | undefined {
+  if (vizLayer.markerArrayRealtimeStream) {
+    return DataSourceBuilder.realtime(
+      vizLayer.markerArrayRealtimeStream,
+      "json"
     );
   }
 
