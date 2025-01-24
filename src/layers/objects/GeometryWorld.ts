@@ -165,7 +165,7 @@ export class GeometryWorld {
           });
         }
         let type = "";
-        if (typeof type === "number") {
+        if (typeof marker.type === "number") {
           // if typeis a number, map it to a string
           const typeIdMap = {
             0: "arrow",
@@ -181,8 +181,9 @@ export class GeometryWorld {
             10: "mesh_resource",
             11: "triangle_list",
           };
-          type = typeIdMap[type as keyof typeof typeIdMap];
+          type = typeIdMap[marker.type as keyof typeof typeIdMap];
         } else {
+          //@ts-ignore
           type = marker.type.toString();
         }
 

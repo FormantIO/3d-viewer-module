@@ -1,3 +1,7 @@
+## [0.171.1] - 2025-01-24
+
+- Fix a bug where markers would disappear based on camera distance.
+
 ## [0.171.0] - 2025-01-22
 
 - Add support for realtime marker arrays.

@@ -198,6 +198,7 @@ function InstancedGeometry({
           ref={ref}
           args={[null as any, null as any, instances.length]}
           up={new Vector3(0, 0, 1)}
+          frustumCulled={false}
         >
           {type === "sphere" ? (
             <sphereGeometry
@@ -285,6 +286,7 @@ function InstancedGeometryFromList({ instances }: InstanceGeoListProps) {
       // update the instanceMatrix and instanceColor once
       if (ref.current) {
         ref.current.instanceMatrix.needsUpdate = true;
+        ref.current.frustumCulled = false;
         if (ref.current.instanceColor) {
           ref.current.instanceColor.needsUpdate = true;
         }
@@ -704,7 +706,6 @@ export function GeometryLayer(props: IGeometryLayer) {
         .deviceId,
       dataSource,
       (d) => {
-        console.log("d", d);
         if (typeof d === "symbol") {
           return;
         }
