@@ -151,8 +151,10 @@ export class GeometryWorld {
         if (marker.id === undefined) {
           marker.id = 0;
         }
-        const position = marker.pose.position;
-        const orientation = marker.pose.orientation;
+        // @ts-expect-error
+        const position = marker.pose.position || marker.pose.translation;
+        // @ts-expect-error
+        const orientation = marker.pose.orientation || marker.pose.rotation;
         reifyVector3(position || { x: 0, y: 0, z: 0 });
         reifyQuaternion(orientation || { x: 0, y: 0, z: 0, w: 1 });
         reifyVector3(marker.scale);
@@ -194,8 +196,10 @@ export class GeometryWorld {
           const geometry: Geometry = {
             id: `${marker.ns}_${marker.id}`,
             type: typeName as any,
-            position: marker.pose.position || { x: 0, y: 0, z: 0 },
-            rotation: marker.pose.orientation || { x: 0, y: 0, z: 0, w: 1 },
+            // @ts-expect-error
+            position: marker.pose.position || marker.pose.translation || { x: 0, y: 0, z: 0 },
+            // @ts-expect-error
+            rotation: marker.pose.orientation || marker.pose.rotation || { x: 0, y: 0, z: 0, w: 1 },
             scale: marker.scale,
             color: marker.color,
             dirty: true,
