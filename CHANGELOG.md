@@ -1,3 +1,7 @@
+## [0.171.2] - 2025-02-10
+
+- Workaround to add support for previous agent versions publishing realtime markers
+
 ## [0.171.1] - 2025-01-24
 
 - Fix a bug where markers would disappear based on camera distance.

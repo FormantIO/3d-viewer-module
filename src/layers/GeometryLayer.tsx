@@ -709,7 +709,6 @@ export function GeometryLayer(props: IGeometryLayer) {
         if (typeof d === "symbol") {
           return;
         }
-        //console.log(d);
         if (!isReady.current) {
           isReady.current = true;
         }

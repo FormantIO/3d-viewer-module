@@ -1,7 +1,7 @@
 {
   "name": "@formant/3d-viewer-module",
   "private": true,
-  "version": "0.170.10",
+  "version": "0.171.2",
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules",

@@ -207,8 +207,6 @@ export function buildScene(
     } else if (layer.visualizationType === "Marker array") {
       const rtcDataSource = layer.markerArrayRealtimeStream;
       let dataSource: UniverseDataSource | undefined;
-      console.log("rtcDataSource", rtcDataSource);
-      console.log("layer", layer);
       if (rtcDataSource) {
         dataSource = getRealtimeMarkerArrayDataSource(layer);
       } else {
