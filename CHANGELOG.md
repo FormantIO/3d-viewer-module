@@ -1,3 +1,7 @@
+## [0.171.3] - 2025-03-13
+
+- Fix a bug where occupancy grid layer would not load.
+
 ## [0.171.2] - 2025-02-10
 
 - Workaround to add support for previous agent versions publishing realtime markers
