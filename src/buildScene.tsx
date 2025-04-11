@@ -287,7 +287,7 @@ export function buildScene(
         key="missionPlanningLayer"
         id="missionPlanningLayer"
         pathType={pathType}
-        pathWidth={pathWidth}
+        pathWidth={Number(pathWidth)}
         commandName={commandName}
       />
     );

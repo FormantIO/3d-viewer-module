@@ -37,9 +37,10 @@ export const MissionPlanning: React.FC<Props> = ({
       ? config.missionPlanning![0].waypointProperties || []
       : [];
 
-  const hasPathLayer = config.visualizations
-    .map((e) => e.visualizationType)
-    .includes("Path");
+  const hasPathLayer =
+    config && config.visualizations
+      ? config.visualizations.map((e) => e.visualizationType).includes("Path")
+      : false;
 
   const sendBtnHandler = async () => {
     if (!commandName) return;
