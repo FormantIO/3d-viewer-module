@@ -1,3 +1,7 @@
+## [0.171.5] - 2025-04-11
+
+- Add default path width to mission planning layer
+
 ## [0.171.4] - 2025-04-11
 
 - Update lint rules to match formant app
