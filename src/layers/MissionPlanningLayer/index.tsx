@@ -52,11 +52,11 @@ export const MissionPlanningLayer = (props: IWaypointsProps) => {
         waypoints.length > 0
           ? waypoints[waypoints.length - 1].rotation
           : {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
+              x: 0,
+              y: 0,
+              z: 0,
+              w: 1,
+            },
     };
 
     // Snap orientation of previous waypoint
@@ -126,10 +126,13 @@ export const MissionPlanningLayer = (props: IWaypointsProps) => {
             pose={pose}
             onPose={(p: IPose) => poseChangeHandler(p, idx)}
             pathType={pathType}
-            pathWidth={pathWidth}
+            pathWidth={pathWidth ? pathWidth : 0.25}
           />
         ))}
-        <MissionPlanningPath pathType={pathType} pathWidth={pathWidth} />
+        <MissionPlanningPath
+          pathType={pathType}
+          pathWidth={pathWidth ? pathWidth : 0.25}
+        />
       </group>
     </DataVisualizationLayer>
   );
