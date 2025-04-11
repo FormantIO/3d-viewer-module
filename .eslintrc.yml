@@ -1,0 +1,187 @@
+env:
+  browser: true
+  es2022: true
+  node: true
+extends:
+  - plugin:react/recommended
+  - airbnb
+  - "plugin:prettier/recommended"
+  - "plugin:import/typescript"
+  - "plugin:jest/recommended"
+  - "plugin:@typescript-eslint/recommended"
+parser: "@typescript-eslint/parser"
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: latest
+  sourceType: module
+  project: "./tsconfig.eslint.json"
+plugins:
+  - react
+  - "@typescript-eslint"
+  - prettier
+  - jest
+rules:
+  # "no-constant-binary-expression": ["error"]  compare with npx oxidation-compiler@latest lint packages
+  "prettier/prettier": ["error"]
+
+  "react/button-has-type": "off"
+  "react/destructuring-assignment": "off"
+  "react/function-component-definition": "off"
+  "react/jsx-boolean-value": ["error", "always"]
+  "react/jsx-filename-extension": ["error", { "extensions": [".tsx", ".jsx"] }]
+  "react/jsx-no-useless-fragment": ["error", { "allowExpressions": true }]
+  "react/jsx-props-no-spreading": "off"
+  "react/no-array-index-key": "off"
+  "react/no-unescaped-entities": "off"
+  "react/no-unstable-nested-components": "off"
+  "react/no-unused-class-component-methods": "off"
+  "react/no-unused-prop-types": "off"
+  "react/prefer-stateless-function": "off"
+  "react/prop-types": "off"
+  "react/require-default-props": "off"
+  "react/sort-comp": "off"
+
+  "jsx-a11y/alt-text": "off"
+  "jsx-a11y/anchor-is-valid": "off"
+  "jsx-a11y/click-events-have-key-events": "off"
+  "jsx-a11y/control-has-associated-label": "off"
+  "jsx-a11y/iframe-has-title": "off"
+  "jsx-a11y/label-has-associated-control": "off"
+  "jsx-a11y/media-has-caption": "off"
+  "jsx-a11y/mouse-events-have-key-events": "off"
+  "jsx-a11y/no-autofocus": "off"
+  "jsx-a11y/no-noninteractive-tabindex": "off"
+  "jsx-a11y/no-static-element-interactions": "off"
+
+  "import/extensions":
+    ["error", "ignorePackages", { "ts": "never", "tsx": "never" }]
+  "import/no-extraneous-dependencies":
+    [
+      "error",
+      {
+        "devDependencies":
+          [
+            "**/realtime-sdk/src/index.ts",
+            "**/*.stories.ts",
+            "**/*.stories.tsx",
+            "**/*.test.ts",
+            "**/*.test.tsx",
+            "**/test/**/*.ts",
+            "**/test/**/*.tsx",
+          ],
+      },
+    ]
+  "import/prefer-default-export": "off"
+  "import/no-unresolved":
+    - error
+    - ignore:
+        - "@ladle/react"
+        - "^file-loader!"
+        - "^worker-loader?"
+  "import/newline-after-import": "off"
+  "import/no-cycle": "off"
+  "import/no-duplicates": "error"
+  "import/no-dynamic-require": "error"
+  "import/no-import-module-exports":
+    ["error", { "exceptions": ["**/test/__mocks__/**/*.ts"] }]
+  "import/no-mutable-exports": "off"
+  "import/no-relative-packages": "error"
+  "import/no-useless-path-segments": "off"
+  "import/no-webpack-loader-syntax": "off"
+
+  "jest/expect-expect": "off"
+  "jest/no-disabled-tests": "off"
+  "jest/no-done-callback": "off"
+  "jest/no-standalone-expect": "off"
+  "jest/valid-title": "off"
+  "jest/no-conditional-expect": "off"
+
+  "arrow-body-style": "off"
+  "camelcase": "off"
+  "class-methods-use-this": "off"
+  "consistent-return": "off"
+  "curly": ["error", "all"]
+  "default-case": "off"
+  "getter-return": "off"
+  "lines-between-class-members": "off"
+  "no-await-in-loop": "off"
+  "no-constant-condition": ["error", { "checkLoops": false }]
+  "no-continue": "off"
+  "no-dupe-class-members": "off"
+  "no-else-return": "off"
+  "no-empty-function": "off"
+  "no-inner-declarations": "off"
+  "no-nested-ternary": "off"
+  "no-new": "off"
+  "no-param-reassign": "off"
+  "no-plusplus": "off"
+  "no-promise-executor-return": "off"
+  "no-restricted-globals": "off"
+  "no-restricted-imports":
+    [
+      "error",
+      {
+        "paths":
+          [
+            {
+              "name": "class-validator",
+              "importNames": ["IsInt"],
+              "message": "Use @IsSafeInteger instead.",
+            },
+          ],
+      },
+    ]
+  "no-restricted-properties": "off"
+  "no-restricted-syntax": "off"
+  "no-return-assign": "off"
+  "no-return-await": "off"
+  "no-shadow": "off"
+  "no-undef": "off"
+  "no-underscore-dangle": "off"
+  "no-use-before-define": "off"
+  "no-useless-constructor": "off"
+  "no-useless-escape": "off"
+  "no-useless-return": "off"
+  "no-void": ["error", { "allowAsStatement": true }]
+  "prefer-arrow-callback": ["error", { "allowNamedFunctions": true }]
+  "prefer-destructuring": "off"
+  "prefer-exponentiation-operator": "off"
+  "prefer-template": "off"
+
+  "@typescript-eslint/ban-ts-comment":
+    ["error", { "ts-expect-error": "allow-with-description" }]
+  "@typescript-eslint/no-explicit-any": "off"
+  "@typescript-eslint/no-var-requires": "off"
+  "@typescript-eslint/prefer-as-const": "off"
+  "@typescript-eslint/no-unused-vars":
+    [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+        ignoreRestSiblings: true,
+      },
+    ]
+  "@typescript-eslint/no-shadow": ["error", { "allow": ["error", "options"] }]
+  "@typescript-eslint/no-floating-promises": "error"
+  "@typescript-eslint/no-non-null-assertion": "error"
+  "@typescript-eslint/naming-convention":
+    [
+      "error",
+      { "selector": "variable", "modifiers": ["destructured"], "format": null },
+      {
+        "selector": "variableLike",
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore": "allow",
+      },
+      {
+        "selector": "function",
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore": "forbid",
+      },
+      { "selector": "typeLike", "format": ["PascalCase"] },
+      { "selector": "interface", "format": ["PascalCase"], "prefix": ["I"] },
+    ]
+  "@typescript-eslint/adjacent-overload-signatures": "error"
