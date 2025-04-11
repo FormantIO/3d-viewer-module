@@ -1,5 +1,6 @@
 import {
   definedAndNotNull,
+  IColorRGBA,
   UniverseDataSource,
   UniverseTelemetrySource,
 } from "@formant/data-sdk";
@@ -320,6 +321,30 @@ function InstancedGeometryFromList({ instances }: InstanceGeoListProps) {
 export function GeometryLayer(props: IGeometryLayer) {
   const { children, dataSource, allowTransparency } = props;
 
+  const defaultMeshMaterial = new MeshLambertMaterial({ vertexColors: true }); // Assuming vertex colors might be used
+  const defaultSpriteMaterial = new SpriteMaterial();
+
+  const createColorAttribute = (
+    colors: IColorRGBA[] | undefined,
+    itemSize: number,
+    countMultiplier: number = 1 // 1 for points/lines, 3 for triangles
+  ): Float32BufferAttribute | undefined => {
+    if (!colors || colors.length === 0) return undefined;
+    const flatColors =
+      countMultiplier === 1
+        ? colors.map((c) => [c.r, c.g, c.b]).flat()
+        : colors
+            .map((c) => Array(countMultiplier).fill([c.r, c.g, c.b]).flat())
+            .flat();
+    // Ensure the number of colors matches the expected geometry size
+    // This basic check might need refinement depending on geometry type
+    // if (flatColors.length !== expectedVerticies * itemSize) {
+    //     console.warn("Color array size mismatch");
+    //     return undefined;
+    // }
+    return new Float32BufferAttribute(new Float32Array(flatColors), itemSize);
+  };
+
   const world = useRef(new GeometryWorld());
   const isReady = useRef(false);
   const bounds = useBounds();
@@ -462,9 +487,9 @@ export function GeometryLayer(props: IGeometryLayer) {
         opacity: g.color.a,
       });
 
-      const shaftDiameter = g.points.length < 2 ? 0.01 : g.scale.x;
-      const headDiameter = g.points.length < 2 ? 0.05 : g.scale.y;
-      const headLength = g.points.length < 2 && g.scale.z ? 0.1 : g.scale.z;
+      const shaftDiameter = g.points?.length < 2 ? 0.01 : g.scale.x;
+      const headDiameter = g.points?.length < 2 ? 0.05 : g.scale.y;
+      const headLength = g.points?.length < 2 && g.scale.z ? 0.1 : g.scale.z;
       const arrowShaft = new CylinderGeometry(
         shaftDiameter,
         shaftDiameter,
@@ -595,7 +620,46 @@ export function GeometryLayer(props: IGeometryLayer) {
     mesh: Mesh | Line | Sprite | Points
   ) => {
     if (g.type === "line_list" || g.type === "line_strip") {
-      mesh.geometry.setFromPoints(g.points as Vector3[]);
+      if (
+        !Array.isArray(g.points) ||
+        g.points.some((p) => !p || typeof p.x !== "number")
+      ) {
+        console.error("Invalid points data detected for Line!", g);
+        return;
+      }
+      const currentPointCount = mesh.geometry.attributes.position.count;
+      const newPointCount = g.points?.length || 0;
+
+      if (currentPointCount === newPointCount) {
+        mesh.geometry.setFromPoints(g.points as Vector3[]);
+        mesh.geometry.computeBoundingSphere();
+
+        const material = mesh.material as LineBasicMaterial;
+        const colorAttribute = createColorAttribute(g.colors || [], 3);
+        if (colorAttribute) {
+          mesh.geometry.setAttribute("color", colorAttribute);
+          material.vertexColors = true;
+        } else {
+          mesh.geometry.deleteAttribute("color");
+          material.vertexColors = false;
+        }
+      } else {
+        // console.log(
+        //   `Recreating Line geometry ${g.id} (${currentPointCount} -> ${newPointCount} points)`
+        // );
+        mesh.geometry.dispose();
+
+        const newGeometry = new BufferGeometry().setFromPoints(
+          g.points as Vector3[]
+        );
+        const colorAttribute = createColorAttribute(g.colors || [], 3);
+        if (colorAttribute) {
+          newGeometry.setAttribute("color", colorAttribute);
+        }
+        mesh.geometry = newGeometry;
+        (mesh.material as LineBasicMaterial).vertexColors = !!colorAttribute;
+      }
+
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.quaternion.set(
         g.rotation.x,
@@ -630,7 +694,46 @@ export function GeometryLayer(props: IGeometryLayer) {
         opacity: g.color.a,
       });
     } else if (g.type === "points") {
-      mesh.geometry.setFromPoints(g.points as Vector3[]);
+      if (
+        !Array.isArray(g.points) ||
+        g.points.some((p) => !p || typeof p.x !== "number")
+      ) {
+        console.error("Invalid points data detected for Points!", g);
+        return;
+      }
+      const currentPointCount = mesh.geometry.attributes.position.count;
+      const newPointCount = g.points?.length || 0;
+
+      if (currentPointCount === newPointCount) {
+        mesh.geometry.setFromPoints(g.points as Vector3[]);
+        mesh.geometry.computeBoundingSphere();
+
+        const material = mesh.material as PointsMaterial;
+        const colorAttribute = createColorAttribute(g.colors || [], 3);
+        if (colorAttribute) {
+          mesh.geometry.setAttribute("color", colorAttribute);
+          material.vertexColors = true;
+        } else {
+          mesh.geometry.deleteAttribute("color");
+          material.vertexColors = false;
+        }
+      } else {
+        // console.log(
+        //   `Recreating Points geometry ${g.id} (${currentPointCount} -> ${newPointCount} points)`
+        // );
+        mesh.geometry.dispose();
+
+        const newGeometry = new BufferGeometry().setFromPoints(
+          g.points as Vector3[]
+        );
+        const colorAttribute = createColorAttribute(g.colors || [], 3);
+        if (colorAttribute) {
+          newGeometry.setAttribute("color", colorAttribute);
+        }
+        mesh.geometry = newGeometry;
+        (mesh.material as PointsMaterial).vertexColors = !!colorAttribute;
+      }
+
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.quaternion.set(
         g.rotation.x,
@@ -643,18 +746,64 @@ export function GeometryLayer(props: IGeometryLayer) {
         opacity: g.color.a,
         size: g.scale.x / 10,
       });
-      if (g.colors) {
-        mesh.geometry.setAttribute(
-          "color",
-          new Float32BufferAttribute(
-            g.colors.map((c) => [c.r, c.g, c.b]).flat(),
-            3
-          )
-        );
-        mesh.material.vertexColors = true;
-      }
     } else if (g.type === "triangle_list") {
-      mesh.geometry.setFromPoints(g.points as Vector3[]);
+      if (
+        !Array.isArray(g.points) ||
+        g.points.some((p) => !p || typeof p.x !== "number")
+      ) {
+        console.error("Invalid points data detected for Triangle List!", g);
+        return;
+      }
+      const currentPointCount = mesh.geometry.attributes.position.count;
+      const newPointCount = g.points?.length || 0;
+
+      if (newPointCount % 3 !== 0) {
+        console.error(
+          `Invalid point count (${newPointCount}) for Triangle List ${g.id}. Must be multiple of 3.`
+        );
+        return;
+      }
+
+      if (currentPointCount === newPointCount) {
+        mesh.geometry.setFromPoints(g.points as Vector3[]);
+        mesh.geometry.computeBoundingSphere();
+        mesh.geometry.computeVertexNormals();
+        mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
+        mesh.position.set(g.position.x, g.position.y, g.position.z);
+        mesh.quaternion.set(
+          g.rotation.x,
+          g.rotation.y,
+          g.rotation.z,
+          g.rotation.w
+        );
+
+        const material = mesh.material as MeshLambertMaterial;
+        const colorAttribute = createColorAttribute(g.colors || [], 3, 3);
+        if (colorAttribute) {
+          mesh.geometry.setAttribute("color", colorAttribute);
+          material.vertexColors = true;
+        } else {
+          mesh.geometry.deleteAttribute("color");
+          material.vertexColors = false;
+        }
+      } else {
+        // console.log(
+        //   `Recreating Triangle List geometry ${g.id} (${currentPointCount} -> ${newPointCount} points)`
+        // );
+        mesh.geometry.dispose();
+
+        const newGeometry = new BufferGeometry().setFromPoints(
+          g.points as Vector3[]
+        );
+        newGeometry.computeVertexNormals();
+        const colorAttribute = createColorAttribute(g.colors || [], 3, 3);
+        if (colorAttribute) {
+          newGeometry.setAttribute("color", colorAttribute);
+        }
+        mesh.geometry = newGeometry;
+        (mesh.material as MeshLambertMaterial).vertexColors = !!colorAttribute;
+      }
+
       mesh.scale.set(g.scale.x, g.scale.y, g.scale.z);
       mesh.position.set(g.position.x, g.position.y, g.position.z);
       mesh.quaternion.set(
@@ -667,21 +816,8 @@ export function GeometryLayer(props: IGeometryLayer) {
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
       });
-      if (g.colors) {
-        mesh.geometry.setAttribute(
-          "color",
-          new Float32BufferAttribute(
-            g.colors
-              .map(
-                (c) => [c.r, c.g, c.b, c.r, c.g, c.b, c.r, c.g, c.b] // 3 times for each vertex
-              )
-              .flat(),
-            3
-          )
-        );
-        mesh.material.vertexColors = true;
-      }
     }
+    (mesh.material as any).needsUpdate = true;
   };
 
   const processGeometry = (geometry: Geometry[]) => {
