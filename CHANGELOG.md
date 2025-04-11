@@ -1,3 +1,9 @@
+## [0.171.4] - 2025-04-11
+
+- Update lint rules to match formant app
+- Fix line geometry errors
+- Add a better demo to test geometry later
+
 ## [0.171.3] - 2025-03-13
 
 - Fix a bug where occupancy grid layer would not load.
