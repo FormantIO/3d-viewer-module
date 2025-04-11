@@ -14,12 +14,6 @@ import {
   IUniverseOdometry,
   IUniversePointCloud,
   IUniversePath,
-} from "@formant/data-sdk";
-import { Quaternion, SplineCurve, Vector2, Vector3 } from "three";
-import seedrandom from "seedrandom";
-import { pointCloud, occupancyMap } from "./exampleData";
-import { clone } from "../../common/clone";
-import {
   IBitset,
   IJointState,
   ILocation,
@@ -28,12 +22,86 @@ import {
   INumericSetEntry,
   ITransform,
   ITransformNode,
+  IColorRGBA,
+  IVector3,
+  IQuaternion,
 } from "@formant/data-sdk";
+import { Quaternion, SplineCurve, Vector2, Vector3 } from "three";
+import seedrandom from "seedrandom";
+import { pointCloud, occupancyMap } from "./exampleData";
+import { clone } from "../../common/clone";
 
 export const SPOT_ID = "abc";
 export const ARM1_ID = "asdfadsfas";
 export const ARM2_ID = "124fasd";
 export const ARM3_ID = "77hrtesgdafdsh";
+
+// Helper types from visualization code (or define inline if needed)
+type MarkerType =
+  | "arrow" // 0
+  | "cube" // 1
+  | "sphere" // 2
+  | "cylinder" // 3
+  | "line_strip" // 4
+  | "line_list" // 5
+  | "cube_list" // 6
+  | "sphere_list" // 7
+  | "points" // 8
+  | "text" // 9
+  | "mesh_resource" // 10 (skipped)
+  | "triangle_list"; // 11
+
+const typeIdMap: { [key: number]: MarkerType } = {
+  0: "arrow",
+  1: "cube",
+  2: "sphere",
+  3: "cylinder",
+  4: "line_strip",
+  5: "line_list",
+  6: "cube_list",
+  7: "sphere_list",
+  8: "points",
+  9: "text",
+  11: "triangle_list",
+};
+
+const typeNameToId = Object.fromEntries(
+  Object.entries(typeIdMap).map(([k, v]) => [v, parseInt(k)])
+);
+
+// Helper functions for test data generation
+const randomColor = (alpha: number = 1): IColorRGBA => ({
+  r: Math.random(),
+  g: Math.random(),
+  b: Math.random(),
+  a: alpha,
+});
+const randomVector = (factor: number = 1): IVector3 => ({
+  x: (Math.random() - 0.5) * 2 * factor,
+  y: (Math.random() - 0.5) * 2 * factor,
+  z: (Math.random() - 0.5) * 2 * factor,
+});
+const randomScale = (factor: number = 1): IVector3 => ({
+  x: Math.random() * factor + 0.1, // Avoid zero scale
+  y: Math.random() * factor + 0.1,
+  z: Math.random() * factor + 0.1,
+});
+const randomQuaternion = (): IQuaternion => {
+  const u = Math.random();
+  const v = Math.random();
+  const w = Math.random();
+  return {
+    x: Math.sqrt(1 - u) * Math.sin(2 * Math.PI * v),
+    y: Math.sqrt(1 - u) * Math.cos(2 * Math.PI * v),
+    z: Math.sqrt(u) * Math.sin(2 * Math.PI * w),
+    w: Math.sqrt(u) * Math.cos(2 * Math.PI * w),
+  };
+};
+const generatePoints = (count: number): IVector3[] =>
+  Array.from({ length: count }, () => randomVector(0.5));
+
+const generateColors = (count: number): IColorRGBA[] =>
+  Array.from({ length: count }, () => randomColor());
 
 export class ExampleUniverseData implements IUniverseData {
   subscribeToBitset(
@@ -507,670 +575,344 @@ export class ExampleUniverseData implements IUniverseData {
     _source: UniverseDataSource,
     callback: (data: IMarker3DArray | DataStatus) => void
   ): () => void {
+    let tick = 0;
+    const updateInterval = 500; // ms between updates
+    const phaseLength = 20; // ticks per phase (10 seconds)
+    let nextId = 0;
+
+    // Store active markers: Map<namespace, Map<id, markerData>>
+    const activeMarkers = new Map<string, Map<number, any>>();
+
+    const addOrUpdateMarker = (marker: any) => {
+      let nsMap = activeMarkers.get(marker.ns);
+      if (!nsMap) {
+        nsMap = new Map<number, any>();
+        activeMarkers.set(marker.ns, nsMap);
+      }
+      nsMap.set(marker.id, marker); // Store the latest version
+      // Return a marker object with action: 0 (ADD/MODIFY)
+      return { ...marker, action: 0 };
+    };
+
+    const deleteMarker = (ns: string, id: number): any | null => {
+      const nsMap = activeMarkers.get(ns);
+      if (nsMap && nsMap.has(id)) {
+        const deletedMarker = { ...nsMap.get(id), action: 2 }; // Create DELETE marker data
+        nsMap.delete(id);
+        if (nsMap.size === 0) {
+          activeMarkers.delete(ns);
+        }
+        return deletedMarker;
+      }
+      return null;
+    };
+
+    const deleteAllMarkers = (): any[] => {
+      const deleteMarkers = [];
+      // It's often enough to send a single marker with action: 3
+      if (activeMarkers.size > 0) {
+        // Pick one existing marker's details if available, otherwise create dummy
+        const firstNs = activeMarkers.keys().next().value;
+        const firstId = activeMarkers
+          .get(firstNs || "")
+          ?.keys()
+          .next().value;
+        if (firstNs && firstId !== undefined) {
+          deleteMarkers.push({ ns: firstNs, id: firstId, action: 3 });
+        } else {
+          // Fallback if no markers exist but we want to signal DELETEALL
+          deleteMarkers.push({ ns: "system", id: 0, action: 3 });
+        }
+      }
+      activeMarkers.clear();
+      return deleteMarkers;
+    };
+
     const timer = setInterval(() => {
       const time = Date.now();
-      const circlePoint1 = Math.sin(time / 1000);
-      const circlePoint2 = Math.cos(time / 1000);
-      const circlePoint3 = Math.sin(time / 1000) + 0.5;
-      const circlePoint4 = Math.cos(time / 1000) + 0.5;
-      const circlePoint5 = Math.sin(time + 200 / 1000);
-      const circlePoint6 = Math.cos(time + 200 / 1000);
-      const array = [];
+      const phase = Math.floor(tick / phaseLength);
+      const markersToSend: any[] = [];
 
-      array.push({
-        id: 1,
-        ns: `cube1`,
-        type: 1,
-        action: 0,
-        lifetime: 100000,
-        frame_id: "base_link",
-        points: [],
-        text: Math.random().toString(), // random text
-        mesh_resource: "",
-        frame_locked: false,
-        mesh_use_embedded_materials: false,
-        color: {
-          r: circlePoint3,
-          g: circlePoint4,
-          b: circlePoint3 + 0.5,
-          a: 1,
-        },
-        colors: [],
-        pose: {
-          position: {
-            x: 10,
-            y: 5,
-            z: 1 + circlePoint1,
-          },
-          orientation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
-        },
-        scale: {
-          x: circlePoint1,
-          y: circlePoint2,
-          z: 1,
-        },
-      });
-      array.push({
-        id: 2,
-        ns: `sphere`,
-        type: 2,
-        action: 0,
-        lifetime: 100000,
-        frame_id: "base_link",
-        points: [],
-        text: Math.random().toString(), // random text
-        mesh_resource: "",
-        frame_locked: false,
-        mesh_use_embedded_materials: false,
-        color: {
-          r: circlePoint2,
-          g: circlePoint1,
-          b: circlePoint2 + 0.5,
-          a: 1,
-        },
-        colors: [],
-        pose: {
-          position: {
-            x: 12,
-            y: 5,
-            z: 1 + circlePoint1,
-          },
-          orientation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
-        },
-        scale: {
-          x: circlePoint2,
-          y: circlePoint1,
-          z: 1,
-        },
-      });
+      // --- Phase Logic ---
+      switch (
+        phase % 8 // Cycle through 8 phases
+      ) {
+        case 0: // Initial Creation of diverse types
+          console.log("Geo Phase 0: Initial Creation");
+          if (tick % phaseLength === 0) {
+            // Only add once per phase start
+            // Add one of each type
+            Object.entries(typeIdMap).forEach(([idStr, typeName], index) => {
+              const id = parseInt(idStr);
+              if (typeName === "mesh_resource") return; // Skip mesh resource
 
-      array.push({
-        id: 3,
-        ns: `arrow`,
-        type: 0,
-        action: 0,
-        lifetime: 100000,
-        frame_id: "base_link",
-        points: [],
-        text: Math.random().toString(), // random text
-        mesh_resource: "",
-        frame_locked: false,
-        mesh_use_embedded_materials: false,
-        color: {
-          r: circlePoint1,
-          g: circlePoint2,
-          b: circlePoint1 + 0.5,
-          a: 1,
-        },
-        colors: [],
-        pose: {
-          position: {
-            x: 11,
-            y: 6,
-            z: 1,
-          },
-          orientation: {
-            x: 0,
-            y: 0,
-            z: circlePoint1,
-            w: 1,
-          },
-        },
-        scale: {
-          x: circlePoint1,
-          y: circlePoint2,
-          z: circlePoint1 + 0.5,
-        },
-      });
+              const marker: any = {
+                id: nextId++,
+                ns: `creation_phase_${typeName}`,
+                type: id,
+                lifetime: 60, // 60 seconds
+                frame_id: "map",
+                pose: {
+                  position: randomVector(5),
+                  orientation: randomQuaternion(),
+                },
+                scale: randomScale(1),
+                color: randomColor(index % 3 === 0 ? 0.5 : 1), // Test transparency
+                text: typeName,
+              };
 
-      array.push({
-        id: 4,
-        ns: `cubelist`,
-        type: 6,
-        action: 0,
-        lifetime: 100000,
-        frame_id: "base_link",
-        // place 100 cubes along a circle of radius 10, and move them in a circle using circleTime1
-        points: Array.from({ length: 20 }, (_, i) => ({
-          x: Math.sin(((i + time / 1000) / 20) * Math.PI * 2) * 2 + 1,
-          y: Math.cos(((i + time / 1000) / 20) * Math.PI * 2) * 2 - 1,
-          z: 0,
-        })),
-        text: Math.random().toString(), // random text
-        mesh_resource: "",
-        frame_locked: false,
-        mesh_use_embedded_materials: false,
-        color: {
-          r: Math.cos(circlePoint1),
-          g: Math.sin(circlePoint2),
-          b: 0,
-          a: 1,
-        },
-        colors: [],
-        pose: {
-          position: {
-            x: 10,
-            y: 6,
-            z: 1,
-          },
-          orientation: {
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1,
-          },
-        },
-        scale: {
-          x: 0.25,
-          y: 0.25,
-          z: 0.25,
-        },
-      });
+              // Check typeName validity BEFORE using it for list checks
+              if (typeName) {
+                const listTypes = [
+                  "line_strip",
+                  "line_list",
+                  "points",
+                  "triangle_list",
+                  "cube_list",
+                  "sphere_list",
+                ];
 
-      callback({ markers: array });
-    }, 100);
+                if (listTypes.includes(typeName)) {
+                  // Safe check now
+                  let numPoints = 10 + Math.floor(Math.random() * 20);
+                  if (typeName === "triangle_list") {
+                    // Ensure point count is a multiple of 3 (and at least 3)
+                    numPoints = Math.max(3, numPoints - (numPoints % 3));
+                  }
+                  marker.points = generatePoints(numPoints);
+                  if (index % 2 === 0) {
+                    marker.colors = generateColors(numPoints);
+                  }
+                }
+
+                // Arrow specific points (outside listTypes check)
+                if (typeName === "arrow") {
+                  marker.points = generatePoints(2);
+                  marker.scale = { x: 0.1, y: 0.2, z: 0.05 };
+                }
+                // Text specific scale (outside listTypes check)
+                if (typeName === "text") {
+                  marker.scale = { x: 1, y: 1, z: 1 };
+                }
+              }
+
+              markersToSend.push(addOrUpdateMarker(marker));
+            });
+          }
+          break;
+
+        case 1: // Modification
+          console.log("Geo Phase 1: Modification");
+          activeMarkers.forEach((nsMap, ns) => {
+            nsMap.forEach((marker) => {
+              // Modify ~20% of markers each tick in this phase
+              if (Math.random() < 0.2) {
+                const modifiedMarker = { ...marker }; // Copy existing data
+                // Change something significant
+                modifiedMarker.pose.position.x += (Math.random() - 0.5) * 0.5;
+                modifiedMarker.pose.position.y += (Math.random() - 0.5) * 0.5;
+                modifiedMarker.color = randomColor(marker.color.a); // Keep original alpha maybe
+                if (modifiedMarker.text) {
+                  modifiedMarker.text = `Updated: ${Math.random().toFixed(2)}`;
+                }
+                markersToSend.push(addOrUpdateMarker(modifiedMarker));
+              }
+            });
+          });
+          break;
+
+        case 2: // Add More
+          console.log("Geo Phase 2: Add More");
+          if (tick % 5 === 0) {
+            // Add one every few ticks
+            const typeId = Math.floor(Math.random() * 11);
+            const typeName = typeIdMap[typeId];
+
+            // Check if typeName is valid and not mesh_resource BEFORE using it
+            if (typeName && typeName !== "mesh_resource") {
+              const marker: any = {
+                id: nextId++,
+                ns: `added_phase_${typeName}`,
+                type: typeId,
+                lifetime: 30,
+                frame_id: "map",
+                pose: {
+                  position: randomVector(8),
+                  orientation: randomQuaternion(),
+                },
+                scale: randomScale(0.5),
+                color: randomColor(),
+                text: `Added ${typeName}`,
+              };
+
+              // Now typeName is guaranteed to be a valid string here
+              if (
+                [
+                  "line_strip",
+                  "line_list",
+                  "points",
+                  "triangle_list",
+                  "cube_list",
+                  "sphere_list",
+                ].includes(typeName as string) // Safe to use includes now
+              ) {
+                marker.points = generatePoints(5);
+              }
+
+              // This check is also safe now
+              if (typeName === "arrow") {
+                marker.points = marker.points || [];
+              }
+
+              markersToSend.push(addOrUpdateMarker(marker));
+            }
+          }
+          break;
+
+        case 3: // Deletion - Specific Markers
+          console.log("Geo Phase 3: Deletion (Specific)");
+          const markersToDelete: { ns: string; id: number }[] = [];
+          activeMarkers.forEach((nsMap, ns) => {
+            nsMap.forEach((marker, id) => {
+              // Delete ~10% of markers each tick in this phase
+              if (Math.random() < 0.1) {
+                markersToDelete.push({ ns, id });
+              }
+            });
+          });
+          markersToDelete.forEach(({ ns, id }) => {
+            const deletedMarkerData = deleteMarker(ns, id);
+            if (deletedMarkerData) {
+              markersToSend.push(deletedMarkerData);
+            }
+          });
+          break;
+
+        case 4: // Re-add a recently deleted one (if possible) or add new
+          console.log("Geo Phase 4: Re-add/Add New");
+          // Note: This phase is simplistic. A real re-add might need tracking deleted IDs.
+          // For now, just add a new one like phase 2.
+          if (tick % 5 === 0) {
+            // Add one every few ticks
+            const typeId = typeNameToId["sphere"]; // Add a sphere
+            const typeName = typeIdMap[typeId];
+            const marker: any = {
+              id: nextId++, // Use a new ID
+              ns: `readded_phase_${typeName}`,
+              type: typeId,
+              lifetime: 30,
+              frame_id: "map",
+              pose: {
+                position: randomVector(3),
+                orientation: randomQuaternion(),
+              },
+              scale: randomScale(1.5),
+              color: { r: 0, g: 1, b: 0, a: 1 }, // Green
+              text: `Re-added ${typeName}`,
+            };
+            markersToSend.push(addOrUpdateMarker(marker));
+          }
+          break;
+
+        case 5: // Modify Lists (Points/Colors)
+          console.log("Geo Phase 5: Modify Lists");
+          activeMarkers.forEach((nsMap, ns) => {
+            nsMap.forEach((marker) => {
+              const typeName = typeIdMap[marker.type]; // Could be undefined
+
+              // Check if it's a known type first
+              if (typeName) {
+                const listTypes = [
+                  "line_strip",
+                  "line_list",
+                  "points",
+                  "triangle_list",
+                  "cube_list",
+                  "sphere_list",
+                ];
+
+                // Explicitly check inclusion *after* confirming typeName is a string
+                if (listTypes.includes(typeName as string)) {
+                  // Modify ~30% of list markers each tick
+                  if (Math.random() < 0.3) {
+                    const modifiedMarker = { ...marker };
+                    // Change number of points or their positions
+                    const numPoints = 5 + Math.floor(Math.random() * 15);
+                    modifiedMarker.points = generatePoints(numPoints);
+                    // Update colors if they existed, or add them
+                    if (modifiedMarker.colors || Math.random() < 0.5) {
+                      modifiedMarker.colors = generateColors(numPoints);
+                    } else {
+                      delete modifiedMarker.colors; // Remove colors sometimes
+                    }
+                    markersToSend.push(addOrUpdateMarker(modifiedMarker));
+                  }
+                }
+              }
+            });
+          });
+          break;
+
+        case 6: // Delete by Namespace (Simulated)
+          console.log("Geo Phase 6: Delete Namespace (Simulated)");
+          // Choose a namespace to delete (e.g., the first one added in phase 0)
+          const nsToDelete = "creation_phase_cube"; // Example
+          const nsMapToDelete = activeMarkers.get(nsToDelete);
+          if (nsMapToDelete) {
+            const idsToDelete = Array.from(nsMapToDelete.keys());
+            idsToDelete.forEach((id) => {
+              const deletedMarkerData = deleteMarker(nsToDelete, id);
+              if (deletedMarkerData) {
+                markersToSend.push(deletedMarkerData);
+              }
+            });
+            console.log(`Deleting namespace ${nsToDelete}`);
+          }
+          break;
+
+        case 7: // Delete All
+          console.log("Geo Phase 7: Delete All");
+          if (tick % phaseLength === Math.floor(phaseLength / 2)) {
+            // Send DELETEALL mid-phase
+            markersToSend.push(...deleteAllMarkers());
+            console.log("Sent DELETEALL action.");
+          }
+          break;
+      }
+
+      // Add some continuous motion to a specific marker if it exists
+      const motionNs = "creation_phase_sphere";
+      const motionId = Array.from(activeMarkers.get(motionNs)?.keys() || [])[0]; // Get first ID if ns exists
+      if (motionId !== undefined) {
+        const marker = activeMarkers.get(motionNs)?.get(motionId);
+        if (marker) {
+          const modifiedMarker = { ...marker };
+          modifiedMarker.pose.position.z = Math.sin(time / 500) * 2; // Bob up and down
+          markersToSend.push(addOrUpdateMarker(modifiedMarker));
+        }
+      }
+
+      // Only send if there are markers to update
+      if (markersToSend.length > 0) {
+        // Remove duplicates (e.g., if a marker was modified twice)
+        // Keep the latest instruction for each unique ns/id combo
+        const finalMarkers = new Map<string, any>();
+        markersToSend.forEach((m) => {
+          finalMarkers.set(`${m.ns}_${m.id}`, m);
+        });
+        callback({ markers: Array.from(finalMarkers.values()) });
+      }
+
+      tick++;
+    }, updateInterval);
+
+    // Initial clear state (optional)
+    // callback({ markers: deleteAllMarkers() });
 
     return () => {
       clearInterval(timer);
+      console.log("Geometry subscription stopped.");
     };
-
-    const array = [];
-
-    for (let i = 0; i < 10; i += 1) {
-      for (let j = 0; j <= 11; j += 1) {
-        if (j === 6 || j === 7 || j === 8 || j === 4 || j === 5 || j === 11) {
-          // let's skip the lists
-          continue;
-        }
-        array.push({
-          id: Math.random(),
-          ns: `cube${Math.random()}`,
-          type: j,
-          action: 0,
-          lifetime: 100000,
-          frame_id: "base_link",
-          points: Array.from({ length: j > 0 ? 100 : 0 }, () => ({
-            x: Math.random(),
-            y: Math.random(),
-            z: Math.random(),
-          })),
-          text: Math.random().toString(), // random text
-          mesh_resource: "",
-          frame_locked: false,
-          mesh_use_embedded_materials: false,
-          color: {
-            r: Math.random(),
-            g: Math.random(),
-            b: Math.random(),
-            a: Math.random(),
-          },
-          colors: Array.from({ length: j > 0 ? 100 : 0 }, () => ({
-            r: Math.random(),
-            g: Math.random(),
-            b: Math.random(),
-            a: 1.0,
-          })),
-          pose: {
-            position: {
-              x: i - 10,
-              y: 5 - j,
-              z: 0,
-            },
-            orientation: {
-              x: Math.random(),
-              y: Math.random(),
-              z: Math.random(),
-              w: 1,
-            },
-          },
-          scale: {
-            x: Math.random(),
-            y: Math.random(),
-            z: Math.random(),
-          },
-        });
-      }
-    }
-
-    // lets make a grid
-    const gridSize = 10;
-
-    // Populate the array with cubes organized in a 10x10x10 grid
-    const points = [];
-    const pointsTriangle = [];
-    const colors = [];
-
-    for (let x = 0; x < gridSize; x++) {
-      for (let y = 0; y < gridSize; y++) {
-        for (let z = 0; z < gridSize; z++) {
-          const color = {
-            r: x / (gridSize - 1), // Red based on X position
-            g: y / (gridSize - 1), // Green based on Y position
-            b: z / (gridSize - 1), // Blue based on Z position
-            a: 1.0,
-          };
-
-          points.push({
-            x: (x / (gridSize - 1)) * 10,
-            y: (y / (gridSize - 1)) * 10,
-            z: (z / (gridSize - 1)) * 10,
-          });
-
-          pointsTriangle.push({
-            x: (x / (gridSize - 1)) * 10,
-            y: (y / (gridSize - 1)) * 10,
-            z: (z / (gridSize - 1)) * 10,
-          });
-
-          pointsTriangle.push({
-            x: (x / (gridSize - 1)) * 10,
-            y: ((y - 0.5) / (gridSize - 1)) * 10,
-            z: (z / (gridSize - 1)) * 10,
-          });
-
-          pointsTriangle.push({
-            x: ((x + 0.5) / (gridSize - 1)) * 10,
-            y: ((y - 0.5) / (gridSize - 1)) * 10,
-            z: (z / (gridSize - 1)) * 10,
-          });
-
-          colors.push(color);
-        }
-      }
-    }
-
-    array.push({
-      id: 199929,
-      ns: `triangle_list${Math.random()}`,
-      type: 11, // TRIANGLE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: pointsTriangle,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: 15,
-          y: -25,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 114429,
-      ns: `line_strip${Math.random()}`,
-      type: 4, // LINE_STRIP
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: points,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: -30,
-          y: -30,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 1122329,
-      ns: `lines_list${Math.random()}`,
-      type: 5, // CUBE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: points,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: -10,
-          y: -30,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 113329,
-      ns: `point_list${Math.random()}`,
-      type: 8, // POINTS
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: points,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: -30,
-          y: -10,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.5,
-        y: 1.5,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 113378,
-      ns: `cube_list${Math.random()}`,
-      type: 6, // CUBE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: points,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: -35,
-          y: 13,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 0.6,
-        y: 0.6,
-        z: 0.6,
-      },
-    });
-
-    array.push({
-      id: 113379,
-      ns: `sphere_list${Math.random()}`,
-      type: 7, // SPHERE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: points,
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: colors,
-      pose: {
-        position: {
-          x: 5,
-          y: 30,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 0.6,
-        y: 0.6,
-        z: 0.6,
-      },
-    });
-
-    array.push({
-      id: 113377,
-      ns: `cube_list${Math.random()}`,
-      type: 6, // CUBE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 10,
-        y: Math.random() * 10,
-        z: Math.random() * 10,
-      })),
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: Array.from({ length: 1000 }, () => ({
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: 1.0,
-      })),
-      pose: {
-        position: {
-          x: -16,
-          y: 13,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 113377,
-      ns: `cube_list${Math.random()}`,
-      type: 6, // CUBE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 10,
-        y: Math.random() * 10,
-        z: Math.random() * 10,
-      })),
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: Array.from({ length: 1000 }, () => ({
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: 1.0,
-      })),
-      pose: {
-        position: {
-          x: -16,
-          y: 13,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    array.push({
-      id: 1337,
-      ns: `sphereo_list${Math.random()}`,
-      type: 7, // SPHERE_LIST
-      action: 0,
-      lifetime: 100000,
-      frame_id: "base_link",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 10,
-        y: Math.random() * 10,
-        z: Math.random() * 10,
-      })),
-      text: Math.random().toString(),
-      mesh_resource: "",
-      frame_locked: false,
-      mesh_use_embedded_materials: false,
-      color: {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: Math.random(),
-      },
-      colors: Array.from({ length: 1000 }, () => ({
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-        a: 1.0,
-      })),
-      pose: {
-        position: {
-          x: 3,
-          y: 13,
-          z: 0,
-        },
-        orientation: {
-          x: Math.random(),
-          y: Math.random(),
-          z: Math.random(),
-          w: 1,
-        },
-      },
-      scale: {
-        x: 1.0,
-        y: 1.0,
-        z: 1.0,
-      },
-    });
-
-    callback({
-      markers: array,
-    });
-    return () => {};
   }
 
   subscribeToJointState(
