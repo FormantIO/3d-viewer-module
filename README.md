@@ -37,10 +37,10 @@ At a very high level there's 3 important things you need to do:
 
 # Examples and Documentation
 
-- [Introduction to 3D Viewer](https://docs.formant.io/docs/3d-viewer)
+- [Introduction to 3D Viewer](https://docs.formant.io/docs/3d-scene-module)
   <img src="https://user-images.githubusercontent.com/66638393/217696414-56af0957-de44-4b78-9b0b-7a77b6484d15.png" width="200"/>
 
-- [Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-layer-in-3d-viewer)
+- [Create a simple interactable layer for 3D Viewer](https://docs.formant.io/recipes/create-a-simple-3d-scene-custom-layer)
   <img width="200" src="https://user-images.githubusercontent.com/66638393/217696316-4c2a9d23-1f47-4f1d-8f27-c82855269781.png">
 
 - [Create a module configuration](https://docs.formant.io/recipes/create-a-simple-module-configuration)
