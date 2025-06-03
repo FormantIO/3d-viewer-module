@@ -110,7 +110,7 @@ export const MissionPlanningLayer = (props: IWaypointsProps) => {
         ref={plane}
         visible={false}
       >
-        <planeGeometry args={[1000, 1000]} />
+        <planeGeometry args={[200000, 200000]} />
         <meshStandardMaterial
           color={FormantColors.green}
           transparent={true}

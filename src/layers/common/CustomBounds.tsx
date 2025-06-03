@@ -134,10 +134,10 @@ export function Bounds({ children, damping = 6, fit, clip, observe, margin = 1.2
         const controls = get().controls as CameraControlsProps;
         setDistance(currentSize.distance);
         if (controls) {
-          controls.maxDistance = currentSize.distance * 2;
+          controls.maxDistance = 100000;
           controls.minDistance = 0.5;
         }
-        camera.far = Math.max(currentSize.distance * 100, 100);
+        camera.far = Math.max(100000, 100);
         camera.updateProjectionMatrix()
         invalidate()
         return this

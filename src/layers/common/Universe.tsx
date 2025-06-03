@@ -220,7 +220,7 @@ export function Universe(props: IUniverseProps) {
                 <CameraControls
                   makeDefault
                   ref={mapControlsRef}
-                  maxDistance={2000}
+                  maxDistance={100000}
                   maxPolarAngle={Math.PI / 2 - 0.1}
                   attach={"controls"}
                   verticalDragToForward={true}
