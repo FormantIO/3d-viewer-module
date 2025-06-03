@@ -35,7 +35,7 @@
             "description": "Select the size of your map. Larger map boundaries take longer to render and update.",
             "type": "string",
             "default": "200 m",
-            "enum": ["200 m", "400 m", "600 m", "800 m", "1000 m", "2500 m","5000 m", "10000 m"],
+            "enum": ["200 m", "400 m", "600 m", "800 m", "1000 m"],
             "$formant.visible.when": ["mapType", "=", "GPS"]
           },
           "gpsMapLatitude": {
