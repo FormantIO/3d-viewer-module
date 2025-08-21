@@ -1,14 +1,14 @@
+import { IUniversePath, UniverseTelemetrySource } from "@formant/data-sdk";
 import { useContext, useEffect, useRef, useState } from "react";
-import { IUniverseLayerProps, PathType } from "./types";
-import { UniverseDataContext } from "./common/UniverseDataContext";
-import { LayerContext } from "./common/LayerContext";
-import { DataVisualizationLayer } from "./DataVisualizationLayer";
-import { UniverseTelemetrySource, IUniversePath } from "@formant/data-sdk";
 import * as THREE from "three";
-import { transformMatrix } from "./utils/transformMatrix";
-import { FormantColors } from "./utils/FormantColors";
 import { useControlsContext } from "./common/ControlsContext";
+import { LayerContext } from "./common/LayerContext";
 import Path from "./common/Path";
+import { UniverseDataContext } from "./common/UniverseDataContext";
+import { DataVisualizationLayer } from "./DataVisualizationLayer";
+import { IUniverseLayerProps, PathType } from "./types";
+import { FormantColors } from "./utils/FormantColors";
+import { transformMatrix } from "./utils/transformMatrix";
 
 interface ILocalPathProps extends IUniverseLayerProps {
   dataSource?: UniverseTelemetrySource;
@@ -17,7 +17,6 @@ interface ILocalPathProps extends IUniverseLayerProps {
   pathWidth?: number;
   flatten?: boolean;
 }
-
 
 export const PathLayer = (props: ILocalPathProps) => {
   const {
@@ -33,7 +32,38 @@ export const PathLayer = (props: ILocalPathProps) => {
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
+  const [url, setUrl] = useState<string | undefined>(undefined);
   const groupRef = useRef<THREE.Group>(null!);
+
+  useEffect(() => {
+    if (url) {
+      // Fetch path data from URL
+      fetch(url)
+        .then((response) => response.json())
+        .then((data: IUniversePath) => {
+          const { poses, worldToLocal } = data;
+
+          setPoints(
+            poses.map(
+              (pos) =>
+                new THREE.Vector3(
+                  pos.translation.x,
+                  pos.translation.y,
+                  pos.translation.z
+                )
+            )
+          );
+
+          if (!groupRef.current) return;
+          const group = groupRef.current;
+          group.matrixAutoUpdate = false;
+          group.matrix.copy(transformMatrix(worldToLocal));
+        })
+        .catch((error) => {
+          console.error("Failed to fetch path data from URL:", error);
+        });
+    }
+  }, [url]);
 
   useEffect(() => {
     if (!layerData) return;
@@ -50,16 +80,37 @@ export const PathLayer = (props: ILocalPathProps) => {
       (data: IUniversePath | Symbol) => {
         if (typeof data === "symbol") return;
 
-        const { poses, worldToLocal } = data as IUniversePath;
+        const { poses, worldToLocal, url: _url } = data as IUniversePath;
 
-        setPoints(
-          poses.map((pos) => new THREE.Vector3(pos.translation.x, pos.translation.y, pos.translation.z))
-        );
-
+        // Set up transform matrix first (like OccupancyGridLayer does)
         if (!groupRef.current) return;
         const group = groupRef.current;
         group.matrixAutoUpdate = false;
-        group.matrix.copy(transformMatrix(worldToLocal));
+        if (worldToLocal) {
+          group.matrix.copy(transformMatrix(worldToLocal));
+        }
+
+        if (_url) {
+          // URL is available, use URL-based fetching
+          setUrl(_url);
+          return;
+        }
+
+        if (!poses) {
+          return;
+        }
+
+        // Fallback to direct data processing if no URL
+        setPoints(
+          poses.map(
+            (pos) =>
+              new THREE.Vector3(
+                pos.translation.x,
+                pos.translation.y,
+                pos.translation.z
+              )
+          )
+        );
       }
     );
 
