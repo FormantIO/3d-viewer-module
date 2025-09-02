@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { useControlsContext } from "./common/ControlsContext";
 import { LayerContext } from "./common/LayerContext";
 import Path from "./common/Path";
+import { PathLoader, IPathAssetData } from "./common/PathLoader";
 import { UniverseDataContext } from "./common/UniverseDataContext";
 import { DataVisualizationLayer } from "./DataVisualizationLayer";
 import { IUniverseLayerProps, PathType } from "./types";
@@ -32,44 +33,49 @@ export const PathLayer = (props: ILocalPathProps) => {
   const [universeData, liveUniverseData] = useContext(UniverseDataContext);
   const layerData = useContext(LayerContext);
   const [points, setPoints] = useState<THREE.Vector3[]>([]);
-  const [url, setUrl] = useState<string | undefined>(undefined);
+  const [isReady, setIsReady] = useState(true);
   const groupRef = useRef<THREE.Group>(null!);
 
-  useEffect(() => {
-    if (url) {
-      // Fetch path data from URL
-      fetch(url)
-        .then((response) => response.json())
-        .then((data: IUniversePath) => {
-          const { poses, worldToLocal } = data;
-
+  // Handle URL-based asset loading using PathLoader
+  const handlePathUrl = (url: string) => {
+    const pathLoader = PathLoader.get();
+    
+    setIsReady(false);
+    pathLoader
+      .load(url)
+      .then((data: IPathAssetData) => {
+        const { poses: pathPoses, worldToLocal } = data;
+        if (pathPoses && Array.isArray(pathPoses)) {
           setPoints(
-            poses.map(
-              (pos) =>
+            pathPoses.map(
+              (pose) =>
                 new THREE.Vector3(
-                  pos.translation.x,
-                  pos.translation.y,
-                  pos.translation.z
-                )
-            )
+                  pose.translation.x,
+                  pose.translation.y,
+                  pose.translation.z,
+                ),
+            ),
           );
 
-          if (!groupRef.current) return;
-          const group = groupRef.current;
-          group.matrixAutoUpdate = false;
-          group.matrix.copy(transformMatrix(worldToLocal));
-        })
-        .catch((error) => {
-          console.error("Failed to fetch path data from URL:", error);
-        });
-    }
-  }, [url]);
+          if (groupRef.current && worldToLocal) {
+            const group = groupRef.current;
+            group.matrixAutoUpdate = false;
+            group.matrix.copy(transformMatrix(worldToLocal));
+          }
+        }
+        setIsReady(true);
+      })
+      .catch(error => {
+        console.error("Failed to load path asset from URL:", url, error);
+        setPoints([]);
+        setIsReady(true);
+      });
+  };
 
   useEffect(() => {
     if (!layerData) return;
 
     const { deviceId } = layerData;
-
     if (!dataSource) return;
 
     dataSource.streamType = "localization";
@@ -80,56 +86,61 @@ export const PathLayer = (props: ILocalPathProps) => {
       (data: IUniversePath | Symbol) => {
         if (typeof data === "symbol") return;
 
-        const { poses, worldToLocal, url: _url } = data as IUniversePath;
+        const pathData = data as any;
 
-        // Set up transform matrix first (like OccupancyGridLayer does)
-        if (!groupRef.current) return;
-        const group = groupRef.current;
-        group.matrixAutoUpdate = false;
-        if (worldToLocal) {
-          group.matrix.copy(transformMatrix(worldToLocal));
+        // Check if path data contains a URL (S3 asset)
+        if (pathData.url && pathData.url.trim() !== "") {
+          // Path data is stored as S3 asset, load using PathLoader
+          handlePathUrl(pathData.url);
+        } else if (pathData.poses && Array.isArray(pathData.poses)) {
+          // Direct poses access (backward compatibility)
+          const { poses, worldToLocal } = pathData;
+
+          setPoints(
+            poses.map(
+              (pos: any) =>
+                new THREE.Vector3(
+                  pos.translation.x,
+                  pos.translation.y,
+                  pos.translation.z,
+                ),
+            ),
+          );
+
+          if (groupRef.current && worldToLocal) {
+            const group = groupRef.current;
+            group.matrixAutoUpdate = false;
+            group.matrix.copy(transformMatrix(worldToLocal));
+          }
+          setIsReady(true);
+        } else {
+          // No valid path data
+          setPoints([]);
+          setIsReady(true);
         }
-
-        if (_url) {
-          // URL is available, use URL-based fetching
-          setUrl(_url);
-          return;
-        }
-
-        if (!poses) {
-          return;
-        }
-
-        // Fallback to direct data processing if no URL
-        setPoints(
-          poses.map(
-            (pos) =>
-              new THREE.Vector3(
-                pos.translation.x,
-                pos.translation.y,
-                pos.translation.z
-              )
-          )
-        );
       }
     );
 
     return () => {
       unsubscribe();
     };
-  }, [layerData, universeData, setPoints]);
+  }, [layerData, universeData]);
 
   return (
     <DataVisualizationLayer {...props} iconUrl="icons/3d_object.svg">
-      <Path
-        points={points}
-        color={FormantColors.mithril}
-        pathOpacity={pathOpacity}
-        pathWidth={pathWidth}
-        pathType={pathType}
-        pathFlatten={flatten}
-        renderOrder={0}
-      />
+      {isReady && (
+        <group ref={groupRef}>
+          <Path
+            points={points}
+            color={FormantColors.mithril}
+            pathOpacity={pathOpacity}
+            pathWidth={pathWidth}
+            pathType={pathType}
+            pathFlatten={flatten}
+            renderOrder={0}
+          />
+        </group>
+      )}
     </DataVisualizationLayer>
   );
 };
