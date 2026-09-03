@@ -35,7 +35,7 @@
     "jszip": "^3.9.1",
     "lodash.clamp": "^4.0.3",
     "postprocessing": "^6.29.3",
-    "qs": "^6.11.1",
+    "qs": "^6.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "seedrandom": "^3.0.5",
