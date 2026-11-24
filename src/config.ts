@@ -39,6 +39,7 @@ export type Viewer3DVisualization = {
   positionIndicatorUseURDF?: boolean;
   jointStateTelemetryStreamName?: string;
   geometryAllowTransparency?: boolean;
+  markerPointSizeMultiplier?: number;
   realtimeJointStateStream?: string;
   pointCloudRealtimeStream?: string;
   markerArrayRealtimeStream?: string;

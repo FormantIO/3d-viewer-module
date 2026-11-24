@@ -222,6 +222,7 @@ export function buildScene(
             treePath={[DEVICE_TREEPATH, i]}
             name={layer.name || "Geometry"}
             allowTransparency={layer.geometryAllowTransparency || false}
+            pointSizeMultiplier={layer.markerPointSizeMultiplier}
           />
         );
       }
