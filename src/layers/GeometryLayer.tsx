@@ -55,6 +55,9 @@ const MINIMUM_TIME_DIFFERENCE = 12 * duration.hour;
 interface IGeometryLayer extends IUniverseLayerProps {
   dataSource: UniverseDataSource;
   allowTransparency: boolean;
+  // Multiplies the drawn size of POINTS markers. Unset, zero, negative or
+  // non-numeric values fall back to 1 (no change).
+  pointSizeMultiplier?: number;
 }
 
 type GeoInstanceData = {
@@ -319,7 +322,14 @@ function InstancedGeometryFromList({ instances }: InstanceGeoListProps) {
 }
 
 export function GeometryLayer(props: IGeometryLayer) {
-  const { children, dataSource, allowTransparency } = props;
+  const { children, dataSource, allowTransparency, pointSizeMultiplier } =
+    props;
+  const pointSizeScale =
+    typeof pointSizeMultiplier === "number" &&
+    Number.isFinite(pointSizeMultiplier) &&
+    pointSizeMultiplier > 0
+      ? pointSizeMultiplier
+      : 1;
 
   const defaultMeshMaterial = new MeshLambertMaterial({ vertexColors: true }); // Assuming vertex colors might be used
   const defaultSpriteMaterial = new SpriteMaterial();
@@ -544,7 +554,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       const material = new PointsMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
-        size: g.scale.x / 10,
+        size: (g.scale.x / 10) * pointSizeScale,
       });
 
       const pointsGeometry = new BufferGeometry().setFromPoints(
@@ -744,7 +754,7 @@ export function GeometryLayer(props: IGeometryLayer) {
       mesh.material = new PointsMaterial({
         color: new Color(g.color.r, g.color.g, g.color.b),
         opacity: g.color.a,
-        size: g.scale.x / 10,
+        size: (g.scale.x / 10) * pointSizeScale,
       });
     } else if (g.type === "triangle_list") {
       if (

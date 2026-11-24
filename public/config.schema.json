@@ -294,6 +294,13 @@
             "description": "If ON, Formant will read transparency values from marker array stream. If OFF, markers will render as opaque. Transparency requires additional computation time.",
             "$formant.visible.when": ["visualizationType", "=", "Marker array"]
           },
+          "markerPointSizeMultiplier": {
+            "title": "Point size multiplier",
+            "type": "number",
+            "default": 1,
+            "description": "Multiplies the drawn size of POINTS markers in this layer. Use a value above 1 if the points in your marker array are too small to see. Other marker types are not affected.",
+            "$formant.visible.when": ["visualizationType", "=", "Marker array"]
+          },
           "telemetryStreamName": {
             "title": "Telemetry stream",
             "type": "string",
